@@ -6,6 +6,20 @@
 如：输入 sdfasd34hs7
 """
 s = 'sdf2asd34hs70'
+# s1 = s + 'a'
+# v = ''
+# total = 0
+# for i in range(len(s)):
+#     if s1[i].isdecimal():
+#         v += s1[i]
+#         if not s1[i+1].isdecimal():
+#             total += int(v)
+#             v = ''
+# print(total)
+
+
+
+
 li = []
 count = 0
 for i in range(len(s)):
