@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
+
+
+
+############################  总结  ##################################
+'''
+1. 切片取值，如果结尾值超出索引，则默认取到最后
+2. os模块，v = os.path.exists('路径地址')，存在v为 Ture
+'''
+############################   end   #################################
 """
 今日作业
 阅读自己
@@ -108,7 +117,7 @@
 
 """
 6.请为以下函数编写一个装饰器，添加上装饰器后可以实现：执行 read_userinfo 函数时，先检查文件路径是否存在，如果存在
-则执行后，如果不存在则输入文件路径不存在，并且不再执行read_userinfo函数体中的内容，再将content变量赋值给None。
+则执行，如果不存在则输入文件路径不存在，并且不再执行read_userinfo函数体中的内容，再将content变量赋值给None。
 温馨提示：如何查看一个路径是否存在？import osresult = os.path.exists('路径地址')
 # result为True，则表示路径存在。
 # result为False，则表示路径不存在。
@@ -278,9 +287,8 @@ def func():
 
 
 func()
-模块
-http: // www.cnblogs.com / wupeiqi / articles / 5501365.
-html
+
+模块http://www.cnblogs.com/wupeiqi/articles/5501365.html
 
 os
 sys
