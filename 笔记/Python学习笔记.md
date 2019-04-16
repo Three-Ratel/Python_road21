@@ -1157,9 +1157,9 @@ value = int(data) if data.isdecimal() else None
 
 
 
-## 5.2 函数
+## 5.2 函数基础
 
-面向过程【可读性差、可重用性差】
+面向过程【可读性差、可重用性差】—> 函数式编程—>面向对象
 
 ```python
 # 如果给其他人发送邮件，可以把发送程序进行封装起来，可缩减代码长度和提高重复利用性。
@@ -1209,7 +1209,7 @@ def 函数名(形参):
 
 #### **Note1**（2）
 
-- 函数默认返回值是 None ，有时可以使用其作为flag
+- 函数默认返回值是 None ，有时可以使用其作为**flag**
 - None方法类似函数，但不是（方法操作是s.upper(),方式，而函数是直接调用，len（），open（））
 
 ### 2. 两种参数（示例）
@@ -1378,6 +1378,8 @@ def func()：
 ```
 
 2. **默认参数**
+   - 注意默认参数一定要在位置参数之后
+   - 在定义默认参数时，**慎用**可变类型变量
 
 ```python
 # 示例 
@@ -1391,15 +1393,13 @@ func(1, 3)
 
 ```python
 # 如果想要给values设置默认是空list
-def func(data, value=[]):  
+def func(data, value=[]):
   pass
 # 推荐
-def func(data, value=None):  
+def func(data, value=None):
   if not value:    
     valu=[]
 ```
-
-
 
 3. ***args/\*\*kwargs（万能参数）**
 
@@ -1568,7 +1568,7 @@ v()
 
 1. 注意**func** 和 **func()** 的区别
 2. 函数可以放入set()中(不常用)， 或dict中（一般用于values，也可以放在key中但不常用）
-3. 函数是可 **hash** 的
+3. 函数一旦定义，只要进行加载，就是不可变，可 **hash** 
 
 ```python
 # 10 个函数， 一般是建立字典
@@ -1765,10 +1765,6 @@ print(v1)			# 'alex'
 
 ### 1. 函数闭包
 
-**闭包**：为函数创建一块区域，并为其维护自己数据，以后执行时方便
-
-**应用**：装饰器，SQLAlchemy源码
-
 ```python
 def func(name):
   def inner():
@@ -1796,15 +1792,12 @@ def func(name):
   return inner 
 ```
 
-
-
-**Note9**: 
+#### Note9（4） 
 
 1. **闭包**，为函数创建一块区域（内部变量供自己使用），为以后执行提供数据；
 2. 函数内部数据不会混乱
 3. **执行完毕**+**内部数据不被**其他程序使用会被销毁
-
-
+4. **应用**：装饰器，SQLAlchemy源码
 
 ### 2. 内置模块
 
@@ -1813,6 +1806,7 @@ def func(name):
 #### **1. random**
 
 ```python
+# random.randint(a, b)
 import random
 def get_random_data(length=6):
     data = []
@@ -1826,6 +1820,7 @@ def get_random_data(length=6):
 
 ```python
 # 将指定的**str**加密
+# hashlib.md5()/ .update() /.hexdigest()
 import hashlib
 def get_md5(data):
     obj = hashlib.md5()
@@ -1863,10 +1858,12 @@ v = time.time() # 获取从1970年开始到目前的时间，单位为秒
 time.sleep(2)  	# 休眠时间，2秒
 ```
 
-#### 4. sys(解释器相关)
+#### 4. sys (5 + 1)
+
+- 解释器相关
 
 1. sys.getrefcount(a)
-2. sys.recursionlimit()
+2. sys.recursionlimit() / sys.setrecursionlimit()
 3. sys.stdout.write(). print—>进度条
 4. **sys.argv**
    - shutil(shutil.rmtree(path)
@@ -1891,9 +1888,11 @@ print('hello', end='')
 # 应用：进度条
 ```
 
+- **sys.argv** / **sys.path** / shutil
+
 ```python
 # sys.argv  shutil
-# 删除目录的脚本
+# 删除 目录 的脚本, 只能是directory
 import sys
 import shutil
 
@@ -1981,7 +1980,7 @@ def fun(a):
   if a == 5:
     return 100
   result = func(a+1) + 10
-  	return result
+  return result
 v = func(1)
 
 # 注意
@@ -1992,9 +1991,6 @@ def fun(a):
 
 v = func(1)
 ```
-
-- sys.getrecrusionlimit
-- sys.setrecrusionlimit
 
 
 
@@ -2224,6 +2220,7 @@ def index():
 ```
 
 ```python
+# 示例：
 # 写一个带参数的装饰器，实现，参数是多少，被装饰器就要执行多少次，最终返回一个list
 def x(*args):
   def wrapper():
