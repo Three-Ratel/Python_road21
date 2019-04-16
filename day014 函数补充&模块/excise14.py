@@ -142,25 +142,37 @@
 9.写代码实现【题目1】和【题目2】
 """
 
+
 # 1.
 # def func(a, b, c=1):
-#     if a+b < 4000000:
-#         v = func(b, a + b, c+1)
+    # # way1
+    # return func(b, a + b, c+1) if a + b < 4000000 else (b, c)
+
+#     # way2
+#     while a + b < 4000000:
+#         v = func(b, a+b, c+1)
 #         return v
 #     else:
 #         return b, c
-#     # v = func(b, a + b, c+1) if a + b < 4000000 else b
-#     # return v
 #
 #
 # v = func(0, 1)
 # print(v)
+
+
+# def func(a, b):
+#     v = func(b, a + b) if a + b < 4000000 else b
+#     return v
 #
+#
+# v = func(0, 1)
+# print(v)
 
 # 2.
 # dicta = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'f': 'hello'}
 # dictb = {'b': 3, 'd': 5, 'e': 7, 'm': 9, 'k': 'world'}
-
+#
+# # way1
 # dictc = {}
 # for i in dicta:
 #     if i in dictb:
@@ -170,6 +182,15 @@
 # for i in dictb:
 #     if i not in dictc:
 #         dictc[i] = dictb[i]
+# print(dictc)
+
+# # way2
+# import copy
+# dictc = copy.copy(dicta)
+# dictc.update(dictb)
+# for i in dicta:
+#     if i in dictb:
+#         dictc[i] = dicta[i] + dictb[i]
 #
 # print(dictc)
 
@@ -220,13 +241,10 @@
 编程题
 """
 # 1.
-# import os
-#
+import os
+
+# print('============================')
 # def li_file(dirname):
-#     for i in os.listdir(dirname):
-#         if os.path.isfile(i):
-#             i = os.path.abspath(i)
-#             print(i)
 #     for a, b, c in os.walk(dirname):
 #         for i in c:
 #             i = os.path.abspath(i)
