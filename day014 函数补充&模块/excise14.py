@@ -143,14 +143,19 @@
 """
 
 # 1.
-# def func(a, b):
-#     v = func(b, a + b) if a + b < 4000000 else b
-#     return v
+# def func(a, b, c=1):
+#     if a+b < 4000000:
+#         v = func(b, a + b, c+1)
+#         return v
+#     else:
+#         return b, c
+#     # v = func(b, a + b, c+1) if a + b < 4000000 else b
+#     # return v
 #
 #
 # v = func(0, 1)
 # print(v)
-
+#
 
 # 2.
 # dicta = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'f': 'hello'}
@@ -215,18 +220,19 @@
 编程题
 """
 # 1.
-import os
+# import os
+#
 # def li_file(dirname):
+#     for i in os.listdir(dirname):
+#         if os.path.isfile(i):
+#             i = os.path.abspath(i)
+#             print(i)
 #     for a, b, c in os.walk(dirname):
 #         for i in c:
 #             i = os.path.abspath(i)
 #             print(i)
-#         for j in b:
-#             i = os.path.abspath(j)
-#             print(j)
-
-
-li_file('/Users/henry/programme/python/Python_codes/day014 函数补充&模块')
+#
+# li_file('/Users/henry/programme/python/Python_codes/day014 函数补充&模块')
 # 2.
 # def nice_num():
 #     ni_num = []
