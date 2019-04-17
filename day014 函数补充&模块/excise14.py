@@ -114,14 +114,20 @@
 """
 7.写函数实现，查看一个路径下所有的文件【所有】。
 """
-# import os
-# def ls_dir(path):
-#     u = os.walk(path)
-#     for items in u:
-#         u, v, w = items
-#         for i in w:
-#             print(i)
-# ls_dir('/Users/henry/programme/python/Python_codes/day014 函数补充&模块')
+import os
+
+
+def ls_dir(path):
+    u = os.walk(path)
+    for items in u:
+        u, v, w = items
+        for i in w:
+            a = os.path.abspath(i)
+            b = os.path.join(a, i)
+            print(b)
+
+
+ls_dir('/Users/henry/programme/python/Python_codes/day014 函数补充&模块')
 
 
 """

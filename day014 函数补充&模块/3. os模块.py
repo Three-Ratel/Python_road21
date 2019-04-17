@@ -7,14 +7,16 @@ import os
 """
 1. os.path.exists('path')
 """
-# v = os.path.exists('/Users/henry/programme/python/Python_codes/day014 函数补充&模块/1. 带参数的装饰器.py')
+# v = os.path.exists('/Users/henry/programme/python/Python_codes/day014 \
+# 函数补充&模块/1. 带参数的装饰器.py')
 # print(v)
 
 """
 2. os.stat('path').st_size 计算单位为字节 byte
 os.path.getsize(file)
 """
-# v = os.stat('/Users/henry/programme/python/Python_codes/day014 函数补充&模块/1. 带参数的装饰器.py').st_size
+# v = os.stat('/Users/henry/programme/python/Python_codes/day014\
+# 函数补充&模块/1. 带参数的装饰器.py').st_size
 # print(v)
 
 
@@ -30,8 +32,8 @@ os.path.getsize(file)
 """
 4. os.path.dirname()
 """
-# v = os.path.dirname('/Users/henry/programme/python/Python_codes/day014 函数补充&模块/test.py')
-# print(v)
+v = os.path.dirname('test.py')
+print(v)
 
 
 """

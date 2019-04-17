@@ -1683,7 +1683,7 @@ print(v1)			# 'alex'
   """
   ```
 
-  5. 进制转换(3)：bin（0b，int<—>bin），oct（0o，int<—>oct），int(其他进制转int)，hex（0x，int<—>hex）
+  5. 进制转换(3)：**bin**（0b，int<—>bin），**oct**（0o，int<—>oct），int(其他进制转int)，**hex**（0x，int<—>hex）
 
   ```python
   # base 默认为 10
