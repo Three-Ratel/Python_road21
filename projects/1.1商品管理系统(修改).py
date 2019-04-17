@@ -70,111 +70,111 @@ def display_pages(data_list):
 
 
 def goods_manage():
-        goods_list = ['查看商品列表', '根据关键字搜索指定商品', '录入商品']
-        s = '******' + ''.join(TITLE[:2]) + '******'
-        """
-        1.查看商品列表
-        """
-        def check_goods_list(filename):
-            print('******' + ''.join(TITLE[0:3]) + '******')
-            if just_file_empty(filename):
-                with open(filename, mode='r', encoding='utf-8') as f:
-                    msg = 1
-                    for i in f:
-                        u, v, w = i.strip().split(':')
+    goods_list = ['查看商品列表', '根据关键字搜索指定商品', '录入商品']
+    s = '******' + ''.join(TITLE[:2]) + '******'
+    """
+    1.1 查看商品列表
+    """
+    def check_goods_list(filename):
+        print('******' + ''.join(TITLE[0:3]) + '******')
+        if just_file_empty(filename):
+            with open(filename, mode='r', encoding='utf-8') as f:
+                msg = 1
+                for i in f:
+                    u, v, w = i.strip().split(':')
+                    print(u, ' ', v, ' ', w, ' ')
+                    msg += 1
+                    if msg == PER_PAGE_AMOUNT + 1:
+                        msg = 1
+                        input('按enter显示下一页')
+                input('按enter键返回')
+        else:
+            print('没有商品')
+        return
+
+    """
+    1.2 根据关键字搜索指定商品
+    """
+    def check_goods_keys(filename):
+        print('******' + ''.join(TITLE[:2]) + TITLE[4] + '******')
+        flag = False
+        while True:
+            key = input('输入关键字输入N返回: ')
+            if key.upper() == 'N':
+                break
+            elif len(key.strip()) == 0:
+                print(FAULT)
+                continue
+            else:
+                pass
+            with open(filename, mode='r', encoding='utf-8') as f:
+                msg = 1
+                print('***搜索结果如下***')
+                for i in f:
+                    u, v, w = i.strip().split(':')
+                    if key in u:
+                        flag = True
                         print(u, ' ', v, ' ', w, ' ')
                         msg += 1
                         if msg == PER_PAGE_AMOUNT + 1:
                             msg = 1
                             input('按enter显示下一页')
-                    input('按enter键返回')
-            else:
-                print('没有商品')
-            return
+                            print('***搜索结果如下***')
 
-        """
-        2.根据关键字搜索指定商品
-        """
-        def check_goods_keys(filename):
-            print('******' + ''.join(TITLE[:2]) + TITLE[4] + '******')
-            flag = False
+                if not flag:
+                    print('没有该商品')
+        return
+
+    """
+    1.3 录入商品
+    """
+    def check_goods_in(filename):
+        print('******' + ''.join(TITLE[:2]) + TITLE[3] + '******')
+        while True:
+            """
+            输入商品名称
+            """
             while True:
-                key = input('输入关键字输入N返回: ')
-                if key.upper() == 'N':
-                    break
-                elif len(key.strip()) == 0:
+                good_name = input('请输入商品名称(输入N返回上一级)：')
+                if len(good_name.strip()) == 0:
                     print(FAULT)
                     continue
-                else:
-                    pass
-                with open(filename, mode='r', encoding='utf-8') as f:
-                    msg = 1
-                    print('***搜索结果如下***')
-                    for i in f:
-                        u, v, w = i.strip().split(':')
-                        if key in u:
-                            flag = True
-                            print(u, ' ', v, ' ', w, ' ')
-                            msg += 1
-                            if msg == PER_PAGE_AMOUNT + 1:
-                                msg = 1
-                                input('按enter显示下一页')
-                                print('***搜索结果如下***')
+                f = open(filename, mode='a', encoding='utf-8')
+                if good_name.upper() == 'N':
+                    f.close()
+                    return
 
-                    if not flag:
-                        print('没有该商品')
-            return
-
-        """
-        3.录入商品
-        """
-        def check_goods_in(filename):
-            print('******' + ''.join(TITLE[:2]) + TITLE[3] + '******')
+                break
+            """
+            输入商品价格
+            """
             while True:
-                """
-                输入商品名称
-                """
-                while True:
-                    good_name = input('请输入商品名称(输入N返回上一级)：')
-                    if len(good_name.strip()) == 0:
-                        print(FAULT)
-                        continue
-                    f = open(filename, mode='a', encoding='utf-8')
-                    if good_name.upper() == 'N':
-                        f.close()
-                        return
+                good_price = input('请输入商品价格：')
+                if len(good_price.strip()) == 0:
+                    print(FAULT)
+                    continue
+                break
 
-                    break
-                """
-                输入商品价格
-                """
-                while True:
-                    good_price = input('请输入商品价格：')
-                    if len(good_price.strip()) == 0:
-                        print(FAULT)
-                        continue
-                    break
+            """
+            输入商品数量
+            """
+            while True:
+                good_amount = input('请输入商品数量：')
+                if len(good_name.strip()) == 0 or not good_amount.isdecimal():
+                    print(FAULT)
+                    continue
+                break
 
-                """
-                输入商品数量
-                """
-                while True:
-                    good_amount = input('请输入商品数量：')
-                    if len(good_name.strip()) == 0 or not good_amount.isdecimal():
-                        print(FAULT)
-                        continue
-                    break
+            li = [good_name, good_price, good_amount]
+            f.write(':'.join(li) + '\n')
+            f.flush()
+            print('添加成功')
+            continue
 
-                li = [good_name, good_price, good_amount]
-                f.write(':'.join(li) + '\n')
-                f.flush()
-                print('添加成功')
-                continue
-
-        """
-        首页展示
-        """
-        while True:
+    """
+    首页展示
+    """
+    while True:
             print(s)
             display_pages(goods_list)
             goods_funcs = {'1': check_goods_list, '2': check_goods_keys, '3': check_goods_in}
@@ -193,10 +193,10 @@ def goods_manage():
 
 
 def users_manage():
+    """
+    2.1添加用户
+    """
 
-    """
-    1.1添加用户
-    """
     def user_add(filename):
         print(s)
         while True:
@@ -241,9 +241,11 @@ def users_manage():
             f.flush()
         f = open(filename, mode='a', encoding='utf-8')
         f.close()
+
     """
-    1.2用户列表
+    2.2用户列表
     """
+
     def users_list(filename):
         print(s)
         if just_file_empty(filename) == 0:
@@ -263,8 +265,9 @@ def users_manage():
         return
 
     """
-    1.3修改密码
+    2.3修改密码
     """
+
     def modify_pwd(filename):
         while True:
             print(s)
@@ -309,9 +312,11 @@ def users_manage():
                 os.remove(filename)
                 os.rename('users_list1.txt', filename)
         return
+
     """
-    1.4删除用户
+    2.4删除用户
     """
+
     def users_del(filename):
         while True:
             print(s)
@@ -350,6 +355,7 @@ def users_manage():
     for i in users_manage_list:
         i = '【' + i + '】'
         vip_title_list.append(i)
+
     """
     会员首页展示
     """
