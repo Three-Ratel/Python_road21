@@ -23,7 +23,7 @@ os.path.getsize(file)
 只能获取本目录下文件的绝对路径
 """
 
-# v = os.path.abspath('codes')
+# v = os.path.abspath('code')
 # print(v)
 
 

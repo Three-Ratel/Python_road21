@@ -169,10 +169,18 @@
 # print(v)
 
 # 2.
+# way1
 # dicta = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'f': 'hello'}
 # dictb = {'b': 3, 'd': 5, 'e': 7, 'm': 9, 'k': 'world'}
-#
-# # way1
+# for u, v in dicta.items():
+#     if u in dictb:
+#         dictb[u] = v + dicta[u]
+#     else:
+#         dictb[u] = v
+# print(dictb)
+
+
+# # way2
 # dictc = {}
 # for i in dicta:
 #     if i in dictb:
@@ -184,7 +192,7 @@
 #         dictc[i] = dictb[i]
 # print(dictc)
 
-# # way2
+# # way3
 # import copy
 # dictc = copy.copy(dicta)
 # dictc.update(dictb)
@@ -210,7 +218,7 @@
 #     res[tupleA[i]] = tupleB[i]
 # print(res)
 
-# 3.
+# 3.sys.argv 是个列表
 
 
 # 4.提取ip
@@ -241,8 +249,8 @@
 编程题
 """
 # 1.
-import os
-
+# import os
+#
 # print('============================')
 # def li_file(dirname):
 #     for a, b, c in os.walk(dirname):
@@ -251,26 +259,21 @@ import os
 #             print(i)
 #
 # li_file('/Users/henry/programme/python/Python_codes/day014 函数补充&模块')
+
+
 # 2.
 # def nice_num():
 #     ni_num = []
 #     for i in range(2, 1001):
-#         li = []
+#         total = 0
 #         for j in range(1, i):
 #             if i % j == 0:
-#                 li.append(j)
-#
-#         total = 0
-#         for k in li:
-#             total += k
+#                 total += j
 #         if total == i:
 #             ni_num.append(i)
-#         else:
-#             pass
 #     return ni_num
 # v = nice_num()
 # print(v)
-
 
 # 4.
 # alist = [1, 2, 3, 4]

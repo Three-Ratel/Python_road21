@@ -136,6 +136,12 @@ is not
 
 - print 默认输出是换行的，如果要实现不换行需要在变量末尾加上 **end=""**：
 
+### 7.  pyc 文件
+
+​	执行Python代码时，如果导入了其他的 .py 文件，那么，执行过程中会自动生成一个与其同名的 .pyc 文件，该文件就是Python解释器编译之后产生的字节码。
+
+**ps**：代码经过编译可以产生字节码；字节码通过反编译也可以得到代码。
+
 # 第三章 数据类型
 
 ## 3.1 int
@@ -988,7 +994,7 @@ f.read(1) # 如果指定编码格式，会读出 1 个字符
 # way2 按行读取文件
 # 一般用于for循环中，可用来读取 GB 级别的文件
 f.readline() 只读取一行
-f.readlines()
+f.readline()  # 一次性加载所有内容到内存，并根据行分割成字符串
 # 读取一行时也可以使用
 for line in v:
   	line = line.strip('\n')
@@ -1761,7 +1767,7 @@ print(v1)			# 'alex'
 
   
 
-## 5.5 函数闭包和内置模块
+## 5.5 函数闭包
 
 ### 1. 函数闭包
 
@@ -1799,165 +1805,7 @@ def func(name):
 3. **执行完毕**+**内部数据不被**其他程序使用会被销毁
 4. **应用**：装饰器，SQLAlchemy源码
 
-### 2. 内置模块
-
-​	内置模块目前有**random**，**hashlib**， **getpass** ，**time**，**sys**相关，**os**相关，**shutil** 等 **7** 个。
-
-#### **1. random**
-
-```python
-# random.randint(a, b)
-import random
-def get_random_data(length=6):
-    data = []
-    for i in range(length):
-        v = chr(random.randint(65, 90)).lower()  # 得到一个随机数
-        data.append(v)
-    return ' '.join(data)
-```
-
-#### **2. hashlib / getpass**
-
-```python
-# 将指定的**str**加密
-# hashlib.md5()/ .update() /.hexdigest()
-import hashlib
-def get_md5(data):
-    obj = hashlib.md5()
-    obj.update(data.encode('utf-8'))
-    return obj.hexdigest()
-val = get_md5('123')
-print(val)
-```
-
-**加盐**：
-
-```python
-import hashlib
-def get_md5(data):
-    obj = hashlib.md5('adsfg12fsg'.encode('utf-8'))
-    obj.update(data.encode('utf-8'))
-    return obj.hexdigest()
-val = get_md5('123')
-print(val）
-```
-
-**密码不显示**：
-
-```python
-import getpass
-pwd = getpass.getpass('please input pwd: ')
-print(pwd)
-```
-
-#### **3. time**
-
-```python
-import time
-v = time.time() # 获取从1970年开始到目前的时间，单位为秒
-time.sleep(2)  	# 休眠时间，2秒
-```
-
-#### 4. sys (5 + 1)
-
-- 解释器相关
-
-1. sys.getrefcount(a)
-2. sys.recursionlimit() / sys.setrecursionlimit()
-3. sys.stdout.write(). print—>进度条
-4. **sys.argv**
-   - shutil(shutil.rmtree(path)
-5. **sys.path**
-
-```python
-# 引用计数器
-import sys  
-a = [1, 2, 3]
-print(sys.getrefcount(a))
-
-# python默认支持的递归数量
-v = sys.getrecrusionlimit()
-
-# 输入输出，默认换行
-sys.stdout.write('hello')
-# \n \t 
-# \r: 回到当前行的起始位置，一般于end=‘’连用
-print('123\r', end='')
-print('hello', end='')   
-# 在输出的时候，回到123前，重新打印
-# 应用：进度条
-```
-
-- **sys.argv** / **sys.path** / shutil
-
-```python
-# sys.argv  shutil
-# 删除 目录 的脚本, 只能是directory
-import sys
-import shutil
-
-path = sys.argv[1]
-shutil.rmtree(path)
-print('remove the %s' %path)
-```
-
-#### 5. os(操作系统相关)
-
-1. **os.path.exist(file_name)**
-2. os.stat(file_name).st_size
-3. os.path.abspath(file_name)
-4. os.path.dirname(file_name) # 获取上级目录
-5. **os.path.join()** # 路径拼接
-6. os.walk(r'path')
-
-```python
-import os
-1. 获取文件大小
-fiel_size = os.stat('filename').st_size   # 单位为字节
-2. 读取文件
-chunk_size = 1024
-with open('filename', mode='rb') as f1:
-  
-v = r'path'  # r 表示转义，包括所有
-os.path.dirname(v)
-```
-
-```python
-转义
-v = 'al\\nex'
-v = r'al\nex'  # 推荐
-```
-
-```python
-import os
-v = 'test.txt'
-path = 'user/henry/desktop'
-new_path = os.path.join(path, v)
-```
-
-```python
-# 当前目录下第一层文件
-import os
-result = os.listdir(r'path')
-print(result)
-
-# 当前目录下的所有文件
-import os
-result = os.walk(r'path')   # 生成器
-for a, b, c in result: 
-  for i in c:  # a 是目录;b 是目录下的文件夹;c 是目录下的文件
-    path = os.path.join(a, i)
-      print(path)
-```
-
-#### 6. shutil
-
-```python
-import shutil
-shutil.rmtree(r'path')
-```
-
-### 3. 递归(效率较低)
+### 2. 递归(效率较低)
 
 - 递归限制为1000次
 
@@ -2285,43 +2133,272 @@ print(v)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # 第六章 模块
+
+
+
+## 6.1 模块的基本知识
+
+1. **分类**：
+
+   - **内置模块**（py内部提供的功能）
+
+   - **第三方模块**
+
+   ```python
+   # pip 安装模块
+   pip install moudle_name
+   # 安装成功，如果导入不成功，需要重启pycharm 
+   ```
+
+   - **自定义模块**
+
+   ```python
+   # a.py
+   def f1():
+     pass
+   def f2():
+     pass 
+   ```
+
+   ```python
+   # 调用自定义模块中的功能
+   import a
+   a.f1()
+   ```
+
+## 6.2 内置模块
+
+​	内置模块目前有**random**，**hashlib**， **getpass** ，**time**，**sys**相关，**os**相关，**shutil** 等 **7** 个。
+
+### **1. random**
+
+```python
+# random.randint(a, b)
+import random
+def get_random_data(length=6):
+    data = []
+    for i in range(length):
+        v = chr(random.randint(65, 90)).lower()  # 得到一个随机数
+        data.append(v)
+    return ' '.join(data)
+```
+
+### **2. hashlib / getpass**
+
+```python
+# 将指定的**str**加密
+# hashlib.md5()/ .update() /.hexdigest()
+import hashlib
+def get_md5(data):
+    obj = hashlib.md5()
+    obj.update(data.encode('utf-8'))
+    return obj.hexdigest()
+val = get_md5('123')
+print(val)
+```
+
+**加盐**：
+
+```python
+import hashlib
+def get_md5(data):
+    obj = hashlib.md5('adsfg12fsg'.encode('utf-8'))
+    obj.update(data.encode('utf-8'))
+    return obj.hexdigest()
+val = get_md5('123')
+print(val）
+```
+
+**密码不显示**：
+
+```python
+import getpass
+pwd = getpass.getpass('please input pwd: ')
+print(pwd)
+```
+
+### **3. time**
+
+```python
+import time
+v = time.time() # 获取从1970年开始到目前的时间，单位为秒
+time.sleep(2)  	# 休眠时间，2秒
+```
+
+### 4. sys (5 + 1)
+
+- 解释器相关
+
+1. sys.getrefcount(a)
+2. sys.recursionlimit() / sys.setrecursionlimit()
+3. sys.stdout.write(). print—>进度条
+4. **sys.argv**
+   - shutil(shutil.rmtree(path)
+5. **sys.path**
+
+```python
+# 引用计数器
+import sys  
+a = [1, 2, 3]
+print(sys.getrefcount(a))
+
+# python默认支持的递归数量
+v = sys.getrecrusionlimit()
+
+# 输入输出，默认换行
+sys.stdout.write('hello')
+# \n \t 
+# \r: 回到当前行的起始位置，一般于end=‘’连用
+print('123\r', end='')
+print('hello', end='')   
+# 在输出的时候，回到123前，重新打印
+# 应用：进度条
+```
+
+- **sys.argv** / shutil
+
+```python
+# sys.argv  shutil
+# 删除 目录 的脚本, 只能是directory
+import sys
+import shutil
+
+path = sys.argv[1]
+shutil.rmtree(path)
+print('remove the %s' % path)
+```
+
+- **sys.path**（是个list）
+  - paython解释器会按sys.pathon的路径查找
+
+```python
+# sys包含python 和 工作目录
+# pycharm也会自动添加工作目录和pycharm的目录
+# python导入模块时默认查找路径
+# 只能导入目录下的第一层文件
+
+sys.path.append('module_path')
+```
+
+### 5. os(操作系统相关)
+
+1. **os.path.exist(file_name)**
+2. os.stat(file_name).st_size
+3. os.path.abspath(file_name)
+4. os.path.dirname(file_name) # 获取上级目录
+5. **os.path.join()** # 路径拼接
+6. os.listdir()  # 指定目录下的第一层文件，默认path = '.'
+7. os.walk(r'path')
+8. os.mkdir() / os.makedirs()
+9. os.rename(a, b)
+10. os.remove(a)
+
+```python
+import os
+1. 获取文件大小
+fiel_size = os.stat('filename').st_size   # 单位为字节
+2. 读取文件
+chunk_size = 1024
+with open('filename', mode='rb') as f1:
+  
+v = r'path'  # r 表示转义，包括所有
+os.path.dirname(v)
+```
+
+```python
+转义
+v = 'al\\nex'
+v = r'al\nex'  # 推荐
+```
+
+```python
+import os
+v = 'test.txt'
+path = 'user/henry/desktop'
+new_path = os.path.join(path, v)
+```
+
+```python
+# 当前目录下第一层文件
+import os
+result = os.listdir(r'path')
+print(result)
+
+# 当前目录下的所有文件
+import os
+result = os.walk(r'path')   # 生成器
+for a, b, c in result: 
+  for i in c:  # a 是目录;b 是目录下的文件夹;c 是目录下的文件
+    path = os.path.join(a, i)
+      print(path)
+```
+
+#### 6. shutil
+
+```python
+import shutil
+shutil.rmtree(r'path')
+```
+
+## 6.3  json
+
+- 特殊的字符串（list和dict嵌套的string）
+- 不同语言间的数据交互
+- 序列化/反序列化：把其语言的数据转化成**json**格式/ 相反
+- **格式**
+
+```python
+# 只能包含，int，str，list，dict，bool
+# 最外层必须是list/dict
+# json 中如果包含str，必须是 双引号
+# 如果是tuple类型数据，则会转换为list
+```
+
+```python
+import json
+v = [12, 3, 4, {'k1': 1}, True, 'adsf']
+# 序列化
+v = json.dumps(v)
+# 反序列化
+json.loads(v)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # 第七章 面向对象
 
