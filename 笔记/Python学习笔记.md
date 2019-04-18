@@ -2137,6 +2137,45 @@ print(v)
 
 
 
+## 模块的导入
+
+1. **模块**：可以是py文件也可以是文件夹
+2. **定义模块时**，可以把一个py文件或一个包当作一个模块，以便于以后其他py文件使用。
+3. **_ _ init_ _.py** 在文件夹中创建此py文件， **python packages**
+   - py2：**文件夹**中必须有_ _ init_ _.py 
+   - py3：不需要，推荐加上
+4. **导入模块**（只能导入模块，不能导入函数）
+   1. 导入模快—>调用模块中的函数（import 文件名）
+   2. import 会把**模块中的文件**优先加载到内存
+   3. **from py文件名 import func，show… (*)**：只导入指定函数，也会把模块中的内容加载一遍
+      - 模块中的函数名可能和本地函数重名
+      - from 模块 import func as f（模块中的函数重命名） f()
+
+```python
+# test为文件夹，在当前工作目录中，jd为py文件，f1为jd中的函数
+import test.jd
+test.jd.f1()
+# test为文件夹，在当前工作目录中，jd为py文件，f1为jd中的函数
+from test import jd
+jd.f1()
+```
+
+**Note1**（3）
+
+- 模块在和要执行的py文件在同一路径且需要很多功能时，推荐使用import 模块
+- 其他推荐：from 模块 import 模块
+- from 模块1.模块2 import 函数     执行：函数()
+
+```python
+# __file__ python命令行中获取的参数
+import os
+import sys
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
+```
+
+
+
 ## 6.1 模块的基本知识
 
 1. **分类**：
@@ -2147,7 +2186,7 @@ print(v)
 
    ```python
    # pip 安装模块
-   pip install moudle_name
+   pip install module_name
    # 安装成功，如果导入不成功，需要重启pycharm 
    ```
 
@@ -2169,7 +2208,7 @@ print(v)
 
 ## 6.2 内置模块
 
-​	内置模块目前有**random**，**hashlib**， **getpass** ，**time**，**sys**相关，**os**相关，**shutil** 等 **7** 个。
+​	内置模块目前有**random**，**hashlib**， **getpass** ，**time**，**sys**相关，**os**相关，**shutil** ，**json**等 **8**个。
 
 ### **1. random**
 
@@ -2274,7 +2313,8 @@ print('remove the %s' % path)
 
 ```python
 # sys包含python 和 工作目录
-# pycharm也会自动添加工作目录和pycharm的目录
+# 当前py文件所在路径会加载到 sys.path中
+# pycharm也会 自动添加工作目录 和 项目路径加入
 # python导入模块时默认查找路径
 # 只能导入目录下的第一层文件
 
@@ -2341,18 +2381,46 @@ import shutil
 shutil.rmtree(r'path')
 ```
 
+```python
+import shutil
+ # 没有返回值
+shutil.rmtree('dir_name')
+# 重命名，可以是文件/目录
+shutil.move('file_name1', 'new_file_name')
+# 压缩文件(c_file_name.zip), 如果只给定文件名，压缩到py脚本所在目录
+shutil.make_archive('c_file_name', 'zip', 'dir_name')
+# 解压文件,默认是当前路径， 指定目录不存在会创建文件目录
+shutil.unpack_archive('c_file_name.zip', extra=r'dir_paths', format='zip', )
+```
+
+```python
+from datetime import datetime
+# 当前时间
+ctime = datetim.now().strftime('%Y-%m-%d %H:%M:%S')
+# 1.压缩test文件夹
+# 2.放到code目录（默认不存在）
+# 3.将文件解压到/User/henry/Desktop/t中
+```
+
+
+
 ## 6.3  json
 
-- 特殊的字符串（list和dict嵌套的string）
-- 不同语言间的数据交互
-- 序列化/反序列化：把其语言的数据转化成**json**格式/ 相反
-- **格式**
+- **json**， 所有语言通用，**只能**序列化指定的基本数据类型
+  - dumps/loads/ dump/load
+- **pickle**，几乎支持所有python东西（socket对象），序列化的内容只能用python
+  - dumps/loads/ dump/load
+
+#### **1. json格式**
 
 ```python
 # 只能包含，int，str，list，dict，bool
 # 最外层必须是list/dict
 # json 中如果包含str，必须是 双引号
 # 如果是tuple类型数据，则会转换为list
+- 特殊的字符串（list和dict嵌套的string）
+- 不同语言间的数据交互
+- 序列化/反序列化：把其语言的数据转化成json格式/ 相反
 ```
 
 ```python
@@ -2364,19 +2432,169 @@ v = json.dumps(v)
 json.loads(v)
 ```
 
+```python
+# 可转为json的数据中包含中文，让中文完全显示
+v = {'k1': 'alex', 'k2': '你好'}
+val = json.dumps(v, ensure_ascii=False)
+print(val, type(val))
+
+val = json.dumps(v)
+print(val, type(val))
+```
 
 
 
+#### **2. pickle**
+
+```python
+# 使用pickle序列化后，结果是编码后的二进制
+import pickle
+v = {1, 2, 3}
+val = pickle.dumps(v)
+print(val, typ(val))
+val = pickle.loads(v)
+print(val, typ(val))
+# json dump 得到的是str， pickle得到的是bytes
+```
+
+**Note**
+
+- 字符串
+- 经过编码过后的数据，通常称为 **字节类型**/bytes，格式为：b‘XXXXXXXX'
+- 压缩后的0101
+
+## 6.4 time&datetime
+
+> **UTC/GMT**：世界协调时间
+>
+> **本地时间**：本地时区的时间
 
 
 
+- time.time()   # 获取时间戳 1970.1.1 00:00-至今  的秒数
+- time.sleep(10)  # 等待的秒数
+- time.zone  # 和标准时间的差距，和电脑的设置有关
+
+#### **datetime**
+
+```python
+# 获取datetime格式时间
+from datetime import datetime, timezone, timedelta
+v1 = datetime.now()
+v2 = datetime.utcnow()
+
+tz = timezone(timedelta(hours = 7))  # 东7区
+v3 = datetime.now(tz)  # 当前东7区时间
+
+<class 'datetime.datetime'>
+```
+
+```python
+# 将datetime格式时间转化为str
+v1 = datetime.now()
+v1.strftime('%Y-%m-%d') # 连接不能使用汉字
+```
+
+```python
+# str转datetime，时间加减
+val = datetime.strptime('2019-04-18', '%Y-%m-%d')
+v = val +/- timedelta(days=40)  # 当前时间加/减40天
+```
+
+```python
+# 时间戳和datetime关系
+import time, datetime
+ctime = time.time()
+datetime.fromtimestamp(ctime，tz)   # 当前时间,tz和上述相同
+```
+
+```python
+v = datetime.now()
+val = v.timestamp()
+print(val)
+```
 
 
 
+## 异常处理
+
+```python
+# 示例1
+try:
+  val = input('请输入数字：')
+  num = int(val)
+except Exception as e:
+  print('操作异常')
+```
+
+```python
+# 示例2
+import requests
+try:
+  ret = requests.get('http://www.baidu.com')
+	print(ret.text)
+except Exception as e:
+  print('请求异常')
+```
+
+```python
+# 示例3
+def func(a):
+  try:
+    return a.strip()
+  except Exception as e:
+    pass
+  return False
+
+v = func([1, 2, 3])
+print(v)
+```
+
+```python
+# 练习1，函数接收一个list将list中的元素每个都加100
+def func(arg):
+    li = []
+    for items in arg:
+        if items.isdecimal():
+            li.append(int(items) + 100)
+     return li
+```
+
+```python
+# 写函数，接收一个list， 中全是url 访问地址，并获取结果
+import requests
+def	func(url_list):
+  li = []
+  try:
+    for i in url_list:
+      reponse = requests.get(i)
+      li.append(reponse.text)
+  except Exception as e:
+    pass
+  return li
+
+func(['http://www.baidu.com', 'http://www.google.com', 'http://www.bing.com'])
+```
+
+```python
+# 比较异常 try 的位置不同，效果也不同
+import requests
+def	func(url_list):
+  li = []
+  for i in url_list:
+      try:
+          reponse = requests.get(i)
+          li.append(reponse.text)
+  		except Exception as e:
+    			pass
+  return li
+
+func(['http://www.baidu.com', 'http://www.google.com', 'http://www.bing.com'])
 
 
-
-
+# 得到的记过是text格式的文本文档
+reponse = requests.get('url', useragent:xxxxxx)
+```
 
 
 

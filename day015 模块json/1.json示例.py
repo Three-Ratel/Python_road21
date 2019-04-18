@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 import json
-v = [1, 2, 3, {"a": 1, "b": '你好'}, True, '你好', (1,)]
-v1 = json.dumps(v)
-print(v1, type(v1))
-v2 = json.loads(v1)
-print(v2, type(v2))
+# v = [1, 2, 3, {"a": 1, "b": '你好'}, True, '你好', (1,)]
+# v1 = json.dumps(v)
+# print(v1, type(v1))
+# v2 = json.loads(v1)
+# print(v2, type(v2))
 
 
 
@@ -26,19 +26,19 @@ print(v2, type(v2))
     {'id': 11, 'name': '技术生涯', 'hide': False, 'category': 1}
 ]
 """
-# import requests
-# import json
-# response = requests.get('https://www.luffycity.com/api/v1/course_sub/category/list/')
-# # response 得到的数据是 .text的文件
-# print(response.text)
-# v = json.loads(response.text)
-# # 反序列化
-# print(v)
-# data = v['data']
-# print(data)
-# li = []
-# for i in data:
-#     li.append(i['name'])
-#     s = ','.join(li)
-# with open('catelog.txt', mode='w', encoding='utf-8') as f:
-#     f.write(s)
+import requests, json
+
+response = requests.get('https://www.luffycity.com/api/v1/course_sub/category/list/')
+# response 得到的数据是 .text的文件
+print(type(response), type(response.text))
+v = json.loads(response.text)
+# 反序列化
+print(type(v))
+data = v['data']
+print(data, type(data))
+li = []
+for i in data:
+    li.append(i['name'])
+    s = ','.join(li)
+with open('catelog.txt', mode='w', encoding='utf-8') as f:
+    f.write(s)

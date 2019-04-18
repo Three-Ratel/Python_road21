@@ -22,10 +22,10 @@ tz = timezone(timedelta(hours=-7))
 """
 2.datetime 类型转换为str类型
 """
-# v1 = datetime.now()
+v1 = datetime.now()
 # print(v1, type(v1))
-# v2 = v1.strftime('%Y/%m/%d %H:%M:%S')
-# print(v2, type(v2))
+v2 = v1.strftime('%Y/%m/%d %H:%M:%S')
+print(v2, type(v2))
 
 
 """
@@ -48,10 +48,10 @@ tz = timezone(timedelta(hours=-7))
 """
 5. datetime 转换为time.time
 """
-v = datetime.now()
-val = v.timestamp()
-print(val)
-print(time.time())
+# v = datetime.now()
+# val = v.timestamp()
+# print(val)
+# print(time.time())
 
 
 
