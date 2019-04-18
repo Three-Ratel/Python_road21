@@ -27,18 +27,25 @@ import sys
 
 
 # 4.sys.path
-# print(sys.path)
+# for i in sys.path:
+#     print(i)
 
 
-# 4.sys.argv() / sys.path() / shutil
-path = 'test/test.txt'
-with open(path, mode='w') as f:
-    pass
-print(sys.argv)
-sys.argv.append(path)
-import shutil
+# 5.sys.argv() / sys.path() / shutil
+# path = 'test/test.txt'
+# with open(path, mode='w') as f:
+#     pass
+# print(sys.argv)
+# sys.argv.append(path)
+# print(sys.argv)
 
-shutil.rmtree(path)
+
+
+
+
+# import shutil
+#
+# shutil.rmtree(path)
 
 
 

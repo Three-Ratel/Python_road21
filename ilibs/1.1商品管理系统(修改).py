@@ -10,7 +10,7 @@ md5加密
 
 
 def get_data_md5(data):
-    s = 'ad12,ghj*\'kl\'dfghjdfghjkhjvbjhuy78e32314sfdxAAERTYUv/./jub'
+    s = 'ad12,ghj*\'kl\'dfghvbjhuy78e32314sfdxAAERTYUv/./jub'
     v = hashlib.md5((s + str(data).strip('{}[]()')).encode('utf-8'))
     return v.hexdigest()
 

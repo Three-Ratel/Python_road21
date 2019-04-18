@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 import json
-v = [1, 2, 3, {"a": 1, "b": 2}, True, "henry", (1,)]
+v = [1, 2, 3, {"a": 1, "b": '你好'}, True, '你好', (1,)]
 v1 = json.dumps(v)
 print(v1, type(v1))
 v2 = json.loads(v1)
