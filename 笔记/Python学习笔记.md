@@ -2131,13 +2131,138 @@ print(v)
 
 
 
+## 5.7迭代器&生成器
 
+**类**：int ,str, list….  / bytes(**b**'xxx'), datetime
+
+**对象**：由**类**创建的数据
+
+> 类和对象
+
+### 1. 迭代器(class:iterator)
+
+- 展示list中所有数据
+
+  1. 迭代器：对某种(str/list/tuple/dict/set) (**序列**)对象中的元素，进行逐个获取。表象：具有_\_next__()方法，
+
+  - list —> 迭代器：
+    - v = iter([1, 2, 3, 4])
+    - val = [1, 2, 3, 4]._\_iter__()
+  - 迭代器获取每一个元素：v.next
+  - 直到报错：StopIteration，表示迭代终止
+
+  ```python
+  v = [1, 2, 3, 4]
+  val = iter(v)
+  value = val.__next__()
+  print(value)
+  ```
+
+  2. **甄别**：数据中是否包含_\_next__()方法
+
+  3. for循环的内部，首先把数据转化为iter，反复执行iter._\_next__(),取完不报错
+
+### 2. 可迭代对象
+
+- 具有**_\_iter__()**方法，必须返回一个**迭代器（生成器）**
+- for循环
+
+### 3. 生成器（函数的变异）（class:generator）
+
+1. 生成器基础
+
+```python
+def func():
+  pass 
+func()
+```
+
+```python
+# 生成器函数（内部是否包含yield）
+def func(arg):
+  arg = arg + 1
+  yield 1
+  yield 2
+  yield 100
+# 函数内部代码不执行，返回一个生成器
+val = func(100) 
+
+# 生成器：可以被for循环的，一旦开始循环，函数内部代码就开始执行
+for i in val:
+  print(i)
+# 遇到第一个yield会把后面的值赋值给 i
+# 如果yield已经执行完毕，则意味着for循环结束
+```
+
+```python
+# 边使用边执行
+def func():
+  count = 1 
+  while True:
+  	yield count
+    count += 1
+
+# v 只取yield值，是一个生成器对象
+v = func()
+for i in v:
+  print(i)
+  
+# 查看v中有哪些方法
+dir(v）
+```
+
+**Note**
+
+- 函数中如果存在**yield**，则该函数为**生成器函数**，调用生成器函数会返回一个**生成器**
+- 只用被for循环时，生成器内部代码才会执行，每次循环都会获取yield的返回值
+- 即使函数内部的yield函数**永远执行不到**，也**是生成器**
+- **生成器**也是一种**特殊的迭代器**，也是一个可迭代对象
+
+```python
+class Foo(object):
+  def __iter__(self):
+    return iter([1, 2, 3])
+  	yield 1 
+    yield 2
+    
+obj = Foo(object)
+```
+
+2. 生成器示例
+
+```python
+# 示例：读取文件
+def func():
+    curse = 0
+    while True:
+        f = open('db','r','utf-8')
+        f.seek(curse)
+        data_list = []
+      	for i in range(10):
+        		line = f.readline()
+            if not line:
+              	return
+            data_list.append(line)
+        curse = f.tell()
+        f.close
+        for row in data_list:
+          	yield row
+```
+
+```python
+# redis 示例
+import redis
+coon = redis.Redis(host='192.168.12.12')
+```
+
+3. yield from 关键字
+4. 生成器推导式
 
 # 第六章 模块
 
 
 
-## 模块的导入
+## 6.1 模块的导入
 
 1. **模块**：可以是py文件也可以是文件夹
 2. **定义模块时**，可以把一个py文件或一个包当作一个模块，以便于以后其他py文件使用。
@@ -2176,7 +2301,7 @@ sys.path.append(BASE_DIR)
 
 
 
-## 6.1 模块的基本知识
+## 6.2 模块的基本知识
 
 1. **分类**：
 
@@ -2206,7 +2331,7 @@ sys.path.append(BASE_DIR)
    a.f1()
    ```
 
-## 6.2 内置模块
+## 6.3 内置模块
 
 ​	内置模块目前有**random**，**hashlib**， **getpass** ，**time**，**sys**相关，**os**相关，**shutil** ，**json**等 **8**个。
 
@@ -2404,7 +2529,7 @@ ctime = datetim.now().strftime('%Y-%m-%d %H:%M:%S')
 
 
 
-## 6.3  json
+## 6.4  json
 
 - **json**， 所有语言通用，**只能**序列化指定的基本数据类型
   - dumps/loads/ dump/load
@@ -2463,19 +2588,19 @@ print(val, typ(val))
 - 经过编码过后的数据，通常称为 **字节类型**/bytes，格式为：b‘XXXXXXXX'
 - 压缩后的0101
 
-## 6.4 time&datetime
+## 6.5 time&datetime
+
+### 1. time
 
 > **UTC/GMT**：世界协调时间
 >
 > **本地时间**：本地时区的时间
 
-
-
 - time.time()   # 获取时间戳 1970.1.1 00:00-至今  的秒数
 - time.sleep(10)  # 等待的秒数
 - time.zone  # 和标准时间的差距，和电脑的设置有关
 
-#### **datetime**
+### **2. datetime**
 
 ```python
 # 获取datetime格式时间
@@ -2516,7 +2641,7 @@ print(val)
 
 
 
-## 异常处理
+## 6.6 异常处理
 
 ```python
 # 示例1
@@ -2592,7 +2717,7 @@ def	func(url_list):
 func(['http://www.baidu.com', 'http://www.google.com', 'http://www.bing.com'])
 
 
-# 得到的记过是text格式的文本文档
+# 得到的结果是text格式的文本文档
 reponse = requests.get('url', useragent:xxxxxx)
 ```
 

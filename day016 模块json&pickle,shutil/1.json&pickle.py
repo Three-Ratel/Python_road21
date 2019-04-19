@@ -7,12 +7,12 @@ import pickle
 """
 可转为json的数据中包含中文，让中文完全显示
 """
-v = {'k1': 'alex', 'k2': '你好'}
-val = json.dumps(v, ensure_ascii=False)
-print(val, type(val))
-
-val = json.dumps(v)
-print(val, type(val))
+# v = {'k1': 'alex', 'k2': '你好'}
+# val = json.dumps(v, ensure_ascii=False)
+# print(val, type(val))
+#
+# val = json.dumps(v)
+# print(val, type(val))
 
 
 """

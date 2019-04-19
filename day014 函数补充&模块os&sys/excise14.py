@@ -150,9 +150,9 @@ ls_dir('/Users/henry/programme/python/Python_codes/day014 函数补充&模块')
 
 
 # 1.
-# def func(a, b, c=1):
-    # # way1
-    # return func(b, a + b, c+1) if a + b < 4000000 else (b, c)
+def func(a, b, c=1):
+    # way1
+    return func(b, a + b, c+1) if a + b < 4000000 else (b, c)
 
 #     # way2
 #     while a + b < 4000000:
@@ -160,10 +160,10 @@ ls_dir('/Users/henry/programme/python/Python_codes/day014 函数补充&模块')
 #         return v
 #     else:
 #         return b, c
-#
-#
-# v = func(0, 1)
-# print(v)
+
+
+v = func(0, 1)
+print(v)
 
 
 # def func(a, b):
