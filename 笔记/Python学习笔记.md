@@ -2536,7 +2536,7 @@ ctime = datetim.now().strftime('%Y-%m-%d %H:%M:%S')
 - **pickle**，几乎支持所有python东西（socket对象），序列化的内容只能用python
   - dumps/loads/ dump/load
 
-#### **1. json格式**
+### **1. json**
 
 ```python
 # 只能包含，int，str，list，dict，bool
@@ -2569,7 +2569,7 @@ print(val, type(val))
 
 
 
-#### **2. pickle**
+### **2. pickle**
 
 ```python
 # 使用pickle序列化后，结果是编码后的二进制
