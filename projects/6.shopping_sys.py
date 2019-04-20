@@ -265,7 +265,7 @@ def buy_goods():
                 2019-12-11-11-22.txt
       注意：重复购买同一件商品时，只更改购物车中的数量。
     4.我的购物车，查看用户所有的购物车记录，即：找到shopping_car目录下当前用户所有的购买信息，并显示：
-        2019-11-11-09-59
+        2019-11-11-09-59.txt
             飞机|1000|10个
             大炮|2000|3个
         2019-11-12-11-56.txt
@@ -291,13 +291,17 @@ def display_pages(arg):
 
 
 def shopping_car():
-    i = os.path.dirname(os.path.abspath('shopping_sys.py'))
+    i = os.path.dirname(os.path.abspath(__file__))
     file_path = '%s/shopping_car/%s/' % (i, STATUS[0])
     if not os.path.exists(file_path):
         print('用户没有购买信息')
         input('按enter键返回')
         return
+    li = []
     for i in os.listdir(file_path):
+        print(i)
+        li.append(i)
+    for i in li:
         print(i)
         goods_display(os.path.join(file_path, i))
 

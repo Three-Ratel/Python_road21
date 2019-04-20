@@ -30,9 +30,9 @@
 
 ## 1.4 进制
 
-- 二进制. 0b		
-- 八进制  （计算机内部使用）
-- 十进制
+- 二进制. 0b
+- 八进制  0o（计算机内部使用）
+- 十进制 int(str, base=2/8/16)
 - 十六进制(表示).  \x （一般用于计算机显示）
 
 
@@ -43,15 +43,15 @@
 
 ​	首先，在官网下载py2与py3，2，3版本有很多不兼容所有会存在两个版本共存的问题。目前，mac、ubuntu等一些系统已经内置了python2版本。
 
-​	为了开发需要，我们需要下载并安装python3。用于开发的软件，通常安装版本一般是找次新版本进行安装。安装pycharm IDE 开发工具。
+​	为了开发需要，我们需要下载并安装python3。用于开发的软件，通常安装版本一般是找**次新**版本进行安装。安装pycharm IDE 开发工具。
 
-​	环境变量的功能，及其配置。环境变量分为，用户环境变量（只对当前用户生效）和系统环境变量（所有用户均有效）。主要用于终端使用，不需要输入python解释器的完整路径，只要输入python* 就可使用。
+​	环境变量的功能，及其配置。环境变量分为，**用户环境变量**（只对当前用户生效）和**系统环境变量**（所有用户均有效）。主要用于终端使用，不需要输入python解释器的完整路径，只要输入pythonx 就可使用。
 
-​	mac的环境变量在～/.bash_profile文件中。通常在安装的时候python会自动生成环境变量，无需手动配置。
+​	mac的环境变量在**～/.bash_profile**文件中。通常在安装的时候python会自动生成环境变量，无需手动配置。
 
 ## 2.2 编码
 
-​	当前，比较通用的编码有ASCII、Unicode、UTF-8、GB2312、GBK。由于计算机最初使用的是ASCII编码，所以掐他编码必须兼容ASCII码。
+​	当前，比较通用的编码有ASCII、Unicode、UTF-8、GB2312、GBK。由于计算机最初使用的是ASCII编码，所以其他编码必须兼容ASCII码。
 
 1. ASCII
 
@@ -69,7 +69,7 @@
 
    全称是GB2312-80《信息交换用汉字编码字符集 基本集》，1980年发布，是中文信息处理的国家标准，在大陆及海外使用简体中文的地区（如新加坡等）是强制使用的唯一中文编码。
 
-   中文使用**2bytes**表示。GBK，是对GB2312的扩展，又称GBK大字符集，简而言之就是将所有亚洲文字的双字节字符。
+   中文使用**2bytes**表示。GBK，是对GB2312的扩展，又称GBK**大字符集**，简而言之就是所有亚洲文字的双字节字符。
 
    
 
@@ -89,7 +89,7 @@ keyword.kwlist
 
 Python语句中一般以新行作为语句的结束符。
 
-但是我们可以使用斜杠（ \）将一行的语句分为多行显示，如下所示：
+但是我们可以使用斜杠**（ \）**将一行的语句分为多行显示，如下所示：
 
 ```python
 total = item_one + \
@@ -103,8 +103,8 @@ total = item_one + \
 input("按下 enter 键退出，其他任意键显示...\n")
 
 # 不换行输出
-print x,
-print y,
+print(x, end='')
+print(y, end='')
 ```
 
 ### 3. 多个变量赋值
@@ -199,7 +199,7 @@ print(s1.isdigit(), s2.isdigit())		# True Flase
 3. s.strip()
 
 ```python
-# 去除两边空格+ \n + \t
+# 默认去除两边空格+ \n + \t
 
 s = '  asdfgh,      '
 print('-->', s.strip(), '<--')
@@ -311,19 +311,16 @@ print(index)
 4. s.capitalize()
 5. s.casefold()
 6. s.center(20, "*").  # 可以为空
-7. s.counter('a', [start], [end])
-8. s.count('a')     # 查找'a' 的个数
-9. s.isalnum()
-10. s.isalpha()
-11. s.isnumeric()
-12. s.isprintable()
-13. s.istitle()
-14. s.ljust()
-15. s.rjust()
-16. s.partition('a')  / s.rpartition()# 分成三部分，a左边，a，a右边
-17. s.swapcase()
-18. s.zfill()  # 用0填充
-19. s.copy()   # li = li1.copy()
+7. s.ljust(20, "*")/s.rjust()
+8. s.zfill()  # 用0填充
+9. s.count('a', [start], [end])  # 查找'a' 的个数
+10. s.isalnum()
+11. s.isalpha()
+12. s.isnumeric()
+13. s.isprintable()
+14. s.istitle()
+15. s.partition('a')  / s.rpartition()# 分成三部分，a左边，a，a右边
+16. s.swapcase()
 
 
 
@@ -479,11 +476,18 @@ li.extend(s)
 print(li)
 ```
 
-___
+### 2. 其他：
+
+1. li.count('a')
+2. li.copy(). # 浅拷贝
+3. li.count() # 只计算第一层，不考虑嵌套
+4. li.index('val')
 
 ___
 
-### 2. 公共功能
+___
+
+### 3. 公共功能
 
 1. len(s)
 
@@ -550,13 +554,10 @@ li = [1, 2, 3, 4, 5, 6]
 del li[2]
 print(li)
 del li[2:]
-print(li)
+print(li
 ```
 
-### 3. 内置函数
 
-- list中python 内置的函数有， len，max，min，list(强转)
-- list.copy()    是浅copy
 
 ## 3.5 tuple ()
 
@@ -608,8 +609,6 @@ for i int t:
 - max(tup).   # 返回最大值
 - min(tup).   # 返回最小值
 - tuple(li).    # list 转tuple 
-
-**Note：可以转tuple 的是 list，dict(keys)，tuple(强转)**
 
 ## 3.6 dict {}
 
@@ -695,8 +694,8 @@ print(val)
 ```python
 # 不能加参数，删除最后一个key值对
 info = {1: 'henry', 2: 'echo', 3: 'eliane'}
-info.popitem()
-print(info)
+v = info.popitem()
+print(v,info)   # v是tuple
 ```
 
 9. info.clear()
@@ -708,11 +707,25 @@ info.clear()
 print(info)
 ```
 
-___
+### 2. 其他
+
+1. info.copy()  # 浅拷贝
+2. info.fromkeys()
+
+```python
+li = [1, 2, 3, 4, 5]
+info = {'a': 1, 'b': 2}
+v = info.fromkeys(li, 'hello')
+print(v, info)
+```
+
+
 
 ___
 
-### 2. 公共功能
+___
+
+### 3. 公共功能
 
 1. len(info)
 
@@ -809,7 +822,7 @@ print(s)
 ```python
 # 随机删除，此时pop中不能有任何参数
 s = {1, 'henry', 2, 'echo', 3, 'eliane'}
-s.pop()
+s.pop()  # 默认删除第一个元素/随机
 print(s)
 ```
 
@@ -878,11 +891,20 @@ v = v1.symmetric_difference(v2)
 print(v)
 ```
 
-___
+### 2. 其他
+
+1. v.copy()
+2. v.difference_update(v2)
+3. v.symmetric_difference_update(v2)
+4. v.intersection.update(v2)
+5. v.isdisjoint(v2)  # 返回 bool值
+6. v.issubset(v2)/ v.issuperset(v2)
 
 ___
 
-### 2. 公共功能
+___
+
+### 3. 公共功能
 
 1. len(v)
 
@@ -922,7 +944,7 @@ for i in v:
 
 ### 1. 可嵌套的数据类型
 
-​	所有的容器类例如：list，tuple， dict，set 都可以嵌套，但set(), 只能嵌套可hash（int, bool, str, tuple 4种）的数据类型。
+​	所有的容器类例如：list，tuple， dict，set 都可以嵌套，但set(), 只能嵌套可**hash**（int, bool, str, tuple 4种）的数据类型。
 
 
 
@@ -949,16 +971,8 @@ for i in v:
 2. **4 个结论**
    - 浅拷贝只是拷贝第一层
    - 深拷贝会拷贝所有可变类型的数据
-   - 只要 copy ，一定会开辟新的内存空间
+   - 只要 copy ，一定会为数据开辟新的内存空间
    - tuple 浅copy地址一样， 有嵌套的可变类型，deepcopy也会拷贝tuple数据
-
-
-
-
-
-
-
-
 
 # 第四章 文件操作
 
@@ -1066,7 +1080,7 @@ os.remove("test2.txt")
 
 
 
-### 3. file.flush()
+### 3. f.flush()
 
 - 强制把内存中的数据，刷到硬盘中。主要用于操作文件时间过长，无法自动保存的问题。
 
@@ -2283,8 +2297,8 @@ coon = redis.Redis(host='192.168.12.12')
 
 1. **模块**：可以是py文件也可以是文件夹
 2. **定义模块时**，可以把一个py文件或一个包当作一个模块，以便于以后其他py文件使用。
-3. **_ _ init_ _.py** 在文件夹中创建此py文件， **python packages**
-   - py2：**文件夹**中必须有_ _ init_ _.py 
+3. **_\_ init__.py** 在文件夹中创建此py文件， **python packages**
+   - py2：**文件夹**中必须有_\_ init__.py 
    - py3：不需要，推荐加上
 4. **导入模块**（只能导入模块，不能导入函数）
    1. 导入模快—>调用模块中的函数（import 文件名）
@@ -2583,8 +2597,6 @@ print(val, type(val))
 val = json.dumps(v)
 print(val, type(val))
 ```
-
-
 
 ### **2. pickle**
 
