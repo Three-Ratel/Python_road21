@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-v = [i if i > 5 else 3for i in range(10)]
+import datetime, time
 
-print(v)
 
+v = datetime.datetime.now()
+v1 = time.time()
+print(v, v1)
