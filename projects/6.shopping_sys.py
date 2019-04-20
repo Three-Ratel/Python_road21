@@ -7,6 +7,13 @@
 import os
 from datetime import datetime
 
+# 购物车
+SHOPPING_CAR = {}
+# 商品列表
+GOODS_LIST = [
+    {'id': 1, 'title': '飞机', 'price': 5000}, {'id': 3, 'title': '大炮', 'price': 3000},
+    {'id': 8, 'title': '迫击炮', 'price': 2000}, {'id': 9, 'title': '手枪', 'price': 500}]
+
 
 def user_register():
     """
@@ -148,15 +155,25 @@ def users_manage():
 """
 
 
+def file_write():
+    li = []
+    for i in range(len(GOODS_LIST)):
+        u, v, w = GOODS_LIST[i]['id'], GOODS_LIST[i]['title'], GOODS_LIST[i]['price']
+        li.append(str(GOODS_LIST[i]['id']))
+        f = open('goods_list.txt', mode='a+', encoding='utf-8')
+        s = '|'.join([str(u), str(v), str(w)]) + '\n'
+        f.write(s)
+        f.close()
+
+
 def goods_display(file_name='goods_list.txt'):
     if not os.path.exists(file_name):
-        print('商品列表为空')
-        return
+        file_write()
+
     f = open(file_name, mode='r', encoding='utf-8')
     content = f.read()
     content_list = content.strip().split('\n')
     per_page_amount = 10
-    content_list.pop(0)
     u, v = divmod(len(content_list), per_page_amount)
     u = u + 1 if v else u
     while True:
@@ -167,46 +184,51 @@ def goods_display(file_name='goods_list.txt'):
             print('输入不合法，请重新输入')
             continue
 
-        last_num = int(num) * per_page_amount -1
-        begin_num = (int(num)-1) * per_page_amount
-        new_content = content_list[begin_num: last_num+1]
+        begin_num = (int(num) - 1) * per_page_amount
+        last_num = begin_num + per_page_amount + 1
+        new_content = content_list[begin_num: last_num]
         for i in new_content:
             print(i)
         f.close()
 
 
+# goods_display()
+
 """
 7.程序设计：购物车
 """
-# 购物车
-SHOPPING_CAR = {}
-# 商品列表
-GOODS_LIST = [
-    {'id': 1, 'title': '飞机', 'price': 5000}, {'id': 3, 'title': '大炮', 'price': 3000},
-    {'id': 8, 'title': '迫击炮', 'price': 2000}, {'id': 9, 'title': '手枪', 'price': 500}]
 
 
 def buy_goods():
-    # li 把商品的id存放到li中
+    goods_list = 'goods_list.txt'
+    if not os.path.exists(goods_list):
+        file_write()
+    f = open(goods_list, mode='r', encoding='utf-8')
     li = []
-    for i in range(len(GOODS_LIST)):
-        print(GOODS_LIST[i]['id'], GOODS_LIST[i]['title'], GOODS_LIST[i]['price'])
-        li.append(str(GOODS_LIST[i]['id']))
+    for i in f:
+        u, v, w = i.strip().split('|')
+        id_name_price = '|'.join([str(u), str(v), str(w)])
+        li.append(id_name_price)
+    goods_display()
 
-    # 把指定商品加入购物车
     while True:
-        num = input('请输入要购买商品的id(N/n)：')
-        if num.upper() == 'N':
+        """
+        输入商品id进行购买
+        """
+        user_num = input('请输入商品id(N/n)：')
+        if user_num.upper() == 'N':
             break
-        if num not in li:
-            print('输入不合法')
+
+        a = False
+        for i in li:
+            num, name, price = i.split('|')
+            if user_num == num:
+                a = True
+                break
+        if not a:
+            print('该商品不存在，请重新选择')
             continue
 
-        for j in range(len(GOODS_LIST)):
-            if GOODS_LIST[j]['id'] == int(num):
-                name = str(GOODS_LIST[j]['title'])
-                price = str(GOODS_LIST[j]['price'])
-                name_price = name + '|' + price
         """
         输入购买商品的数量
         """
@@ -217,18 +239,19 @@ def buy_goods():
             count = int(count)
             break
 
-        if SHOPPING_CAR.get(name_price):
-            SHOPPING_CAR[name_price] = SHOPPING_CAR[name_price] + count
+        s = str(name) + '|' + str(price)
+        if SHOPPING_CAR.get(s):
+            SHOPPING_CAR[s] = SHOPPING_CAR[s] + count
         else:
-            SHOPPING_CAR[name_price] = count
+            SHOPPING_CAR[s] = count
 
-        i = os.path.dirname(os.path.abspath('shopping_sys.py'))
-        file_path = '%s/shopping_car/%s/' % (i, STATUS[0])
-        if not os.path.exists(file_path):
-            os.makedirs(file_path)
-        v1 = datetime.now()
-        y, m, d, H, M = v1.strftime('%Y/%m/%d/%H/%M').split('/')
-        file_path = os.path.join(file_path + '%s-%s-%s-%s-%s.txt' % (y, m, d, H, M))
+    i = os.path.dirname(os.path.abspath(__file__))
+    file_path = '%s/shopping_car/%s/' % (i, STATUS[0])
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
+    v1 = datetime.now()
+    y, m, d, H, M = v1.strftime('%Y/%m/%d/%H/%M').split('/')
+    file_path = os.path.join(file_path + '%s-%s-%s-%s-%s.txt' % (y, m, d, H, M))
 
     """
     把购买信息写入文件，并保存
@@ -295,11 +318,14 @@ def shopping_car():
         return
     li = []
     for i in os.listdir(file_path):
-        print(i)
         li.append(i)
     for i in li:
         print(i)
-        goods_display(os.path.join(file_path, i))
+        f = open(os.path.join(file_path, i), mode='r', encoding='utf-8')
+        for j in f:
+            print(j.strip())
+
+    input('按enter键返回')
 
 
 def shopping_sys():
@@ -327,4 +353,4 @@ def shopping_sys():
 
 
 STATUS = []
-# shopping_sys()
+shopping_sys()
