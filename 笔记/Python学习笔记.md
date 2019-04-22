@@ -1674,11 +1674,11 @@ print(v1)			# 'alex'
 
 - 自定义函数
 
-- **内置函数**（30）
+- **内置函数**（31）
 
   1. 强制转换(7)：int()，str,  bool,  list，dict，tuple，set
   2. 输入输出(2)：print, input
-  3. 其他(5)：type, id, range, open, len
+  3. 其他(5)：type, id, range, open, len，**dir**：查看某一类的对像有什么方法
   4. 数学(7)
      - abs，round，float（int(55.5)保留整数部分）
      - max，min，sum，
@@ -2189,7 +2189,7 @@ print(v)
   print(value)
   ```
 
-  2. **甄别**：数据中是否包含_\_next__()方法
+  2. **甄别**：数据中是否包含**_\_next__()**方法
 
   3. for循环的内部，首先把数据转化为iter，反复执行iter._\_next__(),取完不报错
 
