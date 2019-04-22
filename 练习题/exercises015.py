@@ -5,10 +5,8 @@
 """
 1.sys.path.append("/root/mods")的作用？
 """
-# 把/root/mods路径加入到sys.path中，自定义的模块可以放入此目录，
-# 带import到py文件中，python解释器会按照sys.path中的路径进行搜索,
-# 找到导入模块并使用
-
+# 把/root/mods路径加入到sys.path中，python解释器可以通过此目录下的自定义的模块
+# 使用import到py文件中，python解释器会按照sys.path中的路径进行搜索（list是有序的）
 
 """
 2.字符串如何进行反转？
@@ -25,21 +23,16 @@
 
 # a, b = b, a
 
-
 """
-4. * args和 ** kwargs这俩参数是什么意思？我们为什么要用它。
+4. *args和 **kwargs这俩参数是什么意思？我们为什么要用它。
 """
-# *args 和 **kwargs是接受不定个数的位置参数和关键字参数
+# *args 和 **kwargs是接收不定个数的位置参数和关键字参数
 # 为了解决函数重复利用参数不统一的问题
-
-
 
 """
 5.函数的参数传递是地址还是新值？
 """
 # 传递的是实参的地址
-
-
 
 """
 6.看代码写结果：
@@ -58,8 +51,6 @@
 
 # {'a': 1, 'b': 1, 'c': 2}
 
-
-
 """
 7.什么是lambda表达式
 """
@@ -69,11 +60,9 @@
 """
 8.range和xrang有什么不同？
 """
-# py2同时存在range和xrange，range是一次性在内存中生成一个有序数列，
-# xrange是一个生成器，边执行边产生
+# py2同时存在range和xrange，range是一次性在内存中生成一个list
+# xrange产生一个"可迭代对象"，通过for循环进行数据的获取
 # py3只有range，并且range使用xrange的功能
-
-
 
 """
 9."1,2,3"如何变成['1', '2', '3',]
@@ -95,8 +84,6 @@
 11.def f(a, b=[]) 这种写法有什么陷阱？
 """
 # 使用默认参数定义函数式，默认值采用可变类型可能会造成可变类型数据被修改
-
-
 
 """
 12.如何生成列表[1, 4, 9, 16, 25, 36, 49, 64, 81, 100] ，尽量用一行实现。
@@ -130,8 +117,6 @@
 
 
 # print(li)
-
-
 
 """
 15.如何用Python删除一个文件？
@@ -167,8 +152,6 @@ import random
 #
 # print(se)
 
-
-
 """
 19.用Python实现9 * 9乘法表 （两种方式）
 """
@@ -199,9 +182,6 @@ li = [[print('%s*%s ' % (i, j)) if j == i else print('%s*%s ' % (i, j), end='')\
 # dict_updater('three', 3, {}) # {'three': 3}
 # 因默认参数是可变类型，当不传实参时，就会使用第一次调用的字典
 
-
-
-
 """
 21.写一个装饰器出来。
 """
@@ -210,7 +190,6 @@ li = [[print('%s*%s ' % (i, j)) if j == i else print('%s*%s ' % (i, j), end='')\
 #         v = func()
 #         return v
 #     return inner
-
 
 
 """
@@ -222,7 +201,6 @@ li = [[print('%s*%s ' % (i, j)) if j == i else print('%s*%s ' % (i, j), end='')\
 #         v = func()
 #         return v
 #     return inner()
-
 
 
 """
@@ -244,10 +222,6 @@ li = [[print('%s*%s ' % (i, j)) if j == i else print('%s*%s ' % (i, j), end='')\
 #
 # now()
 # 输出call now()2013-12-25
-
-
-
-
 
 
 """

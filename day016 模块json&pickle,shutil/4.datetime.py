@@ -54,7 +54,12 @@ print(v2, type(v2))
 # print(time.time())
 
 
+"""
+直接格式化
+"""
+v = datetime.now().strftime('%Y年%m月%d日')
 
+print(v)
 
 
 

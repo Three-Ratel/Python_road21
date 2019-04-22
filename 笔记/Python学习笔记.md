@@ -47,6 +47,8 @@
 
 ​	环境变量的功能，及其配置。环境变量分为，**用户环境变量**（只对当前用户生效）和**系统环境变量**（所有用户均有效）。主要用于终端使用，不需要输入python解释器的完整路径，只要输入pythonx 就可使用。
 
+​	**PATH**：方便用户在终端执行程序。即，将可执行程序所在的目录添加到环境变量，以后直接调用即可。
+
 ​	mac的环境变量在**～/.bash_profile**文件中。通常在安装的时候python会自动生成环境变量，无需手动配置。
 
 ## 2.2 编码
@@ -71,7 +73,9 @@
 
    中文使用**2bytes**表示。GBK，是对GB2312的扩展，又称GBK**大字符集**，简而言之就是所有亚洲文字的双字节字符。
 
-   
+```python
+# IDE:统一使用UTF-8， 全局和项目均使用
+```
 
 ## 2.3 变量
 
@@ -82,6 +86,8 @@
 import keyword
 keyword.kwlist
 ```
+
+​	**常量**：不允许修改的值，python中只是约定
 
 ## 2.4 python基础语法
 
@@ -142,12 +148,47 @@ is not
 
 **ps**：代码经过编译可以产生字节码；字节码通过反编译也可以得到代码。
 
+## 2.5 py2与py3的区别
+
+1. 字符串类型不同
+
+```python
+v = u'henry'
+print(v, type(v))  # unicode类型
+# py2                  py3 数据类型对应关系
+unicode<class>    <--> str
+eg.u'alex'        <--> 'alex'
+str               <--> bytes
+eg.'alex'         <--> b'alex
+```
+
+### Note
+
+- bytes类型一般用于文件存储和网络传输
+
+2. 其他不同
+
+|      |                                   | Py2                         | Py3                                                         |
+| ---- | --------------------------------- | --------------------------- | ----------------------------------------------------------- |
+| 1    | 字符串类型不同                    |                             |                                                             |
+| 2    | py2py3默认解释器编码              | ASCII                       | UTF-8                                                       |
+| 3    | 输入输出                          | raw_input() ; print         | input() ; print()                                           |
+| 4    | int / long                        | int 和 long，除法只保留整数 | 只用int，除法保留小数                                       |
+| 5    | range/xrange                      | range/xrange                | 只有range，相当于py2的xrange                                |
+| 6    | info.keys,info.values,info .items | 数据类型是list              | 数据类型是<class 'dict_keys'>                               |
+| 7    | map/filter                        | 数据类型是list              | 返回的是iterator，可以list()查看<map object at 0x108bfc668> |
+| 8    | reduce                            | 内置                        | 移到functools                                               |
+| 9    | 模块和包                          | 需要_\_init__.py            | —                                                           |
+
+
+
 # 第三章 数据类型
 
 ## 3.1 int
 
 ```python
 # None 无操作
+# bytes 类
 ```
 
 ```python
@@ -319,10 +360,8 @@ print(index)
 12. s.isnumeric()
 13. s.isprintable()
 14. s.istitle()
-15. s.partition('a')  / s.rpartition()# 分成三部分，a左边，a，a右边
+15. s.partition('a')  / s.rpartition()# 分成三部分，a左边，a右边
 16. s.swapcase()
-
-
 
 ____
 
@@ -1161,6 +1200,13 @@ with open('a.txt', mode='r', encoding='utf-8') as f1,open('b.txt', mode='r', enc
 ## 5.1 三元运算
 
 又称为三目运算
+
+**和预算符相关**
+
+```python
+val = v if v else 666
+val = v or 666 # 源码中会见到
+```
 
 **Note：为了赋值**
 
@@ -2287,7 +2333,36 @@ coon = redis.Redis(host='192.168.12.12')
 ```
 
 3. yield from 关键字
+
+```python
+# yield from (py3.3之后)
+def base():
+  yield 88
+  yield 99
+ 
+def bar():
+  return 123
+
+def func():
+  yield 1
+  yield from base()
+  yield from bar()   # 报错，int 不可迭代，如果可迭代，则循环取出
+  yield 2
+  yield 
+```
+
 4. 生成器推导式
+
+```python
+v1 = [i for i in range(10)] # list推导式，立即产生数据
+def func():
+  for i in range(10):
+    yield i
+v2 = func()  # 与下面v2相同
+v2 = (i for i in range(10)) # 生成器推导式，不会立即产生数据
+```
+
+
 
 # 第六章 模块
 
@@ -2316,11 +2391,24 @@ from test import jd
 jd.f1()
 ```
 
+```python
+# 导入(绝对导入、相对. /..导入:相对导入必须有父籍包
+# import
+# from 模块.模块 import 模块
+# from 模块.模块.模块 import 函数
+# 调用：模块.函数()，函数()
+# 主文件：运行的文件（print(__name__)). 
+if __name__ == '__main__'
+```
+
+
+
 **Note1**（3）
 
 - 模块在和要执行的py文件在同一路径且需要很多功能时，推荐使用import 模块
 - 其他推荐：from 模块 import 模块
 - from 模块1.模块2 import 函数     执行：函数()
+- 文件(夹)命名不可与模块相同，否则就会用当前目录中的文件(夹)
 
 ```python
 # __file__ python命令行中获取的参数

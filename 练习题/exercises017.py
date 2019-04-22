@@ -1,12 +1,13 @@
 """
-1.列举你常见的内置函数。
+1.列举你常见的内置函数。31
 """
-# 类型转换：int, bool, list, tuple, dict, set
-# 数学相关：abs, max, min, float, round, divmod
-# 进制转换：bin, oct, int, hex
-# 函数相关：map, filter, reduce
-# 编码相关：chr, ord
-# 其他:range, len, type, id,
+# 类型转换（6）：int, bool, list, tuple, dict, set
+# 数学相关（8）：abs, max, min, float, round, divmod, pow, sum
+# 进制转换（3+1）：bin, oct, int, hex
+# 函数相关（4）：map, filter, reduce, zip
+# 编码相关（2）：chr, ord
+# 输入输出（2）：print， input
+# 其   他（6）:range, len, type, id, open, dir
 
 """
 2.列举你常见的内置模块？
@@ -22,6 +23,7 @@
 # json
 # pickle
 # shutil
+# xlrd
 
 
 """
@@ -291,18 +293,6 @@ GOODS_LIST = [
     {'id': 8, 'title': '迫击炮', 'price': 1000},
     {'id': 9, 'title': '手枪', 'price': 1000},
 ]
-
-
-# # 购物车
-# SHOPPING_CAR = {}
-#
-# # 商品列表
-# GOODS_LIST = [
-#     {'id': 1, 'title': '飞机', 'price': 1000},
-#     {'id': 3, 'title': '大炮', 'price': 1000},
-#     {'id': 8, 'title': '迫击炮', 'price': 1000},
-#     {'id': 9, 'title': '手枪', 'price': 1000},
-# ]
 # from datetime import datetime
 #
 # def buy_goods():
@@ -376,12 +366,6 @@ GOODS_LIST = [
 
     5.用户未登录的情况下，如果访问 商品流程 、我的购物车 时，提示登录之后才能访问，让用户先去选择登录（装饰器实现）。
 """
-
-
-
-
-
-
 
 """
 9.请使用第三方模块xlrd读取一个excel文件中的内容。【课外】

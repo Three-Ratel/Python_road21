@@ -42,7 +42,6 @@
 # print(result)
 
 
-
 """
 3.为函数写一个装饰器，根据参数不同做不同操作。
 
@@ -100,7 +99,9 @@
 5.递归的最大次数是多少？
 """
 # 1000
-
+# import sys
+# v = sys.getrecursionlimit()
+# print(v)
 
 """
 6.看代码写结果
@@ -117,17 +118,17 @@
 import os
 
 
-def ls_dir(path):
-    u = os.walk(path)
-    for items in u:
-        u, v, w = items
-        for i in w:
-            a = os.path.abspath(i)
-            b = os.path.join(a, i)
-            print(b)
+# def ls_dir(path):
+#     u = os.walk(path)
+#     for items in u:
+#         u, v, w = items
+#         for i in w:
+#             a = os.path.abspath(i)
+#             b = os.path.join(a, i)
+#             print(b)
 
 
-ls_dir('/Users/henry/programme/python/Python_codes/day014 函数补充&模块')
+# ls_dir('__file__')
 
 
 """
@@ -255,16 +256,20 @@ print(v)
 编程题
 """
 # 1.
-# import os
-#
-# print('============================')
-# def li_file(dirname):
-#     for a, b, c in os.walk(dirname):
-#         for i in c:
-#             i = os.path.abspath(i)
-#             print(i)
-#
-# li_file('/Users/henry/programme/python/Python_codes/day014 函数补充&模块')
+import os
+
+print('============================')
+
+
+def li_file(dirname):
+    for a, b, c in os.walk(dirname):
+        for i in c:
+            i = os.path.abspath(i)
+            print(i)
+
+
+dir = __file__
+li_file(dir)
 
 
 # 2.

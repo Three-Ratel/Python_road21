@@ -38,7 +38,8 @@
 4.filter / map / reduce函数的作用分别是什么？
 """
 # map(func,v):map会循环取出v中的元素，作为参数传给func进行操作，追加到一个新list中，list 中元素和v中元素相等
-# filter(func,v):filter 会循环取出v中的元素，作为参数传给func进行操作，追加到一个新list中，list中的元素会< v中元素
+# filter(func,v):filter 会循环取出v中的元素，作为参数传给func进行操作，追加到一个新list中，
+# list中的元素会< v中元素
 # reduce(func,v):reduce 会循环取出v中的元素，作为参数传给func进行操作，输出一个元素
 
 """
@@ -65,8 +66,6 @@
 # 22
 
 
-
-
 """
 7.看代码分析结果
 """
@@ -79,7 +78,6 @@
 # v2 = func_list[5]()
 # print(v1, v2)
 # 9, 9
-
 
 
 """
@@ -95,7 +93,6 @@
 # print(v1, v2)
 # 11
 # 10
-
 
 
 """
@@ -139,7 +136,6 @@
 # None
 
 
-
 """
 11.看代码分析结果【面试题】
 """
@@ -163,7 +159,6 @@
 # None
 
 
-
 """
 12.看代码分析结果
 """
@@ -180,7 +175,6 @@
 # '景女神'
 # None
 
-
 """
 13.看代码分析结果
 """
@@ -195,9 +189,6 @@
 # print(v)
 # '景女神'
 # "老男孩"
-
-
-
 
 """
 14.看代码分析结果
@@ -217,10 +208,6 @@
 # '景女神'
 # "老男孩"
 
-
-
-
-
 """
 15.看代码分析结果
 """
@@ -237,9 +224,6 @@
 # print(v1, v2)
 # v1, v2都是inner函数的地址
 
-
-
-
 """
 16.看代码写结果
 """
@@ -254,9 +238,6 @@
 # v2 = func('alex')
 # print(v1, v2)
 # v1, v2都是inner函数的地址
-
-
-
 
 
 """
@@ -275,9 +256,6 @@
 # v2 = func('alex')
 # print(v1, v2)
 # v1, v2都是inner函数的地址
-
-
-
 
 
 """
@@ -343,10 +321,13 @@
 """
 21.看代码分析结果【面试题】
 """
+
+
 # def func(num):
 #     def inner():
 #         print(num)
 #     return inner
+#
 #
 # result = []
 # for i in range(10):
@@ -360,7 +341,7 @@
 # print(v1, v2)
 
 # 9
-# 10个inner地址
+# 10个不同inner地址
 # 0
 # 9
 # None
@@ -397,6 +378,8 @@
 """
 判断文件是否为空
 """
+
+
 def just_file_empty(filename):
     with open(filename, mode='a+') as f:
         f.seek(0)
@@ -406,9 +389,12 @@ def just_file_empty(filename):
             os.remove(filename)
         return v
 
+
 """
 商品管理系统
 """
+
+
 def mall_manage_sys():
     TITLE = ['欢迎使用老子的购物商城', '【商品管理】', '【商品列表】', \
              '【录入商品】', '【根据关键字搜索】', '【会员管理】']
@@ -583,6 +569,8 @@ def mall_manage_sys():
             print(v)
         else:
             funcs[v]()
+
+
 mall_manage_sys()
 
 

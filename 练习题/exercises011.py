@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-
-
 """
 1.列举str、list、dict、set中的常用方法（每种至少5个），并标注是否有返回值。
 """
@@ -66,7 +64,6 @@
 None
 
 
-
 """
 5.看代码分析结果
 """
@@ -106,8 +103,6 @@ None
 '好你妹呀'
 
 
-
-
 """
 7.看代码分析结果
 """
@@ -126,9 +121,6 @@ None
 '好你妹呀'
 '你好呀'
 '好你妹呀'
-
-
-
 
 
 """
@@ -242,8 +234,6 @@ None
 # 9
 
 
-
-
 """
 14.看代码写结果
 """
@@ -277,22 +267,24 @@ None
 # 9
 
 
-
 """
 16.
 看代码写结果【新浪微博面试题】
 """
-# def func():
-#     for num in range(10):
-#         pass
-#     v4 = [lambda: num + 10, lambda: num + 100, lambda: num + 100, ]
-#     result1 = v4[1]()
-#     result2 = v4[2]()
-#     print(result1, result2)
-#
+
+
+def func():
+    for num in range(10):
+        pass
+    v4 = [lambda: num + 10, lambda: num + 100, lambda: num + 1000, ]
+    result1 = v4[1]()
+    result2 = v4[2]()
+    print(result1, result2)
+
+
 # func()
 # 109
-# 109
+# 1009
 
 
 """
@@ -324,8 +316,6 @@ None
 # v6 = hex(v)
 
 
-
-
 """
 18.请编写一个函数实现将IP地址转换成一个整数。【面试题】
 """
@@ -342,8 +332,12 @@ None
 # ip = input('plase input a ip: ')
 # ip_transfer(ip)
 
+
 def ip_transfer(ip):
-    print(int(''.join([bin(int(i)).replace('0b', '').zfill(8) for i in str(ip).split('.')]), base=2))
+    print(int(''.join([bin(int(i)).replace('0b', '').zfill(8)\
+                       for i in str(ip).split('.')]), base=2))
 # ip = input('plase input a ip: ')
-ip_transfer('10.3.9.12')
+
+
+# ip_transfer('10.3.9.12')
 

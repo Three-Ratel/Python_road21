@@ -210,8 +210,6 @@ user_login()
 #
 # read_content()
 
-
-
 """
 7.程序设计：购物车
 """

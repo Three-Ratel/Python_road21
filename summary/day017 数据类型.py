@@ -34,8 +34,9 @@ s2 = {1, 2, 3, 4, 5, 6}
 # print(v)
 
 
-v = s1.difference(s2)
-print(v, s1)
-
-
+# v = s1.difference(s2)
+# print(v, s1)
+#
+# val = dir(v)
+# print(val)
 
