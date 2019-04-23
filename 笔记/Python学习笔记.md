@@ -2894,7 +2894,7 @@ class File:
 obj = File()
 obj.path = 'test.txt'    # 往obj对象中写入一个私有对象
 obj.write(content)
-# 对象内部为私有
+# 定义私有属性,私有属性在类外部无法直接进行访问
 obj2 = File('info.txt')
 obj2.write(content)
 ```
@@ -2917,11 +2917,37 @@ obj2 = Person('echo', 19, 'female')
 obj2.show()
 ```
 
-#### **Note1**（3）
+#### **Note1**（4）
 
 1. 如果写代码时，函数较多，可以将**函数归类**，并放入同一类中。
 2. 函数如果有一个反复使用的**公共值**，则可以封装到对像中
 3. 面向对象**三大特性**：封装、继承、多态
+4. self代表类的**实例**，而非类
+
+#### 2.1 查看对象的类
+
+```python
+# 类有一个名为 __init__() 的特殊方法（构造方法），该方法在类实例化时会自动调用
+# 类的方法与普通的函数只有一个特别的区别——它们必须有一个额外的第一个参数名称, 按照惯例它的名称是 self。
+```
+
+````python
+# self.__class__:查看实例所在的类
+class Test:
+    def prt(self):
+        print(self)
+        print(self.__class__)
+t = Test()
+t.prt()
+````
+
+#### 2.2 类的方法
+
+​		在类的内部，使用 def 关键字来定义一个方法，与一般函数定义不同，类方法必须包含参数 **self**，且为第一个参数，**self** 代表的是类的实例。**self** 的名字并不是规定死的，也可以使用 **this**，但是最好还是按照约定是用 **self**。
+
+​		类的私有方法**__private_method**：两个下划线开头，声明该方法为**私有方法**，只能在类的内部调用 ，不能在类的外部调用。**self.__private_methods**。
+
+#### 2.3 示例
 
 ```python
 # 循环让用户输入：用户名，密码，邮箱，输入完成后在打印
@@ -2984,13 +3010,15 @@ class gang:
 
 **场景**：多个类中，如果有公共的方法可以放到基类中，增加代码的重用性。
 
+**继承**：可以对基类中的方法进行覆写
+
 ```python
 # 父类（基类）
 class Base:
   def f1(self):
     pass
   
-# 子类，Foo类继承Base类 （派生类）
+# 单继承，子类，Foo类继承Base类 （派生类）
 class Foo(Base):
   def f2(self):
     pass
@@ -3027,7 +3055,43 @@ def func(arg):  # 多种类型，很多事物
 #这就是鸭子模型，类似于上述的函数，我们认为只要能呱呱叫的就是鸭子，只要有append方法，就是我们想要的类型
 ```
 
+### 5. 类的专有方法：
 
+- **_\_init__ :** 构造函数，在生成对象时调用
+- **_\_del__ :** 析构函数，释放对象时使用
+- **_\_repr__ :** 打印，转换
+- **_\_setitem__ :** 按照索引赋值
+- **_\_getitem__:** 按照索引获取值
+- **_\_len__:** 获得长度
+- **_\_cmp__:** 比较运算
+- **_\_call__:** 函数调用
+- **_\_add__:** 加运算
+- **_\_sub__:** 减运算
+- **_\_mul__:** 乘运算
+- **_\_truediv__:** 除运算
+- **_\_mod__:** 求余运算
+- **_\_pow__:** 乘方
+
+### 6.运算符重载
+
+Python同样支持**运算符重载**，我们可以对类的专有方法进行重载
+
+```python
+class Vector:
+   def __init__(self, a, b):
+      self.a = a
+      self.b = b
+ 
+   def __str__(self):
+      return 'Vector (%d, %d)' % (self.a, self.b)
+   
+   def __add__(self,other):
+      return Vector(self.a + other.a, self.b + other.b)
+ 
+v1 = Vector(2,10)
+v2 = Vector(5,-2)
+print (v1 + v2)
+```
 
 
 

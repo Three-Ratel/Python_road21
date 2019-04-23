@@ -226,7 +226,7 @@ class Account:
 
 
 while True:
-    if len(user_list) == 3:
+    if len(user_list) ==  3:
         break
     user = input('请输入用户名:')
     pwd = input('请输入密码:')
@@ -304,7 +304,7 @@ class Account:
             if choice.upper() == 'N':
                 return
             if not funcs.get(choice):
-                print('your choice is not exsit, please choose again.')
+                print('your choice is not exist, please choose again.')
                 continue
             funcs.get(choice)()
 
@@ -316,10 +316,8 @@ if __name__ == '__main__':
 """
 ## 预习
 - 类成员
-http: // www.cnblogs.com / wupeiqi / p / 4493506.
-html
-http: // www.cnblogs.com / wupeiqi / p / 4766801.
-html
+http: // www.cnblogs.com / wupeiqi / p / 4493506.html
+http: // www.cnblogs.com / wupeiqi / p / 4766801.html
 """
 
 
