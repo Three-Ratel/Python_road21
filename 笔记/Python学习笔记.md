@@ -2842,7 +2842,7 @@ reponse = requests.get('url', useragent:xxxxxx)
 
 # 第七章 面向对象
 
-
+面向对象编程（Object Oriented Programming，**OOP**，面向对象程序设计）
 
 ## 7.1 面向对象
 
@@ -2855,6 +2855,8 @@ reponse = requests.get('url', useragent:xxxxxx)
 - 封装思想：将同一类的函数封装到同一个py文件中，以后放便使用
 - 面向对象：将同一类的函数封装到同一个class中，以后放便使用
 - 对象名：命名首字母大写
+
+**Note**：函数式的应用场景 --> 各个函数之间是独立且无共用的数据
 
 ### 1. 基本格式
 
@@ -2882,6 +2884,8 @@ print(val)
 
 **作用**：存储一些值，将数据封装到对象，方便使用
 
+**属性调用**：**对象.属性名**进行数据的调用    
+
 ```python
 class File:
   def read(self):
@@ -2890,7 +2894,7 @@ class File:
   def write(self, content):
     with open(self.path, mode='r', encoding='utf-8') as f:
       data = f.write()
-# 创建对象，并使用            
+# 创建对象，并使用   
 obj = File()
 obj.path = 'test.txt'    # 往obj对象中写入一个私有对象
 obj.write(content)
@@ -2923,6 +2927,7 @@ obj2.show()
 2. 函数如果有一个反复使用的**公共值**，则可以封装到对像中
 3. 面向对象**三大特性**：封装、继承、多态
 4. self代表类的**实例**，而非类
+5. 执行类中的方法时，需要通过**self间接调用**被封装的内容
 
 #### 2.1 查看对象的类
 
@@ -3040,7 +3045,47 @@ obj.f2()   # 会报错
 2. 从当前实例化类中开始查找，自己没有就找其父类。
 3. 多继承，先找左边的，找不到时，再找右边的
 
+```python
+# 当类是经典类时，多继承情况下，会按照深度优先方式查找
+# 当类是新式类时，多继承情况下，会按照广度优先方式查找
+```
+
+#### 3.1 经典类和新式类
+
+​		从字面上可以看出一个老一个新，新的必然包含了跟多的功能，也是之后推荐的写法，从写法上区分的话，如果 当前类或者父类继承了object类，那么该类便是新式类，否则便是经典类。
+
+```python
+class D(object):
+    def bar(self):
+        print 'D.bar'
+        
+class C(D):
+    def bar(self):
+        print 'C.bar'
+
+class B(D):
+
+    def bar(self):
+        print 'B.bar'
+
+class A(B, C):
+
+    def bar(self):
+        print 'A.bar'
+        
+a = A()
+# 执行bar方法时
+# 首先去A类中查找，如果A类中没有，则继续去B类中找，如果B类中么有，则继续去C类中找，如果C类中么有，则继续去D类中找，如果还是未找到，则报错
+# 所以，查找顺序：A --> B --> C --> D
+# 在上述查找bar方法的过程中，一旦找到，则寻找过程立即中断，便不会再继续找了
+a.bar()
+```
+
+
+
 ### 4. 多态（多种形态/类型）
+
+ Pyhon不支持Java和C#这一类强类型语言中多态的写法，但是**原生多态**，其Python崇尚“**鸭子类型**”。
 
 ```python
 # 多态，鸭子模型

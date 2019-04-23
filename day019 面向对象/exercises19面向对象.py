@@ -226,11 +226,17 @@ class Account:
 
 
 while True:
-    if len(user_list) ==  3:
+    if len(user_list) == 3:
         break
     user = input('请输入用户名:')
     pwd = input('请输入密码:')
-    email = input('请输入邮箱:')
+    while 1:
+        email = input('请输入邮箱:')
+        if '@' in email:
+            break
+        print('请重新输入')
+        continue
+
     v = Account(user, pwd, email)
     v.user_add()
 
