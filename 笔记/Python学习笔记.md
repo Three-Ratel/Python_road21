@@ -2857,14 +2857,16 @@ reponse = requests.get('url', useragent:xxxxxx)
 - 面向对象：将同一类的函数封装到同一个class中，以后放便使用
 - 对象名：命名首字母大写
 
-**Note**：函数式的应用场景 --> 各个函数之间是独立且无共用的数据
+#### Note1
+
+- 函数式的应用场景 --> 各个函数之间是独立且无共用的数据
 
 ### 1. 基本格式
 
 ```python
 # 定义一个类，Account
 class Account:
-  	# 方法, 那个对象调用方法，就是self
+  	# 方法, 哪个对象调用方法，其就是self
   	def login(self，name):
     		print(123)
         return 666
@@ -2877,7 +2879,7 @@ val = x.login('henry')        # 使用对象调用class中的方法
 print(val)
 ```
 
-**Note**
+#### Note2
 
 - **应用场景**：用于很多函数，需要对函数进行归类和划分（封装）
 - **self**：哪个对象操作
@@ -2907,7 +2909,7 @@ obj2.write(content)
 
 ```python
 class Person:
-  # __init__初始化方法（构造方法），给对象内部做初始化
+# __init__初始化方法（构造方法），给对象内部做初始化
     def __init__(self, name, age, gender):
         self.name = name
         self.age = age
@@ -2923,7 +2925,7 @@ obj2 = Person('echo', 19, 'female')
 obj2.show()
 ```
 
-#### **Note1**（4）
+#### Note3（4）
 
 1. 如果写代码时，函数较多，可以将**函数归类**，并放入同一类中。
 2. 函数如果有一个反复使用的**公共值**，则可以封装到类中
@@ -2934,7 +2936,7 @@ obj2.show()
 #### 2.1 查看对象的类
 
 ```python
-# 类有一个名为 __init__() 的特殊方法（构造方法），该方法在类实例化时会自动调用
+# 类有一个名为 __init__() 的构造方法，该方法在类实例化时会自动调用
 # 类的方法与普通的函数只有一个特别的区别——它们必须有一个额外的第一个参数名称, 按照惯例它的名称是 self。
 ```
 
@@ -2965,8 +2967,7 @@ class Person():
     self.email = email
   def info(self):
     return  temp = 'i am %s, pwd:%s, email:%s ' % (self.username, self.password, self.email,)
-  
-  
+
 USER_LIST = []
 while 1:
   user = input('please input user name: ')
@@ -2980,44 +2981,13 @@ for i in USER_LIST:
   print(i)
 ```
 
-示例：
-
-```python
-# 游戏
-# 警察
-class Police:
-  def __init__(self, name):
-    self.name = name 
-    self.hp = 10000
-    
-  def tax(self):
-    msg = '%s 收了个税。 ' % (self, name, )
-    print(msg)
-    
-  def fight(self):
-    msg = '%s 战了个斗。 ' % (self, name, )
-    print(msg)
-   
-# 匪徒
-class gang:
-  def __init__(self, name):
-    self.name = name 
-    self.hp = 1000
-    
-  def rob(self, name):
-    msg = '%s抢劫了%s。 ' % (self, name, )
-    print(msg)
-    
-  def kill(self, name):
-    msg = '%s 杀了%s。 ' % (self, name, )
-    print(msg)
-```
-
 ### 3.  继承
 
 **场景**：多个类中，如果有公共的方法可以放到基类中，增加代码的重用性。
 
 **继承**：可以对基类中的方法进行覆写
+
+#### 3.1 继承的查找方法
 
 ```python
 # 父类（基类）
@@ -3052,9 +3022,9 @@ obj.f2()   # 会报错
 # 当类是新式类时，多继承情况下，会按照广度优先方式查找
 ```
 
-#### 3.1 经典类和新式类
+#### 3.2 经典类和新式类
 
-​		从字面上可以看出一个老一个新，新的必然包含了跟多的功能，也是之后推荐的写法，从写法上区分的话，如果 当前类或者父类继承了object类，那么该类便是新式类，否则便是经典类。
+​		从字面上可以看出一个老一个新，新的必然包含了跟多的功能，也是之后推荐的写法，从写法上区分的话，如果当前类或者父类继承了object类，那么该类便是新式类，否则便是经典类。
 
 ```python
 class D(object):
@@ -3087,7 +3057,7 @@ a.bar()
 
 ### 4. 多态（多种形态/类型）
 
- Pyhon不支持Java和C#这一类强类型语言中多态的写法，但是**原生多态**，其Python崇尚“**鸭子类型**”。
+ Pyhon不支持Java和C#这一类强类型语言中多态的写法，但是**原生多态**，Python崇尚“**鸭子类型**”。
 
 ```python
 # 多态，鸭子模型
@@ -3119,7 +3089,7 @@ def func(arg):  # 多种类型，很多事物
 - **_\_mod__:** 求余运算
 - **_\_pow__:** 乘方
 
-### 6.运算符重载
+### 6. 运算符重载
 
 Python同样支持**运算符重载**，我们可以对类的专有方法进行重载
 
@@ -3155,7 +3125,7 @@ print (v1 + v2)
 
 **对象成员**：**实例变量**（字段）
 
-**Note**：属于谁的只允许谁去取，python允许对象去其类中去变量
+**Note**：属于谁的只允许谁去取，python允许对象去其类中取变量
 
 ### 2. 方法
 
