@@ -179,6 +179,7 @@ eg.'alex'         <--> b'alex
 | 7    | map/filter                        | 数据类型是list              | 返回的是iterator，可以list()查看<map object at 0x108bfc668> |
 | 8    | reduce                            | 内置                        | 移到functools                                               |
 | 9    | 模块和包                          | 需要_\_init__.py            | —                                                           |
+| 10   | 经典类和新式类                    | 同时拥有                    | 只有新式类                                                  |
 
 
 
@@ -2870,7 +2871,8 @@ class Account:
     def logout(self):
     		pass
 # 调用类中的方法 
-x = Account()                 # 实例化(创建)Account类的对象
+x = Account()                
+# 实例化(创建)Account类的对象，开辟一块内存
 val = x.login('henry')        # 使用对象调用class中的方法
 print(val)
 ```
@@ -2924,7 +2926,7 @@ obj2.show()
 #### **Note1**（4）
 
 1. 如果写代码时，函数较多，可以将**函数归类**，并放入同一类中。
-2. 函数如果有一个反复使用的**公共值**，则可以封装到对像中
+2. 函数如果有一个反复使用的**公共值**，则可以封装到类中
 3. 面向对象**三大特性**：封装、继承、多态
 4. self代表类的**实例**，而非类
 5. 执行类中的方法时，需要通过**self间接调用**被封装的内容
@@ -3097,7 +3099,7 @@ def func(arg):  # 多种类型，很多事物
 ```python
 # 对于一个函数，python对参数类型不会限制，传入参数时可以是各种类型，在函数中如果有例如：arg.append方法，就会对传入类型进行限制。
 
-#这就是鸭子模型，类似于上述的函数，我们认为只要能呱呱叫的就是鸭子，只要有append方法，就是我们想要的类型
+# 这就是鸭子模型，类似于上述的函数，我们认为只要能呱呱叫的就是鸭子，只要有append方法，就是我们想要的类型
 ```
 
 ### 5. 类的专有方法：
@@ -3136,6 +3138,150 @@ class Vector:
 v1 = Vector(2,10)
 v2 = Vector(5,-2)
 print (v1 + v2)
+```
+
+
+
+## 7.2 类成员(6)
+
+- 类对象指针，指向其类
+
+### 1. 类变量（静态字段/属性）
+
+- 写在类的下一级，和方法同级
+- 访问：类.变量名/ 对象.变量名
+- **继承关系中，自己类中没有的变量可以去基类中找**
+- **只能赋值、修改自己的变量**
+
+**对象成员**：**实例变量**（字段）
+
+**Note**：属于谁的只允许谁去取，python允许对象去其类中去变量
+
+### 2. 方法
+
+### 2.1 绑定/普通方法
+
+1. 定义：必须有self参数
+2. 执行：先创建对象，由 **对象.方法** 调用
+
+### 2.2 静态方法
+
+1. 定义：@staticmethod， 参数无限制
+2. 执行：类.静态方法名() / python对象也可以调用
+
+```python
+class Foo:
+  	def __init__(self):
+    		self.name = 123
+    
+    def func(self, a, b):
+      	print(self.name, a, b)
+# python内部装饰器
+    @staticmethod
+    def f():
+      	print(1,2)
+
+Foo.f()
+obj = Foo()
+obj.func(1, 2)
+obj.f()
+```
+
+### 2.3 类方法
+
+1. 定义：@classmethod， 必须有cls参数，当前类
+2. 执行：类.类方法() / python对象也可以调用
+
+```python
+class Foo:
+  	def __init__(self):
+    		self.name = 123
+    
+    def func(self, a, b):
+      	print(self.name, a, b)
+# python内部装饰器
+    @classmethod
+    def f(cls, a, b):
+      	print(a, b)
+
+Foo.f(1, 2)
+obj.f(1, 2)   # 不推荐
+```
+
+### 3. 属性
+
+1. 定义：@property 只能有一个参数self
+2. 执行：对象.属性名（ 无括号）
+
+```python
+class Foo:
+  	@property
+  	def func(self):
+        print(123)
+        print(666)
+       
+obj = Foo()
+ret = obj.func
+print(ret)
+```
+
+```python
+# 示例:属性
+class Page：
+		def __init__(self, total_count, current_page, per_page = 10):
+        self.total_count = total_count
+        self.current_page = current_page
+        self.per_page = per_page
+    
+    @proporty
+    def start_index(self):
+      	return(self.current_page -1 ) * self.per_page
+    @property
+    def end_index(self):
+      	returno self.current_page * self.per_page_count
+         
+USER_LIST = []
+for i in range(321):
+  	USER_LIST.append('henry-%s' % (i,))
+
+# 请实现分页
+current_page = int(input('请输入要查看的页码：'))
+p = Page(321, current_page)
+data_list = USER_LIST[p.start_index:p.end_index]
+for i in data_list:
+  	print(i)
+```
+
+### 4. 成员修饰符
+
+- 公有：所有位置都能访问
+- 私有：_\_开头（只有自己才能访问）
+
+```python
+class Foo:
+  	def __init__(self, name):
+      	self.__name = name
+        
+    def func(self):
+      	print(self.name)
+        
+        
+obj = Foo('alex')
+print(obj.__name)		# 会报错
+obj.func()          # 可以访问
+```
+
+```python
+class Foo:
+  	__x = 1
+    
+    @staticmethod
+    def func():
+      	print(Foo.__x)
+
+obj = Foo()  
+print(Foo.__x)       # 会报错
+print(obj._Foo__x)   # 强制访问私有成员
 ```
 
 

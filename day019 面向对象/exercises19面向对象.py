@@ -212,33 +212,33 @@ class Foo(Base):
     2. 为每个用户创建一个对象，并添加到list表中。
     3. 当list表中的添加 3个对象后，跳出循环并以此循环打印所有用户的姓名和邮箱
 """
-user_list = []
-
-
-class Account:
-    def __init__(self, user, pwd, email):
-        self.user = user
-        self.pwd = pwd
-        self.email = email
-
-    def user_add(self):
-        user_list.append(self)
-
-
-while True:
-    if len(user_list) == 3:
-        break
-    user = input('请输入用户名:')
-    pwd = input('请输入密码:')
-    while 1:
-        email = input('请输入邮箱:')
-        if '@' in email:
-            break
-        print('请重新输入')
-        continue
-
-    v = Account(user, pwd, email)
-    v.user_add()
+# user_list = []
+#
+#
+# class Account:
+#     def __init__(self, user, pwd, email):
+#         self.user = user
+#         self.pwd = pwd
+#         self.email = email
+#
+#     def user_add(self):
+#         user_list.append(self)
+#
+#
+# while True:
+#     if len(user_list) == 3:
+#         break
+#     user = input('请输入用户名:')
+#     pwd = input('请输入密码:')
+#     while 1:
+#         email = input('请输入邮箱:')
+#         if '@' in email:
+#             break
+#         print('请重新输入')
+#         continue
+#
+#     v = Account(user, pwd, email)
+#     v.user_add()
 
 
 """
@@ -286,14 +286,19 @@ class Account:
             user = input('please input your user name(N/n): ')
             if user.upper() == 'N':
                 return
+            flag = False
             for i in self.user_list:
                 if user == i.name:
+                    flag = True
                     print('用户已存在，请重新输入')
                     break
+            if flag:
+                continue
             pwd = input('please input your pwd: ')
             v = User(user, pwd)
             self.user_list.append(v)
-            continue
+            # for i in self.user_list:
+            #     print(i.name, i.pwd, id(i))
 
     def run(self):
         """

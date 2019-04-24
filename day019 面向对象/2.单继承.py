@@ -36,4 +36,4 @@ class student(people):
 s = student('ken', 10, 60, 3)
 s.speak()
 
-
+print(type(s))
