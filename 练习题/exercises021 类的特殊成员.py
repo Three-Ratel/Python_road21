@@ -659,7 +659,7 @@
 #         raise Exception('错误了吧')
 #     except Exception as e:
 #         print(e)
-
+dict
 
 """
 18.看代码写结果
