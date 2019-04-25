@@ -61,19 +61,22 @@ for i in range(0, 100):
     print(fib(1000))
 """
 li = [1, 1]
-num = input('please input a num: ')
-num = int(num)
 
 
-def fib(num):
-    b = li[-1] + li[-2]
-    li.append(b)
-    if b > num:
-        return li[:-1]
+def func(num=1000):
+    a, b = 1, 1
+    while a + b < num:
+        b = li[-1] + li[-2]
+        a = li[-2]
+        li.append(b)
+        yield b
 
 
-for i in range(2):
-    print(fib(num))
+for i in func():
+    print(i)
+
+# for i in range(100):
+#     print(fib(1000))
 
 
 

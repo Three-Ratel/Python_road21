@@ -31,6 +31,11 @@ with Foo() as f:
     f.write('echo'+'\n')
 
 
+
+
+# f = open('b.txt', mode='a+', encoding='utf-8')
+# f.write('hahah')
+
 """
 重点来了
 """
@@ -50,8 +55,8 @@ class Context:
         print('我开始做了')
 
 
-with Context() as ctx:
-    ctx.do_something()
+# with Context() as ctx:
+#     ctx.do_something()
 
 
 
