@@ -18,4 +18,3 @@ class Foo(object):
 
 obj = Foo()
 print(obj.name, obj.age)
-
