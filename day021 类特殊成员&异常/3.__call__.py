@@ -15,8 +15,7 @@ class Foo:
         pass
 
     def __call__(self, *args, **kwargs):
-        print('__call__')
+        print('哈哈，你变成我了吧')
 
 
-obj = Foo()  # 执行 __init__
-obj()  # 执行 __call__
+Foo()()
