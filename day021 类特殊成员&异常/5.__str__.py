@@ -10,7 +10,7 @@ class Foo:
 
     def __str__(self):
         print('变样是不是不认识我了')
-        return 'henry'
+        # return 'henry'
 
 
 obj = Foo()

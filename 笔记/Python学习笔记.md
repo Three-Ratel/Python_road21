@@ -3074,7 +3074,7 @@ def func(arg):  # 多种类型，很多事物
 
 ### 5. 类的专有方法：
 
-- **_\_init__ :** 构造函数，在生成对象时调用
+- **_\_init__ :** 初始化，在生成对象时调用
 - **_\_del__ :** 析构函数，释放对象时使用
 - **_\_repr__ :** 打印，转换
 - **_\_setitem__ :** 按照索引赋值
@@ -3224,8 +3224,8 @@ for i in data_list:
 
 ### 4. 成员修饰符
 
-- 公有：所有位置都能访问
-- 私有：_\_开头（只有自己才能访问）
+- **公有**：所有位置都能访问
+- **私有**：_\_开头（只有自己才能访问）
 
 ```python
 class Foo:
@@ -3263,7 +3263,7 @@ print(obj._Foo__x)   # 强制访问私有成员
 
 1. **类和对象的关系**：对象是类的一个实例
 2. **self**：本质就是一个形式参数，对象调用方法时，python内部会将该对象传给这个参数
-3. 类/方法/对像都可以当作变量或嵌套到其他类中
+3. **类/方法/对像**都可以当作变量或嵌套到其他类中
 
 ```python
 class School(object):
@@ -3342,7 +3342,7 @@ class StarkConfig(object):
   def changelist(self):
     print(self.list_display)
     
-class UserConfig(object):
+class UserConfig(StarkConfig):
   list_display = 'echo'
   
   
@@ -3384,14 +3384,12 @@ class Foo:
 
 #### 2.2 _\_new__(构造方法)
 
-**Note**：new方法是静态方法
+**Note**：new方法是静态方法，在使用__new__方法时，构造的对象值为  new 方法的**返回值**
 
 ```python
 #  __new__ 创建一个空对象
 # 通过 __init__ 初始化对像
 class Foo(object):
-  def __init__(self, a):
-    self.a = a
   def __new__(cls, *args, **kwargs):   # 在 __init__ 之前
     return 'henry'/ object.__new__(cls)
   
@@ -3425,7 +3423,7 @@ class Foo(object):
   def __getitem__(self, item):
     return item + 'uuu'
   def __delitem__(self, key):
-    pass
+   	print(key)
  
 obj1 = Foo()
 obj1['k1'] = 123  # 内部会自动调用__setitem__方法
@@ -3449,6 +3447,8 @@ print(obj)
 
 #### 2.6 _\_dict__
 
+**作用**： 查看对象中有哪些变量
+
 ```python
 class Foo(object):
   def __init__(self, name, age, email):
@@ -3462,6 +3462,8 @@ print(val)
 ```
 
 #### 2.7 _\_enter__（**上下文管理**）
+
+**作用**：使用with语法时，需要
 
 ```python
 class Foo(object):
@@ -3480,8 +3482,11 @@ with Foo() as f:   # 需要 __enter__ 和 __exit__ 方法
 
 ```python
 class Foo(object):
+  def __init__(self, v):
+    self.v = v
+    
 	def __add__(self, other):
-    return 123
+    return self.v + other.v
 
 obj1 = Foo()
 obj2 = Foo()
@@ -3608,12 +3613,12 @@ except Exception as e:
 def func():
   resutl = True
   try:
-    with open('x.log', mode='r', encoding='utf-8') as f:
-      data = f.read()
-    if 'henry' not in data:
-      raise Exception()
+      with open('x.log', mode='r', encoding='utf-8') as f:
+        	data = f.read()
+      if 'henry' not in data:
+        	raise Exception()
    except Exception as e:
-     result = False 
+     	result = False 
    return result
 ```
 
@@ -3632,13 +3637,221 @@ except MyException as e:
 ```python
 class MyException(Exception):
   def __init__(self, message):
-      super().__init__()
       self.message = message
 try:
   raise MyExceptoin('123')
 except MyException as e:
   print(e.message)
 ```
+
+
+
+## 7.4 约束&反射
+
+### 1. 扩展
+
+```python
+# 会打印 hello
+# 类里的成员会加载，代码会执行
+# 函数只有在调用时执行
+class Foo(object):
+  print('hello')
+  def func(self):
+    pass
+```
+
+```python
+# 类的嵌套
+class Foo(object):
+    x = 1
+    def func(self):
+      	pass
+
+    class Meta(object):
+        y = 123
+        print('hello')
+        def show(self):
+          	print(y.self)
+```
+
+### 2. 可迭代对象
+
+**表象**：可被for循环的对象
+
+**作用**：组合搜索
+
+**可迭代对象**：在类中实现**_\_iter__**方法并返回**迭代器/生成器**
+
+```python
+# 可迭代对象示例1
+class Foo:
+  	def __iter__(self):
+    		return iter([1, 2, 3, 4])
+  
+obj = Foo()
+# 示例2
+class Foo:
+  	def __iter__(self):
+        yield 1
+        yield 2
+        ...
+ 
+obj = Foo()
+```
+
+### 3. 约束(源码)
+
+```python
+# python的约束，易错点
+# 约束子类中必须要有send方法，如果没有则会抛出：NotImplementedError
+class Interface(object):
+  def send(self):
+    raise NotImplementedError()
+
+class Foo(Interface):
+  def send(self):
+    pass
+
+class Base(Interface): 
+  def func(arg):
+    arg.send(arg)
+```
+
+```python
+# 应用场景示例
+class BaseMassage(object):
+  def send(self):
+    raise NotImplementedError('子类中必须有send方法')
+    
+class Msg(BaseMassage):
+  def send(self):
+    print('发送短信')
+  
+class Email(BaseMassage):
+  def send(self):
+    print('发送邮件')
+  
+class Wechat(BaseMassage):
+	def send(self):
+    print('发送微信')
+  
+class DingDing(BaseMassage):
+	def send(self):
+		pass
+
+obj = Email()
+obj.send()
+```
+
+### 4. 反射
+
+**作用**：根据字符串的形式，去某个对象中操作他的成员。
+
+- **getattr**('对象'， 字符串)：根据字符串的形式，去某个对象中获取其成员。
+- **hasattr**('对象'， 字符串)：根据字符串的形式，去某个对象中判断是够有该成员。
+- **setattr**('对象'， '变量'，值)：根据字符串的形式，去某个对象中设置成员。
+- **delatttr**('对象'， '变量')：根据字符串的形式，去某个对象中删除成员。
+
+```python
+# getattr示例
+class Foo(object):
+  def __init__(self, name):
+    self.name = name
+    
+obj = Foo('alex')
+obj.name
+v1 = getattr(obj, 'name')
+# setattr示例
+obj.name = 'eric'
+setattr(obj, 'name', 'eric')
+```
+
+```python
+# 应用示例
+ class Foo(object):
+    def login(self):
+      pass 
+    
+    def regiseter(self):
+      pass 
+  
+obj = Foo()
+func_name = input('please input method name: ')
+# 获取方法
+getattr(obj, func_name)()
+```
+
+```python
+# setattr 示例
+class Foo(object):
+  pass
+
+obj = Foo()
+setattr(obj, 'k1', 123)
+print(obj.k1)
+```
+
+```python
+# delattr 示例
+class Foo(object):
+  pass
+
+obj = Foo()
+obj.k1 = 999
+delattr(obj, 'k1')
+print(obj.k1)
+```
+
+#### Note（2）
+
+- python中一切皆对象（py文件，包，类，对象），可以通过getattr获取
+- 通过字符串操作内部成员都可以通过反射的机制实现
+
+```python
+import x
+
+v = x.NUM
+# 等价于
+v = getattr(x, 'NUM')
+print(v)
+
+v = getattr(x, 'func')
+v()
+
+v = getattr(x, 'Foo')
+val = v()
+val.x
+```
+
+### 5. 模块importlib
+
+**作用**：根据字符串形式导入模块
+
+**开放封闭原则**：配置文件开放，代码封闭
+
+```python
+# 用字符串形式，去对象中找到其成员
+import importlib
+redis = importlib.import_module('utils.redis')
+getattr(redis, 'func')()
+```
+
+```python
+import importlib
+path = 'utils.redis.func'
+module_path, func_name = path.rsplit('.', 1)
+getattr(module_path, 'func_name')()
+```
+
+
+
+
+
+
+
+
+
+
 
 
 

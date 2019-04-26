@@ -11,7 +11,7 @@
 #         print('get到了吧', key)
 #
 #     def __setitem__(self, key, value):
-#         print('孤单了这么久，来这找个值', key, value)
+#         print('单身了这么久，来这找个值', key, value)
 #
 #     def __delitem__(self, key):
 #         print('删我干啥，你要上天', key)
@@ -23,11 +23,14 @@
 # obj['k2'] = 'henry'        # 自动触发执行 __setitem__
 # del obj['k1']              # 自动触发执行 __delitem__
 
-obj = dict()
-obj['k1'] = 123
+# obj = dict()
+# obj['k1'] = 123
 
 
 class Foo(object):
+    # def __init__(self):
+    #     self.a = 'a'
+    #     self.b = 'b'
     def __setitem__(self, key, values):
         print(key, values)
 
@@ -35,11 +38,12 @@ class Foo(object):
         print(item + '666')
 
     def __delitem__(self, key):
-        pass
+        print(key)
 
 
 obj1 = Foo()
-obj1['k1'] = 123     # 内部会自动调用__setitem__方法
-obj1['xxx']          # 内部会自动调用__getitem__方法
-del obj1['ttt']
+# obj1['k1'] = 123     # 内部会自动调用__setitem__方法
+# obj1['xxx']          # 内部会自动调用__getitem__方法
+# del obj1['ttt']
+print(obj1.__dict__)
 

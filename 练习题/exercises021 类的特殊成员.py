@@ -591,10 +591,10 @@
 # v1 = RoleConfig('alex')
 # v2 = StarkConfig("wupeiqi")
 #
-# print(v1(1))
+# print(v1[1])
 # print(v2(2))
 
-# 345 None
+# l
 # wupeiqi None
 
 """
@@ -659,7 +659,7 @@
 #         raise Exception('错误了吧')
 #     except Exception as e:
 #         print(e)
-dict
+
 
 """
 18.看代码写结果

@@ -15,6 +15,7 @@ class Foo(object):
 
 obj1 = Foo()
 obj2 = Foo()
+
 v = obj1 + obj2
 print(v)
 

@@ -5,30 +5,30 @@
 """
 
 
-class Foo(object):
-
-    def __enter__(self):
-        """
-        进入
-        :return: 返回打开的文件给 as 后的变量
-        """
-        self.x = open('a.txt', mode='a+', encoding='utf-8')
-        return self.x
-
-    def __exit__(self, exe_type, exc_val, exc_tb):
-        """
-        退出，必须有四个参数，否则报错
-        :param exe_type:
-        :param exc_val:
-        :param exc_tb:
-        :return:
-        """
-        self.x.close()
-
-
-with Foo() as f:
-    f.write('henry'+'\n')
-    f.write('echo'+'\n')
+# class Foo(object):
+#
+#     def __enter__(self):
+#         """
+#         进入
+#         :return: 返回打开的文件给 as 后的变量
+#         """
+#         self.x = open('a.txt', mode='a+', encoding='utf-8')
+#         return self.x
+#
+#     def __exit__(self, exe_type, exc_val, exc_tb):
+#         """
+#         退出，必须有四个参数，否则报错
+#         :param exe_type:
+#         :param exc_val:
+#         :param exc_tb:
+#         :return:
+#         """
+#         self.x.close()
+#
+#
+# with Foo() as f:
+#     f.write('henry'+'\n')
+#     f.write('echo'+'\n')
 
 
 
@@ -42,10 +42,14 @@ with Foo() as f:
 # 参考并补全
 
 
-class Context:
+class Context(object):
+
+    def __init__(self, a = 1, b = 2):
+        self.a = a
+        self.b = b
 
     def __enter__(self):
-        print('begin')
+        print('henry')
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -55,9 +59,8 @@ class Context:
         print('我开始做了')
 
 
-# with Context() as ctx:
-#     ctx.do_something()
-
+with Context() as ctx:
+    ctx.do_something()
 
 
 

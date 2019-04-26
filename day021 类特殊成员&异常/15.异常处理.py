@@ -74,16 +74,15 @@ e 代表异常信息，是Exception类的对象，有一个错误信息,
 """
 
 
-class MyException(Exception):
-    def __init__(self, message):
-        # super().__init__()
-        self.message = message
-
-
-try:
-    raise MyException('123')
-except MyException as e:
-    print(e.message)
+# class MyException(Exception):
+#     def __init__(self, message):
+#         self.message = message
+#
+#
+# try:
+#     raise MyException('123')
+# except MyException as e:
+#     print(e.message)
 
 
 
