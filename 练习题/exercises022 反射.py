@@ -78,17 +78,26 @@
 5.请补充代码（提：循环的列表过程中如果删除列表元素，会影响后续的循环，推荐：可以尝试从后向前找）
 """
 
-# li = ['李杰', '女神', '金鑫', '武沛齐']
-#
-# name = input('请输入要删除的姓氏：')  # 如输入“李”，则删除所有姓李的人。
-# # 请补充代码
-# i = len(li) - 1
-# while 0 <= i:
-#     if name in li[i]:
-#         li.pop(i)
-#     i -= 1
-# print(li)
+li = ['李杰', '女神', '金鑫', '武沛齐']
 
+name = input('请输入要删除的姓氏：')  # 如输入“李”，则删除所有姓李的人。
+
+
+# 请补充代码
+# class Foo(object):
+#     def __init__(self, name):
+#         self.name = name
+#
+#     def del_user(self):
+#         i = len(li) - 1
+#         while 0 <= i:
+#             if self.name in li[i]:
+#                 li.pop(i)
+#             i -= 1
+#         print(li)
+#
+#
+# Foo(name).del_user()
 
 """
 6.有如下字典，请删除指定数据。
@@ -274,15 +283,14 @@ def func(environ, start_response):
     response = getattr(obj, method_name)()
     li = []
     for i in MIDDLEWARE_CLASSES:
-        a, b, c= i.split('.')
+        a, b, c = i.split('.')
 
         li.append('【%s】' % b)
     response = ' '.join(li[::-1]) + response + ' '.join(li)
     return [response.encode("utf-8")]
 
-
-server = make_server('127.0.0.1', 8000, func)
-server.serve_forever()
+# server = make_server('127.0.0.1', 8000, func)
+# server.serve_forever()
 
 
 ## 预习
