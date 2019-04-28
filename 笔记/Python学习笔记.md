@@ -301,6 +301,19 @@ s1 = '%s***%s' % (a, b,)
 print(s1)
 ```
 
+**扩展使用示例：**
+
+```python
+# %s ，只能是tuple
+msg = '我是%s, 年龄%s' % ('alex', 19)
+msg = '我是%(name)s, 年龄%(age)s' % {'name': 'alex', 'age': 19}
+# format格式化
+v1 = '我是{name}, 年龄{age}'.format(name = 'alex', age = 18)
+v1 = '我是{name}, 年龄{age}'.format(** {'name': 'alex', 'age': 19})
+v2 = '我是{0}, 年龄{1}'.format('alex', 18) 
+v2 = '我是{0}, 年龄{1}'.format(*('alex', 18) )
+```
+
 8. encode
 
 ```python
@@ -810,6 +823,17 @@ print(info)
 info = {1: 'henry', 2: 'echo', 3: 'eliane'}
 del infop[1]
 print(info)
+```
+
+### 4. 有序字典
+
+```python
+# __getitem__ set, del 
+from collections import OrderdDict
+
+info = OrderedDict()
+info['k1'] = 123
+info['k2'] = 456
 ```
 
 
@@ -3823,6 +3847,43 @@ val = v()
 val.x
 ```
 
+示例：
+
+```python
+# 浏览器两类行为
+# way1: 输入地址+回车
+get....
+# way2: 表单（输入框+按键）
+post....
+
+# 浏览器都会有get，post，dispatch方法
+class View(object):
+  def get(self):
+    pass 
+  def Post(self):
+    pass
+  def Dispatch(self):  # 请求第一步来这，在进行分发
+    pass
+```
+
+
+
+```python
+# 推荐使用性能较好
+class Foo(object):
+  def post(self):
+    pass
+
+# 方式1
+if hasattr(obj, 'get'):
+  getattr(obj, 'get')
+# 方式2：推荐使用
+v = getattr(obj, 'get', None)
+print(v)
+```
+
+
+
 ### 5. 模块importlib
 
 **作用**：根据字符串形式导入模块
@@ -3865,6 +3926,243 @@ for path in middleware_classes:
 # # 用字符串的形式去对象（模块）找到他的成员。
 # getattr(redis,'func')()
 ```
+
+## 7.5 单例&项目结构
+
+### 1. 单例模式
+
+#### 1.1 单例
+
+**场景**：**数据库**连接和数据库**连接池**（数据一致时）
+
+**设计模式**：23种设计模式
+
+```python
+class Foo(object):
+  pass 
+# 每实例化一次，就创建一个新对象,内存地址 不一样
+obj1 = Foo()
+obj2 = Foo()
+```
+
+```python
+# 单例(Singleton)模式，无论是实例化多少次，都用第一次创建的那个对象，内存地址一样
+class Singleton(object):
+  instance = None
+  def __new__(cls, *args, **kwargs):
+    if not cls.instance:
+    	cls.instance = object.__new__(cls)
+    return cls.instance
+ 
+obj1 = Singleton()   # 内存地址一致
+obj2 = Singleton()
+```
+
+#### 1.2 标准
+
+```python
+# 需要加锁，多线程，并发
+```
+
+```python
+class FileHelper(object):
+  instance = None
+	def __init__(self, path):
+    self.file_object = open(path, mode='r', encoding='utf-8')
+  
+  def __new__(cls, *args, **kwargs):
+    if not cls.instance:
+      cls.instance = object.__new__(cls)
+    return cls.instance
+
+obj1 = FileHelper('x')   # 内存地址一致
+obj2 = FileHelper('x')
+```
+
+### 2. 模块导入
+
+```python
+# 导入模块，只是保留模块内存
+# 思考角度：函数名不能重复、内存溢出
+from jd import n1
+
+# 多次导入，模块只会加载一次，即使模块中包含其他模块
+import jd
+import jd
+print(456)
+```
+
+```python
+# 多次导入，模块只会加载一次，即使模块中包含其他模块
+import importlib
+import jd
+importlib.reload(jd)  # 手动加载，会覆盖第一次导入
+print(456)
+```
+
+- 通过模块导入特性，也可以实现单例模式
+
+```python
+# jd.py
+class Foo(object):
+  pass
+obj = Foo()
+```
+
+```python
+# app.py
+import jd   # 加载jd.py,加载最后会实例化一个Foo对象并赋值给obj
+print(jd.obj)
+```
+
+### 3. 日志（模块logging）
+
+| 日志等级（level） | 描述                                                         |
+| ----------------- | ------------------------------------------------------------ |
+| DEBUG             | 最详细的日志信息，典型应用场景是 问题诊断                    |
+| INFO              | 信息详细程度仅次于DEBUG，通常只记录关键节点信息，用于确认一切都是按照我们预期的那样进行工作 |
+| WARNING           | 当某些不期望的事情发生时记录的信息（如，磁盘可用空间较低），但是此时应用程序还是正常运行的 |
+| ERROR             | 由于一个更严重的问题导致某些功能不能正常运行时记录的信息     |
+| CRITICAL          | 当发生严重错误，导致应用程序不能继续运行时记录的信息         |
+
+#### 3.1 日志示例
+
+##### Note(2)
+
+- 多次配置logging模块，只有第一次配置有效
+- 在应用日志时，保留堆栈信息需加上**exc_info=True**
+
+```python
+# 方法1
+import logging
+# logging.Error 默认级别
+logging.basicConfig(fielname='cmdb.log',
+                    format='%(asctime)s - %(name)s - %(levelname)s -%(module)s:  %(message)s'
+                    datefmt = '%Y-%m-%d-%H-%M-%S'
+                    level=logging.WARNING)
+logging.log(10, '日志内容')  # 不写
+logging.debug('asdfgh')
+logging.log(30, 'asdfgh')  # 写
+logging.warning('asdfgh')
+```
+
+**应用场景**：对于异常处理捕获的内容，使用日志模块将其保存到日志
+
+```python
+try:
+  requests.get('http://www.google.com')
+except Exception as e:
+  msg = str(e)  # 调用e.__str__方法
+  logging.error(msg, exc_info=True)   # 线程安全，支持并发
+
+```
+
+#### 3.2 logging本质
+
+```python
+# 方法2
+import logging
+# 对象1：文件 + 格式
+file_handler = logging.FileHandler('xxxxx', 'a', encoding='utf-8')
+fmt = logging.Formatter(fmt='%(asctime)s - %(name)s - %(levelname)s - %(module)s: %(message)s')
+file_handler.setFormatter(fmt)
+
+# 对象2：写（封装了对象1 ）
+logger = logging.Logger('xxx(在log中会显示)', level=logging.ERROR)
+logger.addHandler(file_handler)
+
+logger.error('你好')
+```
+
+#### 3.3 推荐方式
+
+```python
+import logging
+
+file_handler = logging.FileHandler(filename='x1.log', mode='a', encoding='utf-8',)
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s -%(module)s:  %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S %p',
+    handlers=[file_handler,],
+    level=logging.ERROR
+)
+
+logging.error('你好')
+```
+
+#### 3.4 日志切割
+
+```python
+import time
+import logging
+from logging import handlers
+# file_handler = logging.FileHandler(filename='x1.log', mode='a', encoding='utf-8',)
+file_handler = handlers.TimedRotatingFileHandler(filename='x3.log', when='s', interval=5, encoding='utf-8')
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s -%(module)s:  %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S %p',
+    handlers=[file_handler,],
+    level=logging.ERROR
+)
+
+for i in range(1,100000):
+    time.sleep(1)
+    logging.error(str(i))
+```
+
+```python
+# 在应用日志时，如果想要保留异常的堆栈信息。
+import logging
+import requests
+
+logging.basicConfig(
+    filename='wf.log',
+    format='%(asctime)s - %(name)s - %(levelname)s -%(module)s:  %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S %p',
+    level=logging.ERROR
+)
+
+try:
+    requests.get('http://www.xxx.com')
+except Exception as e:
+    msg = str(e) # 调用e.__str__方法
+    logging.error(msg,exc_info=True)
+```
+
+
+
+### 4.项目文件目录结构
+
+#### 4.1 脚本
+
+```python
+import os
+import re
+import datetime
+
+import xlrd
+import requests
+```
+
+#### 4.2 单可执行文件
+
+```python
+# app(程序入口)/src(业务相关)/lib(公共的类库)/db(文件)/config(配置)
+app.py 越简单越好，少于10行
+```
+
+#### 4.3 多可执行文件
+
+```python
+# app(程序入口)/src(业务相关)/lib(公共的类库)/db(文件)/config(配置)
+# bin(多个可执行文件例如：student.py，teacher.py，admin.py)
+# log	(存储日志文件)
+# seetings(BASE_PATH,LOG_FILE_NAME...)
+path = sys.path.os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(path)
+```
+
+![项目目录结构](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84.png)
 
 
 
@@ -3938,8 +4236,6 @@ ___
 
 
 # 附录2:  错误记录
-
-## Day01 - 10
 
 1. day001
 
@@ -4015,6 +4311,10 @@ ___
    - return 1， 2， 3 返回的是元组
    - 注意：函数类似于变量，func 代指一块代码的内存地址。
    - a = ('b', 3, 4)*2 ，tuple里面的数据重复2次，list 和 tuple都可以
+   
+11. day23
+
+   - for循环是根据索引进行循环，删除元素后，后面要进行补位
 
 
 
