@@ -262,8 +262,10 @@ MIDDLEWARE_CLASSES = [
     'utils.csrf.CrsfMiddleware',
 ]
 import importlib
+
 from utils.myexception import MyException
-print(MyException().process())
+from utils.session import SessionMiddleware
+
 from wsgiref.simple_server import make_server
 
 # for i in MIDDLEWARE_CLASSES:

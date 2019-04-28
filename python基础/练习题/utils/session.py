@@ -4,6 +4,7 @@ from .myexception import MyException
 
 
 class SessionMiddleware(MyException):
+    pass
+    # def process(self, data):
+    #     return '【session】%s【session】' % data
 
-    def process(self, data):
-        return '【session】%s【session】' % data
