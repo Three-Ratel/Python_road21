@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 try:
-    import os
-    import sys
-    BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    sys.path.append(BASE_PATH)
     from lib import auth
     from config import settings
     from lib import logger

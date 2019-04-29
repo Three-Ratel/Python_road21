@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-import os
-import sys
-BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(BASE_PATH)
+
 from db import data
 from bin  import article_detil
 from lib import logger
@@ -16,7 +13,7 @@ try:
         """
         while True:
             print('=================== 文章列表 ===================')
-            for i in range(lven(data.ARTICLE_LIST)):
+            for i in range(len(data.ARTICLE_LIST)):
                 row = data.ARTICLE_LIST[i]
                 msg = """%s.%s \n  赞(%s) 评论(%s)\n""" % (i + 1, row['title'], row['up'], len(row['comment']))
                 print(msg)
