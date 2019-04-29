@@ -111,24 +111,11 @@
 # print(r"你\n好") # 你\n好
 
 
-
 """
 7.写函数实现，查看一个路径下所有的文件【所有】。
 """
 import os
 
-
-# def ls_dir(path):
-#     u = os.walk(path)
-#     for items in u:
-#         u, v, w = items
-#         for i in w:
-#             a = os.path.abspath(i)
-#             b = os.path.join(a, i)
-#             print(b)
-
-
-# ls_dir('__file__')
 
 
 """
@@ -163,8 +150,8 @@ def func(a, b, c=1):
 #         return b, c
 
 
-v = func(0, 1)
-print(v)
+# v = func(0, 1)
+# print(v)
 
 
 # def func(a, b):
@@ -256,20 +243,20 @@ print(v)
 编程题
 """
 # 1.
-import os
-
-print('============================')
-
-
-def li_file(dirname):
-    for a, b, c in os.walk(dirname):
-        for i in c:
-            i = os.path.abspath(i)
-            print(i)
-
-
-dir = __file__
-li_file(dir)
+# import os
+#
+# print('============================')
+#
+#
+# def li_file(dirname):
+#     for a, b, c in os.walk(dirname):
+#         for i in c:
+#             i = os.path.abspath(i)
+#             print(i)
+#
+#
+# dir = __file__
+# li_file(dir)
 
 
 # 2.
