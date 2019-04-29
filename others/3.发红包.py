@@ -26,17 +26,16 @@ class RedPackage(object):
         data = list(data)
         data.sort()
         data.insert(0, 0)
-        li = []
         for i in range(1, len(data)):
-            li.append(data[i] - data[i-1])
-        last = money - sum(li)
-        li.append(last)
+            data[i-1] = data[i] - data[i-1]
+        data.append(money - sum(data))
+        data.pop()
+        for i in range(len(data)):
+            data[i] /= 100
+        return data
 
-        for i in range(len(li)):
-            li[i] /= 100
-        return li
 
-
-RedPackage(100, 10).dispatch()
+v = RedPackage(100, 10).dispatch()
+print(v)
 
 
