@@ -2387,11 +2387,104 @@ v2 = func()  # 与下面v2相同
 v2 = (i for i in range(10)) # 生成器推导式，不会立即产生数据
 ```
 
+## 5.8 异常处理
 
+```python
+# 示例1
+try:
+  val = input('请输入数字：')
+  num = int(val)
+except Exception as e:
+  print('操作异常')
+```
+
+```python
+# 示例2
+import requests
+try:
+  ret = requests.get('http://www.baidu.com')
+	print(ret.text)
+except Exception as e:
+  print('请求异常')
+```
+
+```python
+# 示例3
+def func(a):
+  try:
+    return a.strip()
+  except Exception as e:
+    pass
+  return False
+
+v = func([1, 2, 3])
+print(v)
+```
+
+```python
+# 练习1，函数接收一个list将list中的元素每个都加100
+def func(arg):
+    li = []
+    for items in arg:
+        if items.isdecimal():
+            li.append(int(items) + 100)
+     return li
+```
+
+```python
+# 写函数，接收一个list， 中全是url 访问地址，并获取结果
+import requests
+def	func(url_list):
+  li = []
+  try:
+    for i in url_list:
+      reponse = requests.get(i)
+      li.append(reponse.text)
+  except Exception as e:
+    pass
+  return li
+
+func(['http://www.baidu.com', 'http://www.google.com', 'http://www.bing.com'])
+```
+
+```python
+# 比较异常 try 的位置不同，效果也不同
+import requests
+def	func(url_list):
+  li = []
+  for i in url_list:
+      try:
+          reponse = requests.get(i)
+          li.append(reponse.text)
+  		except Exception as e:
+    			pass
+  return li
+
+func(['http://www.baidu.com', 'http://www.google.com', 'http://www.bing.com'])
+
+
+# 得到的结果是text格式的文本文档
+reponse = requests.get('url', useragent:xxxxxx)
+```
 
 # 第六章 模块
 
 
+
+**基本概念模块和包**
+
+1. 什么是模块
+
+   - py文件，写好了的对程序员直接提供某方面功能
+   - import / from xxx import xx
+   - **包**：存储了多个py文件的文件夹，pickle，json，urlib
+   - 如果导入一个包，**包里默认模块是不能使用的**
+   - 导入一个包相当于执行**_\_init__.py**文件内容
+
+   ```python
+   # 在__init__.py中使用
+   from pack import policy
+   ```
 
 ## 6.1 模块的导入
 
@@ -2475,9 +2568,9 @@ sys.path.append(BASE_DIR)
    a.f1()
    ```
 
-## 6.3 内置模块
+## 6.3 内置模块(10)
 
-​	内置模块目前有**random**，**hashlib**， **getpass** ，**time**，**sys**相关，**os**相关，**shutil** ，**json**等 **8**个。
+​	内置模块目前有**random**，**hashlib**， **getpass** ，**sys**相关，**os**相关，**shutil** ，**json**，**time&datetime**, **import lib**, **logging**等 **10**个。
 
 ### **1. random**
 
@@ -2492,10 +2585,21 @@ def get_random_data(length=6):
     return ' '.join(data)
 ```
 
+- random.choice([1, 2, 3])：随机选择一个：验证码，抽奖
+- random.sample([1, 2, 3, 4, 5], 3)：随机选3个不重复，抽奖多个人
+- random.uniform(1, 5)：随机1-5中的随机小数
+- random.shuffle：洗牌，算法
+
 ### **2. hashlib / getpass**
 
+摘要算法模块，**密文验证**/**校验文件独立性**
+
+1. md5 / sha
+2. 摘要文件内容一样，无论怎么分割，md5摘要后一致（大文件一致性校验）
+
 ```python
-# 将指定的**str**加密
+# 将指定的**str**摘要，可以使用sha1/md5
+# md5常用来文件完整性校验
 # hashlib.md5()/ .update() /.hexdigest()
 import hashlib
 def get_md5(data):
@@ -2541,9 +2645,10 @@ time.sleep(2)  	# 休眠时间，2秒
 1. sys.getrefcount(a)
 2. sys.recursionlimit() / sys.setrecursionlimit()
 3. sys.stdout.write(). print—>进度条
-4. **sys.argv**
+4. **sys.argv**：获取命令行参数
    - shutil(shutil.rmtree(path)
-5. **sys.path**
+5. **sys.path**：模块导入路径
+6. sys.modules：存储当前程序中用到的所有模块
 
 ```python
 # 引用计数器
@@ -2602,6 +2707,8 @@ sys.path.append('module_path')
 8. os.mkdir() / os.makedirs()
 9. os.rename(a, b)
 10. os.remove(a)
+11. os.path.isdir()
+12. os.path.isfile()
 
 ```python
 import os
@@ -2643,7 +2750,12 @@ for a, b, c in result:
       print(path)
 ```
 
-#### 6. shutil
+### 6. shutil
+
+1. shutil.make_archive()
+2. shutil.unpack_archive()
+3. shutil.rmtree()
+   1. shutil.move()
 
 ```python
 import shutil
@@ -2677,8 +2789,13 @@ ctime = datetim.now().strftime('%Y-%m-%d %H:%M:%S')
 
 - **json**， 所有语言通用，**只能**序列化指定的基本数据类型
   - dumps/loads/ dump/load
+  - 所有字符串必须都是双引号
+  - 最外层只能是dict/list
+  - 不能支持load多次
+  - dict中key只能是str
 - **pickle**，几乎支持所有python东西（socket对象），序列化的内容只能用python
   - dumps/loads/ dump/load
+  - 支持连续load多次
 
 ### **1. json**
 
@@ -2783,84 +2900,201 @@ print(val)
 
 
 
-## 6.6 异常处理
+## 6.6 模块importlib
+
+**作用**：根据字符串形式导入模块
+
+**开放封闭原则**：配置文件开放，代码封闭
+
+1. 使用str导入模块
+2. _\_import__(和importlib.import_module('模块名'))
+3. os = _\_import__('os')和2等价
 
 ```python
-# 示例1
+# 用字符串形式，去对象中找到其成员
+import importlib
+redis = importlib.import_module('utils.redis')
+getattr(redis, 'func')()
+```
+
+```python
+import importlib
+path = 'utils.redis.func'
+module_path, func_name = path.rsplit('.', 1)
+getattr(module_path, func_name)()
+```
+
+```python
+# 导入模块
+import importlib
+middleware_classes = [
+    'utils.redis.Redis',
+    # 'utils.mysql.MySQL',
+    'utils.mongo.Mongo'
+]
+for path in middleware_classes:
+    module_path,class_name = path.rsplit('.',maxsplit=1)
+    module_object = importlib.import_module(module_path)# from utils import redis
+    cls = getattr(module_object,class_name)
+    obj = cls()
+    obj.connect()
+
+
+# # 用字符串的形式导入模块。
+# redis = importlib.import_module('utils.redis')
+#
+# # 用字符串的形式去对象（模块）找到他的成员。
+# getattr(redis,'func')()
+```
+
+
+
+## 6.7 日志（模块logging）
+
+| 日志等级（level） | 描述                                                         |
+| ----------------- | ------------------------------------------------------------ |
+| DEBUG             | 最详细的日志信息，典型应用场景是 问题诊断                    |
+| INFO              | 信息详细程度仅次于DEBUG，通常只记录关键节点信息，用于确认一切都是按照我们预期的那样进行工作 |
+| WARNING           | 当某些不期望的事情发生时记录的信息（如，磁盘可用空间较低），但是此时应用程序还是正常运行的 |
+| ERROR             | 由于一个更严重的问题导致某些功能不能正常运行时记录的信息     |
+| CRITICAL          | 当发生严重错误，导致应用程序不能继续运行时记录的信息         |
+
+### 1. 日志示例
+
+##### Note(2)
+
+- 多次配置logging模块，只有第一次配置有效
+- 在应用日志时，保留堆栈信息需加上**exc_info=True**
+- 用户：记录日志（银行流水）
+- 程序员：统计、故障排除的 debug、错误完成代码优化
+
+```python
+# 方法1, 
+# basicConfig 不能实现中文编码，不能同时向文件和屏幕输出
+import logging
+# logging.Error 默认级别
+logging.basicConfig(fielname='cmdb.log',
+                    format='%(asctime)s - %(name)s - %(levelname)s -%(module)s:  %(message)s'
+                    datefmt = '%Y-%m-%d-%H-%M-%S'
+                    level=logging.WARNING)
+logging.log(10, '日志内容')  # 不写
+logging.debug('asdfgh')
+logging.log(30, 'asdfgh')  # 写
+logging.warning('asdfgh')
+```
+
+**应用场景**：对于异常处理捕获的内容，使用日志模块将其保存到日志
+
+```python
 try:
-  val = input('请输入数字：')
-  num = int(val)
+  requests.get('http://www.google.com')
 except Exception as e:
-  print('操作异常')
+  msg = str(e)  # 调用e.__str__方法
+  logging.error(msg, exc_info=True)   # 线程安全，支持并发
 ```
 
+### 2. logging本质
+
 ```python
-# 示例2
-import requests
-try:
-  ret = requests.get('http://www.baidu.com')
-	print(ret.text)
-except Exception as e:
-  print('请求异常')
+# 方法2
+import logging
+# 对象1：文件 + 格式
+file_handler = logging.FileHandler('xxxxx', 'a', encoding='utf-8')
+fmt = logging.Formatter(fmt='%(asctime)s - %(name)s - %(levelname)s - %(module)s: %(message)s')
+file_handler.setFormatter(fmt)
+
+# 对象2：写（封装了对象1 ）
+logger = logging.Logger('xxx(在log中会显示)', level=logging.ERROR)
+logger.addHandler(file_handler)
+
+logger.error('你好')
 ```
 
-```python
-# 示例3
-def func(a):
-  try:
-    return a.strip()
-  except Exception as e:
-    pass
-  return False
+### 3. 示例
 
-v = func([1, 2, 3])
-print(v)
+```python
+# 推荐
+import logging
+
+file_handler = logging.FileHandler(filename='x1.log', mode='a', encoding='utf-8',)
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s -%(module)s:  %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S %p',
+    handlers=[file_handler,],
+    level=logging.ERROR
+)
+
+logging.error('你好')
 ```
 
+**logger对像**
+
+1. 创建一个**logger**对象、**文件操作符**、**屏幕操作符**、**格式**
+2. 给logger**绑定****文件**操作和**屏幕**操作
+3. 给屏幕操作符和文件操作符**设置格式**
+4. 用logger对象**操作**
+
 ```python
-# 练习1，函数接收一个list将list中的元素每个都加100
-def func(arg):
-    li = []
-    for items in arg:
-        if items.isdecimal():
-            li.append(int(items) + 100)
-     return li
+# warning和error写入不同文件，需要创建不同对象
+import logging
+# 需要加入name参数
+logger = logging.getLogger() 
+fh = logging.FileHandler('log.log') # 写入文件
+sh = logging.StreamHander()  # 不需要参数，输出到屏幕
+logger.addHander(fh)
+logger.addHander(sh)
+# asctime:日志写入时间， name：logger对象名称， levelname：日志级别， module：模块名称
+fmt=logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(module)s: %(message)s')
+fh.Setformatter(fmt)
+logger.waring('message')
 ```
 
-```python
-# 写函数，接收一个list， 中全是url 访问地址，并获取结果
-import requests
-def	func(url_list):
-  li = []
-  try:
-    for i in url_list:
-      reponse = requests.get(i)
-      li.append(reponse.text)
-  except Exception as e:
-    pass
-  return li
+### 4. 日志切割
 
-func(['http://www.baidu.com', 'http://www.google.com', 'http://www.bing.com'])
+```python
+import time
+import logging
+from logging import handlers
+# file_handler = logging.FileHandler(filename='x1.log', mode='a', encoding='utf-8',)
+file_handler = handlers.TimedRotatingFileHandler(filename='x3.log', when='s', interval=5, encoding='utf-8')
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s -%(module)s:  %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S %p',
+    handlers=[file_handler,],
+    level=logging.ERROR
+)
+
+for i in range(1,100000):
+    time.sleep(1)
+    logging.error(str(i))
+# 在应用日志时，如果想要保留异常的堆栈信息,exc_info=True
+    msg = str(e)  # 调用e.__str__方法
+    logging.error(msg,exc_info=True)
 ```
 
+## 6.8 collections(python核心模块)
+
+- OrideredDict()
+
 ```python
-# 比较异常 try 的位置不同，效果也不同
-import requests
-def	func(url_list):
-  li = []
-  for i in url_list:
-      try:
-          reponse = requests.get(i)
-          li.append(reponse.text)
-  		except Exception as e:
-    			pass
-  return li
+# dict创建过程
+info = dict([('a', 1), ('b', 2), ('c', 3), ('d', 4)])
+```
 
-func(['http://www.baidu.com', 'http://www.google.com', 'http://www.bing.com'])
+- defaultDict
+- deque：双端队列
+- namedtuple：默认dict，可以给dict的value设置一个默认值
 
+```python
+from collections import namedtuple
+# 可命名tuple（time 结构化时间）
+# 创建了一个Course类，这个类没有方法，所有属性值不能修改
+Course = namedtuple('Course', ['name',  'price', 'teacher'])
+python = Course('python', 999, 'alex')
 
-# 得到的结果是text格式的文本文档
-reponse = requests.get('url', useragent:xxxxxx)
+print(python)
+print(python.name)
+print(python.price)
 ```
 
 
@@ -2869,7 +3103,62 @@ reponse = requests.get('url', useragent:xxxxxx)
 
 面向对象编程（Object Oriented Programming，**OOP**，面向对象程序设计）
 
-## 7.1 面向对象
+1. 基础概念
+
+   1. 类：具有相同方法和属性的一类事物
+   2. 什么是对象、实例：一个拥有具体属性值和动作的具体个体
+   3. 实例化：从一个类得到一个具体对象的过程
+
+2. 组合
+
+   1. 一个类的对像作为另一类对象的实例变量
+   2. Foo().name
+
+3. 三大特性
+
+   1. 继承:所有的查找名字(调用方法和属性)。如果自己和父类都有，希望自己和父类都调用，super()/指定类名直接调
+
+      1. 父类、基类、超类
+      2. 派生类、子类
+      3. 多继承、单继承
+      4. 查找顺序
+      5. 多态：一个类变现出来的多种状态—>多个类表现出相似的状态
+      6. 鸭子类型：list，tuple，python的多态是通过鸭子类型实现的
+
+   2. 封装
+
+      1. 广义封装：类中成员
+
+      2. 狭义封装：私有成员
+
+         1. 只能在类的内部使用，类的外部不能调用，也不能在子类中使用
+         2. _类名__名字：命名
+
+         ![私有方法的访问](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/%E7%A7%81%E6%9C%89%E6%96%B9%E6%B3%95%E7%9A%84%E8%AE%BF%E9%97%AE.png)
+
+4. 类成员
+
+   1. _\_call__：源码中
+   2. _\_enter__ with
+   3. _\_dict__
+
+5. 特殊方法/魔术方法/内置方法/双下方法
+
+6. 相关内置函数
+
+   1. isinstance
+   2. issubclass
+   3. type
+   4. super（新式类支持，遵循mro顺序）
+
+7. 新式类和经典类
+
+   1. 新式类：继承object，super，多继承（广度优先c3），具有mro方法
+   2. 经典类：py2不继承object，无super/mro ， 深度优先
+
+   
+
+## 7.1 面向对象基础
 
 **优点和应用场景**：
 
@@ -3096,7 +3385,7 @@ def func(arg):  # 多种类型，很多事物
 # 这就是鸭子模型，类似于上述的函数，我们认为只要能呱呱叫的就是鸭子，只要有append方法，就是我们想要的类型
 ```
 
-### 5. 类的专有方法：
+### 5. 类的专有方法
 
 - **_\_init__ :** 初始化，在生成对象时调用
 - **_\_del__ :** 析构函数，释放对象时使用
@@ -3408,7 +3697,10 @@ class Foo:
 
 #### 2.2 _\_new__(构造方法)
 
-**Note**：new方法是静态方法，在使用__new__方法时，构造的对象值为  new 方法的**返回值**
+**Note**
+
+1. new方法是静态方法，在使用__new__方法时，构造的对象值为  new 方法的**返回值**
+2. 创建的是一块内存和指针
 
 ```python
 #  __new__ 创建一个空对象
@@ -3518,6 +3810,27 @@ val = obj1 + obj2    # obj1触发，把obj1传给self
 ```
 
 **特殊成员**：为了能够给快速实现某些方法而生。
+
+2.9 **_\_iter__**
+
+```python
+# 可迭代对象
+class Foo:
+  	def __iter__(self):
+    		return iter([1, 2, 3, 4])
+  
+obj = Foo()
+# 示例2
+class Foo:
+  	def __iter__(self):
+        yield 1
+        yield 2
+        ...
+ 
+obj = Foo()
+```
+
+
 
 ### 3. 内置函数
 
@@ -3723,7 +4036,7 @@ class Foo:
 obj = Foo()
 ```
 
-### 3. 约束(源码)
+### 3. 抽象类/接口类(约束 源码)
 
 ```python
 # python的约束，易错点
@@ -3788,6 +4101,17 @@ v1 = getattr(obj, 'name')
 # setattr示例
 obj.name = 'eric'
 setattr(obj, 'name', 'eric')
+```
+
+- **getattr**：反射当前文件内容
+
+```python
+# 反射当前文件内容
+getattr(sys.modules[__name__], 'ab')
+# 通过对象获取、示例变量、绑定方法
+# 通过类来获取类变量、类方法、静态方法
+# 通过模块名获取模块中的任意变量(普通变量、函数、类)
+# 通过本文件反射任意变量
 ```
 
 ```python
@@ -3866,8 +4190,6 @@ class View(object):
     pass
 ```
 
-
-
 ```python
 # 推荐使用性能较好
 class Foo(object):
@@ -3883,49 +4205,6 @@ print(v)
 ```
 
 
-
-### 5. 模块importlib
-
-**作用**：根据字符串形式导入模块
-
-**开放封闭原则**：配置文件开放，代码封闭
-
-```python
-# 用字符串形式，去对象中找到其成员
-import importlib
-redis = importlib.import_module('utils.redis')
-getattr(redis, 'func')()
-```
-
-```python
-import importlib
-path = 'utils.redis.func'
-module_path, func_name = path.rsplit('.', 1)
-getattr(module_path, func_name)()
-```
-
-```python
-# 导入模块
-import importlib
-middleware_classes = [
-    'utils.redis.Redis',
-    # 'utils.mysql.MySQL',
-    'utils.mongo.Mongo'
-]
-for path in middleware_classes:
-    module_path,class_name = path.rsplit('.',maxsplit=1)
-    module_object = importlib.import_module(module_path)# from utils import redis
-    cls = getattr(module_object,class_name)
-    obj = cls()
-    obj.connect()
-
-
-# # 用字符串的形式导入模块。
-# redis = importlib.import_module('utils.redis')
-#
-# # 用字符串的形式去对象（模块）找到他的成员。
-# getattr(redis,'func')()
-```
 
 ## 7.5 单例&项目结构
 
@@ -4015,125 +4294,16 @@ import jd   # 加载jd.py,加载最后会实例化一个Foo对象并赋值给obj
 print(jd.obj)
 ```
 
-### 3. 日志（模块logging）
+### 3. 项目开发规范
 
-| 日志等级（level） | 描述                                                         |
-| ----------------- | ------------------------------------------------------------ |
-| DEBUG             | 最详细的日志信息，典型应用场景是 问题诊断                    |
-| INFO              | 信息详细程度仅次于DEBUG，通常只记录关键节点信息，用于确认一切都是按照我们预期的那样进行工作 |
-| WARNING           | 当某些不期望的事情发生时记录的信息（如，磁盘可用空间较低），但是此时应用程序还是正常运行的 |
-| ERROR             | 由于一个更严重的问题导致某些功能不能正常运行时记录的信息     |
-| CRITICAL          | 当发生严重错误，导致应用程序不能继续运行时记录的信息         |
+1. **bin**：**start**
+2. **config**：配置文件**settings**
+3. **src**：业务逻辑
+4. **db**：数据文件
+5. **lib**：扩展模块
+6. **log**：日志文件
 
-#### 3.1 日志示例
-
-##### Note(2)
-
-- 多次配置logging模块，只有第一次配置有效
-- 在应用日志时，保留堆栈信息需加上**exc_info=True**
-
-```python
-# 方法1
-import logging
-# logging.Error 默认级别
-logging.basicConfig(fielname='cmdb.log',
-                    format='%(asctime)s - %(name)s - %(levelname)s -%(module)s:  %(message)s'
-                    datefmt = '%Y-%m-%d-%H-%M-%S'
-                    level=logging.WARNING)
-logging.log(10, '日志内容')  # 不写
-logging.debug('asdfgh')
-logging.log(30, 'asdfgh')  # 写
-logging.warning('asdfgh')
-```
-
-**应用场景**：对于异常处理捕获的内容，使用日志模块将其保存到日志
-
-```python
-try:
-  requests.get('http://www.google.com')
-except Exception as e:
-  msg = str(e)  # 调用e.__str__方法
-  logging.error(msg, exc_info=True)   # 线程安全，支持并发
-
-```
-
-#### 3.2 logging本质
-
-```python
-# 方法2
-import logging
-# 对象1：文件 + 格式
-file_handler = logging.FileHandler('xxxxx', 'a', encoding='utf-8')
-fmt = logging.Formatter(fmt='%(asctime)s - %(name)s - %(levelname)s - %(module)s: %(message)s')
-file_handler.setFormatter(fmt)
-
-# 对象2：写（封装了对象1 ）
-logger = logging.Logger('xxx(在log中会显示)', level=logging.ERROR)
-logger.addHandler(file_handler)
-
-logger.error('你好')
-```
-
-#### 3.3 推荐方式
-
-```python
-import logging
-
-file_handler = logging.FileHandler(filename='x1.log', mode='a', encoding='utf-8',)
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s -%(module)s:  %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S %p',
-    handlers=[file_handler,],
-    level=logging.ERROR
-)
-
-logging.error('你好')
-```
-
-#### 3.4 日志切割
-
-```python
-import time
-import logging
-from logging import handlers
-# file_handler = logging.FileHandler(filename='x1.log', mode='a', encoding='utf-8',)
-file_handler = handlers.TimedRotatingFileHandler(filename='x3.log', when='s', interval=5, encoding='utf-8')
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s -%(module)s:  %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S %p',
-    handlers=[file_handler,],
-    level=logging.ERROR
-)
-
-for i in range(1,100000):
-    time.sleep(1)
-    logging.error(str(i))
-```
-
-```python
-# 在应用日志时，如果想要保留异常的堆栈信息。
-import logging
-import requests
-
-logging.basicConfig(
-    filename='wf.log',
-    format='%(asctime)s - %(name)s - %(levelname)s -%(module)s:  %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S %p',
-    level=logging.ERROR
-)
-
-try:
-    requests.get('http://www.xxx.com')
-except Exception as e:
-    msg = str(e) # 调用e.__str__方法
-    logging.error(msg,exc_info=True)
-```
-
-
-
-### 4.项目文件目录结构
-
-#### 4.1 脚本
+#### 3.1 脚本
 
 ```python
 import os
@@ -4144,14 +4314,14 @@ import xlrd
 import requests
 ```
 
-#### 4.2 单可执行文件
+#### 3.2 单可执行文件
 
 ```python
 # app(程序入口)/src(业务相关)/lib(公共的类库)/db(文件)/config(配置)
 app.py 越简单越好，少于10行
 ```
 
-#### 4.3 多可执行文件
+#### 3.3 多可执行文件
 
 ```python
 # app(程序入口)/src(业务相关)/lib(公共的类库)/db(文件)/config(配置)
