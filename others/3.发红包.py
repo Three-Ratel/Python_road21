@@ -26,9 +26,11 @@ class RedPackage(object):
         data = list(data)
         data.sort()
         data.insert(0, 0)
+        data.insert(len(data), money)
+
         for i in range(1, len(data)):
             data[i-1] = data[i] - data[i-1]
-        data.append(money - sum(data))
+
         data.pop()
         for i in range(len(data)):
             data[i] /= 100
