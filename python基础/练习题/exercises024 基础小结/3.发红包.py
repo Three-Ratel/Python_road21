@@ -8,34 +8,55 @@
 import random
 
 
-class RedPackage(object):
-    def __init__(self, money, people):
-        self.money = money
-        self.people = people
+# class RedPackage(object):
+#     def __init__(self, money, people):
+#         self.money = money
+#         self.people = people
+#
+#     def dispatch(self):
+#         money = self.money * 100
+#         data = set()
+#         while 1:
+#             val = random.randint(0, money)
+#             if val == money or val == 0:
+#                 continue
+#             data.add(val)
+#             if len(data) == self.people - 1:
+#                 break
+#         data = list(data)
+#         data.sort()
+#         data.insert(0, 0)
+#         for i in range(1, len(data)):
+#             data[i-1] = data[i] - data[i-1]
+#         data.append(money - sum(data))
+#         data.pop()
+#         for i in range(len(data)):
+#             data[i] /= 100
+#         return data
+#
+#
+# v = RedPackage(100, 10).dispatch()
+# print(v)
 
-    def dispatch(self):
-        money = self.money * 100
-        data = set()
-        while 1:
-            val = random.randint(0, money)
-            if val == money or val == 0:
-                continue
-            data.add(val)
-            if len(data) == self.people - 1:
-                break
-        data = list(data)
-        data.sort()
-        data.insert(0, 0)
-        for i in range(1, len(data)):
-            data[i-1] = data[i] - data[i-1]
-        data.append(money - sum(data))
-        data.pop()
-        for i in range(len(data)):
-            data[i] /= 100
-        return data
-
-
-v = RedPackage(100, 10).dispatch()
-print(v)
-
-
+"""
+improvement
+"""
+# class RedPackage(object):
+#     def __init__(self, money, people):
+#         self.money = money
+#         self.people = people
+#
+#     def dispatch(self):
+#         money = self.money * 100
+#         val = random.sample(range(1, money), self.people-1)
+#
+#         val.sort()
+#         val.insert(0, 0)
+#         val.append(money)
+#         for i in range(len(val)-1):
+#             yield (val[i+1] - val[i]) / 100
+#
+#
+# v = RedPackage(100, 10).dispatch()
+# for i in v:
+#     print(i)

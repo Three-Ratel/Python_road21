@@ -92,7 +92,7 @@
 
 
 """
-30. 
+30. 有processFunc变量，初始化为processFunc = collapse  and (lambda s:''.join(s.split()))) or (lambda s:s)
 """
 
 
