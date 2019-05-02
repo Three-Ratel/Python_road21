@@ -3,55 +3,106 @@
 import re
 
 """
-1.re.findall
+1. re.findall
 """
 # ret = re.findall('a', 'eva egon yuan')  # 返回所有满足匹配条件的结果,放在列表里
 # print(ret) #结果 : ['a', 'a']
 
-
-"""
-2.re.search
-"""
-# ret = re.search('a', 'eva egon yuan').group()
-# print(ret) #结果 : 'a'
-# # 函数会在字符串内查找模式匹配,只到找到第一个匹配然后返回一个包含匹配信息的对象,该对象可以
-# # 通过调用group()方法得到匹配的字符串,如果字符串没有匹配，则返回None。
-
-
-"""
-3.re.match
-"""
-# ret = re.match('a', 'abc')  # 同search,不过尽在字符串开始处进行匹配
-# print(ret.group())     # 结果 : 'a'
+# w = re.findall('\btina', 'tian tinaaaa')
+# print(w)
+# s = re.findall(r'\bstina', 'tian tinaaaa')
+# print(s)
+# v = re.findall(r'\btina', 'tian#tinaaaa')
+# print(v)
+# a = re.findall(r'\btina\b', 'tian#tina@aaa')
+# print(a)
 
 
 """
-4.re.split
+2. re.compile
 """
-ret = re.split('[ab]', 'abcd')  # 先按'a'分割得到''和'bcd',在对''和'bcd'分别按'b'分割
-print(ret)  # ['', '', 'cd']
+# import re
+# tt = "Tina is a good girl, she is coooool, clever, and so on..."
+# rr = re.compile(r'\w*oo\w*')
+# print(rr.findall(tt))   #查找所有包含'oo'的单词
 
 
 """
-5. re.sub
+3. re.match
 """
-# ret = re.sub('\d', 'H', 'eva3egon4yuan4', 1)#将数字替换成'H'，参数1表示只替换1个
-# print(ret) #evaHegon4yuan4
-#
-# ret = re.subn('\d', 'H', 'eva3egon4yuan4')#将数字替换成'H'，返回元组(替换的结果,替换了多少次)
-# print(ret)
-#
-# obj = re.compile('\d{3}')  #将正则表达式编译成为一个 正则表达式对象，规则要匹配的是3个数字
-# ret = obj.search('abc123eeee') #正则表达式对象调用search，参数为待匹配的字符串
-# print(ret.group())  #结果 ： 123
-#
-
-# ret = re.finditer('\d', 'ds3sy4784a')   #finditer返回一个存放匹配结果的迭代器
-# print(ret)  # <callable_iterator object at 0x10195f940>
-# print(next(ret).group())  #查看第一个结果
-# print(next(ret).group())  #查看第二个结果
-# print([i.group() for i in ret])  #查看剩余的左右结果
+# print(re.match('com', 'comwww.runcomoob').group())
+# print(re.match('^com', 'aComwww.runcomoob'))
+# print(re.match('^com', 'Comwww.runcomoob', re.I).group())
 
 
+"""
+4. re.search
+"""
+# print(re.search('\dcom', 'www.4comrunoob.5com').group())
 
+# import re
+# a = "123abc456"
+# print(re.search("([0-9]*)([a-z]*)([0-9]*)", a).group(0))
+# print(re.search("([0-9]*)([a-z]*)([0-9]*)", a).group(1))
+# print(re.search("([0-9]*)([a-z]*)([0-9]*)", a).group(2))
+# print(re.search("([0-9]*)([a-z]*)([0-9]*)", a).group(3))
+# print(re.search("([0-9]*)([a-z]*)([0-9]*)", a).group(4))
+
+
+"""
+5. re.findall
+"""
+# p = re.compile(r'\d+')
+# print(p.findall('o11n22m333k4444'))
+
+# import re
+# tt = "Tina is a good girl, she is cool, clever, and so on..."
+# rr = re.compile(r'\w*oo\w*')
+# print(rr.findall(tt))
+# print(re.findall(r'(\w)*oo(\w)', tt))  # ()表示子表达式
+
+
+"""
+6. re.finditer
+"""
+# iter = re.finditer(r'\d+', '12 drumm44ers drumming, 11 ... 10 ...')
+# for i in iter:
+#     print(i)
+#     print(i.group())
+#     print(i.span())
+
+"""
+7. re.split
+"""
+# print(re.split('\d+', 'one1two2three3four4five5  wwww', 2))
+
+
+"""
+8.re.sub
+"""
+# import re
+# text = "JGood is a handsome boy, he is cool, clever, and so on..."
+# print(re.sub(r'\s+', '-', text, 2))
+
+# import re
+# text = "JGood is a handsome boy, he is cool, clever, and so on..."
+# print(re.sub(r'\s+', lambda m: '[' + m.group(0) + ']', text, 0))
+
+
+"""
+9. re.subn
+"""
+# print(re.subn('[1-2]', 'A', '123456abcdef'))
+# print(re.sub("g.t", "have", 'I get A,  I got B ,I gut C'))
+# print(re.subn("g.t", "have", 'I get A,  I got B ,I gut C'))
+
+"""
+serarch, match, findall 区别
+"""
+# a = re.search('[\d]', "abc34").group()
+# print(a)
+# p = re.match('[\d]', "abc44")
+# print(p)
+# b = re.findall('[\d]', "abc33")
+# print(b)
 

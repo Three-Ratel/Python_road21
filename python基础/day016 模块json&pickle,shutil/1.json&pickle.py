@@ -18,11 +18,11 @@ v = {'k1': 'alex', 'k2': '你好'}
 """
 json中的 dump 和 load
 """
-f = open('a.txt', mode='w', encoding='utf-8')
-
-val = json.dump(v, f)
-f.close()
-print(val, type(val))
+# f = open('a.txt', mode='w', encoding='utf-8')
+#
+# val = json.dump(v, f)
+# f.close()
+# print(val, type(val))
 
 # f = open('a.txt', mode='r', encoding='utf-8')
 #
@@ -46,16 +46,16 @@ print(val, type(val))
 # """
 # pickle中的dump/load
 # """
-# f = open('a.txt', mode='wb')
-#
-# val = pickle.dump(v, f)
-# f.close()
-# print(val, type(val))
-#
-# f = open('a.txt', mode='rb')
-#
-# val = pickle.load(f)
-# f.close()
-# print(val, type(val))
+f = open('a.txt', mode='wb')
+
+val = pickle.dump(v, f)
+f.close()
+print(val, type(val))
+
+f = open('a.txt', mode='rb')
+
+val = pickle.load(f)
+f.close()
+print(val, type(val))
 
 

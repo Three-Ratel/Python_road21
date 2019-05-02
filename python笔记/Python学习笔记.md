@@ -4374,6 +4374,8 @@ www\.(baidu|google)\.com
 # () 表示分组，给一部分正则规定为一组，
 ```
 
+6. \b：匹配**\w**和**\W**之间，即匹配单词边界匹配一个单词边界，也就是指单词和空格间的位置。例如， 'er\b' 可以匹配"never" 中的 'er'，但不能匹配 "verb" 中的 'er'。
+
 ### 2.2 量词
 
 ```python
@@ -4435,23 +4437,195 @@ www\.(baidu|google)\.com
 # 就是取前面任意长度的字符，直到一个x出现
 ```
 
+### 2.4 特殊分组用法
 
+| 语法       | 含义                                       | 示例                 |            |
+| ---------- | ------------------------------------------ | -------------------- | ---------- |
+| (?P<name>) | 分组，除了原有的编号外再指定一个额外的别名 | (?P<id>abc){2}       | abcabc     |
+| (?P=name)  | 引用别名为<name>的分组匹配到字符串         | (?P<id>\d)abc(?P=id) | 1abc15abc5 |
+| \<number>  | 引用编号为<number>的分组匹配到字符串       | (\d)abc\1            | 1abc15abc5 |
 
+## 3. re模块
 
+1. **compile**()
 
+   - 编译正则表达式模式，返回一个对象的模式。（可以把那些常用的正则表达式编译成正则表达式对象，这样可以提高一点效率。）
 
+   - 格式：re.compile(pattern,flags=0)，pattern: 编译时用的表达式字符串。flags 编译标志位，用于修改正则表达式的匹配方式，如：是否区分大小写，多行匹配等。常用的flags有：
 
+   | 标志               | 含义                                                     |
+   | ------------------ | -------------------------------------------------------- |
+   | re.S(DOTALL)       | 使.匹配包括换行在内的所有字符                            |
+   | re.I（IGNORECASE） | 使匹配对大小写不敏感                                     |
+   | re.L（LOCALE）     | 做本地化识别（locale-aware)匹配，法语等                  |
+   | re.M(MULTILINE)    | 多行匹配，影响^和$                                       |
+   | re.X(VERBOSE)      | 该标志通过给予更灵活的格式以便将正则表达式写得更易于理解 |
+   | re.U               | 根据Unicode字符集解析字符，这个标志影响\w,\W,\b,\B       |
 
+   ```python
+   import re
+   tt = "Tina is a good girl, she is cool, clever, and so on..."
+   rr = re.compile(r'\w*oo\w*')
+   print(rr.findall(tt))   
+   # 查找所有包含'oo'的单词
+   执行结果如下：
+   ['good', 'cool']
+   ```
 
+2. **match**()
 
+决定RE是否在字符串刚开始的位置匹配。/这个方法并**不是完全匹配**。当pattern结束时若string还有剩余字符，仍然视为成功。想要完全匹配，可以在表达式末尾加上边界匹配符'$'
 
+格式：re.match(pattern, string, flags=0)
 
+```python
+print(re.match('com','comwww.runcomoob').group())
+print(re.match('com','Comwww.runcomoob',re.I).group())
+执行结果如下：com、com
+```
 
+3. **search()**
 
+    格式：re.search(pattern, string, flags=0)，re.search函数会在字符串内查找模式匹配,只要找到**第一个**匹配然后返回，如果字符串没有匹配，则返回None。
 
+   ```python
+   print(re.search('\dcom','www.4comrunoob.5com').group())
+   执行结果如下：4com
+   ```
 
+   **注**：match和search一旦匹配成功，就是一个**match object对象**，而match object对象有以下方法：
 
+   - group() 返回被 RE 匹配的字符串
+   - start() 返回匹配开始的位置
+   - end() 返回匹配结束的位置
+   - span() 返回一个元组包含匹配 (开始,结束) 的位置
+   - group() 返回re整体匹配的字符串，可以一次输入多个组号，对应组号匹配的字符串。
 
+   a. group（）返回re整体匹配的字符串，
+   b. group (n,m) 返回组号为n，m所匹配的字符串，如果组号不存在，则返回indexError异常
+   c.groups（）groups() 方法返回一个包含正则表达式中所有小组字符串的元组，从 1 到所含的小组号，通常groups()不需要参数，返回一个元组，元组中的元就是正则表达式中定义的组。 
+
+   ```python
+   import re
+   a = "123abc456"
+    print(re.search("([0-9]*)([a-z]*)([0-9]*)",a).group(0))   #123abc456,返回整体
+    print(re.search("([0-9]*)([a-z]*)([0-9]*)",a).group(1))   #123
+    print(re.search("([0-9]*)([a-z]*)([0-9]*)",a).group(2))   #abc
+    print(re.search("([0-9]*)([a-z]*)([0-9]*)",a).group(3))   #456
+   ###group(1) 列出第一个括号匹配部分，group(2) 列出第二个括号匹配部分，group(3) 列出第三个括号匹配部分。###
+   ```
+
+4. **findall()**
+
+   re.findall遍历匹配，可以获取字符串中所有匹配的字符串，**返回一个列表**。
+
+    格式：re.findall(pattern, string, flags=0)
+
+   ```python
+   p = re.compile(r'\d+')
+   print(p.findall('o1n2m3k4'))
+   执行结果如下：
+   ['1', '2', '3', '4']
+   ```
+
+   ```python
+   import re
+   tt = "Tina is a good girl, she is cool, clever, and so on..."
+   rr = re.compile(r'\w*oo\w*')
+   print(rr.findall(tt))
+   print(re.findall(r'(\w)*oo(\w)',tt))#()表示子表达式 
+   执行结果如下：
+   ['good', 'cool']
+   [('g', 'd'), ('c', 'l')]
+   ```
+
+5. **finditer()**
+
+    搜索string，返回一个顺序访问每一个匹配结果（Match对象）的迭代器。找到 RE 匹配的所有子串，并把它们作为一个迭代器返回。
+
+   格式：re.finditer(pattern, string, flags=0)
+
+   ```python
+   iter = re.finditer(r'\d+','12 drumm44ers drumming, 11 ... 10 ...')
+   for i in iter:
+       print(i)
+       print(i.group())
+       print(i.span())
+   ```
+
+6. **split()**
+
+按照能够匹配的子串将string分割后返回列表。
+
+可以使用re.split来分割字符串，如：re.split(r'\s+', text)；将字符串按空格分割成一个单词列表。
+
+格式re.split(pattern, string[, maxsplit]，maxsplit用于指定最大分割次数，不指定将全部分割。
+
+```python
+print(re.split('\d+','one1two2three3four4five5'))
+执行结果如下：
+['one', 'two', 'three', 'four', 'five', '']
+```
+
+7. **sub()**
+
+   使用re替换string中每一个匹配的子串后返回替换后的字符串。
+
+   格式：re.sub(pattern, repl, string, count)
+
+   ```python
+   import re
+   text = "JGood is a handsome boy, he is cool, clever, and so on..."
+   print(re.sub(r'\s+', '-', text))
+   执行结果如下：
+   JGood-is-a-handsome-boy,-he-is-cool,-clever,-and-so-on...
+   ```
+
+   其中第二个函数是替换后的字符串；本例中为'-'
+
+   第四个参数指替换个数。默认为0，表示每个匹配项都替换。
+
+   re.sub还允许使用函数对匹配项的替换进行复杂的处理。
+
+   如：re.sub(r'\s', lambda m: '[' + m.group(0) + ']', text, 0)；将字符串中的空格' '替换为'[ ]'。
+
+   ```python
+   import re
+   text = "JGood is a handsome boy, he is cool, clever, and so on..."
+   print(re.sub(r'\s+', lambda m:'['+m.group(0)+']', text,0))
+   执行结果如下：
+   JGood[ ]is[ ]a[ ]handsome[ ]boy,[ ]he[ ]is[ ]cool,[ ]clever,[ ]and[ ]so[ ]on...
+   ```
+
+8. **subn()**
+
+    返回替换次数
+
+   **格式**：subn(pattern, repl, string, count=0, flags=0)
+
+   ```python
+   print(re.subn('[1-2]','A','123456abcdef'))
+   print(re.sub("g.t","have",'I get A,  I got B ,I gut C'))
+   print(re.subn("g.t","have",'I get A,  I got B ,I gut C'))
+   执行结果如下：
+   ('AA3456abcdef', 2)
+   I have A,  I have B ,I have C
+   ('I have A,  I have B ,I have C', 3)
+   ```
+
+## 4.示例
+
+1. (?<!…) & (?<=...)
+
+```python
+import re
+m = re.findall('(?<=>)\w+', '\<a>wahaha\</a>\<b>banana\</b>\<h1>qqxing\</h1>')
+ for i in m:
+     print(i)
+
+m = re.findall('(?<!>)\w+', '\<a>wahaha\</a>\<b>banana\</b>\<h1>qqxing\</h1>')
+print(m)
+```
 
 
 
