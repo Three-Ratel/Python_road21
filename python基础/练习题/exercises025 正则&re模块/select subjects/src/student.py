@@ -14,6 +14,7 @@ course_list = os.path.join(path, 'course_list.txt')
 student_list = os.path.join(path, 'student_list.txt')
 student_list1 = os.path.join(path, 'student_list1.txt')
 select_info = os.path.join(path, 'select_info.txt')
+select_info1 = os.path.join(path, 'select_info1.txt')
 
 class Student(object):
     def __init__(self, name=None, pwd=None):
@@ -46,68 +47,73 @@ class Student(object):
 
     @staticmethod
     def select_course():
-        view_course.view_course()
-        if not os.path.exists(course_list) or os.path.getsize(course_list) == 0:
-            print('课程信息为空')
-            return
 
         info = {}
         info['course'] = set()
-        flag = False
-
         while True:
             course_num = input('请输入要选择课程序号(N/n)：').strip()
             if course_num.upper() == 'N':
                 return
-            if course_num.isdecimal():
-                course_num = int(course_num)
+
             f = open(course_list, mode='rb')
             i = 1
-
+            flag1 = False
             while True:
                 try:
                     v = pickle.load(f)
+                    print(v)
                     print(('%s' % i).ljust(8), v.name, v.price, v.period, v.teacher)
-                    if i == course_num:
+                    if str(i) == course_num:
+                        flag1 = True
                         info['name'] = settings.USER
-                        info['course'].add(v)
-                        break
+                        if v.name not in info['course']:
+                            info['course'].add(v.name)
+                        print(info['name'], info['course'])
                     i += 1
                 except:
                     break
+            if not flag1:
+                print('输入有误，请重新输入')
+                continue
+            f.close()
 
+            f1 = open(select_info1, mode='ab')
+            f = open(select_info, mode='rb')
+            flag = False
             while True:
                 try:
-
-                    f = open(select_info, mode='ab')
                     user_info = pickle.load(f)
-                    if settings.USER == user_info['name']:
-                        user_info = user_info.update(info)
-                        pickle.dump(user_info, f)
-                        f.close()
+                    if info['name'] == user_info['name']:
+                        print(user_info['name'], '----------------------d')
                         flag = True
-                        break
+                        user_info = user_info['course'].union(info['course'])
+                        print(user_info['course'], '哈哈哈哈哈')
+                    pickle.dump(user_info, f1)
                 except:
                     break
 
             if not flag:
-                f = open(select_info, mode='ab')
-                pickle.dump(info, f)
-                f.close()
+                print('hahahhahahahhahah')
+                pickle.dump(info, f1)
+            f.close()
+            f1.close()
+            os.remove(select_info)
+            os.rename(select_info1, select_info)
+
 
     @staticmethod
     def look_select():
         flag = False
+        f = open(select_info, mode='rb')
         while True:
             try:
-                f = open(select_info, mode='rb')
                 user_info = pickle.load(f)
                 if settings.USER == user_info['name']:
                     flag = True
-                    v = pickle.load(f)
                     print('用户：', settings.USER)
-                    for i in v['course']:
-                        print(str(i.name).ljust(6), end='')
+                    print('所选课程：', end='')
+                    for i in user_info['course']:
+                        print(i.ljust(6), end='')
                     break
             except:
                 break

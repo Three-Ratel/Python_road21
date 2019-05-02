@@ -16,7 +16,7 @@ def run():
         admin.Admini()()
 
     else:
-        student.Student(settings.USER, settings.PWD)()
+        student.Student()()
 
 
 if __name__ == '__main__':
