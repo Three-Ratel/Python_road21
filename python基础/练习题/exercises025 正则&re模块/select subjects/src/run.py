@@ -10,11 +10,13 @@ from config import settings
 
 def run():
     if not settings.USER:
-        login.login()
+        v = login.login()
+        if not v:
+            print('没有用户信息')
+            exit()
 
-    if settings.USER == 'admin':
+    if settings.USER == 'admin' or settings.USER == 'Admin':
         admin.Admini()()
-
     else:
         student.Student()()
 

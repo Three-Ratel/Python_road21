@@ -1,21 +1,16 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-import pickle, os, sys
-
-PATH = os.path.dirname(os.path.dirname(__file__))
-sys.path.append(PATH)
+import pickle, os
 from lib import get_md5
 from config import settings
 
-path = os.path.join(PATH, 'db')
-student_list = os.path.join(path, 'student_list.txt')
-
 
 def login():
-    if not os.path.exists(student_list) or os.path.getsize(student_list) == 0:
-        return
-    f = open(student_list, mode='rb')
     flag = False
+    if not os.path.exists(settings.STUDENT_LIST) or os.path.getsize(settings.STUDENT_LIST) == 0:
+        return flag
+
+    f = open(settings.STUDENT_LIST, mode='rb')
     name = input('请输入账号：').strip()
     if name.upper() == 'N':
         return
@@ -29,6 +24,7 @@ def login():
                 settings.USER = name
                 settings.PWD = pwd
                 flag = True
+                return flag
         except:
             f.close()
             break
