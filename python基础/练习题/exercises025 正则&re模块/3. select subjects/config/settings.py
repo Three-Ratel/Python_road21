@@ -13,3 +13,5 @@ COURSE_LIST = os.path.join(path, 'course_list.txt')
 
 SELECT_INFO = os.path.join(path, 'select_info.txt')
 SELECT_INFO1 = os.path.join(path, 'select_info1.txt')
+
+LOG_NAME = os.path.join(os.path.join(PATH, 'log'), 'log.log')
