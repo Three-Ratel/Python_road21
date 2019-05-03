@@ -2389,6 +2389,8 @@ v2 = (i for i in range(10)) # 生成器推导式，不会立即产生数据
 
 ## 5.8 异常处理
 
+### 1. 示例
+
 ```python
 # 示例1
 try:
@@ -2467,6 +2469,91 @@ func(['http://www.baidu.com', 'http://www.google.com', 'http://www.bing.com'])
 reponse = requests.get('url', useragent:xxxxxx)
 ```
 
+### 2. 基本格式
+
+```python
+try:
+  pass
+except ValueError as e:
+  pass
+except IndexErro as e:
+  pass
+except Exception as e:
+  print(e)
+finally: 
+  print('final')  # 无论对错都要执行的代码
+# e 代表异常信息，是Exception类的对象，有一个错误信息
+try:
+  int('asdf')
+except Exception as e:
+  print(e)
+
+try:
+  int('asdf')
+except ValueError as e:
+  print(e)
+  
+try:
+  int('asdf')
+except IndexError as e:
+  print(e)
+  
+# 即使遇到return 也会执行finally 
+def func():
+  try:
+    int('1')
+    return
+  except Exception as e:
+    print(e)
+  finally:
+    print('final')
+```
+
+### 3. 主动触发异常
+
+```python
+try:
+  int('123')
+  raise Exception('错误信息')   # 主动抛出异常
+except Exception as e:
+  print(1)
+```
+
+```python
+# 打开一个文件，
+def func():
+  resutl = True
+  try:
+      with open('x.log', mode='r', encoding='utf-8') as f:
+        	data = f.read()
+      if 'henry' not in data:
+        	raise Exception()
+   except Exception as e:
+     	result = False 
+   return result
+```
+
+### 4. 自定义异常
+
+```python
+# 示例1
+class MyException(Exception):
+  pass
+try:
+  raise MyException('haha,错了吧')
+except MyException as e:
+  print(e)
+```
+
+```python
+class MyException(Exception):
+  def __init__(self, message):
+      self.message = message
+try:
+  raise MyExceptoin('123')
+except MyException as e:
+  print(e.message)
+```
 # 第六章 模块
 
 
@@ -2516,12 +2603,10 @@ jd.f1()
 # from 模块.模块.模块 import 函数
 # 调用：模块.函数()，函数()
 # 主文件：运行的文件（print(__name__)). 
-if __name__ == '__main__'
+if __name__ == '__main__
 ```
 
-
-
-**Note1**（3）
+### Note1（4）
 
 - 模块在和要执行的py文件在同一路径且需要很多功能时，推荐使用import 模块
 - 其他推荐：from 模块 import 模块
@@ -2532,7 +2617,7 @@ if __name__ == '__main__'
 # __file__ python命令行中获取的参数
 import os
 import sys
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(BASE_DIR)
 ```
 
@@ -2588,7 +2673,7 @@ def get_random_data(length=6):
 - random.choice([1, 2, 3])：随机选择一个：验证码，抽奖
 - random.sample([1, 2, 3, 4, 5], 3)：随机选3个不重复，抽奖多个人
 - random.uniform(1, 5)：随机1-5中的随机小数
-- random.shuffle：洗牌，算法
+- random.shuffle([1,2,3,4])：洗牌，算法
 
 ### **2. hashlib / getpass**
 
@@ -2755,7 +2840,7 @@ for a, b, c in result:
 1. shutil.make_archive()
 2. shutil.unpack_archive()
 3. shutil.rmtree()
-   1. shutil.move()
+4. shutil.move()
 
 ```python
 import shutil
@@ -2800,7 +2885,7 @@ ctime = datetim.now().strftime('%Y-%m-%d %H:%M:%S')
 ### **1. json**
 
 ```python
-# 只能包含，int，str，list，dict，bool
+# 只能包含，int，bool，str，list，dict
 # 最外层必须是list/dict
 # json 中如果包含str，必须是 双引号
 # 如果是tuple类型数据，则会转换为list
@@ -2857,7 +2942,7 @@ print(val, typ(val))
 
 - time.time()   # 获取时间戳 1970.1.1 00:00-至今  的秒数
 - time.sleep(10)  # 等待的秒数
-- time.zone  # 和标准时间的差距，和电脑的设置有关
+- time.timezone  # 和标准时间的差距，和电脑的设置有关
 
 ### **2. datetime**
 
@@ -2876,7 +2961,7 @@ v3 = datetime.now(tz)  # 当前东7区时间
 ```python
 # 将datetime格式时间转化为str
 v1 = datetime.now()
-v1.strftime('%Y-%m-%d') # 连接不能使用汉字
+v1.strftime('%Y-%m-%d') # 连接不能使用汉字（Mac，linux没问题），可以使用.format()方法
 ```
 
 ```python
@@ -2940,10 +3025,9 @@ for path in middleware_classes:
     obj.connect()
 
 
-# # 用字符串的形式导入模块。
+# 用字符串的形式导入模块。
 # redis = importlib.import_module('utils.redis')
-#
-# # 用字符串的形式去对象（模块）找到他的成员。
+# 用字符串的形式去对象（模块）找到他的成员。
 # getattr(redis,'func')()
 ```
 
@@ -2965,8 +3049,8 @@ for path in middleware_classes:
 
 - 多次配置logging模块，只有第一次配置有效
 - 在应用日志时，保留堆栈信息需加上**exc_info=True**
-- 用户：记录日志（银行流水）
-- 程序员：统计、故障排除的 debug、错误完成代码优化
+- **用户**：记录日志（银行流水）
+- **程序员**：统计、故障排除的 debug、错误完成代码优化
 
 ```python
 # 方法1, 
@@ -3122,7 +3206,7 @@ print(python.price)
       2. 派生类、子类
       3. 多继承、单继承
       4. 查找顺序
-      5. 多态：一个类变现出来的多种状态—>多个类表现出相似的状态
+      5. **多态**：一个类变现出来的多种状态—>多个类表现出相似的状态
       6. 鸭子类型：list，tuple，python的多态是通过鸭子类型实现的
 
    2. 封装
@@ -3139,7 +3223,7 @@ print(python.price)
 4. 类成员
 
    1. _\_call__：源码中
-   2. _\_enter__ with
+   2. _\_enter__ (with open 连用)
    3. _\_dict__
 
 5. 特殊方法/魔术方法/内置方法/双下方法
@@ -3154,7 +3238,7 @@ print(python.price)
 7. 新式类和经典类
 
    1. 新式类：继承object，super，多继承（广度优先c3），具有mro方法
-   2. 经典类：py2不继承object，无super/mro ， 深度优先
+   2. 经典类：py2不继承object，**无super/mro** ， 深度优先
 
    
 
@@ -3166,11 +3250,11 @@ print(python.price)
 2. 数据封装（创建字典存储数据）
 3. 游戏示例：创建一些角色，并根据角色需要再创建任务
 
-- 封装思想：将同一类的函数封装到同一个py文件中，以后放便使用
-- 面向对象：将同一类的函数封装到同一个class中，以后放便使用
-- 对象名：命名首字母大写
+- **封装思想**：将同一类的函数封装到同一个py文件中，以后方便使用
+- **面向对象**：将同一类的函数封装到同一个class中，以后方便使用
+- **对象名**：命名首字母大写
 
-#### Note1
+#### Note1(1)
 
 - 函数式的应用场景 --> 各个函数之间是独立且无共用的数据
 
@@ -3192,10 +3276,10 @@ val = x.login('henry')        # 使用对象调用class中的方法
 print(val)
 ```
 
-#### Note2
+#### Note2(2)
 
 - **应用场景**：用于很多函数，需要对函数进行归类和划分（封装）
-- **self**：哪个对象操作
+- **self**：哪个对象操作，self代表类的**实例**，而非类
 
 ### 2. 对象的封装
 
@@ -3209,7 +3293,7 @@ class File:
     with open(self.path, mode='r', encoding='utf-8') as f:
       data = f.read()
   def write(self, content):
-    with open(self.path, mode='r', encoding='utf-8') as f:
+    with open(self.path, mode='a', encoding='utf-8') as f:
       data = f.write()
 # 创建对象，并使用   
 obj = File()
@@ -3238,13 +3322,13 @@ obj2 = Person('echo', 19, 'female')
 obj2.show()
 ```
 
-#### Note3（4）
+#### Note3（3）
 
-1. 如果写代码时，函数较多，可以将**函数归类**，并放入同一类中。
-2. 函数如果有一个反复使用的**公共值**，则可以封装到类中
-3. 面向对象**三大特性**：封装、继承、多态
-4. self代表类的**实例**，而非类
-5. 执行类中的方法时，需要通过**self间接调用**被封装的内容
+1. 函数和数据的封装
+   - 如果写代码时，函数较多，可以将**函数归类**，并放入同一类中。（函数的封装）
+   - 函数如果有一个反复使用的**公共值**，则可以封装到类中（数据的封装)
+2. 面向对象**三大特性**：封装、继承、多态
+3. 执行类中的方法时，需要通过**self间接调用**被封装的内容
 
 #### 2.1 查看对象的类
 
@@ -3327,13 +3411,8 @@ obj.f2()   # 会报错
 继承关系中的**查找方法**：
 
 1. self 指的是哪个对象
-2. 从当前实例化类中开始查找，自己没有就找其父类。
-3. 多继承，先找左边的，找不到时，再找右边的
-
-```python
-# 当类是经典类时，多继承情况下，会按照深度优先方式查找
-# 当类是新式类时，多继承情况下，会按照广度优先方式查找
-```
+2. 当类是经典类时，多继承情况下，会按照深度优先方式查找
+3. 当类是新式类时，多继承情况下，会按照广度优先方式查找
 
 #### 3.2 经典类和新式类
 
@@ -3427,7 +3506,7 @@ print (v1 + v2)
 
 ## 7.2 类成员(6)
 
-- 类对象指针，指向其类
+- 实例化对象时，对在对象中存储类对象指针，指向其类
 
 ### 1. 类变量（静态字段/属性）
 
@@ -3543,12 +3622,9 @@ for i in data_list:
 ```python
 class Foo:
   	def __init__(self, name):
-      	self.__name = name
-        
+      	self.__name = name    
     def func(self):
-      	print(self.name)
-        
-        
+      	print(self.name)        
 obj = Foo('alex')
 print(obj.__name)		# 会报错
 obj.func()          # 可以访问
@@ -3556,12 +3632,10 @@ obj.func()          # 可以访问
 
 ```python
 class Foo:
-  	__x = 1
-    
+  	__x = 1 
     @staticmethod
     def func():
       	print(Foo.__x)
-
 obj = Foo()  
 print(Foo.__x)       # 会报错
 print(obj._Foo__x)   # 强制访问私有成员
@@ -3678,7 +3752,9 @@ site.registry(3, UserConfig)     # 易错点
 site.run()
 ```
 
-### 2 特殊成员
+### 2. 特殊成员
+
+**特殊成员**：为了能够给快速实现某些方法而生。
 
 #### 2.1 _\_init__(初始化方法)
 
@@ -3809,9 +3885,7 @@ obj2 = Foo()
 val = obj1 + obj2    # obj1触发，把obj1传给self
 ```
 
-**特殊成员**：为了能够给快速实现某些方法而生。
-
-2.9 **_\_iter__**
+#### 2.9 **_\_iter__**
 
 ```python
 # 可迭代对象
@@ -3893,97 +3967,9 @@ obj = Foo()
 obj.func()
 ```
 
-### 5. 异常处理
-
-#### 5.1 基本格式
-
-```python
-try:
-  pass
-except ValueError as e:
-  pass
-except IndexErro as e:
-  pass
-except Exception as e:
-  print(e)
-finally: 
-  print('final')  # 无论对错都要执行的代码
-# e 代表异常信息，是Exception类的对象，有一个错误信息
-try:
-  int('asdf')
-except Exception as e:
-  print(e)
-
-try:
-  int('asdf')
-except ValueError as e:
-  print(e)
-  
-try:
-  int('asdf')
-except IndexError as e:
-  print(e)
-  
-# 即使遇到return 也会执行finally 
-def func():
-  try:
-    int('1')
-    return
-  except Exception as e:
-    print(e)
-  finally:
-    print('final')
-```
-
-#### 5.2 主动触发异常
-
-```python
-try:
-  int('123')
-  raise Exception('错误信息')   # 主动抛出异常
-except Exception as e:
-  print(1)
-```
-
-```python
-# 打开一个文件，
-def func():
-  resutl = True
-  try:
-      with open('x.log', mode='r', encoding='utf-8') as f:
-        	data = f.read()
-      if 'henry' not in data:
-        	raise Exception()
-   except Exception as e:
-     	result = False 
-   return result
-```
-
-#### 5.3 自定义异常
-
-```python
-# 示例1
-class MyException(Exception):
-  pass
-try:
-  raise MyException('haha,错了吧')
-except MyException as e:
-  print(e)
-```
-
-```python
-class MyException(Exception):
-  def __init__(self, message):
-      self.message = message
-try:
-  raise MyExceptoin('123')
-except MyException as e:
-  print(e.message)
-```
 
 
-
-## 7.4 约束&反射
+## 7.4 接口类和抽象类(约束)&反射
 
 ### 1. 扩展
 
@@ -4343,9 +4329,9 @@ sys.path.append(path)
 1. re模块本身只是用来操作正则表达式的和正则本身无关
 2. **正则表达式**：是一种匹配字符串的规则
 3. 为什么要有正则
-   - 匹配字符串
-   - 表单验证：11位，全数字，1开头，第二个数 3-9，绑定银行卡
-   - 爬虫：从网页源码中获取链接，重要数据
+   - **匹配字符串**
+   - **表单验证**：11位，全数字，1开头，第二个数 3-9，绑定银行卡
+   - **爬虫**：从网页源码中获取链接，重要数据
 
 ## 2. 规则
 
@@ -4370,7 +4356,7 @@ sys.path.append(path)
 
 ```python
 # 若果规则有重叠，需要长的在前面
-www\.(baidu|google)\.com
+www.(baidu|google).com
 # () 表示分组，给一部分正则规定为一组，
 ```
 
@@ -4428,11 +4414,11 @@ www\.(baidu|google)\.com
 ```
 
 ```python
-# . 是任意字符
-# * 是取 0 至 无限长度
-# ? 是非贪婪模式。
-# 为何在一起就是 取尽量少的任意字符，一般不会这么单独写，他大多用在：
-# .*?x
+. 是任意字符
+* 是取 0 至 无限长度
+? 是非贪婪模式。
+# 为何在一起就是 取尽量少的任意字符，一般不会这么单独写，大多用在：
+.*?x
 
 # 就是取前面任意长度的字符，直到一个x出现
 ```
@@ -4455,7 +4441,7 @@ www\.(baidu|google)\.com
 
    | 标志               | 含义                                                     |
    | ------------------ | -------------------------------------------------------- |
-   | re.S(DOTALL)       | 使.匹配包括换行在内的所有字符                            |
+   | re.S(DOTALL)       | 使匹配包括换行在内的所有字符                             |
    | re.I（IGNORECASE） | 使匹配对大小写不敏感                                     |
    | re.L（LOCALE）     | 做本地化识别（locale-aware)匹配，法语等                  |
    | re.M(MULTILINE)    | 多行匹配，影响^和$                                       |

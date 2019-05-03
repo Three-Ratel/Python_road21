@@ -20,5 +20,10 @@ else:
     print('Flase')
 
 
-
+"""
+random.shuffle(v)
+"""
+# v = [1, 2, 3, 4]
+# random.shuffle(v)
+# print(v)
 
