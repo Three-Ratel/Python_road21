@@ -57,7 +57,7 @@
 
 1. ASCII
 
-   ASCII码，**8bits**表示一个字符。包含所有英文字母和常用的字符，最多可以表示256种。
+   ASCII码，**7bits**表示一个字符,最高位用0表示，后来IBM进行扩展，形成8bit扩展的ASCII码。包含所有英文字母和常用的字符，最多可以表示127或256种。
 
 2. Unicode
 
@@ -74,7 +74,7 @@
    中文使用**2bytes**表示。GBK，是对GB2312的扩展，又称GBK**大字符集**，简而言之就是所有亚洲文字的双字节字符。
 
 ```python
-# IDE:统一使用UTF-8， 全局和项目均使用
+# IDE:统一使用UTF-8， 全局和项目均如此
 ```
 
 ## 2.3 变量
@@ -144,7 +144,7 @@ is not
 
 ### 7.  pyc 文件
 
-​	执行Python代码时，如果导入了其他的 .py 文件，那么，执行过程中会自动生成一个与其同名的 .pyc 文件，该文件就是Python解释器编译之后产生的字节码。
+​	执行Python代码时，如果导入了其他的 .py 文件，那么，执行过程中会自动生成一个与其同名的 .pyc 文件，该文件就是Python解释器**编译之后产生的字节码**。
 
 **ps**：代码经过编译可以产生字节码；字节码通过反编译也可以得到代码。
 
@@ -596,7 +596,6 @@ print(li)
 # 使用切片[]修改，则循环取值加入
 li[2:3] = 'a', 'b', 'c'
 print(li)
-
 ```
 
 7. 删除del li[]
@@ -821,7 +820,7 @@ print(info)
 
 ```python
 info = {1: 'henry', 2: 'echo', 3: 'eliane'}
-del infop[1]
+del info[1]
 print(info)
 ```
 
@@ -1018,8 +1017,8 @@ for i in v:
 
 **小数据池**
 
-- ==判断值
-- is判断内存地址
+- **==**判断值
+- **is**判断内存地址
 - python中默认会对int，str，bool进行缓存
 
 **缓存规则：**
@@ -1031,11 +1030,11 @@ for i in v:
 
 ### 2. 深浅拷贝
 
-1. 使用格式import copy
+1. 使用格式import copy（模块）
 2. **4 个结论**
-   - 浅拷贝只是拷贝第一层
-   - 深拷贝会拷贝所有可变类型的数据
-   - 只要 copy ，一定会为数据开辟新的内存空间
+   - 浅拷贝只是拷贝第一层可变类型
+   - 深拷贝拷贝所有可变类型的数据
+   - 只要 copy ，一定会为**数据**开辟新的内存空间
    - tuple 浅copy地址一样， 有嵌套的可变类型，deepcopy也会拷贝tuple数据
 
 # 第四章 文件操作
@@ -1072,7 +1071,7 @@ f.read(1) # 如果指定编码格式，会读出 1 个字符
 # way2 按行读取文件
 # 一般用于for循环中，可用来读取 GB 级别的文件
 f.readline() 只读取一行
-f.readline()  # 一次性加载所有内容到内存，并根据行分割成字符串
+f.readlines()  # 一次性加载所有内容到内存，并根据行分割成字符串
 # 读取一行时也可以使用
 for line in v:
   	line = line.strip('\n')
@@ -1141,8 +1140,6 @@ import os
 # 删除一个已经存在的文件test2.txt
 os.remove("test2.txt")
 ```
-
-
 
 ### 3. f.flush()
 
@@ -1298,9 +1295,8 @@ def 函数名(形参):
 函数名(实参)
 ```
 
-#### **Note1**（2）
+#### **Note1**（1)
 
-- 函数默认返回值是 None ，有时可以使用其作为**flag**
 - None方法类似函数，但不是（方法操作是s.upper(),方式，而函数是直接调用，len（），open（））
 
 ### 2. 两种参数（示例）
@@ -1339,10 +1335,12 @@ get_list_sum(info)
 
 ### 3. 函数的返回值
 
-#### **Note2**（2）
+#### Note2(4)
 
-- **return [表达式]** 结束函数，选择性地返回一个值给调用方(func()为返回值)。
-- return 1， 2 ，3   会返回tuple：(1, 2, 3)
+1. **return [表达式]** 结束函数，选择性地返回一个值给调用方(func()为返回值)。
+2. return 1， 2 ，3   会返回tuple：(1, 2, 3)
+3. 函数默认返回值是 None ，有时可以使用其作为**flag**
+4. 可变类型（list）的基本上都是None, 不可变（str）基本上会返回新值
 
 ```python
 def func(arg):
@@ -1369,8 +1367,6 @@ print(count)
 content = input()
 ```
 
-
-
 ### 4.  函数的四种方式
 
 ```python
@@ -1393,8 +1389,6 @@ def fun4(arg1, arg2):
   	return arg1 + arg2
 val = fun4(v1 + v2)
 ```
-
-
 
 ### 5.  练习(3)
 
@@ -1453,8 +1447,6 @@ func(a1 = 1, 2 )     # 此时会报顺序错误
 #### **Note3**（1）
 
 1. 关键字传参可以和位置传参混合使用，但 **位置参数** 必须在 关键字传参**前**。
-
-
 
 ### 2. 函数定义参数(3)
 
@@ -1521,14 +1513,12 @@ func(a=1, b=2, c=3, d=[1, 2 ,3])
 func(a=1, b=2, c=3, d=[1, 2, 3], **{'k1': 4, 'k2': 5})
 ```
 
-#### **Note4**（4）
+#### Note4(4)
 
 1. 形参中的**默认参数**，也可以使用**位置传参方式**
 2. 传参时，有*（**）时，会直接赋值 (循环加入) 给形参
 3. 不带* / **的实参，会转换为tuple / dict
 4. 传入的数据都是循环加入tuple / dict中
-
-
 
 ### 3.  作用域&函数嵌套
 
@@ -1566,7 +1556,7 @@ print(a)
 1. **python文件**就是一个全局作用域
 2. **函数**是一个 (局部) 作用域
 3. 局部作用域中的数据归自己**私有**
-4. 作用域中查找数据规则
+4. 作用域中**查找数据规则**
    - 优先查找自己作用域，自己没有，去父籍作用域查找直到找到全局作用域
    - 查找不到会报错，默认只能使用父籍作用域中的变量值不能赋值（**可变类型可以修改**）
 
@@ -1591,7 +1581,7 @@ nonlocal name
 name = 'alex'  # 给父籍变量重新赋值
 ```
 
-#### **Note6**（3）
+#### Note6(3)
 
 1. 对于可变变量可以进行**修改**
 2. global 关键字对全局变量进行**重新赋值**
@@ -1655,10 +1645,10 @@ v = bar()  # func
 v()
 ```
 
-#### **Note7**（3）
+#### Note7(3)
 
 1. 注意**func** 和 **func()** 的区别
-2. 函数可以放入set()中(不常用)， 或dict中（一般用于values，也可以放在key中但不常用）
+2. 函数(**实际是内存地址**)可以放入set()中(不常用)， 或dict中（一般用于values，也可以放在key中但不常用）
 3. 函数一旦定义，只要进行加载，就是不可变，可 **hash** 
 
 ```python
@@ -1712,7 +1702,7 @@ def func():
   v = func1(1)
   print(v)
 func()
-# way4 使用条件判断
+# way4 使用条件判断 ########
 func = lambda n1, n2: n1 if n1 > n2 else n2
 ```
 
@@ -1735,11 +1725,10 @@ v1 = func_list[0]('   alex')
 print(v1)			# 'alex'
 ```
 
-#### **Note8**（3）
+#### Note8(2)
 
 1. 用于表示简单函数（一行解决的函数）。
 2. lambda 表达式会默认返回**冒号：**之后的值
-3. 可变类型（list）的基本上都是None, 不可变（str）基本上会返回新值
 
 ### 4. 内置函数（30）
 
@@ -1749,12 +1738,13 @@ print(v1)			# 'alex'
 
   1. 强制转换(7)：int()，str,  bool,  list，dict，tuple，set
   2. 输入输出(2)：print, input
-  3. 其他(5)：type, id, range, open, len，**dir**：查看某一类的对像有什么方法
+  3. 其他(5)：type, id, range, open, len
   4. 数学(7)
      - abs，round，float（int(55.5)保留整数部分）
      - max，min，sum，
      - **divmod**（两数相除，得商和余数, 两个值）
-
+5. 面向对象相关(4)：dir，super，issubclass，isinstance
+  
   ```python
   # divmod. 练习
   USER_LIST = []
@@ -1766,10 +1756,10 @@ print(v1)			# 'alex'
   		每页展示10条
   		根据用户输入的页码，查看
   """
-  ```
-
-  5. 进制转换(3)：**bin**（0b，int<—>bin），**oct**（0o，int<—>oct），int(其他进制转int)，**hex**（0x，int<—>hex）
-
+```
+  
+6. 进制转换(3)：**bin**（0b，int<—>bin），**oct**（0o，int<—>oct），int(其他进制转int)，**hex**（0x，int<—>hex）
+  
   ```python
   # base 默认为 10
   v1 = '0b1101'
@@ -1780,8 +1770,8 @@ print(v1)			# 'alex'
   # 转16进制
   v1 = '0x1101'
   result = int(v1, base = 16)
-  ```
-
+```
+  
   ```python
   # ip 点分二进制，将十进制转为二进制并通过 . 连接ip = '192.168.12.79'
   ip = '192.168.12.79'
@@ -1795,12 +1785,13 @@ print(v1)			# 'alex'
       l.append(i)
   s = '.'.join(l)
   print(s)
-  ```
-
-  6. 编码相关
-     - chr() ：把int型数据，转换为unicode编码
-     - ord()：把字符转换为unicode
-
+```
+  
+  7. 编码相关
+  
+- chr() ：把int型数据，转换为unicode编码
+  - ord()：把unicode转换为**字符**
+  
   ```python
   # 生成验证码
   import random	# 导入一个模块
@@ -1812,12 +1803,13 @@ print(v1)			# 'alex'
   	return ' '.join(data)
     
   code = get_random_data()
-  print(code)
+print(code)
   ```
-
-  7. map / filter / reduce（py2）/zip
-     - **map**，循环每个元素（第二个参数），然后让元素执行函数（第一个参数），将每个函数结果保存到新的list中，并返回。（批量修改数据）
-
+  
+8. map / filter / reduce（py2）/zip
+  
+  - **map**，循环每个元素（第二个参数），然后让元素执行函数（第一个参数），将每个函数结果保存到新的list中，并返回。（批量修改数据）
+  
   ```python
   # map操作的 func 是一个函数 v 必须是可迭代，
   v = [11, 22, 33]
@@ -1827,29 +1819,30 @@ print(v1)			# 'alex'
   print(list(result))
   # 使用lambda 改写
   result = map(lambda x: x+100, v)
-  print(result)		# py2直接返回
+print(result)		# py2直接返回
   print(list(resutl)) # py3会返回一个object，可用list()查看
-  ```
-
+```
+  
   - **filter**
-
+  
   ```python
-  v = [1, 2, 3, 'welcome', 4, 'hello']
+  # 结果为True的时候，才返回数据
+v = [1, 2, 3, 'welcome', 4, 'hello']
   result = filter(lambda x: type(x) == int, v) # 生成新list
-  print(list(result))
+print(list(result))
   ```
-
+  
   - **reduce**
-
+  
   ```python
   import functools
-  v = [1, 2, 3, 4]
+v = [1, 2, 3, 4]
   result = functools.reduce(lambda x,y: x*y, v)
-  print(result)
+print(result)
   ```
-
+  
   - **zip**
-
+  
   ```python
   a = [1,2,3]
   b = [4,5,6]
@@ -1863,8 +1856,6 @@ print(v1)			# 'alex'
   # 与 zip 相反，*zipped 可理解为解压，返回二维矩阵式
   [(1, 2, 3), (4, 5, 6)]
   ```
-  
-  
   
   
 
@@ -1899,7 +1890,7 @@ def func(name):
   return inner 
 ```
 
-#### Note9（5） 
+#### Note9(5)
 
 1. **闭包**，为函数创建一块区域（内部变量供自己使用），为以后执行提供数据；
 2. 函数内部数据不会混乱
@@ -2029,8 +2020,6 @@ index = func(index)  # before 123 after
 index()
 ```
 
-**装饰器**：在不改变原函数的基础上，在函数执行之前、之后可以执行操作
-
 ```python
 # 第一步，执行func函数，并将下面的函数当作函数传递，相当于func(index)
 # 第二部，将func返回值，重新赋值为下面的函数名，index = func(index)
@@ -2074,7 +2063,7 @@ def func():
 # 判断用户是否登陆
 ```
 
-#### **Note10**
+#### Note10(2)
 
 1. **目的**：在在不改变原函数的基础上，在执行函数前后自定义一些操作
 2. **场景**：想要为函数扩展功能时
@@ -2140,14 +2129,14 @@ index(1, 2)
 ```python
 # 装饰器建议写法
 def wrapper(function):
-  	  	def inner(*args, **kwargs):
-        	v = funtion(*args, **kwargs)
-        return v
-     return inner
-    
+  	def inner(*args, **kwargs):
+    		v = funtion(*args, **kwargs)
+    		return v
+  	return inner
+
 @wrapper
 def func():
-							    	pass
+		pass
 ```
 
 - 带参数的装饰器
@@ -2190,8 +2179,6 @@ print(v)
 
 - 元数据
 - 多个装饰器：@x1 @x2
-
-
 
 ### 3. 推导式
 
@@ -2313,12 +2300,12 @@ for i in v:
 dir(v）
 ```
 
-**Note**
+#### Note11(4)
 
-- 函数中如果存在**yield**，则该函数为**生成器函数**，调用生成器函数会返回一个**生成器**
-- 只有被for循环时，生成器内部代码才会执行，每次循环都会获取yield的返回值
-- 即使函数内部的yield函数**永远执行不到**，也**是生成器**
-- **生成器**也是一种**特殊的迭代器**，也是一个可迭代对象
+1. 函数中如果存在**yield**，则该函数为**生成器函数**，调用生成器函数会返回一个**生成器**
+2. 只有被for循环时，生成器内部代码才会执行，每次循环都会获取yield的返回值
+3. 即使函数内部的yield函数**永远执行不到**，也**是生成器**
+4. **生成器**也是一种**特殊的迭代器**，也是一个可迭代对象
 
 ```python
 class Foo(object):

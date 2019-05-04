@@ -1,1 +1,4 @@
 你好，北京欢迎您
+welcom to beijing
+hello world
+欢迎来到中国

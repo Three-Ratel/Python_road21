@@ -119,11 +119,20 @@ importlib
 """
 collections
 """
-from collections import OrderedDict
+# from collections import OrderedDict
+#
+# a = OrderedDict()
+# print(a, type(a))
 
-a = OrderedDict()
-print(a, type(a))
 
-
+"""
+数据类型
+"""
+list
+li = [1, 2, 3, 4]
+print(li.__len__())
+for i in li:
+    print(i)
+print(li.__iter__())
 
 
