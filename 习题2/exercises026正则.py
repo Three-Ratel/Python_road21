@@ -3,8 +3,8 @@
 
 # 正则表达式练习
 # 1、匹配一篇英文文章的标题 类似 The Voice Of China
-import re
-# ret = re.findall(r'([A-Z](?:[a-zA-z]+)?)+', 'The Voice Of China')
+# import re
+# ret = re.findall(r'(?:[A-Z](?:[a-zA-z]+)?\s?)+', 'The Voice Of China')
 # print(ret)
 
 
@@ -27,81 +27,36 @@ import re
 
 # 5、从lianjia.html中匹配出标题，户型和面积，结果如下：
 # [('金台路交通部部委楼南北大三居带客厅   单位自持物业', '3室1厅', '91.22平米'), ('西山枫林 高楼层南向两居 户型方正 采光好', '2室1厅', '94.14平米')]
-content = """"<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<div class="info clear">
-	<div class="title">
-		<a class="" href="https://bj.lianjia.com/ershoufang/101103186217.html" target="_blank" data-log_index="1"
-		   data-el="ershoufang" data-housecode="101103186217" data-is_focus="1" data-sl="">金台路交通部部委楼南北大三居带客厅   单位自持物业</a>
-		<span class="new tagBlock">新上</span></div>
-	<div class="address">
-		<div class="houseInfo">
-            <a href="https://bj.lianjia.com/xiaoqu/1111027381816/" target="_blank" data-log_index="1" data-el="region">延静西里 </a>
-            <span class="divide">/</span>3室1厅<span class="divide">/</span>91.22平米<span class="divide">/</span>南 北<span class="divide">/</span>简装<span class="divide">/</span>有电梯
-        </div>
-	</div>
-	<div class="flood">
-		<div class="positionInfo">低楼层(共15层)
-            <span class="divide">/</span>1984年建板塔结合
-            <span class="divide">/</span>
-            <a href="https://bj.lianjia.com/ershoufang/hongmiao/" target="_blank">红庙</a></div>
-	</div>
-	<div class="followInfo">859人关注<span class="divide">/</span>30次带看
-		<div class="timeInfo"><span class="timeIcon"></span>6天以前发布</div>
-		<div class="tag"><span class="subway">近地铁</span><span class="taxfree">房本满五年</span><span class="haskey">随时看房</span></div>
-		<div class="priceInfo">
-			<div class="totalPrice"><span>570</span>万</div>
-			<div class="unitPrice" data-hid="101103186217" data-rid="1111027381816" data-price="62487"><span>单价62487元/平米</span></div>
-		</div>
-	</div>
-</div>
-<div class="info clear">
-    <div class="title">
-        <a class="" href="https://bj.lianjia.com/ershoufang/101103188116.html" target="_blank" data-log_index="2"
-           data-el="ershoufang" data-housecode="101103188116" data-is_focus="1" data-sl="">西山枫林 高楼层南向两居 户型方正 采光好</a>
-        <span class="new tagBlock">新上</span><span class="yezhushuo tagBlock">房主自荐</span></div>
-    <div class="address">
-        <div class="houseInfo">
-            <a href="https://bj.lianjia.com/xiaoqu/1111027381123/" target="_blank" data-log_index="2" data-el="region">西山枫林三期 </a>
-            <span class="divide">/</span>2室1厅<span class="divide">/</span>94.14平米<span class="divide">/</span>南<span class="divide">/</span>简装<span class="divide">/</span>有电梯
-        </div>
-    </div>
-    <div class="flood">
-        <div class="positionInfo">中楼层(共10层)
-            <span class="divide">/</span>2006年建板楼
-            <span class="divide">/</span>
-            <a href="https://bj.lianjia.com/ershoufang/pingguoyuan1/" target="_blank">苹果园</a></div>
-    </div>
-    <div class="followInfo">630人关注<span class="divide">/</span>23次带看
-        <div class="timeInfo"><span class="timeIcon"></span>6天以前发布</div>
-        <div class="tag"><span class="taxfree">房本满五年</span><span class="haskey">随时看房</span></div>
-        <div class="priceInfo">
-            <div class="totalPrice"><span>495</span>万</div>
-            <div class="unitPrice" data-hid="101103188116" data-rid="1111027381123" data-price="52582"><span>单价52582元/平米</span></div>
-        </div>
-    </div>
-</div>
-</body>
-</html>"""
-ret = re.finditer('<div class="title">.*?<a class=.*?>(?P<title>.*?)</a>.*?<span.*?>.*?</div>.*<div class="address">.*?\
-<span class="divide">/</span>(?P<layout>.*?)<span.*?>/</span>(?P<area>.*?)<span class="divide">.*?/div>', content, flags=re.S)
+# import re
+# import json
+# import requests
+# data = requests.get('https://bj.lianjia.com/ershoufang/')
+# content = data.text
+# f = open('lj.html', mode='w',encoding='utf-8')
+# json.dump(content, f)
+# f.close()
 
-for i in ret:
-    print(i.group('title'), i.group('layout'), i.group('area'))
+
+# f = open('lianjia.html', mode='r', encoding='utf-8')
+# content = f.read()
+# f.close()
+# import re
+# ret = re.findall('<div class="title">.*?<a class=.*?>(?P<title>.*?)<.*?/div>.*?<div class="houseInfo">.*?\
+# <span class="divide">/</span>(?P<layout>.*?)<span class="divide">/</span>(?P<area>.*?)<span class="divide">.*?/div>', content, flags=re.S)
+#
+# print(ret)
 
 # 6、
-s = '1-2*((60-30+(-40/5)*(9-2*5/3+7/3*99/4*2998+10*568/14))-(-4*3)/(16-3*2))'
+# s = '1-2*((60-30+(-40/5)*(9-2*5/3+7/3*99/4*2998+10*568/14))-(-4*3)/(16-3*2))'
 # 从上面算式中匹配出最内层小括号以及小括号内的表达式
-# ret = re.findall('', s)
+# import re
+# # ret = re.findall('-?\d+[*/\-+]\d+(?:(?:[*/+-]\d+)+)?', s)
+# ret = re.findall('-?\d+[*/\-+]\d+(?:[*/+-]\d+)*', s)
 # print(ret)
 
 
 # 7、从类似9-2*5/3+7/3*99/4*2998+10*568/14的表达式中匹配出乘法或除法
+# import re
 # ret = re.findall('\d+[*/]\d+(?:[*/]\d+){0,}', '9-2*5/3+7/3*99/4*2998+10*568/14')
 # print(ret)
 
@@ -109,4 +64,38 @@ s = '1-2*((60-30+(-40/5)*(9-2*5/3+7/3*99/4*2998+10*568/14))-(-4*3)/(16-3*2))'
 # 8、通读博客，完成三级菜单
 # http://www.cnblogs.com/Eva-J/articles/7205734.html
 
+
 # 9、大作业：计算器
+"""
+1)如何匹配最内层括号内的表达式
+2)如何匹配乘除法
+3)考虑整数和小数
+4)写函数，计算‘23’ ‘10/5’
+5)引用4)中写好的函数，完成'23/4'计算
+"""
+import re
+li = []
+s = '1-2*((60-30+(-40/5)*(9-2*5/3+7/3*99/4*2998+10*568/14))-(-4*3)/(16-3*2))'
+# ret = re.findall(r'(?<=\()-?\d+[*/+-]\d+(?:[*/+-]\d+)*(?=\))', s)
+ret = re.findall(r'(?<=\()[*/+\-\d\.]+(?=\))', s)
+# print(ret)
+
+
+i = '40/5'
+def exp(i):
+    for j in range(1, len(i)):
+        if i[j].isdecimal():
+            continue
+        break
+    v = re.split((i[j]), i)
+    v.append(i[j])
+    return v
+
+
+li = exp(i)
+print(li)
+res = 1
+for i in li:
+    k = li[-1]
+    res k= int(i)
+print(res)

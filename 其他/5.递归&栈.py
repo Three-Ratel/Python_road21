@@ -64,14 +64,54 @@ menu = {'北京':
 """
 堆栈实现
 """
-l = [menu]
-while l:
-    for key in l[-1]:
-        print(key)
-    k = input('input>>').strip()   # 北京
-    if k in l[-1].keys() and l[-1][k]:
-        l.append(l[-1][k])
-    elif k == 'b':
-        l.pop()
-    elif k == 'q':
-        break
+# l = [menu]
+# while l:
+#     for key in l[-1]:
+#         print(key)
+#     k = input('input>>').strip()   # 北京
+#     if k in l[-1].keys() and l[-1][k]:
+#         l.append(l[-1][k])
+#     elif k == 'b':
+#         l.pop()
+#     elif k == 'q':
+#         break
+
+
+"""
+栈实现：计算文件夹大小
+"""
+import os
+path = os.path.dirname(os.path.dirname(__file__))
+
+li = [path]
+size = 0
+while li:
+    path = li.pop()
+    for i in os.listdir(path):
+        i = os.path.join(path, i)
+        if os.path.isdir(i):
+            li.append(i)
+        else:
+            size += os.path.getsize(i)
+
+print(size)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
