@@ -1756,6 +1756,7 @@ print(v1)			# 'alex'
   		每页展示10条
   		根据用户输入的页码，查看
   """
+  ```
 ```
   
 6. 进制转换(3)：**bin**（0b，int<—>bin），**oct**（0o，int<—>oct），int(其他进制转int)，**hex**（0x，int<—>hex）
@@ -1771,7 +1772,7 @@ print(v1)			# 'alex'
   v1 = '0x1101'
   result = int(v1, base = 16)
 ```
-  
+
   ```python
   # ip 点分二进制，将十进制转为二进制并通过 . 连接ip = '192.168.12.79'
   ip = '192.168.12.79'
@@ -1785,10 +1786,10 @@ print(v1)			# 'alex'
       l.append(i)
   s = '.'.join(l)
   print(s)
-```
-  
+  ```
+
   7. 编码相关
-  
+
 - chr() ：把int型数据，转换为unicode编码
   - ord()：把unicode转换为**字符**
   
@@ -1819,8 +1820,9 @@ print(code)
   print(list(result))
   # 使用lambda 改写
   result = map(lambda x: x+100, v)
-print(result)		# py2直接返回
+	print(result)		# py2直接返回
   print(list(resutl)) # py3会返回一个object，可用list()查看
+  ```
 ```
   
   - **filter**
@@ -1830,19 +1832,19 @@ print(result)		# py2直接返回
 v = [1, 2, 3, 'welcome', 4, 'hello']
   result = filter(lambda x: type(x) == int, v) # 生成新list
 print(list(result))
-  ```
-  
+```
+
   - **reduce**
-  
+
   ```python
   import functools
 v = [1, 2, 3, 4]
   result = functools.reduce(lambda x,y: x*y, v)
 print(result)
   ```
-  
+
   - **zip**
-  
+
   ```python
   a = [1,2,3]
   b = [4,5,6]
@@ -1856,7 +1858,7 @@ print(result)
   # 与 zip 相反，*zipped 可理解为解压，返回二维矩阵式
   [(1, 2, 3), (4, 5, 6)]
   ```
-  
+
   
 
 ## 5.5 函数闭包
@@ -2317,7 +2319,24 @@ class Foo(object):
 obj = Foo(object)
 ```
 
-2. 生成器示例
+2. **生成器中send**
+
+- **send方法，会触发一次next操作，yiled结果为其返回值**
+
+```python
+def func():
+    print(123)
+    n = yield('aaa')
+    print('----->', n)
+    yield 'bbb'
+
+data = func()
+next(data)
+v = data.send('太厉害了，直接传进去了')
+print(v)
+```
+
+3. 生成器示例
 
 ```python
 # 示例：读取文件
@@ -2344,7 +2363,7 @@ import redis
 coon = redis.Redis(host='192.168.12.12')
 ```
 
-3. yield from 关键字
+4. yield from 关键字
 
 ```python
 # yield from (py3.3之后)
@@ -2363,7 +2382,7 @@ def func():
   yield 
 ```
 
-4. 生成器推导式
+5. 生成器推导式
 
 ```python
 v1 = [i for i in range(10)] # list推导式，立即产生数据
@@ -2373,6 +2392,8 @@ def func():
 v2 = func()  # 与下面v2相同
 v2 = (i for i in range(10)) # 生成器推导式，不会立即产生数据
 ```
+
+
 
 ## 5.8 异常处理
 
@@ -4445,21 +4466,27 @@ www.(baidu|google).com
    ['good', 'cool']
    ```
 
-2. **match**()
+2. **re.match()**
 
-决定RE是否在字符串刚开始的位置匹配。/这个方法并**不是完全匹配**。当pattern结束时若string还有剩余字符，仍然视为成功。想要完全匹配，可以在表达式末尾加上边界匹配符'$'
+   **格式**：re.match(pattern, string, flags=0)
 
-格式：re.match(pattern, string, flags=0)
+   - 在search前的正则前加了一个：**^**
 
-```python
-print(re.match('com','comwww.runcomoob').group())
-print(re.match('com','Comwww.runcomoob',re.I).group())
-执行结果如下：com、com
-```
+   - 想要完全匹配，可以在表   达式末尾加上边界匹配符'$'
+
+   ```python
+   # 没有匹配到，则返回 None
+   # 从字符串开头匹配，匹配上则返回一个match对像，有group()方法
+   import re 
+   ret = re.match('\d', '8alex83')  
+   print(ret)
+   ```
 
 3. **search()**
 
-    格式：re.search(pattern, string, flags=0)，re.search函数会在字符串内查找模式匹配,只要找到**第一个**匹配然后返回，如果字符串没有匹配，则返回None。
+   **格式**：re.search(pattern, string, flags=0)
+
+   - re.search只要找到**第一个**匹配然后返回，如果字符串没有匹配，则返回None。
 
    ```python
    print(re.search('\dcom','www.4comrunoob.5com').group())
@@ -4476,7 +4503,7 @@ print(re.match('com','Comwww.runcomoob',re.I).group())
 
    a. group（）返回re整体匹配的字符串，
    b. group (n,m) 返回组号为n，m所匹配的字符串，如果组号不存在，则返回indexError异常
-   c.groups（）groups() 方法返回一个包含正则表达式中所有小组字符串的元组，从 1 到所含的小组号，通常groups()不需要参数，返回一个元组，元组中的元就是正则表达式中定义的组。 
+   c.groups（）groups() 方法返回一个包含正则表达式中所有小组字符串的元组，从 1 到所含的小组号，通常groups()不需要参数，返回一个**元组**，元组中的元就是正则表达式中定义的组。 
 
    ```python
    import re
@@ -4490,9 +4517,9 @@ print(re.match('com','Comwww.runcomoob',re.I).group())
 
 4. **findall()**
 
-   re.findall遍历匹配，可以获取字符串中所有匹配的字符串，**返回一个列表**。
+    **格式**：re.findall(pattern, string, flags=0)
 
-    格式：re.findall(pattern, string, flags=0)
+   - 可以获取字符串中所有匹配的字符串，**返回一个列表**。
 
    ```python
    p = re.compile(r'\d+')
@@ -4506,7 +4533,7 @@ print(re.match('com','Comwww.runcomoob',re.I).group())
    tt = "Tina is a good girl, she is cool, clever, and so on..."
    rr = re.compile(r'\w*oo\w*')
    print(rr.findall(tt))
-   print(re.findall(r'(\w)*oo(\w)',tt))#()表示子表达式 
+   print(re.findall(r'(\w)*oo(\w)',tt)) # ()表示子表达式 
    执行结果如下：
    ['good', 'cool']
    [('g', 'd'), ('c', 'l')]
@@ -4514,81 +4541,131 @@ print(re.match('com','Comwww.runcomoob',re.I).group())
 
 5. **finditer()**
 
-    搜索string，返回一个顺序访问每一个匹配结果（Match对象）的迭代器。找到 RE 匹配的所有子串，并把它们作为一个迭代器返回。
+   搜索string，返回一个顺序访问每一个匹配结果（Match对象）的迭代器。找到 RE 匹配的所有子串，并把它们作为一个迭代器返回。
 
    格式：re.finditer(pattern, string, flags=0)
 
    ```python
-   iter = re.finditer(r'\d+','12 drumm44ers drumming, 11 ... 10 ...')
-   for i in iter:
-       print(i)
-       print(i.group())
-       print(i.span())
+   # 匹配到结果为 迭代器，每一项都是match对象，通过group取值
+   import re
+   ret = re.finditer('\d', 'safh123ghakjdsfg234'*2000000)
+   for i in ret:
+     print(i.group())
    ```
 
 6. **split()**
 
-按照能够匹配的子串将string分割后返回列表。
+    按照能够匹配的子串将string分割后返回列表。
 
-可以使用re.split来分割字符串，如：re.split(r'\s+', text)；将字符串按空格分割成一个单词列表。
+    可以使用re.split来分割字符串，如：re.split(r'\s+', text)；将字符串按空格分割成一个单词列表。
 
-格式re.split(pattern, string[, maxsplit]，maxsplit用于指定最大分割次数，不指定将全部分割。
+    格式re.split(pattern, string[, maxsplit]，maxsplit用于指定最大分割次数，不指定将全部分割。
+
+    ```python
+    import re
+    ret = re.split('\d+', 'henry18')
+    print(ret)
+    # 保留分组中内容
+    ret = re.split('(\d+)', 'henry18')
+    print(ret)
+    ```
+
+
+7. **sub()/ subn()**
+
+   - 不返回/返回替换次数
+   
+   
+    **格式**：re.sub(pattern, repl, string, count=0)
+
+    **格式**：subn(pattern, repl, string, count=0, flags=0) 
+
+     ```python
+    import re
+    text = "JGood is a handsome boy, he is cool, clever, and so on..."
+    print(re.sub(r'\s+', lambda m:'['+m.group(0)+']', text,0))
+    执行结果如下：
+    JGood[ ]is[ ]a[ ]handsome[ ]boy,[ ]he[ ]is[ ]cool,[ ]clever,[ ]and[ ]so[ ]on...
+     ```
+
+    ```python
+    # 替换 n 次
+    ret = re.sub('\d', 'G', 'henry18'，n)
+    print(ret)
+    # 返回替换次数（tuple类型）
+    ret = re.subn('\d', 'G', 'henry18')
+    print(ret)  # 返回值为tuple类型
+    ```
+
+   
+
+## 3. 分组
+
+1. group()：括号中默认为0，即取第0个分组
 
 ```python
-print(re.split('\d+','one1two2three3four4five5'))
-执行结果如下：
-['one', 'two', 'three', 'four', 'five', '']
+s = '<h1>wahaha</h1>'
+ret = re.search('(\w+)>(.*?)</\w+>', s)
+print(ret.group())
+print(ret.group(1))
+print(ret.group(2))
 ```
 
-7. **sub()**
+2. **分组命名**(?P<name>正则表达式)
+   - name：不需要加引号，本身就是字符串
 
-   使用re替换string中每一个匹配的子串后返回替换后的字符串。
+```python
+ret = re.search('<(?P<tag>\w+)>(?P<content>.*?)</\w+>', s)
+print(ret.group('tag'))
+print(ret.group('content'))
+```
 
-   格式：re.sub(pattern, repl, string, count)
+3. **引用分组**(?P=name)
 
-   ```python
-   import re
-   text = "JGood is a handsome boy, he is cool, clever, and so on..."
-   print(re.sub(r'\s+', '-', text))
-   执行结果如下：
-   JGood-is-a-handsome-boy,-he-is-cool,-clever,-and-so-on...
-   ```
+```python
+s = '<h1>wahaha</h1>'
+ret = re.search('(?P<tag>\w+)>.*?</(?P=tag)>', s)
+print(ret.group())
+```
 
-   其中第二个函数是替换后的字符串；本例中为'-'
+```python
+s = '<h1>wahaha</h1>'
+# \1 在python中有特殊含义
+ret = re.search(r'(\w+)>.*?</\1>', s)
+print(ret.group())
+```
 
-   第四个参数指替换个数。默认为0，表示每个匹配项都替换。
+4. 取消分组优先(?:)
 
-   re.sub还允许使用函数对匹配项的替换进行复杂的处理。
+```python
+# findall 遇到正则中的分组 优先 显示分组中的内容
+import re
+ret = re.findall('\d(\d)', 'henry18')
+print(ret)
+# 取消分组优先（?:正则表达式）
+ret = re.findall('\d+(?:\.\d+)?', '1.234+2')
+print(ret)
+```
 
-   如：re.sub(r'\s', lambda m: '[' + m.group(0) + ']', text, 0)；将字符串中的空格' '替换为'[ ]'。
+5. split，保留分割符()
 
-   ```python
-   import re
-   text = "JGood is a handsome boy, he is cool, clever, and so on..."
-   print(re.sub(r'\s+', lambda m:'['+m.group(0)+']', text,0))
-   执行结果如下：
-   JGood[ ]is[ ]a[ ]handsome[ ]boy,[ ]he[ ]is[ ]cool,[ ]clever,[ ]and[ ]so[ ]on...
-   ```
+```python
+# 保留分组中内容
+ret = re.split('(\d+)', 'henry18')
+print(ret)
+```
 
-8. **subn()**
+## 4. 练习
 
-    返回替换次数
+```python
+import re
+ret = re.findall(r'\d+\.\d+|(\d)', '2+23*3.42/3.2')
+print(ret)
+ret.remove('')
+print(ret)
+```
 
-   **格式**：subn(pattern, repl, string, count=0, flags=0)
-
-   ```python
-   print(re.subn('[1-2]','A','123456abcdef'))
-   print(re.sub("g.t","have",'I get A,  I got B ,I gut C'))
-   print(re.subn("g.t","have",'I get A,  I got B ,I gut C'))
-   执行结果如下：
-   ('AA3456abcdef', 2)
-   I have A,  I have B ,I have C
-   ('I have A,  I have B ,I have C', 3)
-   ```
-
-## 4.示例
-
-1. (?<!…) & (?<=...)
+**以。。。为开头(?<!…) & (?<=…)**
 
 ```python
 import re
@@ -4600,11 +4677,20 @@ m = re.findall('(?<!>)\w+', '\<a>wahaha\</a>\<b>banana\</b>\<h1>qqxing\</h1>')
 print(m)
 ```
 
+- | ：或只负责把两个表达式分开，如果是整个表达式中只对一部分内容进行或，需要分组
 
+- ()：限定一组正则的量词约束 (\d\w)?
 
+```python
+# 以a开头，由至少一个字母组成的字
+^a[a-zA-Z]+
+^a[a-zA-Z]*
+```
 
-
-
+```python
+# 以1开头，中间3-5个数字，如果中间位置超过5个数字，则整个字符串不匹配
+^1\d{3,5}$
+```
 
 
 

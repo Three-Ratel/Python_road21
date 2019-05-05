@@ -89,59 +89,62 @@ print(li)
 """
 冒泡排序改进：提前终止的bubble
 """
-# def swap(li):
-#     i = 1
-#     sorted = True
-#     while i < len(li):
-#         if li[i-1] > li[i]:
-#             sorted = False
-#             li[i - 1], li[i] = li[i], li[i - 1]
-#         i += 1
-#     return sorted
-#
-#
-# def bubble(li):
-#     j = len(li) - 1
-#     while j:
-#         j -= 1
-#         if swap(li):
-#             break
-#     print('哈哈，我是j，看我是不是0哦', 'j =', j)
-#
-#
-# bubble(li)
-# print(li)
-
-
-"""
-冒泡排序改进：提前终止的bubble + 脏位判断
-"""
-last = 0
+j = len(li) - 1
 def swap(li):
     i = 1
-    global last
-    print(last, end=' ')
+    global j
     sorted = True
-    while i < len(li) - last:
+    while i < len(li):
         if li[i-1] > li[i]:
             sorted = False
             li[i - 1], li[i] = li[i], li[i - 1]
-            last = i
         i += 1
     return sorted
 
 
 def bubble(li):
-    j = len(li) - 1
+    global j
     while j:
         j -= 1
-        swap(li)
-    print('')
+        if swap(li):
+            break
     print('哈哈，我是j，看我是不是0哦', 'j =', j)
 
 
 bubble(li)
 print(li)
+
+
+"""
+冒泡排序改进：提前终止的bubble + 脏位判断
+"""
+# last = 0
+# j = len(li) - 1
+# def swap(li):
+#     i = 1
+#     global last, j
+#     print(last, end=' ')
+#     sorted = True
+#     while i < len(li) - j:
+#         if li[i-1] > li[i]:
+#             sorted = False
+#             li[i - 1], li[i] = li[i], li[i - 1]
+#             last = i
+#         i += 1
+#     return sorted
+#
+#
+# def bubble(li):
+#     global j
+#     while j:
+#         j -= 1
+#         swap(li)
+#     print('')
+#     print('哈哈，我是j，看我是不是0哦', 'j =', j)
+#
+#
+# bubble(li)
+# print(li)
 
 
 
