@@ -26,7 +26,8 @@
 
 
 # 5、从lianjia.html中匹配出标题，户型和面积，结果如下：
-# [('金台路交通部部委楼南北大三居带客厅   单位自持物业', '3室1厅', '91.22平米'), ('西山枫林 高楼层南向两居 户型方正 采光好', '2室1厅', '94.14平米')]
+# [('金台路交通部部委楼南北大三居带客厅   单位自持物业', '3室1厅', '91.22平米'), ('西山枫林 高楼层南向两居 户型方正 采光好', \
+# '2室1厅', '94.14平米')]
 # import re
 # import json
 # import requests
@@ -37,14 +38,14 @@
 # f.close()
 
 
-# f = open('lianjia.html', mode='r', encoding='utf-8')
-# content = f.read()
-# f.close()
-# import re
-# ret = re.findall('<div class="title">.*?<a class=.*?>(?P<title>.*?)<.*?/div>.*?<div class="houseInfo">.*?\
-# <span class="divide">/</span>(?P<layout>.*?)<span class="divide">/</span>(?P<area>.*?)<span class="divide">.*?/div>', content, flags=re.S)
-#
-# print(ret)
+f = open('lianjia.html', mode='r', encoding='utf-8')
+content = f.read()
+f.close()
+import re
+ret = re.findall('<div class="title">.*?>(.*?)<.*?"houseInfo">.*?/span>(.*?)<.*?/span>(.*?)<.*?/div>',
+                 content, flags=re.S)
+
+print(ret)
 
 # 6、
 # s = '1-2*((60-30+(-40/5)*(9-2*5/3+7/3*99/4*2998+10*568/14))-(-4*3)/(16-3*2))'
