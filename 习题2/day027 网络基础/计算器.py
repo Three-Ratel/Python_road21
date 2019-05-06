@@ -90,9 +90,7 @@ def add_mul(s):
 def last_dispose(s):
     while True:
         ret = re.search('\d+(\.\d+)?[*/]-?\d+(\.\d+)?', s)
-        print(ret)
         if not ret: break
-
         ret = ret.group()
         new_s = mul_div(ret)
         s = s.replace(ret, str(new_s))
@@ -100,23 +98,28 @@ def last_dispose(s):
     s = s.replace('--', '+')
     s = s.replace('+-', '-')
     s = s.replace('-+', '-')
-    return s
-    #
-    # while True:
-    #     ret = re.search('-\d+(\.\d+)?[-+]-?\d+(\.\d+)?', s)
-    #     if not ret: break
-    #     ret = ret.group()
-    #     if '-' in s:
-    #         new_ret = ret.split('-')
-    #         print(new_ret)
-    #         new_ret = float(new_ret[0]) - float(new_ret[1])
-    #     else:
-    #         new_ret = ret.split('+')
-    #         print(new_ret)
-    #         new_ret = float(new_ret[0]) + float(new_ret[1])
-    #
-    #     s = s.replace(ret, str(new_ret))
-    #     return s
+    # return s
+
+    while True:
+        ret = re.search('-?\d+(\.\d+)?[-+]-?\d+(\.\d+)?', s)
+        if not ret: break
+        ret = ret.group()
+        first = True
+        for i in ret:
+            if first:
+                first = False
+                continue
+            if i == '-':
+                new_ret = ret.split('-')
+                print(new_ret)
+                new_ret = float(new_ret[0]) - float(new_ret[1])
+            else:
+                new_ret = ret.split('+')
+                print(new_ret)
+                new_ret = float(new_ret[0]) + float(new_ret[1])
+
+            s = s.replace(ret, str(new_ret))
+            return s
 
 
 def sub(s):
@@ -131,11 +134,10 @@ def sub(s):
         s = dispose_brcket(s)
 
         if '(' not in s:
-            break
-        #     s = last_dispose(s)
-        #     return s
+            s = last_dispose(s)
+            return s
 
-    return s
+    # return s
 
 
 val = sub(s)
