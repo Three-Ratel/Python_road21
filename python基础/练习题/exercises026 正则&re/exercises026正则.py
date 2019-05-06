@@ -73,29 +73,29 @@
 4)写函数，计算‘23’ ‘10/5’
 5)引用4)中写好的函数，完成'23/4'计算
 """
-import re
-li = []
-s = '1-2*((60-30+(-40/5)*(9-2*5/3+7/3*99/4*2998+10*568/14))-(-4*3)/(16-3*2))'
-# ret = re.findall(r'(?<=\()-?\d+[*/+-]\d+(?:[*/+-]\d+)*(?=\))', s)
-ret = re.findall(r'(?<=\()[*/+\-\d\.]+(?=\))', s)
-# print(ret)
-
-
-i = '40/5'
-def exp(i):
-    for j in range(1, len(i)):
-        if i[j].isdecimal():
-            continue
-        break
-    v = re.split((i[j]), i)
-    v.append(i[j])
-    return v
-
-
-li = exp(i)
-print(li)
-res = 1
-for i in li:
-    k = li[-1]
-    res k= int(i)
-print(res)
+# import re
+# li = []
+# s = '1-2*((60-30+(-40/5)*(9-2*5/3+7/3*99/4*2998+10*568/14))-(-4*3)/(16-3*2))'
+# # ret = re.findall(r'(?<=\()-?\d+[*/+-]\d+(?:[*/+-]\d+)*(?=\))', s)
+# ret = re.findall(r'(?<=\()[*/+\-\d\.]+(?=\))', s)
+# # print(ret)
+#
+#
+# i = '40/5'
+# def exp(i):
+#     for j in range(1, len(i)):
+#         if i[j].isdecimal():
+#             continue
+#         break
+#     v = re.split((i[j]), i)
+#     v.append(i[j])
+#     return v
+#
+#
+# li = exp(i)
+# print(li)
+# res = 1
+# for i in li:
+#     k = li[-1]
+#     res k= int(i)
+# print(res)
