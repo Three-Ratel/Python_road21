@@ -27,6 +27,7 @@ while True:
 
     data = input('>>>')
     sk.sendto(data.encode('utf-8'), client_addr)
+    print(client_addr)
     if data.strip().upper() == 'Q': break
 
 
