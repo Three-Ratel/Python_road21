@@ -3,14 +3,21 @@
 
 import socket
 
-
 sk = socket.socket()
-sk.bind(('192.168.12.8', 9000))
+sk.bind(('127.0.0.1', 9000))
+
 sk.listen()
+
 con, add = sk.accept()
-con.send(b'hello')
+
 while True:
+    content = input('请输入内容：')
+    con.send(content.encode('utf-8'))
+    if content.upper() == 'Q': break
+
     data = con.recv(1024).decode('utf-8')
+    if data == 'Q':
+        break
     print(data)
 
 
