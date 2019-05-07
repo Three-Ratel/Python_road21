@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 import socket, os
 sk = socket.socket()
-sk.connect(('192.168.12.62', 9000))
+sk.connect(('127.0.0.1', 9000))
 file_name = '肖申克的救赎.rmvb'
 path = os.path.join('/Users/henry/Movies/Movies', file_name)
 size = os.path.getsize(path)
