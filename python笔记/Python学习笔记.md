@@ -1,4 +1,4 @@
-第一章 计算机基础
+# 第一章 计算机基础
 
 ## 1. 计算机概览
 
@@ -2691,8 +2691,11 @@ def get_random_data(length=6):
 
 摘要算法模块，**密文验证**/**校验文件独立性**
 
+#### note
+
 1. md5 / sha
 2. 摘要文件内容一样，无论怎么分割，md5摘要后一致（大文件一致性校验）
+3. 一般在服务端进行加盐，给每个用户使用不同的salt，**可以借助用户名**
 
 ```python
 # 将指定的**str**摘要，可以使用sha1/md5
@@ -2806,6 +2809,8 @@ sys.path.append('module_path')
 10. os.remove(a)
 11. os.path.isdir()
 12. os.path.isfile()
+13. os.path.isabs()
+14. os.path.basename()：**获取绝对路径下的文件名**
 
 ```python
 import os
@@ -3191,6 +3196,21 @@ python = Course('python', 999, 'alex')
 print(python)
 print(python.name)
 print(python.price)
+```
+
+## 6.9 struct模块
+
+- unpack的结果是**元组**
+- 第一参数是数据类型
+
+```python
+# 把数据转换为四个字节
+import struct
+a = struct.pack('i', 1000)
+b = struct.pack('i', 78)
+
+a1 = struct.unpack('i', a)
+b1 = struct.unpack('i', b)
 ```
 
 
@@ -4332,8 +4352,6 @@ sys.path.append(path)
 
 ![项目目录结构](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84.png)
 
-
-
 # 番外篇之正则
 
 ## 1. 基本概念
@@ -4727,195 +4745,6 @@ ret = re.match('[1-9]\d{14}(\d{2}[\dx])$', content)
 import re
 ret = re.search('\d+(\.\d+)?[\*]-?\d+(\.\d+)?', s)
 ```
-
-# 第八章 网络编程
-
-1. 网络基础
-2. 基于tcp协议和udp协议的**socket**
-3. 解决tcp协议的**粘包问题**
-4. **并发**
-
-## 8.1 网络基础
-
-### 1. 基本概念
-
-1. 两个运行中的程序传递信息？
-  
-   - 通过**文件**
-2. 两台机器上运行中的程序通信？
-  
-   - 通过**网络**
-3. 网络应用开发架构
-   - C/S：client/server（需要安装对应的客户端）
-   - B/S：browser/server（不需要任何客户端）
-     - 统一程序的入口
-   - b/s是特殊的c/s
-
-### 2. 网络中的概念
-
-1. 网卡、mac地址：48位
-
-2. **交换机(4)**
-  
-   - 负责局域网通信（只认识mac地址，通过arp/ rarp协议）
-   - 广播、单播、组播(交换机只使用前面的**两种**)
-   - **ARP**协议：地址解析协议，通过ip地址，获取其mac地址
-   - **保留网段（私有IP）**：192.168.0.0-92.168.255.255 /172.16.0.0-172.31.255.255 /10.0.0.0-10.255.255.255
-   
-3. **路由器(2)**
-  
-   - 负责局域网间通信
-   
-   - **网关ip**：**局域网的网络出口**，访问局域网之外的区域都需要经过gateway
-   
-4. **协议**：server和client得到的内容都是二进制，双发预先约定好的一套语法规则 
-
-5. Ipv6:冒分16进制，0:0:0:0:0:0:0:0- FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF(128bits, 16x8)
-
-6. 每一个ip地址要想被所有人访问到，那么这个ip地址必须是申请的
-
-7. **port 端口(4)**
-
-   - 端口号0 - 65535
-
-   - 一个端口同一时刻只能被一个服务占用
-   - ip+port：可以确认一台机器上的一个应用
-   - 1024以内只能是root才能启用
-
-
-
-## 8.2 OSI&TCP/IP
-
-### 1. TCP协议
-
-- **应用场景**：文件上传下载（邮件、网盘、缓存电影）
-
-- **特点**（3）：可靠、传输效率较低、全双工，重传机制、发送的每一帧都有确认回复
-- **三次握手**：请求(SYN)—> 确认(ACK)+请求—>确认
-  - 通信：建立在全双工连接的基础上
-- **长连接**：会一直占用双方port
-- I/O：相对于**内存**来说
-  - write 是 send
-  - read 是 recv
-
-- **四次挥手**：请求(FIN)—> 确认—>请求—>确认
-  - 断开：四次
-
-![TCP](/Users/henry/Documents/截图/Py截图/TCP.png)
-
-### 2. UDP协议
-
-- **场景**：即时通讯（qq，wechat）
-- **特点**：无连接、速度快，可能会丢帧
-- UDP 是User Datagram Protocol的简称， 中文名是用户数据报协议
-
-#### Note1(2)
-
-- TCP传输**数据几乎没有限制**，UDP能够传递数据长度是有限的，是根据数据传递设备的设置有关
-- Tcp可靠**长**连接，udp不可靠无连接
-
-### 3. OSI(Open System Interconnection)
-
-1. 应用层
-2. 表示层
-3. 会话层
-4. 传输层
-5. 网络层
-6. 数据链路层
-7. 物理层
-
-OSI**五层**协议(简化)
-
-1. 应用层：代码
-2. 传输层：tcp/udp 端口号，**四层路由器、四层交换机**
-3. 网络层：ipv4/ipv6，**三层路由器、三层交换机**
-4. 数据链路层：mac地址，arp协议，**(二层)交换机**
-5. 物理层：二进制流
-
-TCP/IP(**arp在tcp/ip中属于网络层**)
-
-1. 应用层
-2. 传输层
-3. 网络层
-4. 链路层
-
-#### Note2(4)
-
-1. 家用路由器集成了交换功能
-2. **网际层**协议:IP协议、ICMP协议、ARP协议、RARP协议。 
-3. **传输层**协议:TCP协议、UDP协议。 
-4. **应用层**协议:FTP、Telnet、SMTP、HTTP、RIP、NFS、DNS
-
-### 4. socekt(套接字)
-
-- 工作在**应用层**和**传输层**之间的抽象层
-- 帮助我们完成所有信息的组织和拼接
-- socket历史：
-  - 同一机器上的两个服务之间的通信(基于文件)
-  - **基于网络**的多台机器之间的多个服务通信
-
-### 5. Socket模块
-
-**1. TCP**
-
-```python
-type = SOCK_STRESM  # 表示tcp协议
-sk.listen(n)        # n 表示允许多少个客户端等待，3.7之后无限制
-sk.accept()         # 阻塞
-# 服务端需要一直监听，不能关闭
-```
-
-需求：
-
-1. server和client连接后，知道是哪一个好友
-2. 不同好友的聊天颜色不同
-3. 多个人能互相聊
-
-**2. UDP**
-
-```python
-# server
-import socket
-sk = socket.socket(type = socket.SOCK_DGRAM)
-sk.bind(('127.0.0.1', 9000))
-
-msg, client_addr = sk.recvfrom(1024)
-print(msg)
-sk.sendto(b'received', client_addr)
-sk.close()
-
-# client
-import socket
-sk = socket.socket(type = socket.SOCK_DGRAM)
-
-sk.sendto(b'hello', ('127.0.0.1', 9000))
-ret = sk.recv(1024)
-print(ret)
-sk.close()
-```
-
-需求：
-
-1. 实现一个人和多个人聊
-2. 每个人标识
-
-#### Note
-
-1. socket收发的**必须是bytes**类型，经过编码的文件均是bytes类型
-
-# 第九章 并发编程
-
-# 第十章 数据库
-
-# 第十一章 前端开发
-
-# 第十二章 Django框架
-
-
-
-
-
-
 
 
 

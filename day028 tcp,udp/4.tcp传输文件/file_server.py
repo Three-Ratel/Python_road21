@@ -13,7 +13,7 @@ while True:
     f = open(file_name, mode='wb')
     while True:
         content = con.recv(1024)
-        if content == b'Q': break
+        if not content: break
         f.write(content)
     f.close()
     con.close()
