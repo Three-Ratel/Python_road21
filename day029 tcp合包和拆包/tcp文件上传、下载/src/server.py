@@ -4,15 +4,14 @@ import socket, os, sys, struct, json
 PATH = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(PATH)
 USER = []
-def auth(func):
-    def inner():
-        if USER: func()
-        Server.
+
 
 class Server(object):
-    def __init__(self, sk, con, addr):
-        self.sk = sk
-        self.con, self.addr = con, addr
+    def __init__(self):
+        self.sk = socket.socket()
+        self.sk.bind(('127.0.0.1', 9000))
+        self.sk.listen()
+        self.con, self.addr = self.sk.accept()
 
 
     def receive(self):
@@ -31,15 +30,14 @@ class Server(object):
         f = open(file_name, mode='wb')
         receive_size = 0
         while True:
-            print('文件接收中，已接收%s%%\r' % round(receive_size / file_size * 100, 3), end='')
+            percent = round(receive_size / file_size * 100, 3)
+            print('文件接收中，已接收%s%%\r' % percent, end='')
+            if percent == 100.000: break
             content = self.con.recv(1024)
-            if not content: break
             f.write(content)
             receive_size += 1024
         print('文件接收完毕')
         f.close()
-        self.con.close()
-
 
     def send(self):
         """
@@ -70,29 +68,20 @@ class Server(object):
             if not chunk: break
             send_size += 1024
         print('文件传输完成')
-        self.con.close()
 
 
-
-
-def run():
-    while True:
-        sk = socket.socket()
-        sk.bind(('127.0.0.1', 9000))
-        sk.listen()
-        con, addr = sk.accept()
-
-
+    def login(self):
         while True:
-            user_name = con.recv(1024).decode('utf-8')
+            if USER: break
+            user_name = self.con.recv(1024).decode('utf-8')
             if user_name.strip().upper() == 'Q':
                 break
-            user_pwd = con.recv(1024).decode('utf-8')
+            user_pwd = self.con.recv(1024).decode('utf-8')
             try:
                 f = open('user.txt', mode='r', encoding='utf-8')
             except:
                 print('用户信息已丢失')
-                con.send('2'.encode('utf-8'))
+                self.con.send('2'.encode('utf-8'))
                 continue
 
             flag = False
@@ -100,28 +89,31 @@ def run():
                 name, pwd = i.split(':')
                 if name == user_name and pwd == user_pwd:
                     flag = True
-                    con.send('0'.encode('utf-8'))  # 登陆成功
+                    self.con.send('0'.encode('utf-8'))  # 登陆成功
                     USER.append(name)
                     break
             if flag:
                 break
             else:
-                con.send('1'.encode('utf-8'))  # 用户名或密码错误
-
+                self.con.send('1'.encode('utf-8'))  # 用户名或密码错误
         f.close()
 
-        choice = con.recv(1).decode('utf-8')
-        if choice == '1':
-            choice = 'receive'
-        elif choice == '2':
-            choice = 'send'
-        getattr(Server(sk, con, addr), choice)()
+    def run(self):
+        while not USER: self.login()
+        while True:
+            choice = self.con.recv(1).decode('utf-8')
+            if choice == '1':
+                choice = 'receive'
+            elif choice == '2':
+                choice = 'send'
+            elif choice.upper() == 'Q':
+                self.con.close()
+                break
+            getattr(self, choice)()
 
-run()
 
 
-
-
+Server().run()
 
 
 

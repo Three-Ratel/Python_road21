@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 import socket, os, json, struct
-
+USER = []
 
 class Client(object):
 
     def __init__(self):
         self.sk = socket.socket()
         self.sk.connect(('127.0.0.1', 9000))
-
 
     def upload(self):
         while True:
@@ -42,11 +41,10 @@ class Client(object):
             send_size += 1024
 
         print('文件传输完成')
-        self.sk.close()
-
 
     def download(self):
-        file_name = input('请输入文件名：')
+        # file_name = input('请输入文件名：')
+        file_name = '正则指引.pdf'
         """
         给服务器端发送需要下载的文件名
         """
@@ -58,9 +56,7 @@ class Client(object):
         s_first = self.sk.recv(2)
         if s_first != b'ok':
             print('文件不存在')
-            self.sk.close()
             return
-
 
         s_first = self.sk.recv(4)
         s_first = struct.unpack('i', s_first)[0]
@@ -72,23 +68,21 @@ class Client(object):
         f = open(file_path, mode='wb')
         receive_size = 0
         while True:
-            print('文件接收中，已接收%s%%\r' % round(receive_size / file_size * 100, 3), end='')
+            percent = round(receive_size / file_size * 100, 3)
+            print('文件接收中，已接收%s%%\r' % percent, end='')
+            if percent == 100.000: break
             content = self.sk.recv(1024)
-            if not content: break
             f.write(content)
             receive_size += 1024
         print('文件接收完毕')
         f.close()
-        self.sk.close()
 
-    def run(self):
+    def login(self):
         while True:
-            print('******* 欢迎登陆 *******')
-
             user_name = input('请输入用户名(Q/q)：')
             self.sk.send(user_name.encode('utf-8'))
             if user_name.strip().upper() == 'Q':
-                break
+                return False
 
             user_pwd = input('请输入密码：')
             self.sk.send(user_pwd.encode('utf-8'))
@@ -96,7 +90,8 @@ class Client(object):
             msg = self.sk.recv(1024).decode('utf-8')
             if msg == '0':
                 print('登陆成功')
-                break
+                USER.append(user_name)
+                return True
             elif msg == '1':
                 print('用户名或密码错误，请重新输入\n')
                 continue
@@ -104,26 +99,24 @@ class Client(object):
                 print('网站维护中....\n')
                 break
 
+    def run(self):
+        while not USER: self.login()
         while True:
             print("""
             1. 文件上传
             2. 文件下载
             
             """)
-            choice = input('请输入功能选项(Q)：').strip()
+            choice = input('请输入功能选项(Q)：')
             if choice.upper() == 'Q':
+                self.sk.send(choice.encode('utf-8'))
                 break
-
             func_info = {'1': self.upload, '2': self.download}
             if not func_info.get(choice):
                 print('选择有误，请重新输入')
                 continue
             self.sk.send(choice.encode('utf-8'))
-
             func_info[choice]()
-
-
-
 
 
 

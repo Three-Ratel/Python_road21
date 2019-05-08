@@ -208,8 +208,8 @@ ___
    - join 只能是str
 7. ValueError: too many values to unpack (expected 2)
    - 赋值号两边参数不一致
-
-
+8. [][Errno 9][Errno 9] Bad file descriptor
+   - 是因为你关闭了套接字对象后，又再次去调用了套接字对象。
 
 # 附录2:  错误记录
 
