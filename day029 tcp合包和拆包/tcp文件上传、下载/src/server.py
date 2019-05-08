@@ -4,19 +4,10 @@ import socket, os, sys, struct, json
 PATH = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(PATH)
 USER = []
-
-
 def auth(func):
-    def inner(*args):
-        if USER:
-            func(*args)
-        else:
-            Server.login(*args)
-            func(*args)
-    return inner
-
-
-
+    def inner():
+        if USER: func()
+        Server.
 
 class Server(object):
     def __init__(self, sk, con, addr):
@@ -24,7 +15,6 @@ class Server(object):
         self.con, self.addr = con, addr
 
 
-    @auth
     def receive(self):
 
         if self.con.recv(1) == b'0':
@@ -50,7 +40,7 @@ class Server(object):
         f.close()
         self.con.close()
 
-    @auth
+
     def send(self):
         """
         解析用户即将下载的文件名
@@ -83,35 +73,6 @@ class Server(object):
         self.con.close()
 
 
-def login():
-    while True:
-        user_name = con.recv(1024).decode('utf-8')
-        if user_name.strip().upper() == 'Q':
-            break
-        user_pwd = con.recv(1024).decode('utf-8')
-        try:
-            f = open('user.txt', mode='r', encoding='utf-8')
-        except:
-            print('用户信息已丢失')
-            con.send('2'.encode('utf-8'))
-            continue
-
-        flag = False
-        for i in f:
-            name, pwd = i.split(':')
-            if name == user_name and pwd == user_pwd:
-                flag = True
-                con.send('0'.encode('utf-8'))  # 登陆成功
-                USER.append(name)
-                break
-        if flag:
-            break
-        else:
-            con.send('1'.encode('utf-8'))  # 用户名或密码错误
-
-    f.close()
-    self.con.close()
-
 
 
 def run():
@@ -120,6 +81,35 @@ def run():
         sk.bind(('127.0.0.1', 9000))
         sk.listen()
         con, addr = sk.accept()
+
+
+        while True:
+            user_name = con.recv(1024).decode('utf-8')
+            if user_name.strip().upper() == 'Q':
+                break
+            user_pwd = con.recv(1024).decode('utf-8')
+            try:
+                f = open('user.txt', mode='r', encoding='utf-8')
+            except:
+                print('用户信息已丢失')
+                con.send('2'.encode('utf-8'))
+                continue
+
+            flag = False
+            for i in f:
+                name, pwd = i.split(':')
+                if name == user_name and pwd == user_pwd:
+                    flag = True
+                    con.send('0'.encode('utf-8'))  # 登陆成功
+                    USER.append(name)
+                    break
+            if flag:
+                break
+            else:
+                con.send('1'.encode('utf-8'))  # 用户名或密码错误
+
+        f.close()
+
         choice = con.recv(1).decode('utf-8')
         if choice == '1':
             choice = 'receive'

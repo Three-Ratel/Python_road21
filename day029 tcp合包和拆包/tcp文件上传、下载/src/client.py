@@ -9,10 +9,11 @@ class Client(object):
         self.sk = socket.socket()
         self.sk.connect(('127.0.0.1', 9000))
 
-    # @auth
+
     def upload(self):
         while True:
-            file_path = input('请输入文件路径(Q)：')
+            # file_path = input('请输入文件路径(Q)：')
+            file_path = '/Users/henry/Documents/文档资料/python文档/正则指引.pdf'
             file_name = os.path.basename(file_path)
             if file_name.upper() == 'Q':
                 self.sk.send(b'0')
@@ -43,7 +44,7 @@ class Client(object):
         print('文件传输完成')
         self.sk.close()
 
-    # @auth
+
     def download(self):
         file_name = input('请输入文件名：')
         """
@@ -82,25 +83,6 @@ class Client(object):
 
     def run(self):
         while True:
-            print("""
-            1. 文件上传
-            2. 文件下载
-            
-            """)
-            choice = input('请输入功能选项(Q)：').strip()
-            if choice.upper() == 'Q':
-                break
-            func_info = {'1': self.upload, '2': self.download}
-            if not func_info.get(choice):
-                print('选择有误，请重新输入')
-                continue
-            self.sk.send(choice.encode('utf-8'))
-
-            func_info[choice]()
-
-    # @staticmethod
-    def login(self):
-        while True:
             print('******* 欢迎登陆 *******')
 
             user_name = input('请输入用户名(Q/q)：')
@@ -109,13 +91,11 @@ class Client(object):
                 break
 
             user_pwd = input('请输入密码：')
-            # user_pwd = encipher(user_pwd)
             self.sk.send(user_pwd.encode('utf-8'))
 
             msg = self.sk.recv(1024).decode('utf-8')
             if msg == '0':
                 print('登陆成功')
-                # USER.append(user_name)
                 break
             elif msg == '1':
                 print('用户名或密码错误，请重新输入\n')
@@ -123,6 +103,28 @@ class Client(object):
             elif msg == '2':
                 print('网站维护中....\n')
                 break
+
+        while True:
+            print("""
+            1. 文件上传
+            2. 文件下载
+            
+            """)
+            choice = input('请输入功能选项(Q)：').strip()
+            if choice.upper() == 'Q':
+                break
+
+            func_info = {'1': self.upload, '2': self.download}
+            if not func_info.get(choice):
+                print('选择有误，请重新输入')
+                continue
+            self.sk.send(choice.encode('utf-8'))
+
+            func_info[choice]()
+
+
+
+
 
 
 Client().run()
