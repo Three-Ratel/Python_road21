@@ -12,6 +12,7 @@ n = sk.listen()
 i = 31
 while True:
     con, add = sk.accept()
+    print(con, add)
     while True:
         data = con.recv(1024).decode('utf-8')
         if data.upper() == 'Q':

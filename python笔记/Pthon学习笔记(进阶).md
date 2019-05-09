@@ -17,6 +17,9 @@
    - 通过**网络**
 3. 网络应用开发架构
    - C/S：client/server（需要安装对应的客户端）
+   
+   ![c:s架构](/Users/henry/Documents/截图/Py截图/c:s架构.png)
+   
    - B/S：browser/server（不需要任何客户端）
      - 统一程序的入口
    - b/s是特殊的c/s
@@ -110,6 +113,8 @@ TCP/IP(**arp在tcp/ip中属于网络层**)
 3. 网络层
 4. 链路层
 
+
+
 #### Note2(4)
 
 1. 家用路由器集成了交换功能
@@ -128,22 +133,63 @@ TCP/IP(**arp在tcp/ip中属于网络层**)
 
 ### 5. Socket模块
 
-**1. TCP**
+**1. TCP信息传输**
 
 ```python
 type = socket.SOCK_STREAM  # 表示tcp协议
-sk.listen(n)        # n 表示允许多少个客户端等待，3.7之后无限制
-sk.accept()         # 阻塞
-# 服务端需要一直监听，不能关闭
+# server 端
+import socket 
+sk = socket.socket()
+sk.bind(('127.0.0.1'), port号)
+sk.listen(n)               # n 表示允许多少个客户端等待，3.7之后无限制可省略
+con,cli_addr = sk.accept() # 阻塞,服务端需要一直监听，不能关闭
+con.recv(size)    				 # 接收字节数
+con.send('content'.encode('utf-8')) 
+# socket 发送接收都是字节流，即二进制
+con.close()
+sk.close()
+
+# client 端
+import socket
+sk = socket.socket()
+sk.connet(('ip', port号))
+sk.send('content'.encode('utf-8'))
+sk.recv(size)
+sk.close()
 ```
 
-需求：
+**Tcp阻塞问题及解决方案**
 
-1. server和client连接后，知道是哪一个好友
-2. 不同好友的聊天颜色不同
-3. 多个人能互相聊
+```python
+# 自定义协议
+# server端
+import struct
+import socket
+sk = socket.socket()
+sk.bind(('ip', port))
+sk.listen()
+con, cli_addr = sk.accept()
+size = con.recv(4)
+size = struct.unpack(size)[0]
+content = con.recv(size).decode('utf-8')
+con.close()
+sk.close()
 
-**2. UDP**
+# client端
+import struct
+import socket
+sk = socket.socket()
+sk.connect(('ip', port))
+content  = '我是henry'.encode('utf-8')
+size = struct.pack('i', len(content))
+sk.send(size)
+sk.send(content)
+sk.close()
+```
+
+
+
+**2. UDP信息传输**
 
 ```python
 # server
@@ -166,15 +212,11 @@ print(ret)
 sk.close()
 ```
 
-需求：
-
-1. 实现一个人和多个人聊
-2. 每个人标识
-
 #### Note
 
 1. socket收发的**必须是bytes**类型，经过编码的文件均是bytes类型
 2. 网络传输数据一般使用**json**格式
+3. tcp采用流式传输
 
 # 第九章 并发编程
 
@@ -210,6 +252,9 @@ ___
    - 赋值号两边参数不一致
 8. [][Errno 9][Errno 9] Bad file descriptor
    - 是因为你关闭了套接字对象后，又再次去调用了套接字对象。
+9. Errno 54] Connection reset by peer
+   - tcp连接一旦断开，发送数据会报错
+   - 发送空字符不会报错
 
 # 附录2:  错误记录
 
