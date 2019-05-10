@@ -390,12 +390,7 @@ Send data to the socket. The socket must be connected to a remote socket. The op
 #while buffer:
 #    bytes = sock.send(buffer)
 #    buffer = buffer[bytes:]
-
 ```
-
-
-
-
 
 ## 8.4 非阻塞&socketserver模块
 
@@ -439,8 +434,8 @@ sk.close()
 
 ```python
 # clinet端
-import socket
 import time
+import socket
 sk = socket.socket()
 sk.connect(('127.0.0.1', 9000))
 while True:
@@ -454,8 +449,8 @@ sk.close()
 #### Note4(3)
 
 1. socket的非阻塞io模型 + io多路复用实现(框架)
-2. 非阻塞提高了cpu利用率，cpu有效率很低
-3. TCP断开连接后，只要发送数据就会报错
+2. 非阻塞提高了cpu利用率，但cpu有效率很低
+3. TCP**断开连接**后，只要有数据发送就会**报错**
 
 ### 2. 验证客户端的合法性
 
@@ -483,15 +478,15 @@ ret = hmac.digest()   # 结果是bytes类型数据
 # 使用TCP协议发送数据为空时，默认不会发送
 # server端
 import os
-import socket
 import hmac
+import socket
 
 def chat(con):
     while True:
         msg = con.recv(1024).decode('utf-8')
         print('------>', msg)
         con.send(msg.upper().encode('utf-8'))
-        # con.send(''.encode('utf-8'))
+        # con.send(''.encode('utf-8'))         # tcp不会发送
 sk = socket.socket()
 sk.bind(('127.0.0.1', 9000))
 sk.listen()
@@ -606,9 +601,7 @@ def conn_auth(conn):
 def client_handler(ip_port,bufsize=1024):
     tcp_socket_client=socket(AF_INET,SOCK_STREAM)
     tcp_socket_client.connect(ip_port)
-
     conn_auth(tcp_socket_client)
-
     while True:
         data=input('>>: ').strip()
         if not data:continue
@@ -633,13 +626,11 @@ import socketserver  # socket是socketserver的底层模块和time，datetime一
 class Myserver(socketserver.BaseRequestHandler):
   def handle(self):				# 自动触发handle方法，self.request == con
     print(self.request)   # con
-
 server = socketsever.ThreadingTCPServer(('127.0.0.1', 9000), Myserver)
 server.server_forever()
 
-# client
+# client	`
 import socket
-
 sk = socket.socket()
 sk.connect(('127.0.0.1', 9000))
 ```
@@ -657,7 +648,6 @@ class Myserver(socketserver.BaseRequestHandler):
 
 if __name__ == "__main__":
     HOST, PORT = "127.0.0.1", 9999
-
     # 设置allow_reuse_address允许服务器重用地址
     socketserver.TCPServer.allow_reuse_address = True
     # 创建一个server, 将服务地址绑定到127.0.0.1:9999
@@ -665,13 +655,10 @@ if __name__ == "__main__":
     # 让server永远运行下去，除非强制停止程序
     server.serve_forever()
    
-  
 # client端
 import socket
-
 HOST, PORT = "127.0.0.1", 9999
 data = "hello"
-
 # 创建一个socket链接，SOCK_STREAM代表使用TCP协议
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
     sock.connect((HOST, PORT))          # 链接到客户端
@@ -681,12 +668,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
 print("Sent:     {}".format(data))
 print("Received: {}".format(received))
 ```
-
-
-
-
-
-
 
 # 第九章 并发编程
 
@@ -725,6 +706,9 @@ ___
 9. Errno 54] Connection reset by peer
    - tcp连接一旦断开，发送数据会报错
    - 发送空字符不会报错
+10. BrokenPipeError： [Errno 32] Broken pipe
+   - 由于客户端请求的链接，在一次循环之后，产生的套接字关闭，没有新的客户端套接字进行请求连接，所以产生broken pipe错误
+11. - 经过检查发现，是由于客户端请求的链接，在一次循环之后，产生的套接字关闭，没有新的客户端套接字进行请求连接，所以产生broken pipe错误
 
 # 附录2:  错误记录
 

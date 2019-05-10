@@ -132,7 +132,7 @@ def sub(s):
         处理括号
         """
         s = dispose_brcket(s)
-
+        print(s)
         if '(' not in s:
             s = last_dispose(s)
             return s

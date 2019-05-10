@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-#!/usr/bin/env python
+# !/usr/bin/env python
 # -*- coding:utf-8 -*-
 import re
 from functools import reduce
@@ -43,18 +43,31 @@ def cal_addsub(exp):  # 计算加减法
     return count
 
 
+def cal(non_bracket):
+    sub_exp = cal_muldiv(non_bracket)
+    sub_exp = exp_format(sub_exp)
+    ret = cal_addsub(sub_exp)
+    return ret
+
+
+exp = '1-2*((60-30+(-40/5)*(9-2*5/3+7/3*99/4*2998+10*568/14))-(-4*3)/(16-3*2))'
 # 算式的去空格
-exp = '2- -3*   -4/ -5*-3 -6'
 exp = exp.replace(' ', '')
-sub_exp = cal_muldiv(exp)
-sub_exp = exp_format(sub_exp)
-ret = cal_addsub(sub_exp)
+
+
+def main(exp):
+    while True:
+        ret = re.search('\([^()]+\)', exp)
+        if ret: non_bracket = ret.group()
+        else: return exp
+        ret = cal(non_bracket)
+        exp = exp.replace(non_bracket, str(ret))
+        exp = exp_format(exp)
+
+
+exp = main(exp)
+ret = cal(exp)
 print(ret)
 
 # 去括号
 # 把括号表达式匹配出来，调用上面的这个逻辑
-
-
-
-
-
