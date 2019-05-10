@@ -1,13 +1,51 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 import os
+import sys
 import json
+import pickle
 import struct
+import hashlib
 from socketserver import *
+PRO_DIE = os.path.dirname(os.path.dirname(__file__))
+sys.path.append(PRO_DIE)
+from lib import get_md5
 
 IP_PORT = ('127.0.0.1', 9000)
 FILE_PATH = '/Users/henry/programme/python/Python_codes/day030\
  非阻塞IO&socketsever模块/tcp文件上传、下载/db/server_dir'
+USER = []
+USER_INFO = r'/Users/henry/programme/python/Python_codes/day030 非阻塞IO&socketsever模块/tcp文件上传、下载/db/user_info'
+
+
+class User():
+    def __init__(self, obj):
+        self.obj = obj
+
+    def login(self):
+        dic = self.obj.my_recv()
+        flag = False
+        with open(USER_INFO, 'rb') as f:
+            try:
+                while True:
+                    user_dic = pickle.load(f)
+                    if dic['user_name'] == user_dic['user_name'] and \
+                            get_md5.get_md5(dic) == user_dic['user_pwd']:
+                        flag = True
+                        USER.append(user_dic)
+            except: pass
+
+        dic = {'operator': flag}
+        self.obj.my_send(dic)
+
+    def register(self):
+        user_dic = self.obj.my_recv()
+        with open(USER_INFO, 'ab+') as f:
+            pickle.dump({'user_name': user_dic['user_name'],
+                            'user_pwd': get_md5.get_md5(user_dic)}, f)
+            flag = True
+            status_dic = {'operator': flag}
+            self.obj.my_send(status_dic)
 
 
 class Myserver(BaseRequestHandler):
@@ -34,29 +72,7 @@ class Myserver(BaseRequestHandler):
         self.request.send(len_dic)
         self.request.send(byte_dic)
 
-    def file_send(self, dic, file_path):
-        with open(file_path, mode='rb') as f:
-            while dic['file_size'] > 2048:
-                content = f.read(1024)
-                self.request.send(content)
-                dic['file_size'] -= len(content)
-            else:
-                content = f.read()
-                self.request.send(content)
-
-    def file_recv(self, dic):
-        def inner(buffer=2048):
-            while dic['file_size'] > buffer:
-                content = self.request.recv(buffer)
-                f.write(content)
-                dic['file_size'] -= len(content)
-
-        file_path = os.path.join(FILE_PATH, dic['file_name'])
-        with open(file_path, mode='wb') as f:
-            inner()
-            inner(dic['file_size'])
-
-    def download(self, dic):
+    def file_send(self, dic):
         file_path = os.path.join(FILE_PATH, dic['file_name'])
         dic = {}
         if not os.path.isfile(file_path): dic['isfile'] = False
@@ -65,15 +81,53 @@ class Myserver(BaseRequestHandler):
             file_size = os.path.getsize(file_path)
             dic['file_size'] = file_size
         self.my_send(dic)
-        if dic['isfile']: self.file_send(dic, file_path)
+        if not dic['isfile']: return
+        obj = hashlib.md5()
+        with open(file_path, mode='rb') as f:
+            while dic['file_size']:
+                content = f.read(2048)
+                self.request.send(content)
+                dic['file_size'] -= len(content)
+                """校验文件"""
+                obj.update(content)
+
+        """发送文件的 md5 值"""
+        self.request.send(obj.hexdigest().encode('utf-8'))
+
+    def file_recv(self, dic):
+        obj = hashlib.md5()
+
+        def inner(buffer_size=2048, buffer=2048):
+            while dic['file_size'] > buffer_size:
+                content = self.request.recv(buffer)
+                f.write(content)
+                dic['file_size'] -= len(content)
+                """校验文件"""
+                obj.update(content)
+
+        file_path = os.path.join(FILE_PATH, dic['file_name'])
+        with open(file_path, mode='wb') as f:
+            inner()
+            inner(0, dic['file_size'])
+        """发送文件的 md5 值"""
+        self.request.send(obj.hexdigest().encode('utf-8'))
 
     def handle(self):
         dic = self.my_recv()
-        if dic['operation'] == 'download':
-            self.download(dic)
-        elif dic['operation'] == 'upload':
+        if dic['operator'] == 'Q': pass
+        elif dic['operator'] == 'download':
+            self.file_send(dic)
+        elif dic['operator'] == 'upload':
             self.file_recv(dic)
+        elif dic['operator'] == 'login':
+            obj = self
+            User(obj).login()
+        elif dic['operator'] == 'register':
+            obj = self
+            User(obj).register()
 
 
-server = ThreadingTCPServer(IP_PORT, Myserver)
-server.serve_forever()
+if __name__ == '__main__':
+    TCPServer.allow_reuse_address = True
+    server = ThreadingTCPServer(IP_PORT, Myserver)
+    server.serve_forever()
