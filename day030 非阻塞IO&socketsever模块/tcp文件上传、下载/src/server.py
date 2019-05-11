@@ -23,26 +23,30 @@ class User():
         self.obj = obj
 
     def login(self):
-        dic = self.obj.my_recv()
-        flag = False
-        with open(USER_INFO, 'rb') as f:
-            try:
-                while True:
-                    user_dic = pickle.load(f)
-                    if dic['user_name'] == user_dic['user_name'] and \
-                            get_md5.get_md5(dic) == user_dic['user_pwd']:
-                        flag = True
-                        USER.append(user_dic)
-            except: pass
-
-        dic = {'operator': flag}
-        self.obj.my_send(dic)
+        while True:
+            dic = self.obj.my_recv()
+            if dic['user_name'] == 'Q': return
+            flag = False
+            with open(USER_INFO, 'rb') as f:
+                try:
+                    while True:
+                        user_dic = pickle.load(f)
+                        if dic['user_name'] == user_dic['user_name'] and \
+                                get_md5.get_md5(dic) == user_dic['user_pwd']:
+                            flag = True
+                            USER.append(user_dic)
+                            break
+                except:
+                    pass
+            dic = {'operator': flag}
+            self.obj.my_send(dic)
+            if flag: return flag
 
     def register(self):
         user_dic = self.obj.my_recv()
         with open(USER_INFO, 'ab+') as f:
             pickle.dump({'user_name': user_dic['user_name'],
-                            'user_pwd': get_md5.get_md5(user_dic)}, f)
+                         'user_pwd': get_md5.get_md5(user_dic)}, f)
             flag = True
             status_dic = {'operator': flag}
             self.obj.my_send(status_dic)
@@ -75,7 +79,8 @@ class Myserver(BaseRequestHandler):
     def file_send(self, dic):
         file_path = os.path.join(FILE_PATH, dic['file_name'])
         dic = {}
-        if not os.path.isfile(file_path): dic['isfile'] = False
+        if not os.path.isfile(file_path):
+            dic['isfile'] = False
         else:
             dic['isfile'] = True
             file_size = os.path.getsize(file_path)
@@ -113,18 +118,26 @@ class Myserver(BaseRequestHandler):
         self.request.send(obj.hexdigest().encode('utf-8'))
 
     def handle(self):
-        dic = self.my_recv()
-        if dic['operator'] == 'Q': pass
-        elif dic['operator'] == 'download':
-            self.file_send(dic)
-        elif dic['operator'] == 'upload':
-            self.file_recv(dic)
-        elif dic['operator'] == 'login':
-            obj = self
-            User(obj).login()
-        elif dic['operator'] == 'register':
-            obj = self
-            User(obj).register()
+        while True:
+            try:
+                dic = self.my_recv()
+                if dic['operator'] == 'Q': pass
+                elif dic['operator'] == 'login':
+                    if User(self).login(): break
+                elif dic['operator'] == 'register':
+                    User(self).register()
+            except:return
+
+
+        while True:
+            try:
+                dic = self.my_recv()
+                if dic['operator'] == 'Q':break
+                elif dic['operator'] == 'download':
+                    self.file_send(dic)
+                elif dic['operator'] == 'upload':
+                    self.file_recv(dic)
+            except:pass
 
 
 if __name__ == '__main__':

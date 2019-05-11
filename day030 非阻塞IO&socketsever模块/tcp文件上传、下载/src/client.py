@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 import os
+import sys
 import json
 import struct
 import socket
@@ -9,9 +10,21 @@ import hashlib
 IP_PORT = ('127.0.0.1', 9000)
 FILE_PATH = '/Users/henry/programme/python/Python_codes/day030\
  非阻塞IO&socketsever模块/tcp文件上传、下载/db/client_dir'
+STATUS = []
+
+
+def auth(func):
+
+    def inner(*args):
+        if STATUS: func(*args)
+        else:print('----------您还未登陆')
+        return
+    return inner
 
 
 class Client():
+    def __init__(self, sk):
+        self.sk = sk
 
     def process_bar(self, recv_size, file_size):
         """
@@ -22,16 +35,18 @@ class Client():
         """
         rate = round(recv_size / file_size * 100, 3)
         rate_size = int(rate)
-        print('%s\033[36m%s%%\033[0m\r' % ('*'*rate_size, rate), end='', flush=True)
+        r = '%s\033[36m%s%%\033[0m\r' % ('*' * rate_size, rate)
+        sys.stdout.write(r)
+        sys.stdout.flush
 
-    def quit_fun(self, choice):
+    def qu_fun(self, choice, opt='operator'):
         """
         判断用户choice信息，如果为 Q 则告知服务端，进行断开连接
         :param choice:
         :return:
         """
         flag = True
-        dic = {'operator': choice.upper()}
+        dic = {'%s' % opt: choice.upper()}
         if choice.strip().upper() == 'Q':
             self.my_send(dic)
             flag = False
@@ -63,8 +78,8 @@ class Client():
         obj = hashlib.md5()
         file_size = dic['file_size']
 
-        def inner(buffersize=0, recvsize=2048):
-            recv_size = 0
+        def inner(recv_size = 0, buffersize=2048, recvsize=2048):
+
             while dic['file_size'] > buffersize:
                 content = self.sk.recv(recvsize)
                 f.write(content)
@@ -74,16 +89,19 @@ class Client():
                 obj.update(content)
                 """实现进度条"""
                 self.process_bar(recv_size, file_size)
+            return recv_size
 
         file_path = os.path.join(FILE_PATH, file_name)
         with open(file_path, mode='wb') as f:
-            inner()
-            inner(0, dic['file_size'])
+            recv_size = 0
+            inner(inner(), 0, dic['file_size'])
 
         """接收文件的 md5 值"""
         file_md5 = self.sk.recv(32).decode('utf-8')
-        if file_md5 == obj.hexdigest():print('\n文件下载成功')
-        else: print('\n文件校验失败，请重新下载')
+        if file_md5 == obj.hexdigest():
+            print('\n文件下载成功')
+        else:
+            print('\n文件校验失败，请重新下载')
 
     def file_send(self, dic, file_path):
         obj = hashlib.md5()
@@ -98,9 +116,12 @@ class Client():
                 """进度条打印"""
                 self.process_bar(recv_size, file_size)
             o_md5 = self.sk.recv(32).decode('utf-8')
-            if o_md5 == obj.hexdigest(): print('\n文件上传成功')
-            else: print('\033[31m\n文件上传失败\033[0m')
+            if o_md5 == obj.hexdigest():
+                print('\n文件上传成功')
+            else:
+                print('\033[31m\n文件上传失败\033[0m')
 
+    @auth
     def download(self):
         file_name = input('请输入要下载文件(Q)：')
         if file_name.upper() == 'Q': return
@@ -109,13 +130,14 @@ class Client():
         dic = self.my_recv()
         if dic['isfile']:
             self.file_recv(dic, file_name)
-            self.sk.close()
-        else: print('您下载的文件不存在')
+        else:
+            print('您下载的文件不存在')
 
+    @auth
     def upload(self):
         while True:
             file_name = input('请输入要上传文件名(Q)：')
-            if not self.quit_fun(file_name): return
+            if file_name.upper() == 'Q': return
             file_path = os.path.join(FILE_PATH, file_name)
             if os.path.isfile(file_path): break
             print('文件不存在,请重新输入')
@@ -124,7 +146,6 @@ class Client():
                'operator': 'upload'}
         self.my_send(dic)
         self.file_send(dic, file_path)
-        self.sk.close()
 
 
 class User():
@@ -132,18 +153,29 @@ class User():
         self.obj = obj
 
     def login(self):
+        if STATUS:
+            print('您已登陆')
+            return
         dic = {'operator': 'login'}
         self.obj.my_send(dic)
-        user_name = input('请输入用户名：').strip()
-        user_pwd = input('请输入用户密码：').strip()
-        user_info = {'user_name': user_name, 'user_pwd': user_pwd}
-        self.obj.my_send(user_info)
-        status_dic = self.obj.my_recv()
-        if status_dic['operator']: print('登陆成功')
-        else: print('登陆失败，请重新登陆')
-        self.obj.sk.close()
+        while True:
+            user_name = input('请输入用户名(Q)：').strip()
+            if not self.obj.qu_fun(user_name, 'user_name'):return
+            user_pwd = input('请输入用户密码：').strip()
+            user_info = {'user_name': user_name, 'user_pwd': user_pwd}
+            self.obj.my_send(user_info)
+            status_dic = self.obj.my_recv()
+            if status_dic['operator']:
+                print('登陆成功')
+                STATUS.append(user_name)
+                break
+            else:
+                print('登陆失败，请重新登陆')
 
     def register(self):
+        if STATUS:
+            print('您已登陆,请先退出在注册新用户')
+            return
         dic = {'operator': 'register'}
         self.obj.my_send(dic)
         user_name = input('请输入用户名：').strip()
@@ -154,18 +186,22 @@ class User():
         user_info = {'user_name': user_name, 'user_pwd': user_pwd}
         self.obj.my_send(user_info)
         status_dic = self.obj.my_recv()
-        if status_dic['operator']:print('注册成功')
-        else:print('注册失败，请重新注册')
-        self.obj.sk.close()
-
+        if status_dic['operator']:
+            print('注册成功')
+        else:
+            print('注册失败，请重新注册')
 
 
 def run():
-    obj = Client()
+    sk = socket.socket()
+    sk.connect(IP_PORT)
+    obj = Client(sk)
     user = User(obj)
-    fun_dic = {'1': user.register, '2': user.login,
-               '3': obj.upload, '4': obj.download}
-    print("""
+
+    while True:
+        fun_dic = {'1': user.register, '2': user.login,
+                   '3': obj.upload, '4': obj.download}
+        print("""
             1.用户注册 
             2.用户登陆
             3.上传文件
@@ -173,18 +209,20 @@ def run():
             
             """)
 
-    while True:
-        obj.sk = socket.socket()
-        obj.sk.connect(IP_PORT)
-        choice = input('请输入功能选项(Q)：')
-        if not obj.quit_fun(choice):
-            obj.sk.close()
+        choice = input('请输入功能选项(Q)：').strip()
+        if choice.upper() == 'Q':
+            obj.qu_fun('Q')
             return
-        if not fun_dic.get(choice):
-            obj.quit_fun('Q')
-            obj.sk.close()
-            continue
-        fun_dic[choice]()
+        if not fun_dic.get(choice): continue
+        try:
+            fun_dic[choice]()
+        except BrokenPipeError:
+            sk.close()
+            sk = socket.socket()
+            sk.connect(IP_PORT)
+            obj = Client(sk)
+            user = User(obj)
+            print('请登陆后使用')
 
 
 if __name__ == '__main__':

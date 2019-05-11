@@ -181,7 +181,8 @@ TCP/IP(**arp在tcp/ip中属于网络层**)
 
 ### 1. socket参数的详解
 
-```
+```python
+import socket
 socket.socket(family=AF_INET,type=SOCK_STREAM,proto=0,fileno=None)
 创建socket对象的参数说明：
 ```
@@ -219,11 +220,11 @@ sk.close()
 
 ```python
 # ip和端口占用解决方法，针对macos
-#加入一条socket配置，重用ip和端口
+# 加入一条socket配置，重用ip和端口
 import socket
 from socket import SOL_SOCKET,SO_REUSEADDR
 sk = socket.socket()
-sk.setsockopt(SOL_SOCKET,SO_REUSEADDR,1) #就是它，在bind前加
+sk.setsockopt(SOL_SOCKET,SO_REUSEADDR,1) # 就是它，在bind前加
 sk.bind(('127.0.0.1',8898))  #把地址绑定到套接字
 sk.listen()             #监听链接
 conn,addr = sk.accept() #接受客户端链接
@@ -392,7 +393,7 @@ Send data to the socket. The socket must be connected to a remote socket. The op
 #    buffer = buffer[bytes:]
 ```
 
-## 8.4 非阻塞&socketserver模块
+## 8.4 非阻塞模型
 
 ### 1. 非阻塞io模型模型
 
@@ -618,7 +619,9 @@ if __name__ == '__main__':
     client_handler(ip_port,bufsize)
 ```
 
-### 3. socketserver模块
+## 8.5 socketserver模块
+
+#### 1. socketserver模块
 
 ```python
 # server端
@@ -629,11 +632,13 @@ class Myserver(socketserver.BaseRequestHandler):
 server = socketsever.ThreadingTCPServer(('127.0.0.1', 9000), Myserver)
 server.server_forever()
 
-# client	`
+# client 
 import socket
 sk = socket.socket()
 sk.connect(('127.0.0.1', 9000))
 ```
+
+#### 2. socketserver模块进阶
 
 ```python 
 # 进阶示例
@@ -670,6 +675,94 @@ print("Received: {}".format(received))
 ```
 
 # 第九章 并发编程
+
+## 9.1 操作系统基础
+
+- 操作系统发展史
+- 并发和并行
+- 阻塞和非阻塞
+- 同步和异步
+- 进程：三状态图，唯一标示，开始和结束
+- 线程
+
+### 1. 操作系统发展史
+
+人机矛盾(cpu利用率低)—>磁带存储+批处理(降低数据的读取时间,提高cpu的利用率)
+
+—>**多道操作系统**：数据隔离、时空复用(能够遇到**I/O**操作的时候主动把cpu让出来，给其他任务使用，切换需要时间，由OS完成)
+
+—> 短作业优先算法、先来先服务算法
+
+—>**分时OS**：时间分片，CPU轮转，每一个程序分配一个时间片，**降低了cpu利用率**，**提高了用户体验**
+
+—>**分时**OS + **多道**OS：多个程序一起执行，遇到IO切换，时间片到了也要切换
+
+**实时OS**：实时控制，实时信息处理
+
+**通用OS**：多道、分时、实时处理或其两种以上
+
+**网络OS**：自带网络相关服务
+
+**分布式OS**：python中可使用：**celery**模块
+
+**OS作用**：1.将应用程序对硬件资源的竞态请求变得有序化
+
+### 2. 进程
+
+1. 进程：运行中的程序
+   - 程序只是一个文件，进程是程序文件被cpu运行
+   - 进程是计算机中最小的资源分配单位
+   - 在OS中有唯一标示符PID
+2. OS调度算法(4)
+   - 短作业优先
+   - 先来先服务
+   - 时间片轮转
+   - **多级反馈算法**：分时+先来先服务+短作业优先
+3. 并行与并发
+   - **并行**：程序分别独占cpu自由执行，看起来同时执行，实际每一个时间点都各自执行
+   - **并发**：多个程序占用同一cpu，每个程序交替使用cpu，看起来同时执行，实际上仍是串行
+
+### 3. 同步异步阻塞非阻塞
+
+1. **同步**：程序不可以同时执行
+2. **异步**：程序同时运行，没有依赖和等待关系
+3. **阻塞**：cpu不工作
+4. **非阻塞**：cpu工作
+5. **同步阻塞**
+   - con.recv()，socket阻塞的tcp协议
+6. **同步非阻塞**
+   - 没有io操作的func()
+   - socket非阻塞tcp协议； 调用自定义函数(不存在io操作)
+7. **异步非阻塞**（重点）
+   - 没有io操作，把func扔到其他任务里各自执行，cpu一直工作
+8. **异步阻塞**
+   - 程序中出现io操作
+
+### 4. 进程的三状态图
+
+#### 1. 进程状态
+
+**进程状态**：运行(runing) 就绪(ready)  阻塞(blocking)
+
+![进程三状态图](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/%E8%BF%9B%E7%A8%8B%E4%B8%89%E7%8A%B6%E6%80%81%E5%9B%BE.png)
+
+#### 2. 进程的创建与结束
+
+**进程创建**：
+
+1. 系统初始化(ps)
+2. 一个进程开启了一个子进程(os.fork,subprocess.Popen)
+3. 用户交互式请求(用户双击app)
+4. 批处理作业的初始化(只在大型机的批处理系统中应用)
+
+**进程结束**：
+
+1. 正常退出
+2. 出错退出
+3. 严重错误
+4. 被其他进程杀死(kill -9 pid)
+
+
 
 # 第十章 数据库
 
@@ -708,9 +801,8 @@ ___
    - 发送空字符不会报错
 10. BrokenPipeError： [Errno 32] Broken pipe
    - 由于客户端请求的链接，在一次循环之后，产生的套接字关闭，没有新的客户端套接字进行请求连接，所以产生broken pipe错误
-   - 经过检查发现，是由于客户端请求的链接，在一次循环之后，产生的套接字关闭，没有新的客户端套接字进行请求连接，所以产生broken pipe错误
 11. [Errno 41] Protocol wrong type for socket
-    - 
+12. 
 
 # 附录2:  错误记录
 
