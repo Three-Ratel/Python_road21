@@ -4,20 +4,15 @@ import os
 import sys
 import json
 import struct
-import socket
 import hashlib
-
-IP_PORT = ('127.0.0.1', 9000)
-FILE_PATH = '/Users/henry/programme/python/Python_codes/day030\
- 非阻塞IO&socketsever模块/tcp文件上传、下载/db/client_dir'
-STATUS = []
+from config import settings
 
 
 def auth(func):
 
     def inner(*args):
-        if STATUS: func(*args)
-        else:print('----------您还未登陆')
+        if settings.STATUS: func(*args)
+        else:print('您还未登陆')
         return
     return inner
 
@@ -90,8 +85,7 @@ class Client():
                 """实现进度条"""
                 self.process_bar(recv_size, file_size)
             return recv_size
-
-        file_path = os.path.join(FILE_PATH, file_name)
+        file_path = os.path.join(USER_DIR, file_name)
         with open(file_path, mode='wb') as f:
             recv_size = 0
             inner(inner(), 0, dic['file_size'])
@@ -116,10 +110,9 @@ class Client():
                 """进度条打印"""
                 self.process_bar(recv_size, file_size)
             o_md5 = self.sk.recv(32).decode('utf-8')
-            if o_md5 == obj.hexdigest():
-                print('\n文件上传成功')
-            else:
-                print('\033[31m\n文件上传失败\033[0m')
+            if o_md5 == obj.hexdigest(): print('\n文件上传成功')
+            else:print('\033[31m\n文件上传失败\033[0m')
+
 
     @auth
     def download(self):
@@ -138,7 +131,7 @@ class Client():
         while True:
             file_name = input('请输入要上传文件名(Q)：')
             if file_name.upper() == 'Q': return
-            file_path = os.path.join(FILE_PATH, file_name)
+            file_path = os.path.join(USER_DIR, file_name)
             if os.path.isfile(file_path): break
             print('文件不存在,请重新输入')
         file_size = os.path.getsize(file_path)
@@ -153,7 +146,7 @@ class User():
         self.obj = obj
 
     def login(self):
-        if STATUS:
+        if settings.STATUS:
             print('您已登陆')
             return
         dic = {'operator': 'login'}
@@ -167,13 +160,15 @@ class User():
             status_dic = self.obj.my_recv()
             if status_dic['operator']:
                 print('登陆成功')
-                STATUS.append(user_name)
+                settings.STATUS.append(user_name)
+                global USER_DIR
+                USER_DIR = os.path.join(settings.CLI_DIR, settings.STATUS[0])
+                if not os.path.exists(USER_DIR): os.makedirs(USER_DIR)
                 break
-            else:
-                print('登陆失败，请重新登陆')
+            else:print('登陆失败，请重新登陆')
 
     def register(self):
-        if STATUS:
+        if settings.STATUS:
             print('您已登陆,请先退出在注册新用户')
             return
         dic = {'operator': 'register'}
@@ -192,38 +187,4 @@ class User():
             print('注册失败，请重新注册')
 
 
-def run():
-    sk = socket.socket()
-    sk.connect(IP_PORT)
-    obj = Client(sk)
-    user = User(obj)
 
-    while True:
-        fun_dic = {'1': user.register, '2': user.login,
-                   '3': obj.upload, '4': obj.download}
-        print("""
-            1.用户注册 
-            2.用户登陆
-            3.上传文件
-            4.下载文件
-            
-            """)
-
-        choice = input('请输入功能选项(Q)：').strip()
-        if choice.upper() == 'Q':
-            obj.qu_fun('Q')
-            return
-        if not fun_dic.get(choice): continue
-        try:
-            fun_dic[choice]()
-        except BrokenPipeError:
-            sk.close()
-            sk = socket.socket()
-            sk.connect(IP_PORT)
-            obj = Client(sk)
-            user = User(obj)
-            print('请登陆后使用')
-
-
-if __name__ == '__main__':
-    run()

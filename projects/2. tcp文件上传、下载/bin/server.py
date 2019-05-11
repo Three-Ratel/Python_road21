@@ -1,21 +1,13 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 import os
-import sys
 import json
 import pickle
 import struct
 import hashlib
 from socketserver import *
-PRO_DIE = os.path.dirname(os.path.dirname(__file__))
-sys.path.append(PRO_DIE)
 from lib import get_md5
-
-IP_PORT = ('127.0.0.1', 9000)
-FILE_PATH = '/Users/henry/programme/python/Python_codes/day030\
- 非阻塞IO&socketsever模块/tcp文件上传、下载/db/server_dir'
-USER = []
-USER_INFO = r'/Users/henry/programme/python/Python_codes/day030 非阻塞IO&socketsever模块/tcp文件上传、下载/db/user_info'
+from config import settings
 
 
 class User():
@@ -27,14 +19,16 @@ class User():
             dic = self.obj.my_recv()
             if dic['user_name'] == 'Q': return
             flag = False
-            with open(USER_INFO, 'rb') as f:
+            with open(settings.USER_INFO, 'rb') as f:
                 try:
                     while True:
                         user_dic = pickle.load(f)
+
                         if dic['user_name'] == user_dic['user_name'] and \
                                 get_md5.get_md5(dic) == user_dic['user_pwd']:
                             flag = True
-                            USER.append(user_dic)
+                            settings.USER.append(user_dic['user_name'])
+                            print(settings.USER)
                             break
                 except:
                     pass
@@ -44,7 +38,7 @@ class User():
 
     def register(self):
         user_dic = self.obj.my_recv()
-        with open(USER_INFO, 'ab+') as f:
+        with open(settings.USER_INFO, 'ab+') as f:
             pickle.dump({'user_name': user_dic['user_name'],
                          'user_pwd': get_md5.get_md5(user_dic)}, f)
             flag = True
@@ -77,7 +71,7 @@ class Myserver(BaseRequestHandler):
         self.request.send(byte_dic)
 
     def file_send(self, dic):
-        file_path = os.path.join(FILE_PATH, dic['file_name'])
+        file_path = os.path.join(os.path.join(settings.SER_DIR, settings.USER[0]), dic['file_name'])
         dic = {}
         if not os.path.isfile(file_path):
             dic['isfile'] = False
@@ -109,8 +103,10 @@ class Myserver(BaseRequestHandler):
                 dic['file_size'] -= len(content)
                 """校验文件"""
                 obj.update(content)
-
-        file_path = os.path.join(FILE_PATH, dic['file_name'])
+        settings.SER_DIR = os.path.join(settings.SER_DIR, settings.USER[0])
+        print(settings.SER_DIR)
+        if not os.path.exists(settings.SER_DIR): os.makedirs(settings.SER_DIR)
+        file_path = os.path.join(settings.SER_DIR, dic['file_name'])
         with open(file_path, mode='wb') as f:
             inner()
             inner(0, dic['file_size'])
@@ -128,19 +124,14 @@ class Myserver(BaseRequestHandler):
                     User(self).register()
             except:return
 
-
         while True:
             try:
                 dic = self.my_recv()
-                if dic['operator'] == 'Q':break
+                if dic['operator'] == 'Q':
+                    settings.USER.pop()
+                    break
                 elif dic['operator'] == 'download':
                     self.file_send(dic)
                 elif dic['operator'] == 'upload':
                     self.file_recv(dic)
             except:pass
-
-
-if __name__ == '__main__':
-    TCPServer.allow_reuse_address = True
-    server = ThreadingTCPServer(IP_PORT, Myserver)
-    server.serve_forever()
