@@ -3015,8 +3015,7 @@ print(val)
 ```python
 # 用字符串形式，去对象中找到其成员
 import importlib
-redis = importlib.import_module('utils.redis')
-getattr(redis, 'func')()
+redis = importlib.import_module('utils.redis')getattr(redis, 'func')()
 ```
 
 ```python

@@ -113,12 +113,11 @@ class Client():
             if o_md5 == obj.hexdigest(): print('\n文件上传成功')
             else:print('\033[31m\n文件上传失败\033[0m')
 
-
     @auth
     def download(self):
         file_name = input('请输入要下载文件(Q)：')
         if file_name.upper() == 'Q': return
-        dic = {'file_name': file_name, 'operator': 'download'}
+        dic = {'file_name': file_name, 'operator': 'file_send'}
         self.my_send(dic)
         dic = self.my_recv()
         if dic['isfile']:
@@ -136,7 +135,7 @@ class Client():
             print('文件不存在,请重新输入')
         file_size = os.path.getsize(file_path)
         dic = {'file_name': file_name, 'file_size': file_size,
-               'operator': 'upload'}
+               'operator': 'file_recv'}
         self.my_send(dic)
         self.file_send(dic, file_path)
 

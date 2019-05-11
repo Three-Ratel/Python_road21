@@ -794,8 +794,8 @@ ___
    - join 只能是str
 7. ValueError: too many values to unpack (expected 2)
    - 赋值号两边参数不一致
-8. [][Errno 9][Errno 9] Bad file descriptor
-   - 是因为你关闭了套接字对象后，又再次去调用了套接字对象。
+8. [][Errno 9]OSError: [Errno 9] Bad file descriptor
+   - 因为关闭了套接字对象后，又再次去调用了套接字对象。
 9. Errno 54] Connection reset by peer
    - tcp连接一旦断开，发送数据会报错
    - 发送空字符不会报错
