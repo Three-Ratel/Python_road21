@@ -74,7 +74,6 @@ class Client():
         file_size = dic['file_size']
 
         def inner(recv_size = 0, buffersize=2048, recvsize=2048):
-
             while dic['file_size'] > buffersize:
                 content = self.sk.recv(recvsize)
                 f.write(content)
@@ -85,17 +84,14 @@ class Client():
                 """实现进度条"""
                 self.process_bar(recv_size, file_size)
             return recv_size
-        file_path = os.path.join(USER_DIR, file_name)
+        file_path = os.path.join(settings.USER_DIR, file_name)
         with open(file_path, mode='wb') as f:
             recv_size = 0
             inner(inner(), 0, dic['file_size'])
-
         """接收文件的 md5 值"""
         file_md5 = self.sk.recv(32).decode('utf-8')
-        if file_md5 == obj.hexdigest():
-            print('\n文件下载成功')
-        else:
-            print('\n文件校验失败，请重新下载')
+        if file_md5 == obj.hexdigest():print('\n文件下载成功')
+        else:print('\n文件校验失败，请重新下载')
 
     def file_send(self, dic, file_path):
         obj = hashlib.md5()
@@ -120,22 +116,19 @@ class Client():
         dic = {'file_name': file_name, 'operator': 'file_send'}
         self.my_send(dic)
         dic = self.my_recv()
-        if dic['isfile']:
-            self.file_recv(dic, file_name)
-        else:
-            print('您下载的文件不存在')
+        if dic['isfile']:self.file_recv(dic, file_name)
+        else:print('您下载的文件不存在')
 
     @auth
     def upload(self):
         while True:
             file_name = input('请输入要上传文件名(Q)：')
             if file_name.upper() == 'Q': return
-            file_path = os.path.join(USER_DIR, file_name)
+            file_path = os.path.join(settings.USER_DIR, file_name)
             if os.path.isfile(file_path): break
             print('文件不存在,请重新输入')
         file_size = os.path.getsize(file_path)
-        dic = {'file_name': file_name, 'file_size': file_size,
-               'operator': 'file_recv'}
+        dic = {'file_name': file_name, 'file_size': file_size, 'operator': 'file_recv'}
         self.my_send(dic)
         self.file_send(dic, file_path)
 
@@ -157,14 +150,13 @@ class User():
             user_info = {'user_name': user_name, 'user_pwd': user_pwd}
             self.obj.my_send(user_info)
             status_dic = self.obj.my_recv()
-            if status_dic['operator']:
+            if not status_dic['operator']:print('登陆失败，请重新登陆')
+            else:
                 print('登陆成功')
                 settings.STATUS.append(user_name)
-                global USER_DIR
-                USER_DIR = os.path.join(settings.CLI_DIR, settings.STATUS[0])
-                if not os.path.exists(USER_DIR): os.makedirs(USER_DIR)
+                settings.USER_DIR = os.path.join(settings.CLI_DIR, settings.STATUS[0])
+                if not os.path.exists(settings.USER_DIR): os.makedirs(settings.USER_DIR)
                 break
-            else:print('登陆失败，请重新登陆')
 
     def register(self):
         if settings.STATUS:
@@ -180,10 +172,9 @@ class User():
         user_info = {'user_name': user_name, 'user_pwd': user_pwd}
         self.obj.my_send(user_info)
         status_dic = self.obj.my_recv()
-        if status_dic['operator']:
-            print('注册成功')
-        else:
-            print('注册失败，请重新注册')
+        if status_dic['operator']:print('注册成功')
+        else: print('注册失败，请重新注册')
+
 
 
 

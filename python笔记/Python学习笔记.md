@@ -2968,7 +2968,6 @@ print(val, typ(val))
 from datetime import datetime, timezone, timedelta
 v1 = datetime.now()
 v2 = datetime.utcnow()
-
 tz = timezone(timedelta(hours = 7))  # 东7区
 v3 = datetime.now(tz)  # 当前东7区时间
 
@@ -3015,7 +3014,8 @@ print(val)
 ```python
 # 用字符串形式，去对象中找到其成员
 import importlib
-redis = importlib.import_module('utils.redis')getattr(redis, 'func')()
+redis = importlib.import_module('utils.redis')
+getattr(redis, 'func')()
 ```
 
 ```python
@@ -3030,16 +3030,15 @@ getattr(module_path, func_name)()
 import importlib
 middleware_classes = [
     'utils.redis.Redis',
-    # 'utils.mysql.MySQL',
+    'utils.mysql.MySQL',
     'utils.mongo.Mongo'
 ]
 for path in middleware_classes:
     module_path,class_name = path.rsplit('.',maxsplit=1)
-    module_object = importlib.import_module(module_path)# from utils import redis
+    module_object = importlib.import_module(module_path)    # from utils import redis
     cls = getattr(module_object,class_name)
     obj = cls()
     obj.connect()
-
 
 # 用字符串的形式导入模块。
 # redis = importlib.import_module('utils.redis')
@@ -3064,7 +3063,7 @@ for path in middleware_classes:
 ##### Note(2)
 
 - 多次配置logging模块，只有第一次配置有效
-- 在应用日志时，保留堆栈信息需加上**exc_info=True**
+- 在应用日志时，**保留堆栈**信息需加上**exc_info=True**
 - **用户**：记录日志（银行流水）
 - **程序员**：统计、故障排除的 debug、错误完成代码优化
 
@@ -3077,9 +3076,9 @@ logging.basicConfig(fielname='cmdb.log',
                     format='%(asctime)s - %(name)s - %(levelname)s -%(module)s:  %(message)s'
                     datefmt = '%Y-%m-%d-%H-%M-%S'
                     level=logging.WARNING)
-logging.log(10, '日志内容')  # 不写
+logging.log(10, '日志内容')           # 不写
 logging.debug('asdfgh')
-logging.log(30, 'asdfgh')  # 写
+logging.log(30, 'asdfgh')            # 写
 logging.warning('asdfgh')
 ```
 
@@ -3212,16 +3211,14 @@ a1 = struct.unpack('i', a)
 b1 = struct.unpack('i', b)
 ```
 
-
-
 # 第七章 面向对象
 
 面向对象编程（Object Oriented Programming，**OOP**，面向对象程序设计）
 
 1. 基础概念
 
-   1. 类：具有相同方法和属性的一类事物
-   2. 什么是对象、实例：一个拥有具体属性值和动作的具体个体
+   1. **类**：具有相同方法和属性的一类事物
+   2. 对象、实例：一个拥有具体属性值和动作的具体个体
    3. 实例化：从一个类得到一个具体对象的过程
 
 2. 组合
@@ -3231,7 +3228,7 @@ b1 = struct.unpack('i', b)
 
 3. 三大特性
 
-   1. 继承:所有的查找名字(调用方法和属性)。如果自己和父类都有，希望自己和父类都调用，super()/指定类名直接调
+   1. **继承**:所有的查找名字(调用方法和属性)。如果自己和父类都有，希望自己和父类都调用，super()指定类名直接调
 
       1. 父类、基类、超类
       2. 派生类、子类
@@ -3264,11 +3261,11 @@ b1 = struct.unpack('i', b)
    1. isinstance
    2. issubclass
    3. type
-   4. super（新式类支持，遵循mro顺序）
+   4. super（新式类支持，遵循**mro**顺序）
 
 7. 新式类和经典类
 
-   1. 新式类：继承object，super，多继承（广度优先c3），具有mro方法
+   1. 新式类：继承object，super，多继承（**广度优先c3**），具有mro方法
    2. 经典类：py2不继承object，**无super/mro** ， 深度优先
 
    
@@ -3326,8 +3323,8 @@ class File:
   def write(self, content):
     with open(self.path, mode='a', encoding='utf-8') as f:
       data = f.write()
-# 创建对象，并使用   
-obj = File()
+
+obj = File()  					 # 创建对象，并使用   
 obj.path = 'test.txt'    # 往obj对象中写入一个私有对象
 obj.write(content)
 # 定义私有属性,私有属性在类外部无法直接进行访问
@@ -3442,8 +3439,8 @@ obj.f2()   # 会报错
 继承关系中的**查找方法**：
 
 1. self 指的是哪个对象
-2. 当类是经典类时，多继承情况下，会按照深度优先方式查找
-3. 当类是新式类时，多继承情况下，会按照广度优先方式查找
+2. 当类是经典类时，多继承情况下，会按照**深度优先**方式查找
+3. 当类是新式类时，多继承情况下，会按照**广度优先**方式查找
 
 #### 3.2 经典类和新式类
 
@@ -3491,7 +3488,6 @@ def func(arg):  # 多种类型，很多事物
 
 ```python
 # 对于一个函数，python对参数类型不会限制，传入参数时可以是各种类型，在函数中如果有例如：arg.append方法，就会对传入类型进行限制。
-
 # 这就是鸭子模型，类似于上述的函数，我们认为只要能呱呱叫的就是鸭子，只要有append方法，就是我们想要的类型
 ```
 
@@ -3537,7 +3533,7 @@ print (v1 + v2)
 
 ## 7.2 类成员(6)
 
-- 实例化对象时，对在对象中存储类对象指针，指向其类
+- 实例化对象时，对在对象中**存储类对象指针**，指向其类
 
 ### 1. 类变量（静态字段/属性）
 
@@ -3603,8 +3599,8 @@ obj.f(1, 2)   # 不推荐
 
 ### 3. 属性
 
-1. 定义：@property 只能有 **一个参数self**
-2. 执行：对象.属性名（ 无括号）
+1. 定义：@property **只能有一个参数self**
+2. **执行**：对象.属性名（ 无括号）
 
 ```python
 class Foo:
@@ -3706,14 +3702,13 @@ class Classes(object):
 
 s1 = School('北京')
 c1 = Course('Python', s1)
-
 cl1 = Classes('全栈1期'， c1)
 ```
 
 ### 1. 嵌套
 
-- 函数：参数可以是任意类型
-- dict：函数、类和对像都可以作为字典的key， 即都是可hash的
+- **函数**：参数可以是任意类型
+- **dict**：函数、类和对像都可以作为字典的key， 即都是可hash的
 - 继承的查找关系
 
 ```python
@@ -3779,7 +3774,7 @@ class AdminSite(object):
 site = AdminSite()
 site.registry(1)
 site.registry(2, StackConfig)
-site.registry(3, UserConfig)     # 易错点
+site.registry(3, UserConfig)     # 易错点 echo
 site.run()
 ```
 
@@ -3880,8 +3875,8 @@ class Foo(object):
     self.email = emial
 
 obj = Foo('henry', 19, '123@qq.com')
-val = obj.__dict__  # 去对象中找到所有变量并将其转换为字典
-print(val)
+val = obj.__dict__ 			   # 去对象中找到所有变量并将其转换为字典
+print(val) 
 ```
 
 #### 2.7 _\_enter__（**上下文管理**）
@@ -3896,7 +3891,7 @@ class Foo(object):
   def __exit__(self, exe_type, exc_val, exc_tb):
     self.x.close()
   
-with Foo() as f:   # 需要 __enter__ 和 __exit__ 方法
+with Foo() as f:   					# 需要 __enter__ 和 __exit__ 方法
   f.write('henry')
   f.write('echo')
 ```
@@ -4124,6 +4119,7 @@ setattr(obj, 'name', 'eric')
 
 ```python
 # 反射当前文件内容
+import sys
 getattr(sys.modules[__name__], 'ab')
 # 通过对象获取、示例变量、绑定方法
 # 通过类来获取类变量、类方法、静态方法
@@ -4250,7 +4246,7 @@ class Singleton(object):
     	cls.instance = object.__new__(cls)
     return cls.instance
  
-obj1 = Singleton()   # 内存地址一致
+obj1 = Singleton()      # 内存地址一致
 obj2 = Singleton()
 ```
 
@@ -4292,7 +4288,8 @@ print(456)
 # 多次导入，模块只会加载一次，即使模块中包含其他模块
 import importlib
 import jd
-importlib.reload(jd)  # 手动加载，会覆盖第一次导入
+# 手动加载，会覆盖第一次导入
+importlib.reload(jd)  
 print(456)
 ```
 
@@ -4307,7 +4304,7 @@ obj = Foo()
 
 ```python
 # app.py
-import jd   # 加载jd.py,加载最后会实例化一个Foo对象并赋值给obj
+import jd                # 加载jd.py,加载最后会实例化一个Foo对象并赋值给obj
 print(jd.obj)
 ```
 
@@ -4366,19 +4363,21 @@ sys.path.append(path)
 
 ### 2.1 元字符
 
-1. 是哪个一字符就匹配字符串中的哪一个字符
+- 是哪个一字符就匹配字符串中的哪**一个**字符
+
 2. 字符组（3）
    - [ad] ，匹配a/d，**单字符匹配**
-   - [0-9]， [a-z]， [A-Z] (范围是从小到大),遵循ASCII码
+   - [0-9]， [a-z]， [A-Z] (范围是**从小到大)**,遵循ASCII码
    - [a-zA-Z], [0-9x]
-3. 转义字符（6）
+3. 转义字符（7 ）
    - [0-9] 等价于  **\d** (\转义符，转义d使得其匹配0-9之间的数)
    - \w：(word,数字，大小写字母，下划线) 
-   - \s(space, 空格，换行，制表符)  (\t(table) \n(next))
+   - \s：(space, 空格，换行，制表符)  (\t(table) \n(next))
    - \D  \W  \S(对以上结果取反)
+   - **\b**：匹配**\w**和**\W**之间，即匹配单词边界匹配一个**单词边界**，也就是指单词和空格间的位置。例如， 'er\b' 可以匹配"never" 中的 'er'，但不能匹配 "verb" 中的 'er'。
 4. 特殊符号的含义（4）
    - **.** 除了换行符之外的任意内容
-   - [\d] [0-9] \d 没有区别。 [\d\D] 匹配所有
+   - [\d] [0-9] \d 没有区别。 [\d\D] **匹配所有**
    - [^abc]：**非字符组**，[abc] 取反
    - ^：表示一个字符的开始。 $：表示一个字符的结束 (^abc\$)
 5. | 和（）eg. abc|edf。  abc|ab 
@@ -4388,8 +4387,6 @@ sys.path.append(path)
 www.(baidu|google).com
 # () 表示分组，给一部分正则规定为一组，
 ```
-
-6. \b：匹配**\w**和**\W**之间，即匹配单词边界匹配一个单词边界，也就是指单词和空格间的位置。例如， 'er\b' 可以匹配"never" 中的 'er'，但不能匹配 "verb" 中的 'er'。
 
 ### 2.2 量词（6）
 
@@ -4407,31 +4404,21 @@ www.(baidu|google).com
 # 匹配任意小数，保留两位
 \d+\.\d{2}
 # 匹配任意整数或小数
-\d+\.?\d*		 # 有bug
-\d+(\.?\d+)? # 分组实现
+\d+\.?\d*		    # 有bug
+\d+(\.\d+)?     # 分组实现
 ```
 
 ### 2.3 贪婪匹配/惰性匹配
 
 ```python
-\d{7-12}   # 默认是贪婪匹配，尽量多匹配
-# 回溯算法
-<.+>
-
+\d{7-12}        # 默认是贪婪匹配，尽量多匹配
+                # 回溯算法
+  
 # 非贪婪匹配，惰性匹配，总是匹配符合条件范围内尽量小的字符串
-\d{2, 3}?
-\d+?3         # 尽量多取，遇到3结束
-元字符 量词 ？x # 按照元字符规则在量词范围内匹配，一旦遇到x停止
-.*?x          # 常用，先找x找到匹配结束
-
-# 元字符
-# 元字符量词
-# 元字符量词？
-# \d+?x      .*?x   常用于爬虫
-```
-
-```python
-李[^和]+
+\d{2,3}?			  # 匹配两位数
+\d+?3           # 尽量多取，遇到3结束
+元字符 量词 ？x   # 按照元字符规则在量词范围内匹配，一旦遇到x停止
+.*?x            # 常用，先找x找到匹配结束
 ```
 
 ```python
@@ -4446,28 +4433,10 @@ www.(baidu|google).com
 . 是任意字符
 * 是取 0 至 无限长度
 ? 是非贪婪模式。
-# 为何在一起就是 取尽量少的任意字符，一般不会这么单独写，大多用在：
-.*?x
-
-# 就是取前面任意长度的字符，直到一个x出现
+.*?x              # 就是取前面任意长度的字符，直到一个x出现
 ```
 
-### 2.4 特殊分组用法
-
-| 语法       | 含义                                       | 示例                 |            |
-| ---------- | ------------------------------------------ | -------------------- | ---------- |
-| (?P<name>) | 分组，除了原有的编号外再指定一个额外的别名 | (?P<id>abc){2}       | abcabc     |
-| (?P=name)  | 引用别名为<name>的分组匹配到字符串         | (?P<id>\d)abc(?P=id) | 1abc15abc5 |
-| \<number>  | 引用编号为<number>的分组匹配到字符串       | (\d)abc\1            | 1abc15abc5 |
-| (?<=….)    | 以…开头，并不包括开头                      |                      |            |
-| (?<!….)    | 不以…结尾，并不包括开头                    |                      |            |
-
-**Note**：[ ] [^] 带有特殊意义的元字符到字符组中大部分会取消它特殊意义
-
-- [()+*.]：取消特殊含义，恢复原本意义
-- [-]：第一个或最后表示横杠，中间位置表示范围
-
-#### 2.5 示例
+### 2.4 示例
 
 ```python
 # 匹配邮箱
@@ -4481,71 +4450,69 @@ www.(baidu|google).com
 
 ## 3. re模块
 
-1. **compile**()
+### 3.1 compile()
 
-   - 编译正则表达式模式，返回一个对象的模式。（可以把那些常用的正则表达式编译成正则表达式对象，这样可以提高一点效率。）
+- 编译正则表达式模式，返回一个对象的模式。（可以把那些常用的正则表达式编译成正则表达式对象，这样可以提高一点效率。）
 
-   - 格式：re.compile(pattern,flags=0)，pattern: 编译时用的表达式字符串。flags 编译标志位，用于修改正则表达式的匹配方式，如：是否区分大小写，多行匹配等。常用的flags有：
+- 格式：re.compile(pattern,flags=0)，pattern: 编译时用的表达式字符串。flags 编译标志位，用于修改正则表达式的匹配方式，如：是否区分大小写，多行匹配等。常用的flags有：
 
-   | 标志               | 含义                                                     |
-   | ------------------ | -------------------------------------------------------- |
-   | re.S(DOTALL)       | 使匹配包括换行在内的所有字符                             |
-   | re.I（IGNORECASE） | 使匹配对大小写不敏感                                     |
-   | re.L（LOCALE）     | 做本地化识别（locale-aware)匹配，法语等                  |
-   | re.M(MULTILINE)    | 多行匹配，影响^和$                                       |
-   | re.X(VERBOSE)      | 该标志通过给予更灵活的格式以便将正则表达式写得更易于理解 |
-   | re.U               | 根据Unicode字符集解析字符，这个标志影响\w,\W,\b,\B       |
+| 标志               | 含义                                                     |
+| ------------------ | -------------------------------------------------------- |
+| re.S(DOTALL)       | 使匹配包括换行在内的所有字符                             |
+| re.I（IGNORECASE） | 使匹配对大小写不敏感                                     |
+| re.L（LOCALE）     | 做本地化识别（locale-aware)匹配，法语等                  |
+| re.M (MULTILINE)   | 多行匹配，影响^和$                                       |
+| re.X (VERBOSE)     | 该标志通过给予更灵活的格式以便将正则表达式写得更易于理解 |
+| re.U               | 根据Unicode字符集解析字符，这个标志影响\w,\W,\b,\B       |
 
-   ```python
-   import re
-   tt = "Tina is a good girl, she is cool, clever, and so on..."
-   rr = re.compile(r'\w*oo\w*')
-   print(rr.findall(tt))   
-   # 查找所有包含'oo'的单词
-   执行结果如下：
-   ['good', 'cool']
-   ```
+```python
+import re
+tt = "Tina is a good girl, she is cool, clever, and so on..."
+rr = re.compile(r'\w*oo\w*')
+print(rr.findall(tt))   
+# 查找所有包含'oo'的单词
+执行结果如下：
+['good', 'cool']
+```
 
-2. **re.match()**
+###3.2 re.match()
 
    **格式**：re.match(pattern, string, flags=0)
 
    - 在search前的正则前加了一个：**^**
 
-   - 想要完全匹配，可以在表   达式末尾加上边界匹配符'$'
+   - 想要**完全匹配**，可以在表达式末尾加上边界匹配符**$**，没有匹配到，则返回 **None**
 
    ```python
-   # 没有匹配到，则返回 None
    # 从字符串开头匹配，匹配上则返回一个match对像，有group()方法
    import re 
    ret = re.match('\d', '8alex83')  
    print(ret)
    ```
 
-3. **search()**
+###3.3 search()
 
    **格式**：re.search(pattern, string, flags=0)
 
-   - re.search只要找到**第一个**匹配然后返回，如果字符串没有匹配，则返回None。
+   - re.search只要找到**第一个**匹配然后返回，如果字符串没有匹配，则返回**None**。
 
    ```python
    print(re.search('\dcom','www.4comrunoob.5com').group())
-   执行结果如下：4com
+   # 执行结果如下：4com
    ```
 
    **注**：match和search一旦匹配成功，就是一个**match object对象**，而match object对象有以下方法：
 
-   - group() 返回被 RE 匹配的字符串
    - start() 返回匹配开始的位置
    - end() 返回匹配结束的位置
    - span() 返回一个元组包含匹配 (开始,结束) 的位置
    - group() 返回re整体匹配的字符串，可以一次输入多个组号，对应组号匹配的字符串。
 
-   a. group（）返回re整体匹配的字符串，
+a. group（）返回re整体匹配的字符串，
    b. group (n,m) 返回组号为n，m所匹配的字符串，如果组号不存在，则返回indexError异常
    c.groups（）groups() 方法返回一个包含正则表达式中所有小组字符串的元组，从 1 到所含的小组号，通常groups()不需要参数，返回一个**元组**，元组中的元就是正则表达式中定义的组。 
 
-   ```python
+```python
    import re
    a = "123abc456"
     print(re.search("([0-9]*)([a-z]*)([0-9]*)",a).group(0))   #123abc456,返回整体
@@ -4553,13 +4520,13 @@ www.(baidu|google).com
     print(re.search("([0-9]*)([a-z]*)([0-9]*)",a).group(2))   #abc
     print(re.search("([0-9]*)([a-z]*)([0-9]*)",a).group(3))   #456
    ###group(1) 列出第一个括号匹配部分，group(2) 列出第二个括号匹配部分，group(3) 列出第三个括号匹配部分。###
-   ```
+```
 
-4. **findall()**
+###3.4 findall()
 
     **格式**：re.findall(pattern, string, flags=0)
 
-   - 可以获取字符串中所有匹配的字符串，**返回一个列表**。
+   - 可以获取字符串中所有匹配的字符串，**返回一个列表**，没有匹配则为空。
 
    ```python
    p = re.compile(r'\d+')
@@ -4579,11 +4546,11 @@ www.(baidu|google).com
    [('g', 'd'), ('c', 'l')]
    ```
 
-5. **finditer()**
+###3.5 finditer()
 
-   搜索string，返回一个顺序访问每一个匹配结果（Match对象）的迭代器。找到 RE 匹配的所有子串，并把它们作为一个迭代器返回。
+   **格式**：re.finditer(pattern, string, flags=0)
 
-   格式：re.finditer(pattern, string, flags=0)
+   - 搜索string，返回一个顺序访问每一个匹配结果（**Match对象**）的迭代器。找到 RE 匹配的所有子串，并把它们作为一个迭代器返回。
 
    ```python
    # 匹配到结果为 迭代器，每一项都是match对象，通过group取值
@@ -4593,14 +4560,13 @@ www.(baidu|google).com
      print(i.group())
    ```
 
-6. **split()**
-
-    按照能够匹配的子串将string分割后返回列表。
-
-    可以使用re.split来分割字符串，如：re.split(r'\s+', text)；将字符串按空格分割成一个单词列表。
+###3.6 split()
 
     **格式**：re.split(pattern, string[, maxsplit]，maxsplit用于指定最大分割次数，不指定将全部分割。
-
+    
+    - 按照能够匹配的子串将string分割后返回列表。
+    - 可以使用re.split来分割字符串，如：re.split(r'\s+', text)；将字符串按空格分割成一个单词列表。
+    
     ```python
     import re
     ret = re.split('\d+', 'henry18')
@@ -4611,37 +4577,57 @@ www.(baidu|google).com
     ```
 
 
-7. **sub()/ subn()**
+###3.7 sub()/ subn()
 
-   - 不返回/返回替换次数
-   
-   
+
     **格式**：re.sub(pattern, repl, string, count=0)
-
+       
     **格式**：subn(pattern, repl, string, count=0, flags=0) 
 
+   - 不返回/返回替换次数
+
      ```python
+     
+     ```
+
     import re
     text = "JGood is a handsome boy, he is cool, clever, and so on..."
-    print(re.sub(r'\s+', lambda m:'['+m.group(0)+']', text,0))
+    print(re.sub(r'\s+', lambda m:'['+m.group(0)+']', text,0))        # flags=0默认参数
     执行结果如下：
     JGood[ ]is[ ]a[ ]handsome[ ]boy,[ ]he[ ]is[ ]cool,[ ]clever,[ ]and[ ]so[ ]on...
      ```
-
+    
     ```python
     # 替换 n 次
-    ret = re.sub('\d', 'G', 'henry18'，n)
+    ret = re.sub('\d', 'G', 'henry18',n)
     print(ret)
     # 返回替换次数（tuple类型）
     ret = re.subn('\d', 'G', 'henry18')
     print(ret)  # 返回值为tuple类型
     ```
 
-   
 
-## 3. 分组
+## 4. 分组
 
-1. group()：括号中默认为0，即取第0个分组
+### 4.1 特殊分组用法
+
+| 语法       | 含义                                       | 示例                 |            |
+| ---------- | ------------------------------------------ | -------------------- | ---------- |
+| (?P<name>) | 分组，除了原有的编号外再指定一个额外的别名 | (?P<id>abc){2}       | abcabc     |
+| (?P=name)  | 引用别名为<name>的分组匹配到字符串         | (?P<id>\d)abc(?P=id) | 1abc15abc5 |
+| \<number>  | 引用编号为<number>的分组匹配到字符串       | (\d)abc\1            | 1abc15abc5 |
+| (?<=….)    | 以…开头，并不包括开头                      |                      |            |
+| (?<!….)    | 不以…结尾，并不包括开头                    |                      |            |
+
+#### Note（3）
+
+1. [^] 带有特殊意义的元字符到字符组中大部分会取消它特殊意义
+2. [()+*.]：取消特殊含义，恢复原本意义
+3. [-]：第一个或最后表示横杠，中间位置表示范围
+
+### 4.2. group()
+
+- 括号中**默认为0**，即取第0个分组
 
 ```python
 s = '<h1>wahaha</h1>'
@@ -4651,8 +4637,10 @@ print(ret.group(1))
 print(ret.group(2))
 ```
 
-2. **分组命名**(?P<name>正则表达式)
-   - name：不需要加引号，本身就是字符串
+### 4.3 分组命名
+
+- **(?P<name>正则表达式)**
+- name：不需要加引号，本身就是字符串
 
 ```python
 ret = re.search('<(?P<tag>\w+)>(?P<content>.*?)</\w+>', s)
@@ -4660,7 +4648,9 @@ print(ret.group('tag'))
 print(ret.group('content'))
 ```
 
-3. **引用分组**(?P=name)
+### 4.4 引用分组
+
+- **(?P=name)**
 
 ```python
 s = '<h1>wahaha</h1>'
@@ -4675,7 +4665,9 @@ ret = re.search(r'(\w+)>.*?</\1>', s)
 print(ret.group())
 ```
 
-4. **取消分组优先**(?:)
+### 4.5 取消分组优先
+
+- **(?:)**
 
 ```python
 # findall 遇到正则中的分组 优先 显示分组中的内容
@@ -4687,7 +4679,9 @@ ret = re.findall('\d+(?:\.\d+)?', '1.234+2')
 print(ret)
 ```
 
-5. split，**保留分割符**()
+### 4.6 split，保留分割符
+
+- **()**
 
 ```python
 # 保留分组中内容
@@ -4695,24 +4689,26 @@ ret = re.split('(\d+)', 'henry18')
 print(ret)
 ```
 
-## 4. 练习
+## 5. 练习
 
 ```python
+# 示例1：匹配单个数字，findall方法会有屏蔽所有其他匹配项，只显示分组中内容
 import re
 ret = re.findall(r'\d+\.\d+|(\d)', '2+23*3.42/3.2')
 print(ret)
-ret.remove('')
+while True:
+    if '' not in ret:break
+    ret.remove('')
 print(ret)
 ```
 
-**以。。。为开头(?<!…) & (?<=…)**
-
 ```python
+# 示例2：匹配以...开头的数据，不包括开头
 import re
 m = re.findall('(?<=>)\w+', '\<a>wahaha\</a>\<b>banana\</b>\<h1>qqxing\</h1>')
  for i in m:
      print(i)
-
+# 匹配不以...开头的数据，不包括结尾
 m = re.findall('(?<!>)\w+', '\<a>wahaha\</a>\<b>banana\</b>\<h1>qqxing\</h1>')
 print(m)
 ```
@@ -4722,7 +4718,7 @@ print(m)
 - ()：限定一组正则的量词约束 (\d\w)?
 
 ```python
-# 以a开头，由至少一个字母组成的字
+# 示例3：以a开头，由至少一个字母组成的字
 ^a[a-zA-Z]+
 ^a[a-zA-Z]*
 ```
@@ -4733,14 +4729,14 @@ print(m)
 ```
 
 ```python
-# 匹配用户输入的身份证号
+# 示例4：匹配用户输入的身份证号
 import re
 content = input('用户输入：')
-ret = re.match('[1-9]\d{14}(\d{2}[\dx])$', content)
+ret = re.match('[1-9]\d{14}(\d{2}[\dx])?$', content)
 ```
 
 ```python
-# 第一个乘除法
+# 示例5：第一个乘除法
 import re
 ret = re.search('\d+(\.\d+)?[\*]-?\d+(\.\d+)?', s)
 ```

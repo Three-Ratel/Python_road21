@@ -7,14 +7,11 @@
 
 ## 8.1 网络基础
 
-### 1. 基本概念
+### 1. 基本概念(2)
 
 1. 两个运行中的程序传递信息？
   
-   - 通过**文件**
-2. 两台机器上运行中的程序通信？
-  
-   - 通过**网络**
+   - 通过**文件**，通过**网络**
 3. 网络应用开发架构
    - C/S：client/server（需要安装对应的客户端）
    
@@ -22,33 +19,32 @@
    
    - B/S：browser/server（不需要任何客户端）
      - 统一程序的入口
-   - b/s是特殊的c/s
+   - B/S是特殊的C/S
 
-### 2. 网络中的概念
+### 2. 网络中的概念(7)
 
-1. 网卡、mac地址：48位
-
+1. **网卡(3)**
+   - mac地址：48位, 6位冒分十六进制
+   - head中包含的源和目标地址由来
+     - ethernet规定接入internet的设备都必须具备网卡，发送端和接收端的地址便是指网卡的地址，即mac地址。
+   - mac地址：每块网卡出厂时都被烧制上一个世界唯一的mac地址，长度为48位2进制，通常由12位16进制数表示（**前六位是厂商编号**，后六位是流水线号）
 2. **交换机(4)**
-  
-   - 负责局域网通信（只认识mac地址，通过arp/ rarp协议）
-   - 广播、单播、组播(交换机只使用前面的**两种**)
+   - **功能**：负责局域网通信（只认识mac地址，通过arp/ rarp协议）
+   - **通信方式**：广播、单播、组播(交换机只使用前面的**两种**)
    - **ARP**协议：地址解析协议，通过ip地址，获取其mac地址
    - **保留网段（私有IP）**：192.168.0.0-92.168.255.255 /172.16.0.0-172.31.255.255 /10.0.0.0-10.255.255.255
-   
+   - **广播限制**在二层交换机的局域网范围内，**禁止广播数据穿过路由器**，防止广播数据影响大面积的主机
 3. **路由器(2)**
-  
    - 负责局域网间通信
-   
    - **网关ip**：**局域网的网络出口**，访问局域网之外的区域都需要经过gateway
-   
-4. **协议**：server和client得到的内容都是二进制，双发预先约定好的一套语法规则 
-
-5. Ipv6:冒分16进制，0:0:0:0:0:0:0:0- FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF(128bits, 16x8)
-
-6. 每一个ip地址要想被所有人访问到，那么这个ip地址必须是申请的
-
-7. **port 端口(4)**
-
+   - 路由器（Router）又称**网关设备**（Gateway）是用于连接多个逻辑上分开的网络
+4. **协议**
+   - server和client得到的内容都是二进制，双发预先约定好的一套语法规则 
+   - 语法、语义、时序
+5. **IP地址**
+   - Ipv6:冒分16进制，0:0:0:0:0:0:0:0- FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF(128bits, 16x8)
+   - 每一个ip地址要想被所有人访问到，那么这个ip地址必须是申请的
+6. **port 端口(4)**
    - 端口号0 - 65535
 
    - 一个端口同一时刻只能被一个服务占用
@@ -59,61 +55,40 @@
 
 ## 8.2 OSI&TCP/IP
 
-### 1. TCP协议
+### 1. TCP协议(6)
 
-- **应用场景**：文件上传下载（邮件、网盘、缓存电影）
-
-- **特点**（3）：可靠、传输效率较低、全双工，重传机制、发送的每一帧都有确认回复
-- **三次握手**：请求(SYN)—> 确认(ACK)+请求—>确认
-  - 通信：建立在全双工连接的基础上
-- **长连接**：会一直占用双方port
-- I/O：相对于**内存**来说
-  - write 是 send
-  - read 是 recv
-
-- **四次挥手**：请求(FIN)—> 确认—>请求—>确认
-  - 断开：四次
+1. **TCP**（Transmission Control Protocol）可靠的、面向连接的协议（eg:打电话）、传输效率低全双工通信（发送缓存&接收缓存）、**面向字节流**。
+2. **应用场景**：文件上传下载（邮件、网盘、缓存电影）、Web浏览器；电子邮件、文件传输程序。
+3. **特点**（3）：面向连接、可靠、流式传输的全双工通信
+4. **三次握手**：请求(SYN)—> 确认(ACK)+请求—>确认
+   - **server端** **accept** 接收过程中等待客户端的连接
+   - **connect** 会发送一个**syn**连接请求
+     - 如果收到了server响应**ack**和由server端发来的**syn**连接请求
+     - client端进行回复ack信息后，建立了一个tcp连接
+   - 三次握手过程在代码过程中是由**accept**和**connect**共同完成，具体细节在socket没有体现
+5. **四次挥手**：请求(FIN)—> 确认—>请求—>确认
+   - server 端和clinet端在代码中都有**close**方法，每一端发起的close操作都是断开**fin**请求，得到断开确认**ack**之后，就可以结束一端的数据发送
+   - 如果两端发起close请求，那么就是**两次请求**和**两次确认**，一共是四次操作
+   - 可以结束数据发送，表示连接断开
+6. **长连接**：会一直占用双方port
+7. I/O：相对于**内存**来说
+   - write 是 send
+   - read 是 recv
 
 ![TCP](/Users/henry/Documents/截图/Py截图/TCP.png)
 
 ### 2. UDP协议
 
-- **场景**：即时通讯（qq，wechat）
-- **特点**：无连接、速度快，可能会丢帧
-- UDP 是User Datagram Protocol的简称， 中文名是用户数据报协议
+1. **UDP**（User Datagram Protocol）不可靠的、无连接的服务，传输效率高（发送前时延小），一对一、一对多、多对一、多对多、面向报文，尽最大努力服务，无拥塞控制。
+2. 场景**：即时通讯（qq，wechat），域名系统 (DNS)；视频流；IP语音(VoIP)。
+3. **特点**：面向数据报，不可靠，传输速度快，能完成一对多，多对一，和一对一的高效通信
+4. **UDP** 是User Datagram Protocol的简称， 中文名是用户数据报协议
 
-#### Note1(2)
+#### Note1(3)
 
 - TCP传输**数据几乎没有限制**，UDP能够传递数据长度是有限的，是根据数据传递设备的设置有关
 - Tcp可靠**长**连接，udp不可靠无连接
 - 三次握手时，确认信息和请求连接信息合并为一帧，四次挥手，主动断开端，不能确定另一端是否还需要传输信息，所以不能合并。
-
-**TCP UDP 小结：**
-
-1. **TCP**（Transmission Control Protocol）可靠的、面向连接的协议（eg:打电话）、传输效率低全双工通信（发送缓存&接收缓存）、面向字节流。使用TCP的应用：Web浏览器；电子邮件、文件传输程序。
-
-2. **UDP**（User Datagram Protocol）不可靠的、无连接的服务，传输效率高（发送前时延小），一对一、一对多、多对一、多对多、面向报文，尽最大努力服务，无拥塞控制。使用UDP的应用：域名系统 (DNS)；视频流；IP语音(VoIP)。
-
-3. tcp：面向连接、可靠、流式传输的全双工通信
-
-   udp：面向数据报，不可靠，传输速度快，能完成一对多，多对一，和一对一的高效通信
-
-   - 即时通信
-   - 在线视频
-
-4. 三次握手
-
-   - sercer **accept** 接收过程中等待客户端的连接
-   - **connect** 会发送一个syn连接请求
-     - 如果收到了server响应ack和由server端发来的syn连接请求
-     - client端进行回复ack信息后，建立了一个tcp连接
-   - 三次握手过程在代码过程中是由accept和connect共同完成，具体细节在socket没有体现
-
-5. 四次挥手
-
-   - server 端和clinet端在代码中都有**close**方法，每一端发起的close操作都是断开**fin**请求，得到断开确认**ack**之后，就可以结束一端的数据发送
-   - 如果两端发起close请求，那么就是**两次请求**和**两次确认**，一共是四次操作
-   - 可以结束数据发送，表示连接断开
 
 ### 3. OSI(Open System Interconnection)
 
@@ -128,7 +103,7 @@
 OSI**五层**协议(简化)
 
 1. 应用层：代码
-2. 传输层：tcp/udp 端口号，**四层路由器、四层交换机**
+2. 传输层：tcp/udp **端口号**，**四层路由器、四层交换机**
 3. 网络层：ipv4/ipv6，**三层路由器、三层交换机**
 4. 数据链路层：mac地址，arp协议，**(二层)交换机**
 5. 物理层：二进制流
@@ -144,36 +119,26 @@ TCP/IP(**arp在tcp/ip中属于网络层**)
 
 1. 家用路由器集成了交换功能
 2. **网络协议**
-   1. **网际层**协议:IP协议、ICMP协议、ARP协议、RARP协议。 
-   2. **传输层**协议:TCP协议、UDP协议。 
-   3. **应用层**协议:FTP、Telnet、SMTP、HTTP、RIP、NFS、DNS
+   - **网际层**协议:IP协议、ICMP协议、ARP协议、RARP协议。 
+   - **传输层**协议:TCP协议、UDP协议。 
+   - **应用层**协议:FTP、Telnet、SMTP、HTTP、RIP、NFS、DNS
 
 ### 4. socekt(套接字)
 
-1. 工作在**应用层**和**传输层**之间的抽象层
-
-2. 帮助我们完成所有信息的组织和拼接
-
-3. socket历史：
-
-   - 套接字起源于 20 世纪 70 年代加利福尼亚大学伯克利分校版本的 Unix,即人们所说的 BSD Unix。 因此,有时人们也把套接字称为“伯克利套接字”或“BSD 套接字”。一开始,套接字被设计用在同 一台主机上多个应用程序之间的通讯。这也被称进程间通讯,或 IPC。**套接字有两种**（或者称为有两个种族）,分别是**基于文件**型的和**基于网络**型的。 
-
-   - **基于文件类型的套接字家族**
-     - 套接字家族的名字：**AF_UNIX**，unix一切皆文件，基于文件的套接字调用的就是底层的文件系统来取数据，两个套接字进程运行在同一机器，可以通过访问同一个文件系统间接完成通信
-
-   - **基于网络类型的套接字家族**
-
-   - 套接字家族的名字：**AF_INET**，(还有**AF_INET6**被用于ipv6，还有一些其他的地址家族，不过，他们要么是只用于某个平台，要么就是已经被废弃，或者是很少被使用，或者是根本没有实现，所有地址家族中，AF_INET是使用最广泛的一个，python支持很多种地址家族，但是由于我们只关心网络编程，所以大部分时候我么只使用AF_INET)
-
-4. - 同一机器上的两个服务之间的通信(基于文件)
+1. 工作在**应用层**和**传输层**之间的**抽象层**，帮助我们完成所有信息的**组织**和**拼接**
+   - Socket是应用层与TCP/IP协议族通信的中间软件抽象层，它是**一组接口**。在**设计模式中**，Socket其实就是一个门面模式，它把复杂的**TCP/IP协议族隐藏在Socket接口后**面，对用户来说，一组简单的接口就是全部，让Socket去组织数据，以符合指定的协议。
+2. socket历史
+   1. 套接字起源于 20 世纪 70 年代加利福尼亚大学伯克利分校版本的 Unix,即人们所说的 **BSD Unix**。 因此,有时人们也把套接字称为“伯克利套接字”或“BSD 套接字”。一开始,套接字被设计用在同 一台主机上多个应用程序之间的通讯。这也被称**进程间通讯**,或 **IPC**。**套接字有两种**（或者称为有两个种族）,分别是**基于文件**型的和**基于网络**型的。 
+   2. **基于文件类型的套接字家族**
+      - 套接字家族的名字：**AF_UNIX**，unix一切皆文件，基于文件的套接字**调用**的就是**底层的文件系统**来取数据，两个套接字进程运行在同一机器，可以通过访问同一个文件系统间接完成通信
+   3. **基于网络类型的套接字家族**
+      - 套接字家族的名字：**AF_INET**，(还有**AF_INET6**被用于ipv6，还有一些其他的地址家族，不过，他们要么是只用于某个平台，要么就是已经被废弃，或者是很少被使用，或者是根本没有实现，所有地址家族中，AF_INET是使用最广泛的一个，python支持很多种地址家族，但是由于我们只关心网络编程，所以大部分时候我么只使用AF_INET)
+3. 同一机器上的两个服务之间的通信(基于文件)
    - **基于网络**的多台机器之间的多个服务通信
 
 ![socket](/Users/henry/Documents/截图/Py截图/socket.png)
 
-4. Socket是应用层与TCP/IP协议族通信的中间软件抽象层，它是一组接口。在设计模式中，Socket其实就是一个门面模式，它把复杂的**TCP/IP协议族隐藏在Socket接口后**面，对用户来说，一组简单的接口就是全部，让Socket去组织数据，以符合指定的协议。
-5. **其实站在你的角度上看，socket就是一个模块**。我们通过调用模块中已经实现的方法建立两个进程之间的连接和通信。也有人将**socke**t说成**ip+port**，因为ip是用来标识互联网中的一台主机的位置，而port是用来标识这台机器上的一个应用程序。所以我们只要确立了ip和port就能找到一个应用程序，并且使用**socket**模块来与之通信。
-
-
+4. **其实站在你的角度上看，socket就是一个模块**。我们通过调用模块中已经实现的方法建立两个进程之间的连接和通信。也有人将**socke**t说成**ip+port**，因为ip是用来标识互联网中的一台主机的位置，而port是用来标识这台机器上的一个应用程序。所以我们只要确立了ip和port就能找到一个应用程序，并且使用**socket**模块来与之通信。
 
 ## 8.3 Socket模块
 
@@ -184,14 +149,15 @@ TCP/IP(**arp在tcp/ip中属于网络层**)
 ```python
 import socket
 socket.socket(family=AF_INET,type=SOCK_STREAM,proto=0,fileno=None)
-创建socket对象的参数说明：
+# 创建socket对象的参数说明：
 ```
 
-| **family** | 地址系列应为AF_INET(默认值),AF_INET6,AF_UNIX,AF_CAN或AF_RDS。 （AF_UNIX 域实际上是使用本地 socket 文件来通信） |
+| 参数       | 含义                                                         |
 | ---------- | ------------------------------------------------------------ |
-| **type**   | 套接字类型应为SOCK_STREAM(默认值),SOCK_DGRAM,SOCK_RAW或其他SOCK_常量之一。 **SOCK_STREAM** 是基于TCP的，有保障的（即能保证数据正确传送到对方）面向连接的SOCKET，多用于资料传送。  **SOCK_DGRAM** 是基于UDP的，无保障的面向消息的socket，多用于在网络上发广播信息。 |
+| **family** | 地址系列应为**AF_INET**(默认值),AF_INET6,AF_UNIX,AF_CAN或AF_RDS。 （AF_UNIX 域实际上是使用本地 socket 文件来通信） |
+| **type**   | 套接字类型应为**SOCK_STREAM**(默认值),SOCK_DGRAM,SOCK_RAW或其他SOCK_常量之一。 **SOCK_STREAM** 是基于**TCP**的，有保障的（即能保证数据正确传送到对方）面向连接的SOCKET，多用于资料传送。  **SOCK_DGRAM** 是基于UDP的，无保障的面向消息的socket，多用于在网络上发广播信息。 |
 | **proto**  | 协议号通常为零,可以省略,或者在地址族为AF_CAN的情况下,协议应为CAN_RAW或CAN_BCM之一。 |
-| **fileno** | 如果指定了fileno,则其他参数将被忽略,导致带有指定文件描述符的套接字返回。 与socket.fromfd()不同,fileno将返回相同的套接字,而不是重复的。 这可能有助于使用socket.close()关闭一个独立的插座。 |
+| **fileno** | 如果指定了**fileno**,则其他参数将被忽略,导致带有指定文件描述符的套接字返回。 与socket.fromfd()不同,fileno将返回相同的套接字,而不是重复的。 这可能有助于使用socket.close()关闭一个独立的插座。 |
 
 ### 2. TCP信息传输
 
@@ -201,13 +167,13 @@ type = socket.SOCK_STREAM  # 表示tcp协议
 import socket 
 sk = socket.socket()
 sk.bind(('127.0.0.1'), port号)
-sk.listen(n)               # n 表示允许多少个客户端等待，3.7之后无限制可省略
-con,cli_addr = sk.accept() # 阻塞,服务端需要一直监听，不能关闭
+sk.listen(n)               # 监听链接，n 表示允许多少个客户端等待，3.7之后无限制可省略
+con,cli_addr = sk.accept() # 接受客户端链接，阻塞,服务端需要一直监听，不能关闭
 con.recv(size)    				 # 接收字节数
 con.send('content'.encode('utf-8')) 
 # socket 发送接收都是字节流，即二进制
-con.close()
-sk.close()
+con.close()           		 #关闭客户端套接字
+sk.close()								 #关闭服务器套接字(可选)
 
 # client 端
 import socket
@@ -220,56 +186,39 @@ sk.close()
 
 ```python
 # ip和端口占用解决方法，针对macos
-# 加入一条socket配置，重用ip和端口
 import socket
-from socket import SOL_SOCKET,SO_REUSEADDR
+from socket import SOL_SOCKET,SO_REUSEADDR # 加入一条socket配置，重用ip和端口
 sk = socket.socket()
-sk.setsockopt(SOL_SOCKET,SO_REUSEADDR,1) # 就是它，在bind前加
-sk.bind(('127.0.0.1',8898))  #把地址绑定到套接字
-sk.listen()             #监听链接
-conn,addr = sk.accept() #接受客户端链接
-ret = conn.recv(1024)   #接收客户端信息
-print(ret)              #打印客户端信息
-conn.send(b'hi')        #向客户端发送信息
-conn.close()            #关闭客户端套接字
-sk.close()              #关闭服务器套接字(可选)
-
+sk.setsockopt(SOL_SOCKET,SO_REUSEADDR,1) 		# 就是它，在bind前加
+sk.bind(('127.0.0.1',8898))  						 		# 把地址绑定到套接字
 ```
 
 ### 3. TCP黏包问题
 
-1. 什么是黏包现象？
+#### 1. 黏包现象
 
-- 为了减少tcp协议中的'确认收到'的网络延迟时间 
-- **发送端**：由于两个数据的发送时间间隔短+数据长度小，tcp协议的优化机制将两条信息作为一条信息发送出去
-- **接收端**：由于tcp协议中所传输的数据无边界，来不及接收的多条数据会在接收端内核的缓存端黏在一起
+- **提高效率**：为了减少tcp协议中的**确认收到**的网络延迟时间 
+- **发送端**：由于两个数据的发送**时间间隔短**+**数据长度小**，tcp协议的优化机制将两条信息作为一条信息发送出去
+- **接收端**：由于tcp协议中所传输的**数据无边界**，来不及接收的**多条数据**会在接收端**内核的缓存端黏在一起**
 - **本质**：接收信息的边界不清晰，主要是接收方不知道消息之间的界限，不知道一次性提取多少字节的数据所造成的
 
-#### 1. 成因机制
+#### 2. 成因机制
 
-**tcp协议的拆包机制**
+1. **tcp协议的拆包机制**
+   - 当发送端缓冲区的长度大于网卡的MTU时，tcp会将这次发送的数据拆成几个数据包发送出去。 
+   - MTU是Maximum Transmission Unit的缩写。意思是网络上传送的最大数据包。**MTU**的单位是**字节**。 **大部分网络设备的MTU都是1500**。
+   - 如果**本机的MTU比网关的MTU大**，大的数据包就会被拆开来传送，这样会产生很多数据包碎片，增加丢包率，降低网络速度。
+2. **面向流的通信特点和Nagle算法**
+   - TCP（transport control protocol，**传输控制协议**）是面向连接的，面向流的，提供高可靠性服务。
+   - 收发两端（客户端和服务器端）都要有**一一成对的socket**，因此，**发送端为了将多个发往接收端的包，更有效的发到对方，使用了优化方法（Nagle算法）**，将多次间隔较小且数据量小的数据，合并成一个大的数据块，然后进行封包。这样，接收端，就难于分辨出来了，必须提供科学的拆包机制。 **即面向流的通信是无消息保护边界的。**
+   - **对于空消息**：**tcp**是基于数据流的，于是收发的**消息不能为空**，这就需要在客户端和服务端都添加空消息的处理机制，防止程序卡住，而**udp**是基于数据报的，即便是你输入的是**空内容(直接回车)，也可以被发送**，udp协议会帮你封装上消息头发送过去。 
+   - **可靠黏包的tcp协议**：tcp的协议数据不会丢，没有收完包，下次接收，会继续上次继续接收，己端总是在收到ack时才会清除缓冲区内容。**数据是可靠的，但是会粘包**。
 
-```python
-# 当发送端缓冲区的长度大于网卡的MTU时，tcp会将这次发送的数据拆成几个数据包发送出去。 
-# MTU是Maximum Transmission Unit的缩写。意思是网络上传送的最大数据包。MTU的单位是字节。 大部分网络设备的MTU都是1500。如果本机的MTU比网关的MTU大，大的数据包就会被拆开来传送，这样会产生很多数据包碎片，增加丢包率，降低网络速度。
-```
+#### 3. Tcp黏包现象
 
-**面向流的通信特点和Nagle算法**
-
-```python
-# TCP（transport control protocol，传输控制协议）是面向连接的，面向流的，提供高可靠性服务。
-# 收发两端（客户端和服务器端）都要有一一成对的socket，因此，发送端为了将多个发往接收端的包，更有效的发到对方，使用了优化方法（Nagle算法），将多次间隔较小且数据量小的数据，合并成一个大的数据块，然后进行封包。这样，接收端，就难于分辨出来了，必须提供科学的拆包机制。 即面向流的通信是无消息保护边界的。 
-# 对于空消息：tcp是基于数据流的，于是收发的消息不能为空，这就需要在客户端和服务端都添加空消息的处理机制，防止程序卡住，而udp是基于数据报的，即便是你输入的是空内容（直接回车），也可以被发送，udp协议会帮你封装上消息头发送过去。 
-# 可靠黏包的tcp协议：tcp的协议数据不会丢，没有收完包，下次接收，会继续上次继续接收，己端总是在收到ack时才会清除缓冲区内容。数据是可靠的，但是会粘包。
-```
-
-**Tcp黏包问题及解决方案**
-
-- 自定义协议：首先发送报头(**4**bytes) ，内容是即将发送报文字节长度
+- **自定义协议**：首先发送报头(**4**bytes) ，针对发送数据大小进行提前声明，内容是即将发送**报文字节长度**
   - struct：把所有数字都固定的转换为4bytes
   - 再发送数据信息
-
-#### 2. TCP的数据传递
 
 ```python
 # 自定义协议，解决黏包问题
@@ -281,8 +230,8 @@ sk.bind(('ip', port))
 sk.listen()
 con, cli_addr = sk.accept()
 size = con.recv(4)
-size = struct.unpack(size)[0]
-content = con.recv(size).decode('utf-8')
+size = struct.unpack(size)[0]							# unpack,为一tuple类型
+content = con.recv(size).decode('utf-8')	# 接收文件内容
 con.close()
 sk.close()
 
@@ -291,8 +240,8 @@ import struct
 import socket
 sk = socket.socket()
 sk.connect(('ip', port))
-content  = '我是henry'.encode('utf-8')
-size = struct.pack('i', len(content))
+content  = '我是henry'.encode('utf-8')     # 字节流
+size = struct.pack('i', len(content))			# 发送内容长度进行struct
 sk.send(size)
 sk.send(content)
 sk.close()
@@ -321,21 +270,19 @@ print(ret)
 sk.close()
 ```
 
-#### Note3(3)
+#### Note3(2)
 
 1. socket收发的**必须是bytes**类型，经过编码的文件均是bytes类型
 2. 网络传输数据一般使用**json**格式
-3. tcp采用流式传输
 
-#### 1. UDP不会发生黏包
+#### 1. UDP不会发生黏包(6)
 
 1. **UDP（user datagram protocol，用户数据报协议）**是无连接的，面向消息的，提供高效率服务。 
-   **不会使用块的合并优化算法**，, 由于UDP支持的是一对多的模式，所以接收端的skbuff(套接字缓冲区）采用了链式结构来记录每一个到达的UDP包，在每个UDP包中就有了消息头（消息来源地址，端口等信息），这样，对于接收端来说，就容易进行区分处理了。 即面向消息的通信是有消息保护边界的。 
-   对于空消息：tcp是基于数据流的，于是收发的消息不能为空，这就需要在客户端和服务端都添加空消息的处理机制，防止程序卡住，而udp是基于数据报的，即便是你输入的是空内容（直接回车），也可以被发送，udp协议会帮你封装上消息头发送过去。 不可靠不黏包的udp协议：udp的recvfrom是阻塞的，一个recvfrom(x)必须对唯一一个sendto(y),收完了x个字节的数据就算完成,若是y;x数据就丢失，这意味着udp根本不会粘包，但是会丢数据，不可靠。
-
-2. 用UDP协议发送时，用sendto函数最大能发送数据的长度为：**65535- IP头(20) – UDP头(8)＝65507字节**。用sendto函数发送数据时，如果发送数据长度**大于该值，则函数会返回错误**。（丢弃这个包，不进行发送） 
-
-   **用TCP协议发送时**，由于TCP是数据流协议，因此不存在包大小的限制（暂不考虑缓冲区的大小），这是指在用send函数时，**数据长度**参数**不受限制**。而实际上，所指定的这段数据并不一定会一次性发送出去，如果这段数据比**较长**，会被**分段发送**，如果比**较短**，可能会等待和下一次数据**一起发送**。
+2. **不会使用块的合并优化算法**，由于UDP支持的是一对多的模式，所以接收端的skbuff(套接字缓冲区）采用了**链式结构来记录每一个到达的UDP包**，在每个UDP包中就有了消息头（消息来**源地址**，**端口**等信息），这样，对于接收端来说，就容易进行区分处理了。 即**面向消息的通信是有消息保护边界的**。 
+3. **对于空消息**：tcp是基于数据流的，于是收发的消息不能为空，这就需要在**客户端**和**服务端**都添加**空消息的处理机制**，防止程序卡住，而udp是基于数据报的，即便是你输入的是空内容（直接回车），也可以被发送，udp协议会帮你封装上消息头发送过去。 
+4. **不可靠不黏包的udp**协议：udp的**recvfrom**是**阻塞**的，一个recvfrom(x)必须对唯一一个sendto(y),收完了x个字节的数据就算完成,若是y;x数据就丢失，这意味着udp根本不会粘包，但是会丢数据，不可靠。
+5. 用**UDP协议发送**时，用sendto函数最大能发送数据的长度为：**65535- IP头(20) – UDP头(8)＝65507字节**。用sendto函数发送数据时，如果发送数据长度**大于该值，则函数会返回错误**。（丢弃这个包，不进行发送） 
+6. 用**TCP协议发送**时**，由于TCP是数据流协议，因此不存在包大小的限制（暂不考虑缓冲区的大小），这是指在用send函数时，**数据长度**参数**不受限制。而实际上，所指定的这段数据并不一定会一次性发送出去，如果这段数据比**较长**，会被**分段发送**，如果比**较短**，可能会等待和下一次数据**一起发送**。
 
 ### 5.  socket其他操作
 
@@ -354,8 +301,10 @@ s.connect_ex()  # connect()函数的扩展版本,出错时返回出错码,而不
 s.recv()            # 接收TCP数据
 s.send()            # 发送TCP数据
 s.sendall()         # 发送TCP数据
+
 s.recvfrom()        # 接收UDP数据
 s.sendto()          # 发送UDP数据
+
 s.getpeername()     # 连接到当前套接字的远端的地址
 s.getsockname()     # 当前套接字的地址
 s.getsockopt()      # 返回指定套接字的参数
@@ -376,39 +325,37 @@ s.makefile()        # 创建一个与该套接字相关的文件
 # 官方文档对socket模块下的socket.send()和socket.sendall()解释如下：
 socket.send(string[, flags])
 Send data to the socket. The socket must be connected to a remote socket. The optional flags argument has the same meaning as for recv() above. Returns the number of bytes sent. Applications are responsible for checking that all data has been sent; if only some of the data was transmitted, the application needs to attempt delivery of the remaining data.
-
 # send()的返回值是发送的字节数量，这个数量值可能小于要发送的string的字节数，也就是说可能无法发送string中所有的数据。如果有错误则会抛出异常。
 
 socket.sendall(string[, flags])
 Send data to the socket. The socket must be connected to a remote socket. The optional flags argument has the same meaning as for recv() above. Unlike send(), this method continues to send data from string until either all data has been sent or an error occurs. None is returned on success. On error, an exception is raised, and there is no way to determine how much data, if any, was successfully sent.
-
 # 尝试发送string的所有数据，成功则返回None，失败则抛出异常。
 
-故，下面两段代码是等价的：
-#sock.sendall('Hello world\n')
+# 故，下面两段代码是等价的：
+sock.sendall('Hello world\n')
 
-#buffer = 'Hello world\n'
-#while buffer:
-#    bytes = sock.send(buffer)
-#    buffer = buffer[bytes:]
+buffer = 'Hello world\n'
+while buffer:
+    bytes = sock.send(buffer)
+    buffer = buffer[bytes:]        # ？？？？
 ```
 
 ## 8.4 非阻塞模型
 
+- 阻塞io模型，非阻塞io模型，事件驱动io，io多路复用，异步io模型**五种**
+
 ### 1. 非阻塞io模型模型
 
-阻塞io模型，非阻塞io模型，事件驱动io，io多路复用，异步io模型**五种**。
-
-**使用tcp实现非阻塞**
-
-- Socket **阻塞**和**非阻塞**，利用tcp可以实现并发通信的socket serve
+- 利用**tcp**可以实现**并发**
+- server端使用setblocking(False)方法进行设置，此时需要使用异常处理
+- **客户端下线**时，在**非阻塞**情况下，**msg为空**
 
 ```python
 # server端
 import socket
 sk = socket.socket()
 sk.bind(('127.0.0.1', 9000))
-sk.setblocking(False)         # 设置为非阻塞状态
+sk.setblocking(False)               # 设置为非阻塞状态
 sk.listen()
 
 user = []
@@ -424,7 +371,7 @@ while True:
                 if not content:
                     del_user.append(i)
                     continue
-                i.send(content.upper().encode('utf-8')) 
+                i.send(content.upper(). encode('utf-8')) 
                 # 发送的bytes类型可以直接解释出(ascii字符)
             except BlockingIOError:pass     # 注意异常，会报错
         for i in del_user:
@@ -449,7 +396,7 @@ sk.close()
 
 #### Note4(3)
 
-1. socket的非阻塞io模型 + io多路复用实现(框架)
+1. socket的非阻塞io模型 + io多路复用实现(**框架实现方式**)
 2. 非阻塞提高了cpu利用率，但cpu有效率很低
 3. TCP**断开连接**后，只要有数据发送就会**报错**
 
@@ -463,7 +410,7 @@ sk.close()
 # 客户端使用对象是机器
 ```
 
-**摘要算法：hmac算法**
+1. **摘要算法：hmac算法**
 
 ```python
 import hmac
@@ -473,7 +420,7 @@ hmac.new(secret_key, random_seq)
 ret = hmac.digest()   # 结果是bytes类型数据
 ```
 
-**使用hmac验证客户端的合法性**
+2. **使用hmac验证客户端的合法性**
 
 ```python
 # 使用TCP协议发送数据为空时，默认不会发送
@@ -488,6 +435,7 @@ def chat(con):
         print('------>', msg)
         con.send(msg.upper().encode('utf-8'))
         # con.send(''.encode('utf-8'))         # tcp不会发送
+        
 sk = socket.socket()
 sk.bind(('127.0.0.1', 9000))
 sk.listen()
@@ -496,9 +444,9 @@ com_key = b'henry'
 while True:
     con, addr = sk.accept()
     sec_key = os.urandom(32)
-    con.send(sec_key)          # 第一次发送
+    con.send(sec_key)                 # 第一次发送
     val = hmac.new(com_key, sec_key).digest()
-    data = con.recv(32)   # 第一次接收
+    data = con.recv(32)               # 第一次接收
     if data == val:
         print('客户端合法')
         chat(con)
@@ -524,7 +472,7 @@ sk.connect(('127.0.0.1', 9000))
 sec_key = sk.recv(32)      # 第一次接收
 com_key = b'henry'
 val = hmac.new(com_key, sec_key).digest()
-sk.send(val)             # 第一次发送
+sk.send(val)               # 第一次发送
 chat(sk)
 
 sk.close()
@@ -535,13 +483,9 @@ sk.close()
 from socket import *
 import hmac,os
 
-secret_key=b'linhaifeng bang bang bang'
+secret_key=b'henry bang bang bang'
 def conn_auth(conn):
-    '''
-    认证客户端链接
-    :param conn:
-    :return:
-    '''
+    ''' 认证客户端链接'''
     print('开始验证新链接的合法性')
     msg=os.urandom(32)
     conn.sendall(msg)
@@ -562,11 +506,7 @@ def data_handler(conn,bufsize=1024):
         conn.sendall(data.upper())
 
 def server_handler(ip_port,bufsize,backlog=5):
-    '''
-    只处理链接
-    :param ip_port:
-    :return:
-    '''
+    '''只处理链接'''
     tcp_socket_server=socket(AF_INET,SOCK_STREAM)
     tcp_socket_server.bind(ip_port)
     tcp_socket_server.listen(backlog)
@@ -589,11 +529,7 @@ import hmac,os
 
 secret_key=b'linhaifeng bang bang bang'
 def conn_auth(conn):
-    '''
-    验证客户端到服务器的链接
-    :param conn:
-    :return:
-    '''
+    '''验证客户端到服务器的链接'''
     msg=conn.recv(32)
     h=hmac.new(secret_key,msg)
     digest=h.digest()
@@ -605,8 +541,8 @@ def client_handler(ip_port,bufsize=1024):
     conn_auth(tcp_socket_client)
     while True:
         data=input('>>: ').strip()
-        if not data:continue
-        if data == 'quit':break
+        if not data:continue					# tcp协议不支持发送数据为空
+        if data.lower() == 'q':break
 
         tcp_socket_client.sendall(data.encode('utf-8'))
         respone=tcp_socket_client.recv(bufsize)
@@ -625,7 +561,7 @@ if __name__ == '__main__':
 
 ```python
 # server端
-import socketserver  # socket是socketserver的底层模块和time，datetime一样
+import socketserver       # socket是socketserver的底层模块和time，datetime一样
 class Myserver(socketserver.BaseRequestHandler):
   def handle(self):				# 自动触发handle方法，self.request == con
     print(self.request)   # con
@@ -666,9 +602,9 @@ HOST, PORT = "127.0.0.1", 9999
 data = "hello"
 # 创建一个socket链接，SOCK_STREAM代表使用TCP协议
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-    sock.connect((HOST, PORT))          # 链接到客户端
+    sock.connect((HOST, PORT))                # 链接到客户端
     sock.sendall(bytes(data + "\n", "utf-8")) # 向服务端发送数据
-    received = str(sock.recv(1024), "utf-8")# 从服务端接收数据
+    received = str(sock.recv(1024), "utf-8")  # 从服务端接收数据
 
 print("Sent:     {}".format(data))
 print("Received: {}".format(received))
@@ -687,7 +623,9 @@ print("Received: {}".format(received))
 
 ### 1. 操作系统发展史
 
-人机矛盾(cpu利用率低)—>磁带存储+批处理(降低数据的读取时间,提高cpu的利用率)
+#### 1.1 人机矛盾(cpu利用率低)
+
+—>磁带存储+批处理(降低数据的读取时间,提高cpu的利用率)
 
 —>**多道操作系统**：数据隔离、时空复用(能够遇到**I/O**操作的时候主动把cpu让出来，给其他任务使用，切换需要时间，由OS完成)
 
@@ -697,35 +635,50 @@ print("Received: {}".format(received))
 
 —>**分时**OS + **多道**OS：多个程序一起执行，遇到IO切换，时间片到了也要切换
 
-**实时OS**：实时控制，实时信息处理
+- **多道技术介绍**
 
-**通用OS**：多道、分时、实时处理或其两种以上
+1. 产生背景：针对单核，实现并发
+2. 现在的主机一般是多核，那么每个核都会利用多道技术有4个cpu，运行于cpu1的某个程序遇到io阻塞，会等到io结束再重新调度，会被调度到4个 cpu中的任意一个，具体由操作系统调度算法决定。
+3. 空间上的复用：如内存中同时有多道程序
+4. 时间上的复用：复用一个cpu的时间片
 
-**网络OS**：自带网络相关服务
+**Note**：遇到io切，占用cpu时间过长也切，核心在于切之前将进程的状态保存下来，这样
+才能保证下次切换回来时，能基于上次切走的位置继续运行。  
 
-**分布式OS**：python中可使用：**celery**模块
+#### 2.2 操作系统**分类**(5)
 
-**OS作用**：1.将应用程序对硬件资源的竞态请求变得有序化
+- **实时OS**：实时控制，实时信息处理
+
+- **通用OS**：多道、分时、实时处理或其两种以上
+
+- **网络OS**：自带网络相关服务
+
+- **分布式OS**：python中可使用：**celery**模块
+
+- **OS作用**：1.将应用程序对硬件资源的竞态请求变得有序化
 
 ### 2. 进程
 
-1. 进程：运行中的程序
+- **进程**（Process）是计算机中的程序关于某数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，是OS结构的基础。
+- 在早期面向进程设计的计算机结构中，进程是程序的基本执行实体；在当代**面向线程设计**的计算机结构中，**进程是线程的容器**。程序是指令、数据及其组织形式的描述，**进程是程序的实体。**
+
+####2.1 进程：运行中的程序
    - 程序只是一个文件，进程是程序文件被cpu运行
-   - 进程是计算机中最小的资源分配单位
-   - 在OS中有唯一标示符PID
-2. OS调度算法(4)
+   - 进程是计算机中最小的**资源分配**单位
+   - 在OS中有唯一标示符**PID**
+####2.2 OS调度算法(4)
    - 短作业优先
    - 先来先服务
    - 时间片轮转
    - **多级反馈算法**：分时+先来先服务+短作业优先
-3. 并行与并发
+####2.3 并行与并发
    - **并行**：程序分别独占cpu自由执行，看起来同时执行，实际每一个时间点都各自执行
    - **并发**：多个程序占用同一cpu，每个程序交替使用cpu，看起来同时执行，实际上仍是串行
 
 ### 3. 同步异步阻塞非阻塞
 
-1. **同步**：程序不可以同时执行
-2. **异步**：程序同时运行，没有依赖和等待关系
+1. **同步**：程序不可以同时执行(分步运行)，调用一个方法，要**等待**这个方法**结束**
+2. **异步**：程序同时运行，没有**依赖**和**等待**关系，调用一个方法，**不等待**这个方法**结束**，不关心这个方法做了什么
 3. **阻塞**：cpu不工作
 4. **非阻塞**：cpu工作
 5. **同步阻塞**
@@ -742,25 +695,168 @@ print("Received: {}".format(received))
 
 #### 1. 进程状态
 
-**进程状态**：运行(runing) 就绪(ready)  阻塞(blocking)
+**进程状态**：运行(runing)  就绪(ready)  阻塞(blocking)
 
 ![进程三状态图](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/%E8%BF%9B%E7%A8%8B%E4%B8%89%E7%8A%B6%E6%80%81%E5%9B%BE.png)
 
 #### 2. 进程的创建与结束
 
-**进程创建**：
+- **进程创建**
 
-1. 系统初始化(ps)
-2. 一个进程开启了一个子进程(os.fork,subprocess.Popen)
+1. 系统初始化(**ps**)
+2. 一个进程开启了一个子进程(os.fork，subprocess.Popen)
 3. 用户交互式请求(用户双击app)
 4. 批处理作业的初始化(只在大型机的批处理系统中应用)
 
-**进程结束**：
+- **进程结束**
 
 1. 正常退出
 2. 出错退出
 3. 严重错误
-4. 被其他进程杀死(kill -9 pid)
+4. 被其他进程杀死(**kill -9 pid**)
+
+## 9.2 进程
+
+### 1. 线程
+
+#### 1.1 分别做多件事
+
+- 如果是两个程序分别做两件事
+  - 起两个进程
+- 如果是一个程序，要分别做两件事
+  - 视频软件：下载电影1，电影2，电影3
+
+#### 1.2 **进程**
+
+1. 顾名思义，进程即正在执行的一个过程。进程是对正在运行程序的一个抽象。
+
+2. 进程的概念起源于操作系统，是操作系统最核心的概念，也是操作系统提供的最古老也是最重要的**抽象概念**之一。操作系统的其他所有内容都是围绕进程的概念展开的。
+
+   
+
+   **PS**：即使可以利用的cpu只有一个（早期的计算机确实如此），也能保证支持（伪）并发的能力。将一个单独的cpu变成多个虚拟的cpu（多道技术：时间多路复用和空间多路复用+硬件上支持隔离），没有进程的抽象，现代计算机将不复存在。
+
+3. **进程概念**
+
+   - 进程是一个实体。每一个进程都有它自己的地址空间，一般情况下，包括**文本区域**（text region）、**数据区域**（data region）和**堆栈**（stack region）。文本区域存储处理器执行的代码；数据区域存储变量和进程执行期间使用的动态分配的内存；堆栈区域存储着活动过程调用的指令和本地变量。
+   - 进程是一个“执行中的程序”。程序是一个没有生命的实体，只有处理器赋予程序生命时（操作系统执行之），它才能成为一个活动的实体，我们称其为进程。
+     进程是操作系统中最基本、重要的概念。是多道程序系统出现后，为了刻画系统内部出现的动态情况，描述系统内部各道程序的活动规律引进的一个概念,所有多道程序设计操作系统都建立在进程的基础上。
+
+4. 特点
+
+   - 是计算机中最小的**资源分配单位**，**数据隔离**。
+   - 创建进程时间**开销大**
+   - 销毁进程时间开销大
+   - 进程之间切换时间开销大
+
+#### 1.3 线程
+
+- 线程是进程中的一部分，不能脱离进程存在
+- 任何进程中至少有一个线程，只负责执行代码，不负责存储共享的数据，也不负责资源分配
+- **进程**负责数据隔离
+- **线程**负责执行代码，共享**全局资源**
+- 进程是计算机中最小资源分配单位
+- 线程是计算机中能被cpu调度的最小单位
+
+#### 1.4 开销
+
+- 线程的创建和销毁
+  - 需要一些开销(一个存储局部变量的数据结构，记录状态)
+  - 创建、销毁、切换**开销**远**远小于**进程
+- python中的线程比较特殊，所以进程也有可能被用到
+- 进程：数据隔离、开销大  同时执行几段代码
+- 线程：数据共享、开销小  同时执行几段代码
+
+### 2. 进程模块
+
+#### 2.1 multiprocessing模块
+
+- 基于process模块
+
+```python
+# 获取进程的pid, 父进程的id及ppid
+import os
+import time
+print('start')
+time.sleep(20)
+print(os.getpid(),os.getppid(),'end')
+```
+
+#### 2.2 子进程和父进程
+
+- pycharm中启动的所有py程序都是pycharm的子进程
+
+```python
+# 把func函数交给子进程执行
+import os
+import time
+from multiprocessing import Process
+
+def func():
+  print('start', os.getpid())
+  time.sleep(1)
+  print('end', os.getpid())
+
+if __name__ == '__main__':	  
+  p = Process(target=func)				# 创建一个即将要执行的进程对象
+  p.start()	                      # 开启一个进程，异步非阻塞
+  p.join()												# 同步阻塞，直到子进程执行完毕
+  print('main', os.getpid())			# 异步的程序，调用开启进程的方法，并不等待这个进程的开启
+```
+
+**创建子进程注意**
+
+ps：_\_name__ 只有两种情况，文件名或双下划线main字符串
+
+```python
+# windows
+只要导入就会执行p.start()，加上__mian__可以控制此类问题发生
+创建新的子进程是执行import 父进程文件完成数据导入工作
+# macos
+创建新的子进程是copy父进程内存空间，完成数据导入工作（fork）
+```
+
+- windows中相当于把主进程中的文件又从头执行了一遍
+- linux，macos不执行代码，直接执行调用的函数
+
+- 父进程(主进程)
+
+![父子进程](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/%E7%88%B6%E5%AD%90%E8%BF%9B%E7%A8%8B.png)
+
+- 进程之间不能进行数据共享
+- 主进程需要等待子进程结束，主进程负责创建和回收子进程
+- 子进程执行结束，父进程没有回收资源，即僵尸进程。
+- 主进程结束逻辑：主进程代码结束、所有子进程结束、回收子进程资源、主进程结束
+- 主进程怎么知道子进程结束？通过文件或网络进行进程通信
+
+#### 2.3 join方法
+
+- 把一个进程的结束事件封装成一个join方法
+- 执行join方法效果，**阻塞**，直到子进程结束，就结束
+
+```python
+# 在多个子进程中使用join方法
+from multiprocessing import Process
+
+def send_mail(i):
+    print('邮件已发送', i)
+if __name__ == '__main__':
+    li = []
+    for i in range(10):
+        p = Process(target=send_mail, args=(i,))  # args必须是元组，给子进程中的函数传参数
+        p.start()
+    li.append(p)
+    for p in li: p.join()													# 阻塞，知道所有子进程执行完毕
+    print('100封邮件已发送')
+```
+
+
+
+
+
+
+
+
 
 
 
@@ -785,24 +881,46 @@ ___
 # 附录1:  常见报错
 
 1. SyntaxError: invalid syntax；语法错误：无效语法（变量定义不规范）
+
 2. SyntaxError: invalid character in identifier 语法错误；无效字符（中英文字符混乱）
+
 3. ValueError: invalid literal for int() with base 10: 'henry'；(非法类型转换)
+
 4. NameError: name 'D' is not defined ;（一般发生是变量不合法）
+
 5. ValueError: invalid literal for int() with base 10: '3  2'
+  
    - 字符串没有，强制转换为int
+   
 6. TypeError: sequence item 0: expected str instance, int found
+  
    - join 只能是str
+   
 7. ValueError: too many values to unpack (expected 2)
+  
    - 赋值号两边参数不一致
+   
+   
+   
 8. [][Errno 9]OSError: [Errno 9] Bad file descriptor
+
    - 因为关闭了套接字对象后，又再次去调用了套接字对象。
-9. Errno 54] Connection reset by peer
+
+9. BrokenPipeError:[Errno 32] Broken pipe
+
+  - 由于客户端请求的链接，在一次循环之后，产生的套接字关闭，没有新的客户端套接字进行请求连接，所以产生broken pipe错误
+
+10. BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+  - 非阻塞模型中，接收不到client端发来的数据，此时会报错
+  - client端会出现 ConnectionResetError: [Errno 54] Connection reset by peer的报错
+
+11. [Errno 41] Protocol wrong type for socket
+
+12. ConnectionResetError: [Errno 54] Connection reset by peer
+
    - tcp连接一旦断开，发送数据会报错
    - 发送空字符不会报错
-10. BrokenPipeError： [Errno 32] Broken pipe
-   - 由于客户端请求的链接，在一次循环之后，产生的套接字关闭，没有新的客户端套接字进行请求连接，所以产生broken pipe错误
-11. [Errno 41] Protocol wrong type for socket
-12. 
 
 # 附录2:  错误记录
 

@@ -3,7 +3,6 @@
 import os
 import sys
 from socketserver import *
-
 PRO_DIE = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(PRO_DIE)
 from config import settings

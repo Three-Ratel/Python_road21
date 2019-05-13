@@ -80,21 +80,21 @@ menu = {'北京':
 """
 栈实现：计算文件夹大小
 """
-import os
-path = os.path.dirname(os.path.dirname(__file__))
-
-li = [path]
-size = 0
-while li:
-    path = li.pop()
-    for i in os.listdir(path):
-        i = os.path.join(path, i)
-        if os.path.isdir(i):
-            li.append(i)
-        else:
-            size += os.path.getsize(i)
-
-print(size)
+# import os
+# path = os.path.dirname(os.path.dirname(__file__))
+#
+# li = [path]
+# size = 0
+# while li:
+#     path = li.pop()
+#     for i in os.listdir(path):
+#         i = os.path.join(path, i)
+#         if os.path.isdir(i):
+#             li.append(i)
+#         else:
+#             size += os.path.getsize(i)
+#
+# print(size)
 
 
 

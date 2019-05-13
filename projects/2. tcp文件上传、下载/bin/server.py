@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 import os
-import sys
 import json
 import pickle
 import struct
@@ -31,8 +30,8 @@ class User():
                             settings.SER_DIR = os.path.join(settings.SER_DIR, settings.USER[0])
                             if not os.path.exists(settings.SER_DIR): os.makedirs(settings.SER_DIR)
                             break
-                except:
-                    pass
+                except:pass
+
             dic = {'operator': flag}
             self.obj.my_send(dic)
             if flag: return flag
@@ -50,10 +49,7 @@ class User():
 class Myserver(BaseRequestHandler):
 
     def my_recv(self, encoding='utf-8'):
-        """
-        第一次接收报文头
-        :return:
-        """
+        """第一次接收报文头"""
         len_dic = self.request.recv(4)
         len_dic = struct.unpack('i', len_dic)[0]
         str_dic = self.request.recv(len_dic).decode(encoding)
@@ -61,11 +57,7 @@ class Myserver(BaseRequestHandler):
         return dic
 
     def my_send(self, dic, encoding='utf-8'):
-        """
-        发送报文头
-        :param dic:
-        :return:
-        """
+        """发送报文头"""
         byte_dic = json.dumps(dic).encode(encoding)
         len_dic = struct.pack('i', len(byte_dic))
         self.request.send(len_dic)
@@ -74,8 +66,7 @@ class Myserver(BaseRequestHandler):
     def file_send(self, dic):
         file_path = os.path.join(settings.SER_DIR, dic['file_name'])
         dic = {}
-        if not os.path.isfile(file_path):
-            dic['isfile'] = False
+        if not os.path.isfile(file_path):dic['isfile'] = False
         else:
             dic['isfile'] = True
             file_size = os.path.getsize(file_path)
@@ -90,7 +81,6 @@ class Myserver(BaseRequestHandler):
                 dic['file_size'] -= len(content)
                 """校验文件"""
                 obj.update(content)
-
         """发送文件的 md5 值"""
         self.request.send(obj.hexdigest().encode('utf-8'))
 
@@ -118,17 +108,14 @@ class Myserver(BaseRequestHandler):
                 if dic['operator'] == 'Q': pass
                 elif dic['operator'] == 'login':
                     if User(self).login(): break
-                elif dic['operator'] == 'register':
-                    User(self).register()
+                elif dic['operator'] == 'register': User(self).register()
             except:return
-
         while True:
             try:
                 dic = self.my_recv()
                 if dic['operator'] == 'Q':
                     settings.USER.pop()
                     break
-                if hasattr(self, dic['operator']):
-                    getattr(self, dic['operator'])(dic)
+                if hasattr(self, dic['operator']):getattr(self, dic['operator'])(dic)
             except:pass
 
