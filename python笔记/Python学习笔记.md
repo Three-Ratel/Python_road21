@@ -2799,6 +2799,8 @@ sys.path.append('module_path')
 12. os.path.isfile()
 13. os.path.isabs()
 14. os.path.basename()：**获取绝对路径下的文件名**
+15. os.getpid()：获取进程的id
+16. os.getppid()：获取其父进程的id
 
 ```python
 import os

@@ -4,7 +4,7 @@ import pickle
 
 
 def pickle_write():
-    f = open('books_info', mode='ab')
+    f = open('books_info.txt', mode='ab')
     while True:
         book_name = input('请输入书名(Q/q): ').strip()
         if book_name.upper() == 'Q': break
@@ -15,10 +15,10 @@ def pickle_write():
         pickle.dump(dic, f)
     f.close()
 
-# pickle_write()
+pickle_write()
 
 def pickle_read():
-    f = open('books_info', mode='rb')
+    f = open('books_info.txt', mode='rb')
     try:
         while True:
             dic = pickle.load(f)

@@ -1,23 +1,19 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-
 import os
 import time
 from multiprocessing import Process
 
 
 def func():
-    print('start', os.getpid())
-    time.sleep(1)
-    print('end', os.getpid())
+    while True:
+        time.sleep(0.5)
+        print(os.getpid(), 'is func')
 
 
 if __name__ == '__main__':
     p = Process(target=func)
+    p.daemon = True
     p.start()
-    p.join()
-    print('main', os.getpid())
-
-
-
+    time.sleep(2)
 

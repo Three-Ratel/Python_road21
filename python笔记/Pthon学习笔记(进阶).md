@@ -642,25 +642,19 @@ print("Received: {}".format(received))
 3. 空间上的复用：如内存中同时有多道程序
 4. 时间上的复用：复用一个cpu的时间片
 
-**Note**：遇到io切，占用cpu时间过长也切，核心在于切之前将进程的状态保存下来，这样
+**Note**：遇到io切，占用cpu时间过长也切，**核心**在于切之前将进程的状态保存下来，这样
 才能保证下次切换回来时，能基于上次切走的位置继续运行。  
 
-#### 2.2 操作系统**分类**(5)
+#### 2.2 操作系统**分类**(4)
+
+**OS作用**：将应用程序对硬件资源的竞态请求变得有序化
 
 - **实时OS**：实时控制，实时信息处理
-
 - **通用OS**：多道、分时、实时处理或其两种以上
-
 - **网络OS**：自带网络相关服务
-
 - **分布式OS**：python中可使用：**celery**模块
 
-- **OS作用**：1.将应用程序对硬件资源的竞态请求变得有序化
-
 ### 2. 进程
-
-- **进程**（Process）是计算机中的程序关于某数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，是OS结构的基础。
-- 在早期面向进程设计的计算机结构中，进程是程序的基本执行实体；在当代**面向线程设计**的计算机结构中，**进程是线程的容器**。程序是指令、数据及其组织形式的描述，**进程是程序的实体。**
 
 ####2.1 进程：运行中的程序
    - 程序只是一个文件，进程是程序文件被cpu运行
@@ -675,12 +669,20 @@ print("Received: {}".format(received))
    - **并行**：程序分别独占cpu自由执行，看起来同时执行，实际每一个时间点都各自执行
    - **并发**：多个程序占用同一cpu，每个程序交替使用cpu，看起来同时执行，实际上仍是串行
 
+
+
+   - **并发**（concurrency）：把任务在不同的时间点交给处理器进行处理。在同一时间点，任务并不会同时运行。
+- **并行**（parallelism）：把每一个任务分配给每一个处理器独立完成。在同一时间点，任务一定是同时运行。
+
 ### 3. 同步异步阻塞非阻塞
 
-1. **同步**：程序不可以同时执行(分步运行)，调用一个方法，要**等待**这个方法**结束**
+1. **同步**：调用一个函数/方法，需要**等待**这个函数/方法**结束**
+   - **一个功能调用时，没有得到结果之前，就不会返回，可以说是一种操作方式。**
 2. **异步**：程序同时运行，没有**依赖**和**等待**关系，调用一个方法，**不等待**这个方法**结束**，不关心这个方法做了什么
 3. **阻塞**：cpu不工作
+   - 阻塞调用是指调用结果返回之前，**当前线程**会被挂起。函数只有在得到结果之后才会返回
 4. **非阻塞**：cpu工作
+   - 调用指在不能立刻得到结果之前，该调用不会阻塞当前线程。
 5. **同步阻塞**
    - con.recv()，socket阻塞的tcp协议
 6. **同步非阻塞**
@@ -690,6 +692,11 @@ print("Received: {}".format(received))
    - 没有io操作，把func扔到其他任务里各自执行，cpu一直工作
 8. **异步阻塞**
    - 程序中出现io操作
+
+#### Note1(2)
+
+1. 同步和异步关注的是**消息通信机制** (synchronous communication/ asynchronous communication)
+2. 阻塞和非阻塞关注的是**程序在等待调用结果（消息，返回值）时的状态**
 
 ### 4. 进程的三状态图
 
@@ -715,59 +722,69 @@ print("Received: {}".format(received))
 3. 严重错误
 4. 被其他进程杀死(**kill -9 pid**)
 
+
+
 ## 9.2 进程
 
-### 1. 线程
+### 1. 进程与线程
 
 #### 1.1 分别做多件事
 
 - 如果是两个程序分别做两件事
   - 起两个进程
 - 如果是一个程序，要分别做两件事
-  - 视频软件：下载电影1，电影2，电影3
+  - 起线程，视频软件：下载电影1，电影2，电影3
 
-#### 1.2 **进程**
+#### 1.2 进程解析
 
-1. 顾名思义，进程即正在执行的一个过程。**进程**是对正在运行程序的一个抽象。
+1. **进程**（Process）是计算机中的程序关于**某数据集合上**的一次运行活动，是系统进行**资源分配和调度**的**基本单位**，是OS结构的基础。
 
-2. 进程的概念起源于操作系统，是操作系统最核心的概念，也是操作系统提供的最古老也是最重要的**抽象概念**之一。操作系统的其他所有内容都是围绕进程的概念展开的。
+   
+
+2. 在早期面向进程设计的计算机结构中，进程是程序的基本执行实体；在当代**面向线程设计**的计算机结构中，**进程是线程的容器**。程序是指令、数据及其组织形式的描述，**进程是程序的实体。**
+
+3. 顾名思义，进程即正在执行的一个过程。**进程**是对正在运行程序的一个抽象。
+
+4. 进程的概念起源于操作系统，是操作系统最核心的概念，也是操作系统提供的最古老也是最重要的**抽象概念**之一。操作系统的其他所有内容都是围绕进程的概念展开的。
 
    **PS**：即使可以利用的cpu只有一个（早期的计算机确实如此），也能保证支持（伪）并发的能力。将一个单独的cpu变成多个虚拟的cpu（多道技术：时间多路复用和空间多路复用+硬件上支持隔离），没有进程的抽象，现代计算机将不复存在。
 
-3. **进程概念**
+5. **进程概念**
 
-   - 进程是一个实体。每一个进程都有它自己的地址空间，一般情况下，包括**文本区域**（text region）、**数据区域**（data region）和**堆栈**（stack region）。文本区域存储处理器执行的代码；数据区域存储变量和进程执行期间使用的动态分配的内存；堆栈区域存储着活动过程调用的指令和本地变量。
+   - 进程是一个程序实体。每**一个进程**都有它自己的**地址空间**，一般情况下，包括**文本区域**（text region）、**数据区域**（data region）和**堆栈**（stack region）。文本区域存储处理器执行的代码；数据区域存储变量和进程执行期间使用的**动态分配**的内存；堆栈区域存储着活动过程调用的**指令和本地变量**。
    - 进程是一个“执行中的程序”。程序是一个没有生命的实体，只有处理器赋予程序生命时（操作系统执行之），它才能成为一个活动的实体，我们称其为进程。
-     进程是操作系统中最基本、重要的概念。是多道程序系统出现后，为了刻画系统内部出现的动态情况，描述系统内部各道程序的活动规律引进的一个概念,所有多道程序设计操作系统都建立在进程的基础上。
+   - 进程是操作系统中最基本、重要的概念。是多道程序系统出现后，为了刻画系统内部出现的动态情况，描述系统内部各道程序的活动规律引进的一个概念,所有**多道程序设计操作系统**都建立在**进程**的基础上。
 
-4. 特点
+6. 特点
 
    - 是计算机中最小的**资源分配单位**，**数据隔离**。
-   - 创建进程时间**开销大**
-   - 销毁进程时间开销大
-   - 进程之间切换时间开销大
+   - 创建、销毁、切换进程时间**开销大**
 
 #### 1.3 线程
 
-- 线程是进程中的一部分，不能脱离进程存在
-- 任何进程中至少有一个线程，只负责执行代码，不负责存储共享的数据，也不负责资源分配
-- **进程**负责数据隔离
-- **线程**负责执行代码，共享**全局资源**
-- 进程是计算机中最小资源分配单位
-- 线程是计算机中能被cpu调度的最小单位
+1. 线程是进程中的一部分，不能脱离进程存在
+2. 任何进程中至少有一个线程，**只**负责执行代码，不负责存储共享的数据，也不负责资源分配
+3. **进程**负责数据隔离
+4. **线程**负责执行代码，共享**全局资源**
+5. 进程是计算机中最小资源分配单位
+6. **线程**是计算机中能被**cpu调度的最小单位**
+   - 爬虫使用需要配合前端
+7. 一个进程中的多个线程可以共享这个进程的数据——  数据共享
 
 #### 1.4 开销
 
-- 线程的创建和销毁
-  - 需要一些开销(一个存储局部变量的数据结构，记录状态)
-  - 创建、销毁、切换**开销**远**远小于**进程
-- python中的线程比较特殊，所以进程也有可能被用到
-- 进程：数据隔离、开销大  同时执行几段代码
-- 线程：数据共享、开销小  同时执行几段代码
+1. 线程的创建和销毁
+   - 需要一些开销(一个存储局部变量的数据结构，记录状态)
+   - 创建、销毁、切换**开销**远**远小于**进程
+2. python中的线程比较特殊，所以进程也有可能被用到
+3. **进程**：数据隔离、开销大  同时执行几段代码
+4. **线程**：数据共享、开销小  同时执行几段代码
 
-### 2. 进程模块
+### 2. 进程的创建
 
-#### 2.1 multiprocessing模块
+​      仔细说来，multiprocess不是一个模块而是python中一个操作、管理进程的包。 之所以叫multi是取自multiple的多功能的意思,在这个包中几乎包含了和进程有关的所有子模块。由于提供的子模块非常多，为了方便大家归类记忆，我将这部分大致分为四个部分：**创建进程**部分，**进程同步**部分，**进程池**部分，进程之间**数据共享**。
+
+#### 2.1 multiprocessing
 
 - 基于process模块
 
@@ -782,7 +799,7 @@ print(os.getpid(),os.getppid(),'end')
 
 #### 2.2 子进程和父进程
 
-- pycharm中启动的所有py程序都是pycharm的子进程
+1. pycharm中启动的所有py程序都是pycharm的子进程
 
 ```python
 # 把func函数交给子进程执行
@@ -802,40 +819,44 @@ if __name__ == '__main__':
   print('main', os.getpid())			# 异步的程序，调用开启进程的方法，并不等待这个进程的开启
 ```
 
-**创建子进程注意**
+2. **创建子进程注意**
 
-ps：_\_name__ 只有两种情况，文件名或双下划线main字符串
+ps：_\_name__ 只有两种情况，**文件名**或**双下划线**main字符串
 
 ```python
 # windows
-只要导入就会执行p.start()，加上__mian__可以控制此类问题发生
-创建新的子进程是执行import 父进程文件完成数据导入工作
-# macos
-创建新的子进程是copy父进程内存空间，完成数据导入工作（fork）
+通过（模块导入）执行父进程文件中的代码获取父进程中的变量
+只要是不希望被子进程执行的代码，就写在if __name__ == '__mian__'下
+进入导入时，父进程文件中的 __name__ != '__mian__'
+# linux/macos
+创建新的子进程是copy父进程内存空间，完成数据导入工作（fork）,正常写就可以
+
+公司开发环境都是linux，无需考虑win中的缺陷
+# windows中相当于把主进程中的文件又从头执行了一遍
+
+# linux，macos不执行代码，直接执行调用的函数在Windows操作系统中由于没有fork(linux操作系统中创建进程的机制)，在创建子进程的时候会自动 import 启动它的这个文件，而在 import 的时候又执行了整个文件。因此如果将process()直接写在文件中就会无限递归创建子进程报错。所以必须把创建子进程的部分使用if __name__ ==‘__main__’ 判断保护起来，import 的时候  ，就不会递归运行了。
 ```
 
-- windows中相当于把主进程中的文件又从头执行了一遍
-- linux，macos不执行代码，直接执行调用的函数
-
-- 父进程(主进程)
+- 父进程(主进程)存活周期
 
 ![父子进程](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/%E7%88%B6%E5%AD%90%E8%BF%9B%E7%A8%8B.png)
 
-- 进程之间不能进行数据共享
-- 主进程需要等待子进程结束，主进程负责创建和回收子进程
-- 子进程执行结束，父进程没有回收资源，即僵尸进程。
-- 主进程结束逻辑：主进程代码结束、所有子进程结束、回收子进程资源、主进程结束
-- 主进程怎么知道子进程结束？通过文件或网络进行进程通信
+#### Note2(4)
+
+1. 进程之间不能进行数据共享
+2. 主进程需要等待子进程结束，主进程负责**创建**和**回收**子进程
+3. 子进程执行结束，若父进程没有回收资源，即**僵尸**进程。
+4. 主进程结束逻辑：主进程**代码结束**、所有子进程结束、回收子进程资源、主**进程结束**
 
 #### 2.3 join方法
 
 - 把一个进程的结束事件封装成一个join方法
 - 执行join方法效果，**阻塞**，直到子进程结束，就结束
+- 所有的进程执行的先后是由**OS控制的**
 
 ```python
 # 在多个子进程中使用join方法
 from multiprocessing import Process
-
 def send_mail(i):
     print('邮件已发送', i)
 if __name__ == '__main__':
@@ -846,9 +867,245 @@ if __name__ == '__main__':
     li.append(p)
     for p in li: p.join()													# 阻塞，知道所有子进程执行完毕
     print('100封邮件已发送')
+# 主线程等待p终止（强调：是主线程处于等的状态，而p是处于运行的状态）。timeout是可选的超时时间，需要强调的是，p.join只能join住start开启的进程，而不能join住run开启的进程 
 ```
 
 
+
+## 9.3 锁&进程间通信
+
+### 1. Process类
+
+#### 1.1 守护进程
+
+- 生产者消费者模型
+- 和守护线程做对比
+
+ **p.daemon**：默认值为False，如果设为True，代表p为后台运行的守护进程，当p的父进程终止时，p也随之终止，并且设定为True后，p不能创建自己的新进程，必须在p.start()之前设置
+
+```python
+import time
+from multiprocessing import Process
+
+def son1():
+  	while True:
+        print('is alive')
+        time.sleep(0.5)
+    
+def son2():
+  	for i in range(5):
+      print('in son2')
+      time.sleep(1)
+              
+if __name__ == '__main__':
+    p = Process(target=son1)
+    p.daemon = True                    # 把p子进程设置成了守护进程															 
+    p.start()
+    p2 = Process(target=son2)
+    p2.start()
+    time.sleep(2)
+# 守护进程是随着主进程‘代码’结束而结束
+# 所有子进程都必须在主进程结束之前结束
+# 守护进程内无法再开启子进程,否则抛出异常：AssertionError: daemonic processes are not allowed to have children
+```
+
+#### 1.2 Process的方法
+
+- p.terminate(), p.is_alive()
+- **异步非阻塞**
+  - 使用terminate方法后，再查看进程是否还存活时，会发现进程还存活，并没有等待OS关闭进程，说明terminate方法请求后，程序会继续执行
+
+```python
+import time
+from multiprocessing import Process
+
+def son1():
+  	while True:
+        print('is alive')
+        time.sleep(0.5)
+              
+if __name__ == '__main__':
+    p = Process(target=son1)
+    p.start()                   # 开启了一个进程
+  	print(p.is_alive)           # 判断子进程时候存活, Ture和False
+    time.sleep(1)
+    p.terminate()               # “异步非阻塞”，强制结束一个子进程
+    print(p.is_alive)           # True，os还没来得及关闭进程
+   	time.sleep(0.01)
+    print(p.is_alive)           # False，OS已经响应了关闭进程的需求，再去检测的时候，结果是进程已经结束
+```
+
+#### 1.3 面向对象开启进程
+
+- 当创建子进程需要传参时，需要使用**super()._\_init__()**
+
+```python 
+import os
+import time
+from multiprocessing import Process
+
+class MyProcess(Process):
+    def __init__(self, x, y):   # 子进程如果不需要参数，可以省略
+        self.x = x
+        self.y = y
+        super().__init__()        
+        
+    def run(self):
+        while True:
+            print(self.x, self.y, os.getpid())
+            print('in myprocess')
+
+if __name__ == '__main__':
+    mp = MyProcess(1, 2)
+    mp.daemon = True
+    mp.start()                  # 开启一个子进程，会调用run()方法
+    time.sleep(1)
+    mp.terminate()							# 结束进程，异步非阻塞						
+    print(mp.is_alive())				# True
+    time.sleep(0.01)				
+    print(mp.is_alive())				# False
+```
+
+- p.join() : 同步阻塞
+- p.terminate() 和 p.start()：异步非阻
+- p.is_alive()：获取当前进程状态
+- daemon = True：设置为守护进程，守护进程在主进程代码执行结束而结束
+
+### 2. 锁
+
+1. 在并发的场景下，设计某部分的内容
+
+   - 需要修改一些所有进程共享数据资源
+
+   - 需要加锁来维护数据的安全
+
+2. 在数据安全的基础上，才考虑效率问题
+
+   - with lock：内部会有异常处理
+   - 在主进程中进行实例化
+   - 把锁传递给子进程
+
+3. 在子进程中对需要加锁的代码进行with lock
+
+   - with lock相当于lock.acquire()和lock.release()
+
+4. 需要加锁的场景
+
+   - 操作共享的数据资源
+   - 对资源进行修改操作
+   - 加锁之后能够保证数据的安全性，但会降低程序执行效率
+
+```python 
+# 数据操作时，不能同时进行修改
+import json
+from multiprocessing import Process, Lock             # 导入Lock
+
+def search_ticket(user):
+    with open('tickets.txt') as f:
+        dic = json.load(f)
+        print('%s查询结果：%s张余票' %(user, dic['count']))
+
+def buy_ticket(user, lock):
+    # with lock:
+    lock.acquire()
+    # time.sleep(0.01)
+    with open('tickets.txt') as f:
+        dic = json.load(f)
+    if dic["count"] > 0:
+        print('%s已买到票' % user)
+        dic["count"] -= 1
+    else:
+        print('%s没买到票' % user)
+    with open('tickets.txt', 'w') as f:
+        json.dump(dic, f)
+    lock.release()
+
+
+if __name__ == '__main__':
+    lock = Lock()                                      # 实例化一个对象
+    for i in range(10):
+      	search_ticket('user%s '%(i+1),)
+        p = Process(target=buy_ticket, args=('user%s '%(i+1), lock))
+        p.start()
+```
+
+### 3. 进程间的通信
+
+#### 3.1 进程间数据隔离
+
+```python
+from multiprocessing import Process
+n = 100
+def func():
+	global n
+  n -= 1
+ 
+li = []
+for i in range(10):
+  p = Process(target=func)
+  p.start()
+  li.append(p)
+  
+ for p in li:p.join()
+ print(n)
+```
+
+#### 3.2 进程间通信
+
+- 文件或网络只有这两种
+- 进程间通信(**IPC**， inter-process communication):**Queue和Pipe**
+- **Queue(3)**：先进先出，文件家族的**socket**，写文件基于**pickle**，基于**Lock**
+  - 数据安全，**Pipe**管道：天生数据不安全（socket通信）
+  - Queue = **Pipe**(socket + picket)**+Lock**
+
+```python
+from multiprocessing import Process,Queue
+
+def func(exp,q):
+    res = eval(exp)
+    q.put(res)
+
+if __name__ == '__main__':
+    q = Queue()
+    p = Process(target=func, args=('1+2+3',q))
+    p.start()
+    print(q.get())
+```
+
+```python
+from multiprocessing import Pipe
+pip = Pipe()
+pip.send()
+pip.recv()
+```
+
+```python
+# Process中的队列
+import queue
+from multiprocessing import Queue
+q = Queue(3)													# 可设置队列长度
+q.put(1)
+q.put(2)															# 对列为满时，继续放数据会发生阻塞
+q.put(3)
+print('----------')
+try:
+	q.put_nowait(4)                     # 对列为满时，继续放数据会报错和丢失
+except queue.Full:pass
+print('----------')
+
+q.get()
+q.get()
+q.get()                                # 对列为空时，会发生阻塞
+try:
+	q.get_nowait()											 # 对列为空时，会报错，阻塞会取消
+except queue.Empty:pass
+```
+
+```python
+q.empty()                              # 有缺陷
+q.qsize()
+q.full()
+```
 
 
 
