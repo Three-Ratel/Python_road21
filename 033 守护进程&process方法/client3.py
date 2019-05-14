@@ -8,7 +8,7 @@ while True:
     msg = sk.recv(1024).decode('utf-8')
     print('33333', msg)
 
-
+sk.close()
 
 
 

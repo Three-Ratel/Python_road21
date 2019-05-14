@@ -23,7 +23,10 @@ def get_three():
     return ip_li
 
 
-generate_ip()
-res = get_three()
-print(res)
+def run():
+    generate_ip()
+    res = get_three()
+    print(res)
 
+
+run()

@@ -8,17 +8,14 @@ def log(func):
         func()
         asctime = datetime.datetime.now()
         c_time = asctime.strftime('%Y-%m-%d %H:%M:%S')
-        print(c_time, '%s被调用了'%(func.__name__,))
+        print(c_time, '%s被调用了' % (func.__name__,))
+
     return inner
-
-
 
 
 @log
 def func():
     print('blablabla')
 
+
 func()
-
-
-

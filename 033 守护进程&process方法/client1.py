@@ -5,3 +5,5 @@ while True:
     sk.send('hello'.encode('utf-8'))
     msg = sk.recv(1024).decode('utf-8')
     print('11111', msg)
+
+sk.close()
