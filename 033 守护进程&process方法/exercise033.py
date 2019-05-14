@@ -33,11 +33,6 @@
 from multiprocessing import Process
 from socket import socket, SOL_SOCKET, SO_REUSEADDR
 
-sk = socket()
-sk.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-sk.bind(('127.0.0.1', 9000))
-sk.listen()
-
 
 def chat(con):
     while True:
@@ -45,7 +40,12 @@ def chat(con):
         con.send(msg.upper().encode('utf-8'))
 
 
-while True:
-    con, addr = sk.accept()
-    p = Process(target=chat, args=(con,))
-    p.start()
+if __name__ == '__main__':
+    sk = socket()
+    sk.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+    sk.bind(('127.0.0.1', 9000))
+    sk.listen()
+    while True:
+        con, addr = sk.accept()
+        p = Process(target=chat, args=(con,))
+        p.start()

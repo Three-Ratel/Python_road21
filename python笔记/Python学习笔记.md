@@ -2584,7 +2584,7 @@ except MyException as e:
    - py3：不需要，推荐加上
 4. **导入模块**
    1. 导入模块—>调用模块中的函数（import 文件名）
-   2. import 会把**模块中的文件**优先加载到内存
+   2. import 会把**模块中的文件**加载到内存
    3. **from py文件名 import func，show… (*)**：只导入指定函数，也会把模块中的内容加载一遍
       - 模块中的函数名可能和本地函数重名
       - from 模块 import func as f（模块中的函数重命名） f()
@@ -2659,7 +2659,7 @@ sys.path.append(BASE_DIR)
 
 ​	内置模块目前有**random**，**hashlib**， **getpass** ，**sys**相关，**os**相关，**shutil** ，**json**，**time&datetime**, **import lib**, **logging**等 **10**个。
 
-### **1. random**
+### 1. random(7)
 
 ```python
 # random.randint(a, b)
@@ -2672,16 +2672,19 @@ def get_random_data(length=6):
     return ' '.join(data)
 ```
 
-- random.choice([1, 2, 3])：随机选择一个：验证码，抽奖
-- random.sample([1, 2, 3, 4, 5], 3)：随机选3个不重复，抽奖多个人
-- random.uniform(1, 5)：随机1-5中的随机小数
-- random.shuffle([1,2,3,4])：洗牌，算法
+1. random.randint(1,5)
+2. random.choice([1, 2, 3])：随机选择一个：验证码，抽奖≥
+3. random.sample([1, 2, 3, 4, 5], 3)：随机选3个不重复，抽奖多个人
+4. random.uniform(1, 5)：随机1-5中的随机小数
+5. random.shuffle([1,2,3,4])：洗牌，算法
+6. random.random()：随机生成**[0-1)**之间的数
+7. random.randrange(1,5)：**randint基于randrange**
 
-### **2. hashlib / getpass**
+### 2. hashlib(1) / getpass
 
 摘要算法模块，**密文验证**/**校验文件独立性**
 
-#### note
+#### note1(3)
 
 1. md5 / sha
 2. 摘要文件内容一样，无论怎么分割，md5摘要后一致（大文件一致性校验）
@@ -2720,7 +2723,7 @@ pwd = getpass.getpass('please input pwd: ')
 print(pwd)
 ```
 
-### **3. time**
+### 3. time(2)
 
 ```python
 import time
@@ -2728,7 +2731,7 @@ v = time.time() # 获取从1970年开始到目前的时间，单位为秒
 time.sleep(2)  	# 休眠时间，2秒
 ```
 
-### 4. sys (5 + 1)
+### 4. sys (5)
 
 - 解释器相关
 
@@ -2785,7 +2788,7 @@ print('remove the %s' % path)
 sys.path.append('module_path')
 ```
 
-### 5. os(操作系统相关)
+### 5. os(操作系统相关)(16)
 
 1. **os.path.exist(file_name)**
 2. os.stat(file_name).st_size
@@ -2844,7 +2847,7 @@ for a, b, c in result:
       print(path)
 ```
 
-### 6. shutil
+### 6. shutil(4)
 
 1. shutil.make_archive()
 2. shutil.unpack_archive()
@@ -2881,12 +2884,23 @@ ctime = datetim.now().strftime('%Y-%m-%d %H:%M:%S')
 
 ## 6.4  json
 
+**序列化**：将原本的字典、列表等内容转换成一个字符串的过程就叫做**序列化**。
+
+**目的**：
+
+1. 以某种存储形式使自定义**对象持久化**
+   - 对象持久化是指将内存中的对象保存到**可永久保存**的存储设备中（如磁盘）的一种技术。
+2. 将对象从一个地方传递到另一个地方。
+3. 使程序更具维护性。
+
+![序列化](/Users/henry/Documents/截图/Py截图/序列化.png)
+
 - **json**， 所有语言通用，**只能**序列化指定的基本数据类型
   - dumps/loads/ dump/load
-  - 所有字符串必须都是双引号
-  - 最外层只能是dict/list
+  - 所有字符串必须都是**双引号**
+  - **最外层**只能是**dict/list**
   - 不能支持load多次
-  - dict中key只能是str
+  - dict中**key**只能是**str**
 - **pickle**，几乎支持所有python东西（socket对象），序列化的内容只能用python
   - dumps/loads/ dump/load
   - 支持连续load多次
@@ -2935,11 +2949,10 @@ print(val, typ(val))
 # json dump 得到的是str， pickle得到的是bytes
 ```
 
-**Note**
+#### Note(2)
 
-- 字符串
-- 经过编码过后的数据，通常称为 **字节类型**/bytes，格式为：b‘XXXXXXXX'
-- 压缩后的0101
+1. 经过编码过后的数据，通常称为 **字节类型**/bytes，字符串，格式为：b‘XXXXXXXX'
+2. 压缩后的0101
 
 ## 6.5 time&datetime
 
@@ -3266,8 +3279,8 @@ class File:
     with open(self.path, mode='a', encoding='utf-8') as f:
       data = f.write()
 
-obj = File()  					 # 创建对象，并使用   
-obj.path = 'test.txt'    # 往obj对象中写入一个私有对象
+obj = File()  					                        # 创建对象，并使用   
+obj.path = 'test.txt'                           # 往obj对象中写入一个私有对象
 obj.write(content)
 # 定义私有属性,私有属性在类外部无法直接进行访问
 obj2 = File('info.txt')
@@ -3292,7 +3305,7 @@ obj2 = Person('echo', 19, 'female')
 obj2.show()
 ```
 
-#### Note3（3）
+#### Note3(3)
 
 1. 函数和数据的封装
    - 如果写代码时，函数较多，可以将**函数归类**，并放入同一类中。（函数的封装）
@@ -4038,6 +4051,10 @@ obj.send()
 
 ### 4. 反射
 
+反射的概念是由Smith在1982年首次提出的，**主要是指程序可以访问、检测和修改它本身状态或行为的一种能力（自省）**。这一概念的提出很快引发了计算机科学领域关于应用反射性的研究。它首先被程序语言的设计领域所采用,并在Lisp和面向对象方面取得了成绩。
+
+**反射**：通过字符串的形式操作对象相关的属性。python中的一切事物都是对象（都可以使用反射）
+
 **作用**：根据字符串的形式，去某个对象中操作他的成员。
 
 - **getattr**('对象'， 字符串)：根据字符串的形式，去某个对象中获取其成员。
@@ -4110,7 +4127,7 @@ print(obj.k1)
 #### Note（2）
 
 - python中一切皆对象（py文件，包，类，对象），可以通过getattr获取
-- 通过字符串操作内部成员都可以通过反射的机制实现
+- 通过**字符串操作内部成员**都可以通过反射的机制实现
 
 ```python
 import x
