@@ -1057,6 +1057,12 @@ for i in range(10):
 - **Queue(3)**：先进先出，文件家族的**socket**，写文件基于**pickle**，基于**Lock**
   - 数据安全，**Pipe**管道：天生数据不安全（socket通信）
   - Queue = **Pipe**(socket + picket)**+Lock**
+- **第三方提供(5)**：redis，memcache，kafka，rabbitmq（消息中间件(消息转发)）
+  - 并发需求
+  - 高可用
+  - 实现集群的概念
+  - 断电保存数据
+  - 解耦
 
 ```python
 from multiprocessing import Process,Queue

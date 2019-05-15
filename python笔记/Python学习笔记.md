@@ -2399,7 +2399,52 @@ v2 = func()  # 与下面v2相同
 v2 = (i for i in range(10)) # 生成器推导式，不会立即产生数据
 ```
 
+6. 酸爽生成器
 
+   - 所有生成器取一次就没有了
+
+   - 不取不会执行，**惰性运算**
+
+```python
+# 示例1
+ret = filter(lambda n: n%3==0, range(10))
+print(len(list(ret)))                    # 4
+print(len(list(ret)))										 # 0
+```
+
+```python
+# 示例2
+def add(n, i):
+  return n + i
+
+def test():
+  for i in range(4):
+    yield i
+    
+g = test()
+for n in [1, 10]:
+  g = (add(n, i) for i in g)
+  
+print(list(g))
+# [20 21 22 23 24]
+```
+
+```python
+# 示例3
+def add(n, i):
+  return n + i
+
+def test():
+  for i in range(4):
+    yield i
+    
+g = test()
+for n in [1, 10, 5]:
+  g = (add(n, i) for i in g)
+  
+print(list(g))
+# [15, 16, 17, 18]
+```
 
 ## 5.8 异常处理
 
