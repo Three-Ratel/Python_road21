@@ -9,12 +9,13 @@ DB_PATH：数据信息的目录
 SER_DIR：每个用户上传、下载的目录
 USER_INFO：存储用户注册信息的文件路径
 """
-USER = []
+USER = {}
 IP_PORT = ('127.0.0.1', 9000)
 PRO_DIE = os.path.dirname(os.path.dirname(__file__))
 DB_PATH = os.path.join(PRO_DIE, 'db')
 SER_DIR = os.path.join(DB_PATH, 'server_dir')
 USER_INFO = os.path.join(DB_PATH, 'user_info')
+USER_DIR = None
 
 
 """

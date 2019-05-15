@@ -23,12 +23,12 @@ class User():
                 try:
                     while True:
                         user_dic = pickle.load(f)
-                        if dic['user_name'] == user_dic['user_name'] and \
-                                get_md5.get_md5(dic) == user_dic['user_pwd']:
+                        if dic['user_name'] == user_dic['user_name'] and get_md5.get_md5(dic) == user_dic['user_pwd']:
                             flag = True
-                            settings.USER.append(user_dic['user_name'])
-                            settings.SER_DIR = os.path.join(settings.SER_DIR, settings.USER[0])
-                            if not os.path.exists(settings.SER_DIR): os.makedirs(settings.SER_DIR)
+
+                            # settings.USER.add(user_dic['user_name'])
+                            settings.USER_DIR = os.path.join(settings.SER_DIR, user_dic['user_name'])
+                            if not os.path.exists(settings.USER_DIR): os.makedirs(settings.USER_DIR)
                             break
                 except:pass
 
@@ -64,7 +64,7 @@ class Myserver(BaseRequestHandler):
         self.request.send(byte_dic)
 
     def file_send(self, dic):
-        file_path = os.path.join(settings.SER_DIR, dic['file_name'])
+        file_path = os.path.join(settings.USER_DIR, dic['file_name'])
         dic = {}
         if not os.path.isfile(file_path):dic['isfile'] = False
         else:
@@ -94,7 +94,7 @@ class Myserver(BaseRequestHandler):
                 dic['file_size'] -= len(content)
                 """校验文件"""
                 obj.update(content)
-        file_path = os.path.join(settings.SER_DIR, dic['file_name'])
+        file_path = os.path.join(settings.USER_DIR, dic['file_name'])
         with open(file_path, mode='wb') as f:
             inner()
             inner(0, dic['file_size'])
@@ -114,7 +114,7 @@ class Myserver(BaseRequestHandler):
             try:
                 dic = self.my_recv()
                 if dic['operator'] == 'Q':
-                    settings.USER.pop()
+                    # settings.USER.pop()
                     break
                 if hasattr(self, dic['operator']):getattr(self, dic['operator'])(dic)
             except:pass
