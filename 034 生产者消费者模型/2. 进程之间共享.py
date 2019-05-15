@@ -4,7 +4,7 @@ from multiprocessing import Manager, Lock, Process
 
 
 def func(dic, lock):
-    with lock:
+    # with lock:
         dic['count'] -= 1
 
 

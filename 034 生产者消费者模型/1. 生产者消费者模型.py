@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-# 示例1
 import time
 import random
 from multiprocessing import Process, Queue
@@ -34,8 +33,7 @@ def cp(num1, num2):
     for i in range(num2):
         c = Process(target=consumer, args=(q, 'echo%s' % (i+1,)))
         c.start()
-    for i in p_l:
-        i.join()
+    for i in p_l:i.join()
     q.put(None)
 
 

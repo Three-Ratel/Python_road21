@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 try:
     import os, sys
+
     PATH = os.path.dirname(os.path.dirname(__file__))
     sys.path.append(PATH)
 
@@ -17,7 +18,7 @@ try:
                 print("""
                        1. 创建课程
                        2. 创建学生账号
-                       3. 查看所有课程
+                       3. 查看所有课程 
                        4. 查看所有学生
                        5. 查看所有学生选课情况
                        6. 修改管理员密码
@@ -26,7 +27,7 @@ try:
                        """)
                 choice = input('请输入功能序号：')
                 funcs = {'1': Admini.creat_course, '2': Admini.creat_student, '3': Admini.view_course,
-                         '4': Admini.view_student, '5': Admini.view_select, '6': Admini.modified,'7': Admini.end_pro}
+                         '4': Admini.view_student, '5': Admini.view_select, '6': Admini.modified, '7': Admini.end_pro}
                 if not funcs.get(choice):
                     print('输入有误，请重新输入')
                     continue
@@ -56,7 +57,6 @@ try:
         def modified():
             pwd_modified.pwd_modified()
 
-
         @staticmethod
         def end_pro():
             exit(0)
@@ -67,7 +67,3 @@ try:
 
 except Exception as e:
     logger.logger(e)
-
-
-
-

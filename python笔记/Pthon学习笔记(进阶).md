@@ -841,12 +841,13 @@ ps：_\_name__ 只有两种情况，**文件名**或**双下划线**main字符�
 
 ![父子进程](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/%E7%88%B6%E5%AD%90%E8%BF%9B%E7%A8%8B.png)
 
-#### Note2(4)
+#### Note2(5)
 
-1. 进程之间不能进行数据共享
+1. 进程之间不能共享内存
 2. 主进程需要等待子进程结束，主进程负责**创建**和**回收**子进程
 3. 子进程执行结束，若父进程没有回收资源，即**僵尸**进程。
 4. 主进程结束逻辑：主进程**代码结束**、所有子进程结束、回收子进程资源、主**进程结束**
+5. **进程里面无法进行input**：所有print都是向文件里**写**数据
 
 #### 2.3 join方法
 
@@ -1115,7 +1116,411 @@ q.full()
 
 
 
+## 9.4 cp模型&操作线程
 
+### 1. 生产者消费者模型
+
+#### 1.1 程序的解藕
+
+- 把写在一起的功能分开成多个小的功能处理
+  - 修改和复用，增加可读性
+  - 计算速度有差异，执行效率最大化，节省进程
+
+- **生产者**：生产数据
+- **消费者**：处理数据
+
+![生产者消费者模型](/Users/henry/Documents/截图/Py截图/生产者消费者模型.jpg)
+
+#### 1.2 生产者和消费者
+
+1. 一个进程就是一个生产者/消费者
+2. 生产者和消费者之间的容器就是队列(**队列有大小，控制内存消耗**)
+
+```python
+# 生产者消费者模型示例
+import time
+import random
+from multiprocessing import Process, Queue
+
+def producer(q, name, food):
+    for i in range(10):
+        time.sleep(random.random())
+        fd = '%s%s' % (food, i)
+        q.put(fd)
+        print('%s生产了一个%s' % (name, food))
+
+def consumer(q, name):
+    while True:
+        food = q.get()
+        if not food:
+            q.put(None)
+            break
+        time.sleep(random.randint(1, 3))
+        print('%s吃了%s' % (name, food))
+
+def cp(num1, num2):
+    q = Queue(10)
+    p_l = []
+    for i in range(num1):
+        p = Process(target=producer, args=(q, 'henry', 'food'))
+        p.start()
+        p_l.append(p)
+    for i in range(num2):
+        c = Process(target=consumer, args=(q, 'echo%s' % (i+1,)))
+        c.start()
+    for i in p_l:
+        i.join()
+    q.put(None)
+
+if __name__ == '__main__':
+    cp(1, 4)
+```
+
+```python
+# 生产者消费者模型示例之爬虫
+import re
+import requests
+from multiprocessing import Process, Queue
+
+def producer(q, url):
+    response = requests.get(url)
+    q.put(response.text)
+
+def consumer(q):
+    while True:
+        s = q.get()
+        if not s:
+            q.put(None)
+            break
+        com = re.compile(
+            '<div class="item">.*?<div class="pic">.*?<em .*?>(?P<id>\d+).*?<span class="title">(?P<title>.*?)</span>'
+            '.*?<span class="rating_num" .*?>(?P<rating_num>.*?)</span>.*?<span>(?P<comment_num>.*?)评价</span>', re.S)
+        ret = com.finditer(s)
+        for i in ret:
+            print({
+                "id": i.group("id"),
+                "title": i.group("title"),
+                "rating_num": i.group("rating_num"),
+                "comment_num": i.group("comment_num"),
+            })
+
+if __name__ == '__main__':
+    count = 0
+    q = Queue()
+    p_l = []
+    for i in range(10):
+        count += 25
+        p = Process(target=producer, args=(q, 'https://movie.douban.com/top250?start=%s&filter=' % count))
+        p.start()
+        p_l.append(p)
+    for i in range(5):
+        c = Process(target=consumer, args=(q,))
+        c.start()
+    for i in p_l:
+        i.join()
+    q.put(None)
+```
+
+#### 1.3 joinablequeue
+
+1. **q.join()**：阻塞，知道队列中所有内容被取走且**q.task_done**
+   - 生产者将使用此方法进行阻塞，直到队列中所有项目均被处理。阻塞将持续到为队列中的每个项目均调用
+2. 先设置消费者为守护进程
+   - **c.daemon = True**
+3. 阻塞生产者
+   - 其中的队列阻塞结束后，才会结束
+4. 在生产者中使用阻塞队列
+   - 阻塞一结束，所有数据都已经消费完
+5. 队列阻塞结束代表消费者，把所有生产数据消费完（**jq.taks_done()操作**）
+   - 使用者使用此方法发出信号，表示q.get()返回的项目已经被处理。如果调用此方法的次数大于从队列中删除的项目数量，将引发**ValueError**异常。
+
+![joinable_queue](/Users/henry/Documents/截图/Py截图/joinable_queue.png)
+
+![joinable逻辑](/Users/henry/Documents/截图/Py截图/joinable逻辑.png)
+
+```python
+# joinable实现生产者、消费者模型
+import time
+import random
+from multiprocessing import Process,JoinableQueue
+
+def producer(q, name, food):
+  for i in range(10):
+    time.sleep(random.random())
+    fd = '%s%s'%(food,i)
+    print('%s生产了一个%s'%(name, food))
+  q.join()
+
+def consumer(q, name, food):
+  while True:
+    food = q.get()
+    if not food:
+      q.put(None)
+      break
+    time.sleep(random.randint(1, 3))
+    print('%s吃了%s'%(name, food))
+    q.task_done()
+ 
+if __name__ = '__main__':
+  jq = JoinableQueue()
+  p = Processor(target=producer, args=(jq, 'henry', 'food'))
+  p.start()
+```
+
+### 2. 进程间数据共享
+
+1. 与数据共享相关：**Manager模块**(Manager().list(), Manager().Queue)
+2. multiprocessing 中有一个manager类
+3. 封装了所有和进程相关的数据共享、数据传递
+4. 但是对于dict、list这类进行数据操作时，会产生数据不安全
+5. m = Manager()也可以使用with Manager() as m:
+
+```python
+# 进程间数据是独立的，可以借助于队列或管道实现通信，二者都是基于消息传递的
+# 虽然进程间数据独立，但可以通过Manager实现数据共享，事实上Manager的功能远不止于此
+A manager object returned by Manager() controls a server process which holds Python objects and allows other processes to manipulate them using proxies.
+
+A manager returned by Manager() will support types list, dict, Namespace, Lock, RLock, Semaphore, BoundedSemaphore, Condition, Event, Barrier, Queue, Value and Array.
+```
+
+```python
+from mutliprocessing import Manager,
+def func(dic, lock):
+  with lock:
+		dic['count'] -= 1
+
+if __name__ = '__main__':
+  # m = Manager()
+  lock = Lock
+  with Manager() as m:
+    l = Lock()
+    dic = m.dict({'count': 100})    							# 共享的dict
+    p_l = []
+    for i in range(100):
+      p = Process(target=func, args=(dic,lock))
+      p.start()
+      p_l.append(p)
+    for p in p_l:p.join()
+    print(dic)
+```
+
+### 3. 线程
+
+- cpython解释器当中的线程问题
+
+- https：加证书，需要购买
+- **四核八线程**
+  - 每个核心被虚拟成两个核心，可以同时执行8个线程。
+  - 如果是计算复杂数据，会转换到四核
+
+#### 3.1垃圾回收机制
+
+1. **cpython**解释器不能实现多线程利用多核
+2. 垃圾回收机制(gc)：**引用计数** + **分代回收**
+   - 专门有一条线程完成垃圾回收机制，对每一个在程序中的变量**统计引用计数**
+
+#### 3.2 GIL锁
+
+**GIL**(global interpreter lock)：**全局解释器锁**
+
+1. 保证了整个python程序中，只能有一个线程被CPU执行
+   - 导致了py程序不能并行
+   - 使用多线程并不影响高IO型操作，只会对高计算型程序有效率的影响
+   - 遇到高计算：多进程+多线程，分布式
+2. 原因：**cpython**解释器中特殊的垃圾回收机制
+3. cpython、pypy，jpython(先翻译为java字节码，在java上执行)、iron python
+
+#### 3.3 遇到IO操作的时候
+
+1. 5-6亿条cpu指令
+2. 5-6cpu指令 == 一句python代码
+3. 几千万条python代码
+
+#### 3.4 web框架几乎都是多线程
+
+- 利用IO操作，类似多道系统
+
+### 4. python操作线程(重点)
+
+#### 4.1 开启线程
+
+- 使用**Threading**类
+
+```python
+# multiprocessing 是完全仿照Threading类的
+import os
+import time
+from threading imoprt Thread
+def func():
+  print('start son thread')
+  time.sleep(1)
+  print('end son thread', os.getpid())
+  
+Thread(target=func).start()                 # 开启一个线程的速度非常快
+print('start')
+time.sleep(0.5)
+print('end', os.getpid())
+```
+
+```python
+# 开启多个线程
+import os
+import time
+from threading imoprt Thread
+def func():
+  print('start son thread')
+  time.sleep(1)
+  print('end son thread', os.getpid())
+ 
+for i in range(10):
+  Thread(target=func).start()                 # 开启一个线程的速度非常快
+  																					  # 线程的调度由OS决定
+```
+
+#### 4.2 join方法
+
+1. join阻塞知道子线程执行结束
+
+- **主线程**如果结束了，**主进程**也就结束了
+- **主线程**需要等待**所有子线程结束**才能结束
+
+```python
+import os
+import time
+from threading imoprt Thread
+def func():
+    print('start son thread')
+    time.sleep(1)
+    print('end son thread', os.getpid())
+
+t_l = []
+for i in range(10):
+    t = Thread(target=func)
+    t.start()
+    t_l.append(t)
+for i in t_l:i.join()
+print('子线程执行结束')
+```
+
+#### 4.3 面向对象启动线程
+
+```python
+from threading import Thread
+
+class MyThread(Thread):
+    def __init__(self, i):
+        self.i = i
+        super().__init__()               # 注意变量名避免与父类init中的变量重名  
+
+    def run(self):
+        print(self.i, self.ident)        # 通过self.ident，查看子线程的id
+
+t_l = []
+for i in range(100):
+    t = MyThread(i)
+    t_l.append(t)
+    t.start()                             # start 方法封装了开启线程的方法和run方法
+
+for t in t_l: t.join()
+print('主进程结束')       
+```
+
+#### 4.4 线程中的其他方法
+
+```python
+from threading import current_thread, enumerate, active_count
+
+def func():
+    print('start son thread', i , current_thread.ident)
+    time.sleep(1)
+    print('end son thread', os.getpid())
+
+t = Thread(target=func)
+t.start()
+print(t.ident)
+print(current_thread().ident)   # current_ident()在哪个线程，就得到这个线程id
+print(enumerate())					    # 统计当前进程中多少线程活着，包含主线程
+print(active_count())				    # 统计当前进程中多少线程活着，个数，包含主线程
+                                # 线程中不能从主线程结束一个子线程
+```
+
+#### 4.5 效率差
+
+```python
+import time
+from threading import Thread
+from multiprocessing import Process
+def func(a, b):
+  	c = a + b
+ 
+if __name__ == '__main__':
+    p_l = []
+    start = time.time()
+    for i in range(100):
+        p = Process(target=func, args=(i, i*2))
+        p.start()
+        p_l.append(p)
+     for i in P_l:i.join()
+     print(time.time() - start)
+    
+     t_l = []
+     start = time.time()
+     for i in range(100):
+         t = Thread(target=func, args=(i, i*2))
+         t.start()
+         t_l.append(t)
+     for i in t_l:i.join()
+     print(time.time() - start)
+```
+
+#### 4.6 数据共享
+
+```python
+# 不要在子线程里随便修改全局变量
+from threading import Thread
+n = 100
+def son():
+  global n
+  n -= 1
+
+t_l = []
+for i in range(100):
+		t = Thread(target=son)
+    t_l.append(t)
+    t.start()
+    
+for t in t_l:t.join()
+print(n)
+```
+
+#### 4.7 守护线程
+
+- 守护线程会一直等到所有非守护线程结束之后才结束
+- 除了**守护主线程**的代码之外，也会**守护子线程**
+- 只要有非守护线程存在，主进程就不会结束
+
+```python
+import time
+from threading imoprt Thread
+def son():
+  	while True:
+      		time.sleep(0.5)
+
+def son2():
+  	for i in range(5):
+      
+t = Thread(target=son)
+t.daemon = True
+t.start()
+time.sleep(3)
+```
+
+#### Note(4)
+
+1. 对主进程来说，运行完毕指的是主进程代码运行完毕
+2. 对主线程来说，运行完毕指的是主线程所在的进程内所有非守护线程执行完毕
+3. 主进程在其代码结束后就已经运行完毕了（守护进程在此时就被回收），然后主进程会一直等非守护进程都运行完毕后回收子进程资源（否则会产生僵尸进程），才会结束
+4. 主线程在其他非守护线程运行完毕后才算运行完毕（守护线程在此时就被回收），因为主线程的结束意味着进程的结束，进程整体的资源都将被回收，而进程必须保证非守护线程都运行完毕后才能结束。
 
 
 

@@ -30,14 +30,41 @@
 """
 5、使用进程实现并发的socket的server端
 """
+# from multiprocessing import Process
+# from socket import socket, SOL_SOCKET, SO_REUSEADDR
+#
+#
+# def chat(con):
+#     while True:
+#         msg = con.recv(1024).decode('utf-8')
+#         con.send(msg.upper().encode('utf-8'))
+#
+#
+# if __name__ == '__main__':
+#     sk = socket()
+#     sk.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+#     sk.bind(('127.0.0.1', 9000))
+#     sk.listen()
+#     while True:
+#         con, addr = sk.accept()
+#         p = Process(target=chat, args=(con,))
+#         p.start()
+
+
+
+"""
+报错版
+"""
 from multiprocessing import Process
 from socket import socket, SOL_SOCKET, SO_REUSEADDR
 
 
 def chat(con):
-    while True:
-        msg = con.recv(1024).decode('utf-8')
-        con.send(msg.upper().encode('utf-8'))
+    try:
+        while True:
+            con.send('hello'.encode('utf-8'))
+            con.recv(1024)
+    except ConnectionResetError:pass
 
 
 if __name__ == '__main__':

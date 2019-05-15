@@ -219,3 +219,9 @@ sudo -s launchctl unload -w /System/Library/LaunchDaemons/ftp.plist
 # 然后输入你在Mac上的用户名和密码就可以了
 ```
 
+## 7. Terminal
+
+1. arp -a | wc -l
+2. fping 192.168.12.0/24 -g -a
+3. 
+
