@@ -755,10 +755,11 @@ print("Received: {}".format(received))
    - 进程是一个“执行中的程序”。程序是一个没有生命的实体，只有处理器赋予程序生命时（操作系统执行之），它才能成为一个活动的实体，我们称其为进程。
    - 进程是操作系统中最基本、重要的概念。是多道程序系统出现后，为了刻画系统内部出现的动态情况，描述系统内部各道程序的活动规律引进的一个概念,所有**多道程序设计操作系统**都建立在**进程**的基础上。
 
-6. 特点
+6. **特点**
 
    - 是计算机中最小的**资源分配单位**，**数据隔离**。
    - 创建、销毁、切换进程时间**开销大**
+   - 可以利用多核
 
 #### 1.3 线程
 
@@ -766,10 +767,10 @@ print("Received: {}".format(received))
 2. 任何进程中至少有一个线程，**只**负责执行代码，不负责存储共享的数据，也不负责资源分配
 3. **进程**负责数据隔离
 4. **线程**负责执行代码，共享**全局资源**
-5. 进程是计算机中最小资源分配单位
+5. 进程是计算机中**最小资源分配**单位
 6. **线程**是计算机中能被**cpu调度的最小单位**
    - 爬虫使用需要配合前端
-7. 一个进程中的多个线程可以共享这个进程的数据——  数据共享
+7. 一个进程中的多个线程可以共享这个进程的数据——  **数据共享**
 
 #### 1.4 开销
 
@@ -1223,7 +1224,7 @@ if __name__ == '__main__':
 
 #### 1.3 joinablequeue
 
-1. **q.join()**：阻塞，知道队列中所有内容被取走且**q.task_done**
+1. **q.join()**：阻塞，直到队列中所有内容被取走且**q.task_done**
    - 生产者将使用此方法进行阻塞，直到队列中所有项目均被处理。阻塞将持续到为队列中的每个项目均调用
 2. 先设置消费者为守护进程
    - **c.daemon = True**
@@ -1404,6 +1405,9 @@ print('子线程执行结束')
 
 #### 4.3 面向对象启动线程
 
+- self.ident / current_thread：查看线程id
+- enumerate / active_count：查看线程存活情况
+
 ```python
 from threading import Thread
 
@@ -1523,6 +1527,344 @@ time.sleep(3)
 4. 主线程在其他非守护线程运行完毕后才算运行完毕（守护线程在此时就被回收），因为主线程的结束意味着进程的结束，进程整体的资源都将被回收，而进程必须保证非守护线程都运行完毕后才能结束。
 
 
+
+## 9.5 锁
+
+### 1. 互斥锁
+
+```python
+# 线程数据同样不安全
+import dis
+a = 0
+def func():
+  	global a
+  	a += 1
+dis.dis(func)                   # 返回cpu指令
+```
+
+- 即便是线程，有GIL锁， 也会出现**数据不安全**的问题
+- **STORE_GLOBAL**：一旦有这种方法，就会有数据安全问题
+- **操作是全局变量**
+- **操作以下方法**
+  - += , -= , *=, /=（在操作线程全局变量时，注意）
+
+```python
+# 使用互斥锁解决线程全局变量数据不安全问题
+from threading import Thread, Lock
+a = 0
+def add_f(lock):
+    global a
+    with lock:
+        for i in range(2000000):
+            a += 1
+def sub_f(lock):
+    global a
+    with lock:
+        for i in range(2000000):
+            a -= 1
+lock = Lock()
+t1 = Thread(target=add_f, args=(lock,))
+t1.start()
+t2 = Thread(target=sub_f, args=(lock,))
+t2.start()
+t1.join()
+t2.join()
+print(a)
+```
+
+**互斥锁**：是锁中的一种：在同一线程中，不能连续lock.acquire()多次
+
+```python
+from threading import Lock
+lock = Lock()
+lock.acquire()
+print('-------------')
+lock.acquite()
+print('-------------')
+```
+
+### 2. 单例模式
+
+```python 
+import time
+import random
+from threading import Thread
+
+class Singleton:
+    from threading import Lock  # 复用性考虑
+    __instance = None
+    lock = Lock()
+    
+    def __new__(cls, *args, **kwargs):
+        with cls.lock:
+            if not cls.__instance:
+                time.sleep(random.random())  # 切换GIL锁
+                cls.__instance = super().__new__(cls)
+        return cls.__instance
+      
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+def fun():
+    print(Singleton('henry', 18))
+
+li = []
+for i in range(10):
+    t = Thread(target=fun)
+    li.append(t)
+    t.start()
+for t in li: t.join()
+```
+
+### 3. 死锁
+
+#### 3.1 原因(2)
+
+- 有**多把锁**(一把以上)
+- 多把锁**交替使用**
+
+```python
+from threading import Thread,Lock
+noodle_lock = Lock()
+fork_lock = Lock()
+def eat1(name,noddle_lock, fork_lock):
+    noddle_lock.acquire()
+    print('%s抢到面了'%name)
+    fork_lock.acquire()
+    print('%s抢到叉子了'%name)
+    print('%s吃了一口面'%name)
+    noddle_lock.release()
+    print('%s放下面了'%name)
+    fork_lock.release()
+    print('%s放下叉子了'%name)
+ 
+def eat2(name,noddle_lock, fork_lock):
+    fork_lock.acquire()
+    print('%s抢到叉子了'%name)
+    noddle_lock.acquire()
+    print('%s抢到面了'%name)
+    print('%s吃了一口面'%name)
+    noddle_lock.release()
+    print('%s放下面了'%name)
+    fork_lock.release()
+    print('%s放下叉子了'%name)
+
+```
+
+#### 3.2 解决方案
+
+1. **递归锁**
+   - 递归锁在同一线程中，可以连续**acquire多次**不会阻塞
+   - 本质：一把锁
+   - acquire和release次数要一致
+   - 优点：在同一线程中多次acquire也不会发生阻塞
+   - 缺点：**占用**了更多的**资源**
+2. **多把递归锁**也会产生**死锁**现象
+   - 使用递归锁，永远不要使用多把
+   - 互斥锁效率更高，递归锁效率较低
+
+```python
+import time
+from threading import RLock, Thread
+noodle_lock = fork_lock = RLock()          # 将多把互斥锁变成了一把递归锁
+
+def eat1(name, noodle_lock, fork_lock):
+    noodle_lock.acquire()
+    print('%s抢到面了' % name)
+    fork_lock.acquire()
+    print('%s抢到叉子了' % name)
+    print('%s吃了一口面' % name)
+    time.sleep(0.1)
+    fork_lock.release()
+    print('%s放下叉子了' % name)
+    noodle_lock.release()
+    print('%s放下面了' % name)
+
+def eat2(name, noodle_lock, fork_lock):
+    fork_lock.acquire()
+    print('%s抢到叉子了' % name)
+    noodle_lock.acquire()
+    print('%s抢到面了' % name)
+    print('%s吃了一口面' % name)
+    time.sleep(0.1)
+    noodle_lock.release()
+    print('%s放下面了' % name)
+    fork_lock.release()
+    print('%s放下叉子了' % name)
+
+lst = ['henry', 'echo', 'dean', 'daniel']
+Thread(target=eat1, args=(lst[0], noodle_lock, fork_lock)).start()
+Thread(target=eat2, args=(lst[1], noodle_lock, fork_lock)).start()
+Thread(target=eat1, args=(lst[2], noodle_lock, fork_lock)).start()
+Thread(target=eat2, args=(lst[3], noodle_lock, fork_lock)).start()
+```
+
+3. **代码优化**
+
+```python
+# 使用互斥锁解决问题
+import time
+from threading import Lock, Thread
+
+lock = Lock()
+def eat1(name, lock):
+    lock.acquire()
+    print('%s抢到面了' % name)
+    print('%s抢到叉子了' % name)
+    print('%s吃了一口面' % name)
+    time.sleep(0.1)
+    print('%s放下叉子了' % name)
+    print('%s放下面了' % name)
+    lock.release()
+
+def eat2(name, lock):
+    lock.acquire()
+    print('%s抢到叉子了' % name)
+    print('%s抢到面了' % name)
+    print('%s吃了一口面' % name)
+    time.sleep(0.1)
+    print('%s放下面了' % name)
+    print('%s放下叉子了' % name)
+    lock.release()
+
+lst = ['henry', 'echo', 'dean', 'daniel]
+Thread(target=eat1, args=(lst[0], lock)).start()
+Thread(target=eat2, args=(lst[1], lock)).start()
+Thread(target=eat1, args=(lst[2], lock)).start()
+Thread(target=eat2, args=(lst[3], lock)).start()
+```
+
+### 4. 队列
+
+- 线程之间的通信，线程安全
+
+```python
+import queue
+# 先进先出队列：服务
+from queue import Queue           
+q = Queue(5)
+q.put(1)
+q.get()
+# 后进先出队列：算法
+from queue import LifoQueue
+lfq = LifiQueue(4)
+lfq.put(1)
+lfq.put(2)
+lfq.get()
+lfq.get()
+# 优先级队列：自动排序、vip用户、告警级别
+from queue import PriorityQueue
+pq = PriorityQueue()
+pq.put((10, 'henry'))
+pq.put((6, 'echo'))
+pq.put((10, 'dean'))
+pq.get()
+pq.get()
+pq.get()
+```
+
+- FIFO：所有的请求放在对列里，先来先服务思想
+- LIFO：一般用于算法
+
+### 5. 进程池/线程池
+
+- 进程，线程开启关闭切换需要时间
+- 进程池一般和cpu核心说有关，个数一般为cpu核心数或加一
+- 节省了进程创建和销毁的时间
+
+#### 5.1 池
+
+- 预先开启固定个数的进程数，当任务来临时，直接提交给开好的进程，让这个进行执行，从而减轻了os调度的负担
+
+#### 5.2 concurrent futures模块
+
+- 3.4版本之后出现
+- **进程池**
+
+```python
+# 进程池。 p.submit， p.shutdown
+import os,time, random
+from concurrent futrures import ProcessPoolExecutor
+
+def func(i):
+    print('start', os.getpid())
+    time.sleep(random.randint(1,3))
+    print('end', os.getpid())
+    return '%s * %s' %(i, os.getpid())
+
+if __name__ == '__main__':
+    p = ProcessPoolExecutor(5)       # cpu核心数或多一
+    ret_l = []
+    for i in range(10):
+        ret = p.submit(func, i)			 # 提交进程,参数直接放在其后
+        ret_l.append(ret)						 # ret为future对象，ret.result()取值
+    # 关闭池，不能提交任务，阻塞，直到已经提交的任务执行完毕
+    p.shutdown()
+    for ret in ret_l:                # 会阻塞，相当于q.get()
+      	print('------>',ret.result())# result，同步阻塞
+    print('main', os.getpid())
+```
+
+- 一个进程池中的任务个数，限制了我们程序的并发个数
+- **线程池**
+
+```python
+# 线程池。p.submit(), p.shutdown(), ret.result()
+from concurrent.futures import ThreadPoolExecutor
+
+def func(i):
+    print('start', os.getpid())
+    time.sleep(random.randint(1,3))
+    print('end', os.getpid())
+    return '%s * %s' %(i, os.getpid())
+
+tp = ThreadPoolExecutor(20)            # 线程个数一般为cpu核心数4-5倍
+ret_l = []
+for i in range(100):
+		ret = tp.submit(func, 1)
+    ret_l.append(ret)
+for ret in ret_l:
+  	print('------->', ret.result())
+p.shutdown()
+print('main')
+```
+
+- tp.map(func, 可迭代对象)：参数只能传输一个
+
+```python
+# 线程池。p.submit(), p.shutdown(), ret.result()
+from concurrent.futures import ThreadPoolExecutor
+
+def func(i):
+    print('start', os.getpid())
+    time.sleep(random.randint(1,3))
+    print('end', os.getpid())
+    return '%s * %s' %(i, os.getpid())
+
+tp = ThreadPoolExecutor(20)            # 线程个数一般为cpu核心数4-5倍
+ret = tp.map(func, range(20))					 # tp.map()方法 
+for i in ret:print(i)
+```
+
+#### 5.3 回调函数
+
+- ret.add_done_callback：回调函数
+- 先来先响应，会提高整体的处理速度
+
+```python
+from concurrent.futures import ThreadPoolExecutor
+def get_page(url):
+  	content = requests.get(url)
+    return {'url':url, 'content':content.text}
+def parserpage(dic):
+  	print(dic.result()['url'])
+
+for url in url_l:
+  	ret = get_page(url)
+    ret.add_done_callback(parserpage)   # 先执行完，先调用parserpage函数
+    																		# ret=add_done_callback(函数名)
+```
 
 
 
