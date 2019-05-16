@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-import requests, re, os
+import requests, re
 from queue import Queue
 from datetime import datetime
 from threading import Thread
@@ -8,7 +8,7 @@ from threading import Thread
 
 def producer(q, url):
     content = requests.get(url)
-    dic = {'url':url, 'content':content.text}
+    dic = {'url': url, 'content': content.text}
     q.put(dic)
 
 
@@ -28,7 +28,8 @@ def consumer(q):
 
 p_l = []
 q = Queue()
-url_l = ['https://www.baidu.com', 'https://www.meijutt.com/alltop_hit.html', 'https://www.cnblogs.com/henryw/', 'https://www.cnblogs.com']
+url_l = ['https://www.baidu.com', 'https://www.meijutt.com/alltop_hit.html', 'https://www.cnblogs.com/henryw/',
+         'https://www.cnblogs.com']
 
 for i in range(len(url_l)):
     p = Thread(target=producer, args=(q, url_l[i]))
