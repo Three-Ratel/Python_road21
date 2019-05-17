@@ -74,6 +74,8 @@
 7. I/O：相对于**内存**来说
    - write 是 send
    - read 是 recv
+   - i input 向内存中输入 input，read，recv， recvfrom， accept， connect， close
+   - output 从内存中输出 print，write，send，sendto， accept， connect， close
 
 ![TCP](/Users/henry/Documents/截图/Py截图/TCP.png)
 
@@ -557,7 +559,7 @@ if __name__ == '__main__':
 
 ## 8.5 socketserver模块
 
-#### 1. socketserver模块
+### 1. socketserver模块
 
 ```python
 # server端
@@ -574,7 +576,7 @@ sk = socket.socket()
 sk.connect(('127.0.0.1', 9000))
 ```
 
-#### 2. socketserver模块进阶
+### 2. socketserver模块进阶
 
 ```python 
 # 进阶示例
@@ -814,10 +816,10 @@ def func():
   print('end', os.getpid())
 
 if __name__ == '__main__':	  
-  p = Process(target=func)				# 创建一个即将要执行的进程对象
-  p.start()	                      # 开启一个进程，异步非阻塞
-  p.join()												# 同步阻塞，直到子进程执行完毕
-  print('main', os.getpid())			# 异步的程序，调用开启进程的方法，并不等待这个进程的开启
+  p = Process(target=func)				      # 创建一个即将要执行的进程对象
+  p.start()	                            # 开启一个进程，异步非阻塞
+  p.join()												      # 同步阻塞，直到子进程执行完毕
+  print('main', os.getpid())		      	# 异步的程序，调用开启进程的方法，并不等待这个进程的开启
 ```
 
 2. **创建子进程注意**
@@ -901,7 +903,7 @@ def son2():
               
 if __name__ == '__main__':
     p = Process(target=son1)
-    p.daemon = True                    # 把p子进程设置成了守护进程															 
+    p.daemon = True                               # 把p子进程设置成了守护进程	 
     p.start()
     p2 = Process(target=son2)
     p2.start()
@@ -983,13 +985,13 @@ if __name__ == '__main__':
 
 2. 在数据安全的基础上，才考虑效率问题
 
-   - with lock：内部会有异常处理
+   - with lock：内部**有异常处理**
    - 在主进程中进行实例化
    - 把锁传递给子进程
 
 3. 在子进程中对需要加锁的代码进行with lock
 
-   - with lock相当于lock.acquire()和lock.release()
+   - with lock：相当于lock.acquire()和lock.release()
 
 4. 需要加锁的场景
 
@@ -1308,11 +1310,39 @@ if __name__ = '__main__':
 ### 3. 线程
 
 - cpython解释器当中的线程问题
-
 - https：加证书，需要购买
 - **四核八线程**
   - 每个核心被虚拟成两个核心，可以同时执行8个线程。
   - 如果是计算复杂数据，会转换到四核
+- 在多线程的操作系统中，通常是在一个进程中包括多个线程，每个线程都是作为利用CPU的基本单位，是花费最小开销的实体。线程具有以下属性。
+
+　　1）轻型实体
+
+　　线程中的实体基本上不拥有系统资源，只是有一点必不可少的、能保证独立运行的资源。
+
+　　线程的实体包括程序、数据和TCB。线程是动态概念，它的动态特性由线程控制块TCB（Thread Control Block）描述。
+
+```python
+TCB包括以下信息：
+（1）线程状态。
+（2）当线程不运行时，被保存的现场资源。
+（3）一组执行堆栈。
+（4）存放每个线程的局部变量主存区。
+（5）访问同一个进程中的主存和其它资源。
+用于指示被执行指令序列的程序计数器、保留局部变量、少数状态参数和返回地址等的一组寄存器和堆栈。
+```
+
+　　2）独立调度和分派的基本单位。
+
+　　在多线程OS中，线程是能独立运行的基本单位，因而也是独立调度和分派的基本单位。由于线程很“轻”，故线程的切换非常迅速且开销小（在同一进程中的）。
+
+　　3）共享进程资源。
+
+　　线程在同一进程中的各个线程，都可以共享该进程所拥有的资源，这首先表现在：所有线程都具有相同的进程id，这意味着，线程可以访问该进程的每一个内存资源；此外，还可以访问进程所拥有的已打开文件、定时器、信号量机构等。由于同一个进程内的线程共享内存和文件，所以线程之间互相通信不必调用内核。
+
+　　4*）可并发执行。*
+
+　　*在一个进程中的多个线程之间，可以并发执行，甚至允许在一个进程中所有线程都能并发执行；同样，不同进程中的线程也能并发执行，充分利用和发挥了处理机与外围设备并行工作的能力。*
 
 #### 3.1垃圾回收机制
 
@@ -1414,16 +1444,16 @@ from threading import Thread
 class MyThread(Thread):
     def __init__(self, i):
         self.i = i
-        super().__init__()               # 注意变量名避免与父类init中的变量重名  
+        super().__init__()                   # 注意变量名避免与父类init中的变量重名  
 
     def run(self):
-        print(self.i, self.ident)        # 通过self.ident，查看子线程的id
+        print(self.i, self.ident)            # 通过self.ident，查看子线程的id
 
 t_l = []
 for i in range(100):
     t = MyThread(i)
     t_l.append(t)
-    t.start()                             # start 方法封装了开启线程的方法和run方法
+    t.start()                                 # start 方法封装了开启线程的方法和run方法
 
 for t in t_l: t.join()
 print('主进程结束')       
@@ -1442,10 +1472,10 @@ def func():
 t = Thread(target=func)
 t.start()
 print(t.ident)
-print(current_thread().ident)   # current_ident()在哪个线程，就得到这个线程id
-print(enumerate())					    # 统计当前进程中多少线程活着，包含主线程
-print(active_count())				    # 统计当前进程中多少线程活着，个数，包含主线程
-                                # 线程中不能从主线程结束一个子线程
+print(current_thread().ident)                 # current_ident()在哪个线程，就得到这个线程id
+print(enumerate())					                  # 统计当前进程中多少线程活着，包含主线程
+print(active_count())				                  # 统计当前进程中多少线程活着，个数，包含主线程
+                                              # 线程中不能从主线程结束一个子线程
 ```
 
 #### 4.5 效率差
@@ -1539,7 +1569,7 @@ a = 0
 def func():
   	global a
   	a += 1
-dis.dis(func)                   # 返回cpu指令
+dis.dis(func)                                   # 返回cpu指令
 ```
 
 - 即便是线程，有GIL锁， 也会出现**数据不安全**的问题
@@ -1547,6 +1577,8 @@ dis.dis(func)                   # 返回cpu指令
 - **操作是全局变量**
 - **操作以下方法**
   - += , -= , *=, /=（在操作线程全局变量时，注意）
+  - li[0] += 1, dic['key'] -= 1
+  - 对同一文件进行写操作
 
 ```python
 # 使用互斥锁解决线程全局变量数据不安全问题
@@ -1591,14 +1623,14 @@ import random
 from threading import Thread
 
 class Singleton:
-    from threading import Lock  # 复用性考虑
+    from threading import Lock                          # 复用性考虑
     __instance = None
     lock = Lock()
     
     def __new__(cls, *args, **kwargs):
         with cls.lock:
             if not cls.__instance:
-                time.sleep(random.random())  # 切换GIL锁
+                time.sleep(random.random())             # 切换GIL锁
                 cls.__instance = super().__new__(cls)
         return cls.__instance
       
@@ -1649,7 +1681,6 @@ def eat2(name,noddle_lock, fork_lock):
     print('%s放下面了'%name)
     fork_lock.release()
     print('%s放下叉子了'%name)
-
 ```
 
 #### 3.2 解决方案
@@ -1667,7 +1698,7 @@ def eat2(name,noddle_lock, fork_lock):
 ```python
 import time
 from threading import RLock, Thread
-noodle_lock = fork_lock = RLock()          # 将多把互斥锁变成了一把递归锁
+noodle_lock = fork_lock = RLock()                      # 将多把互斥锁变成了一把递归锁
 
 def eat1(name, noodle_lock, fork_lock):
     noodle_lock.acquire()
@@ -1767,7 +1798,7 @@ pq.get()
 - FIFO：所有的请求放在对列里，先来先服务思想
 - LIFO：一般用于算法
 
-### 5. 进程池/线程池
+### 5. 池
 
 - 进程，线程开启关闭切换需要时间
 - 进程池一般和cpu核心说有关，个数一般为cpu核心数或加一
@@ -1777,7 +1808,7 @@ pq.get()
 
 - 预先开启固定个数的进程数，当任务来临时，直接提交给开好的进程，让这个进行执行，从而减轻了os调度的负担
 
-#### 5.2 concurrent futures模块
+#### 5.2 concurrent.futures模块(3)
 
 - 3.4版本之后出现
 - **进程池**
@@ -1785,7 +1816,7 @@ pq.get()
 ```python
 # 进程池。 p.submit， p.shutdown
 import os,time, random
-from concurrent futrures import ProcessPoolExecutor
+from concurrent.futrures import ProcessPoolExecutor
 
 def func(i):
     print('start', os.getpid())
@@ -1794,15 +1825,15 @@ def func(i):
     return '%s * %s' %(i, os.getpid())
 
 if __name__ == '__main__':
-    p = ProcessPoolExecutor(5)       # cpu核心数或多一
+    p = ProcessPoolExecutor(5)                    # cpu核心数或多一
     ret_l = []
     for i in range(10):
-        ret = p.submit(func, i)			 # 提交进程,参数直接放在其后
-        ret_l.append(ret)						 # ret为future对象，ret.result()取值
+        ret = p.submit(func, i)			              # 提交进程,参数直接放在其后
+        ret_l.append(ret)						              # ret为future对象，ret.result()取值
     # 关闭池，不能提交任务，阻塞，直到已经提交的任务执行完毕
     p.shutdown()
-    for ret in ret_l:                # 会阻塞，相当于q.get()
-      	print('------>',ret.result())# result，同步阻塞
+    for ret in ret_l:                             # 会阻塞，相当于q.get()
+      	print('------>',ret.result())             # result，同步阻塞
     print('main', os.getpid())
 ```
 
@@ -1819,7 +1850,7 @@ def func(i):
     print('end', os.getpid())
     return '%s * %s' %(i, os.getpid())
 
-tp = ThreadPoolExecutor(20)            # 线程个数一般为cpu核心数4-5倍
+tp = ThreadPoolExecutor(20)                      # 线程个数一般为cpu核心数4-5倍
 ret_l = []
 for i in range(100):
 		ret = tp.submit(func, 1)
@@ -1842,8 +1873,8 @@ def func(i):
     print('end', os.getpid())
     return '%s * %s' %(i, os.getpid())
 
-tp = ThreadPoolExecutor(20)            # 线程个数一般为cpu核心数4-5倍
-ret = tp.map(func, range(20))					 # tp.map()方法 
+tp = ThreadPoolExecutor(20)                     # 线程个数一般为cpu核心数4-5倍
+ret = tp.map(func, range(20))				          	# tp.map()方法 
 for i in ret:print(i)
 ```
 
@@ -1851,6 +1882,7 @@ for i in ret:print(i)
 
 - ret.add_done_callback：回调函数
 - 先来先响应，会提高整体的处理速度
+- 会监听obj值：直到obj.result()有值为止
 
 ```python
 from concurrent.futures import ThreadPoolExecutor
@@ -1862,11 +1894,279 @@ def parserpage(dic):
 
 for url in url_l:
   	ret = get_page(url)
-    ret.add_done_callback(parserpage)   # 先执行完，先调用parserpage函数
-    																		# ret=add_done_callback(函数名)
+    ret.add_done_callback(parserpage)          # 先执行完，先调用parserpage函数
+    																	       	 # ret=add_done_callback(函数名)
 ```
 
+## 9.6 协程
 
+ ### 1. 协程概念
+
+1. 只要是线程里的代码，就都被cpu执行
+2. **协程**：用户级别，自己写的py代码；控制切换是OS不可见的
+   1. 一个线程中的阻塞都被其他的各种任务占满了
+   2. 让OS认为这个线程很忙，尽量减少这个线程进入阻塞状态
+   3. 提高了单线程对cpu的利用率
+      - 多个任务在同一个线程中执行，也达到了一个并发的效果
+   4. 规避了每个任务的io操作，减少了线程的个数，减轻了OS负担
+
+3. 在Cpython解释器：**协程和线程**都不能利用**多核**
+   1. 由于多线程本身不能利用多核
+   2. 即便开启了多线程也只能**轮流在一个cpu上执行**
+   3. 协程如果把所哟io操作都规避掉，只剩下需要使用cpu的操作
+   4. 意味着协程就可以做到提高cpu利用率的效果
+4. 多线程和协程
+   1. **线程**：切换需要OS，开销大，os不可控，给os的压力大
+      - os对io操作的感知更加敏感
+   2. **协程**：切换需要py代码，开销小，用户操作可控，完全不会增加os压力
+      - 用户级别对io操作感知较低
+      - 协程切换开销几乎和函数调用一致
+
+### 2. greenlet&gevent
+
+#### 2.1 原生python完成
+
+- asynicio：**使用yield**
+- 能够在一个线程下的多个任务之间来回切换，那么每一个任务都是协程
+
+```python
+# 切换，协程任务
+def func1():
+  	1 + 2
+    2 + 3
+    yield 1 
+    sleep(1)
+def func2():
+  	g = func1()
+    next(g)
+    next(g)
+```
+
+#### 2.2 C语言完成的py模块
+
+- greenlet
+- gevent
+
+1. greenlet模块
+
+```python
+# 完成切换
+import time
+from greenlet import greenlet
+
+def func1():
+    print(123)
+    time.sleep(0.5)
+    g2.switch()
+    print(123)
+  
+def func2():
+  	print(456)
+    time.sleep(0.5)
+    print(456)
+    g1.switch()
+   
+g1 = greenlet(func1)
+g2 = greenlet(func2)
+g1.switch()
+```
+
+2. **协程切换原理**
+
+```python
+def sleep(num):
+  	t = num + time.time()
+    yield t
+    print('sleep 结束')
+    
+g1 = sleep(1)
+g2 = sleep(2)
+t1 = next(g1) 
+t2 = next(g2)
+lst = [t1, t2]
+min_t = min(lst)
+time.sleep(min_t - time.time())
+g1.next()
+
+min_t = min(lst)
+time.sleep(min_t - time.time())
+g2.next()
+```
+
+- 事件循环：第三者一直在循环所有任务调度所有任务
+
+3. gevent模块
+   - 基于greenlet
+
+```python
+# gevent不认识time.sleep
+import time
+import gevent
+from gevent import monkey
+monkey.patch_all()                        # 可能的阻塞方法
+
+def func1():
+    print(123)
+    gevent.sleep(1)
+    print(123)
+  
+def func2():
+  	print(456)
+    gevnet.sleep(1)
+    print(456)
+  
+g1 = gevent.spawn(fun1)
+g2 = gevent.spawn(fun2)
+# gevent.sleep(2)											  	# 遇到阻塞才会切换
+# g1.join()                               # 阻塞直到g1任务完成为止
+# g2.join() 
+gevent.joinall([g1, g2])
+
+g_l = []
+for i in range(10):
+  	g = gevent.spawn(func1)
+    g_l.append(g)
+gevent.joinall(g_l)
+```
+
+```python
+# 示例大变身
+import gevent
+from gevent import monkey,time
+monkey.patch_all()                          # 对io操作进行重现实现
+
+def func1():
+    print(123)
+    time.sleep(3)
+    print(456)
+
+def func2():
+    print('---------')
+    time.sleep(1)
+    print('=========')
+
+g1 = gevent.spawn(func1)
+g2 = gevent.spawn(func2)
+gevent.joinall([g1, g2])									  # 阻塞列表中的所有协程
+print('main')
+```
+
+- 获取返回值
+
+```python
+print(g1.value )                            # value是属性，如果没有执行则为None
+```
+
+- 协程实现socket
+
+```python
+import socket
+import gevent
+from gevent import monkey
+monkey.patch_all()
+
+sk = socket.socket()
+sk.bind(('127.0.0.1', 9000))
+sk.listen()
+
+def chat(con):
+    while True:
+        msg = con.recv(1024).decode('utf-8')
+        con.send(msg.upper().encode('utf-8'))
+
+while True:
+    con, _ = sk.accept()
+    gevent.spawn(chat, con)
+```
+
+### 3. asynico
+
+- python原生底层的协程模块
+  - 爬虫、webserver框架
+  - 提高网编的效率和并发效果
+
+#### 3.1 启动一个任务
+
+```python
+import asyncio                          # 只识别自身的方法
+
+# 起一个任务
+async def demo():                       # 必须要async修饰，协程方法
+    print('start')
+		await asyncio.sleep(1)              # 阻塞，await关键字 + 协程函数
+    print('end')
+    
+loop = asyncio.get_event_loop()         # 创建一个事件循环
+loop.run_until_complete(demo())         # 阻塞，直到协程执行完毕
+																				# 把demo任务丢到事件循环中执行
+```
+
+#### 3.2 启动多个任务
+
+1. **没有返回值**
+
+```python
+import asyncio                          # 只识别自身的方法
+
+async def demo():                       # 必须要async修饰，协程方法
+    print('start')
+		await asyncio.sleep(1)              # 阻塞，await关键字 + 协程函数
+    print('end')
+
+loop = asyncio.get_event_loop()         # 创建一个事件循环
+wait_obj = asyncio.wait([demo(), demo(), demo()])
+loop.run_until_complete(wait_obj)       # 没有返回值
+```
+
+2. **有返回值**
+
+```python
+# 同步取返回值
+import asyncio
+async def demo():
+    print('start')
+		await asyncio.sleep(1)
+    print('end')
+    return 123
+    
+loop = asyncio.get_event_loop()        # 创建一个事件循环
+t1 = loop.create_task(demo())
+t2 = loop.create_task(demo())
+tasks = [t1, t2]                       # 任务列表
+wait_obj = asyncio.wait([t1, t2])
+loop.run_until_complete(wait_obj)
+for task in tasks:
+ 	 	print(t.result())                   # 获取返回值
+```
+
+3. **异步取返回值**
+
+```python
+import asyncio
+async def demo(i):
+    print('start')
+		await asyncio.sleep(10-i)
+    print('end')
+    return i, 123
+
+async def main():
+  	task_l = []
+    for i in range(10):
+      	task = asyncio.ensure_future(demo(i))
+        task_l.append(task)
+    for ret in asyncio.as_compeleted(task_l):
+      	res = await ret
+        print(res)
+        
+loop = asyncio.get_event_loop() 
+loop.run_until_compeleted(main())
+```
+
+#### Note3(2)
+
+1. **await** 阻塞事件，协程函数从这里切换出去，还能保证切回来
+   - 必须写在**async**里面，async函数是个协程函数(调用时并不执行)
+2. **loop**是事件循环，所有的协程执行、调度、都离不开**loop**
 
 # 第十章 数据库
 
