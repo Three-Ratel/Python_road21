@@ -3,7 +3,6 @@
 import asyncio
 import random
 
-
 async def func(i):
     await asyncio.sleep(random.random())
     return i
