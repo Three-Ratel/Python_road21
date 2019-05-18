@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-
-#!/usr/bin/env python
-# -*- coding:utf-8 -*-
 import os, sys, socket
-
-PRO_DIE = os.path.dirname(os.path.dirname(__file__))
-sys.path.append(PRO_DIE)
+# PRO_DIR = os.path.dirname(os.path.dirname(__file__))
+PRO_DIR = '/Users/henry/programme/python/Python_codes/projects/2.tcp_upload_download'
+sys.path.append(PRO_DIR)
 from bin import client
 from config import settings
 
@@ -16,10 +13,10 @@ def run():
     sk.connect(settings.IP_PORT)
     obj = client.Client(sk)
     user = client.User(obj)
-    fun_dic = {'1': user.register, '2': user.login, '3': obj.upload, '4': obj.download}
+    fun_dic = {'1': user.register, '2': user.login, '3': obj.upload, '4': obj.download, '5': obj.ls}
     while True:
         print("""
-            1.用户注册 2.用户登陆 3.上传文件 4.下载文件
+            1.用户注册 2.用户登陆 3.上传文件 4.下载文件 5. 查看文件列表
             """)
         choice = input('请输入功能选项(Q)：').strip()
         if choice.upper() == 'Q':
@@ -38,7 +35,3 @@ def run():
 
 
 run()
-
-
-
-

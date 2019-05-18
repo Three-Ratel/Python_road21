@@ -16,7 +16,10 @@ DB_PATH = os.path.join(PRO_DIE, 'db')
 SER_DIR = os.path.join(DB_PATH, 'server_dir')
 USER_INFO = os.path.join(DB_PATH, 'user_info')
 USER_DIR = None
-
+"""普通用户配额2G"""
+DIR_SIZE = 1024*1024*1024 * 2
+"""vip用户配额4G"""
+VIP_SIZE = 1024*1024*1024 * 6
 
 """
 client 端的配置信息，及全局变量

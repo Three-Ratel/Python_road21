@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 import os, sys, socket
-
-PRO_DIE = os.path.dirname(os.path.dirname(__file__))
-sys.path.append(PRO_DIE)
+# PRO_DIR = os.path.dirname(os.path.dirname(__file__))
+PRO_DIR = '/Users/henry/programme/python/Python_codes/projects/2.tcp_upload_download'
+sys.path.append(PRO_DIR)
 from bin import client
 from config import settings
-
 
 def run():
     sk = socket.socket()

@@ -6,11 +6,13 @@ import pickle
 import struct
 import hashlib
 from socketserver import *
-from lib import get_md5
+from lib import get_md5, get_dir_size
 from config import settings
 
+VIP_L = set()
 
-class User():
+
+class User(object):
     def __init__(self, obj):
         self.obj = obj
 
@@ -25,25 +27,42 @@ class User():
                         user_dic = pickle.load(f)
                         if dic['user_name'] == user_dic['user_name'] and get_md5.get_md5(dic) == user_dic['user_pwd']:
                             flag = True
-
-                            # settings.USER.add(user_dic['user_name'])
                             settings.USER_DIR = os.path.join(settings.SER_DIR, user_dic['user_name'])
-                            if not os.path.exists(settings.USER_DIR): os.makedirs(settings.USER_DIR)
+                            if user_dic['ident'] == 'vip':
+                                VIP_L.add(user_dic['user_name'])
                             break
-                except:pass
+                except:
+                    pass
 
             dic = {'operator': flag}
             self.obj.my_send(dic)
             if flag: return flag
 
     def register(self):
-        user_dic = self.obj.my_recv()
-        with open(settings.USER_INFO, 'ab+') as f:
-            pickle.dump({'user_name': user_dic['user_name'],
-                         'user_pwd': get_md5.get_md5(user_dic)}, f)
-            flag = True
+        dic = self.obj.my_recv()
+        flag = True
+        with open(settings.USER_INFO, 'rb') as f:
+            try:
+                while True:
+                    user_dic = pickle.load(f)
+                    if dic['user_name'] == user_dic['user_name']:
+                        flag = False
+            except:
+                pass
+
+        if not flag:
+            """用户名已存在"""
             status_dic = {'operator': flag}
             self.obj.my_send(status_dic)
+        else:
+            """把用户名、密码和身份信息写入user_info文件"""
+            with open(settings.USER_INFO, 'ab') as f:
+                pickle.dump({'user_name': dic['user_name'],
+                             'user_pwd': get_md5.get_md5(dic), 'ident': 'ordinary'}, f)
+                settings.USER_DIR = os.path.join(settings.SER_DIR, dic['user_name'])
+                if not os.path.exists(settings.USER_DIR): os.makedirs(settings.USER_DIR)
+                status_dic = {'operator': flag}
+                self.obj.my_send(status_dic)
 
 
 class Myserver(BaseRequestHandler):
@@ -66,7 +85,8 @@ class Myserver(BaseRequestHandler):
     def file_send(self, dic):
         file_path = os.path.join(settings.USER_DIR, dic['file_name'])
         dic = {}
-        if not os.path.isfile(file_path):dic['isfile'] = False
+        if not os.path.isfile(file_path):
+            dic['isfile'] = False
         else:
             dic['isfile'] = True
             file_size = os.path.getsize(file_path)
@@ -85,7 +105,6 @@ class Myserver(BaseRequestHandler):
         self.request.send(obj.hexdigest().encode('utf-8'))
 
     def file_recv(self, dic):
-        obj = hashlib.md5()
 
         def inner(buffer_size=2048, buffer=2048):
             while dic['file_size'] > buffer_size:
@@ -94,28 +113,58 @@ class Myserver(BaseRequestHandler):
                 dic['file_size'] -= len(content)
                 """校验文件"""
                 obj.update(content)
-        file_path = os.path.join(settings.USER_DIR, dic['file_name'])
-        with open(file_path, mode='wb') as f:
-            inner()
-            inner(0, dic['file_size'])
-        """发送文件的 md5 值"""
-        self.request.send(obj.hexdigest().encode('utf-8'))
+
+        obj = hashlib.md5()
+        user_size = get_dir_size.get_dir_size(settings.USER_DIR)
+
+        name = os.path.basename(settings.USER_DIR)
+        if name in VIP_L:
+            size = settings.VIP_SIZE
+        else:
+            size = settings.DIR_SIZE
+
+        flag = True
+        if user_size + dic['file_size'] <= size:
+            state_dic = {'operator': flag}
+            self.my_send(state_dic)
+
+            file_path = os.path.join(settings.USER_DIR, dic['file_name'])
+            with open(file_path, mode='wb') as f:
+                inner()
+                inner(0, dic['file_size'])
+            """发送文件的 md5 值"""
+            self.request.send(obj.hexdigest().encode('utf-8'))
+        else:
+            flag = False
+            state_dic = {'operator': flag}
+            self.my_send(state_dic)
+
+    def ls(self, dic):
+        print(settings.USER_DIR)
+        user_home = os.listdir(settings.USER_DIR)
+        user_home_dic = {'content': user_home}
+        self.my_send(user_home_dic)
 
     def handle(self):
         while True:
             try:
                 dic = self.my_recv()
-                if dic['operator'] == 'Q': pass
+                if dic['operator'] == 'Q':
+                    pass
                 elif dic['operator'] == 'login':
                     if User(self).login(): break
-                elif dic['operator'] == 'register': User(self).register()
-            except:return
+                elif dic['operator'] == 'register':
+                    User(self).register()
+            except:
+                return
         while True:
             try:
                 dic = self.my_recv()
                 if dic['operator'] == 'Q':
-                    # settings.USER.pop()
+                    name = os.path.basename(settings.USER_DIR)
+                    VIP_L.discard(name)
                     break
-                if hasattr(self, dic['operator']):getattr(self, dic['operator'])(dic)
+                if hasattr(self, dic['operator']): getattr(self, dic['operator'])(dic)
             except:pass
+
 

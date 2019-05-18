@@ -110,6 +110,15 @@ class Client():
             else:print('\033[31m\n文件上传失败\033[0m')
 
     @auth
+    def ls(self):
+        dic = {'operator': 'ls'}
+        self.my_send(dic)
+        dic = self.my_recv()
+        for i in dic['content']:
+            print(i)
+
+
+    @auth
     def download(self):
         file_name = input('请输入要下载文件(Q)：')
         if file_name.upper() == 'Q': return
@@ -130,7 +139,10 @@ class Client():
         file_size = os.path.getsize(file_path)
         dic = {'file_name': file_name, 'file_size': file_size, 'operator': 'file_recv'}
         self.my_send(dic)
-        self.file_send(dic, file_path)
+        state_dic = self.my_recv()
+        if state_dic['operator']:
+            self.file_send(dic, file_path)
+        else:print('您的存储空间已不足，请购买VIP')
 
 
 class User():
@@ -173,7 +185,7 @@ class User():
         self.obj.my_send(user_info)
         status_dic = self.obj.my_recv()
         if status_dic['operator']:print('注册成功')
-        else: print('注册失败，请重新注册')
+        else: print('用户名已存在，请重新注册')
 
 
 
