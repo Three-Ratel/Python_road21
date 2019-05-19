@@ -5,11 +5,12 @@ import json
 from multiprocessing import Process, Lock
 
 
-def search_ticket(user):
+def search_ticket(user, lcok):
+    lock.acquire()
     with open('tickets.txt') as f:
         dic = json.load(f)
         print('%s查询结果：%s张余票' %(user, dic['count']))
-
+    lock.release()
 
 def buy_ticket(user, lock):
     # with lock:
@@ -29,6 +30,6 @@ def buy_ticket(user, lock):
 if __name__ == '__main__':
     lock = Lock()
     for i in range(40):
-        search_ticket('user%s ' % (i + 1), )
+        search_ticket('user%s ' % (i + 1), lock)
         p = Process(target=buy_ticket, args=('user%s '%(i+1), lock))
         p.start()
