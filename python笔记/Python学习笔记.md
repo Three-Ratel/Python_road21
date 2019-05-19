@@ -6663,18 +6663,17 @@ for url in url_l:
 
 4. 线程和协程**对比**
    1. **线程**
-     
-      - 切换需要OS，开销大，os不可控，给os的压力大
+     - 切换需要OS，开销大，os不可控，给os的压力大
       
       - os对io操作的感知更加敏感
       
    2. **协程**
-
-      - 切换需要py代码，开销小，用户操作可控，完全不会增加os压力
-
-      - 用户级别对io操作感知较低
+   
+   - 切换需要py代码，开销小，用户操作可控，完全不会增加os压力
+   
+   - 用户级别对io操作感知较低
       - 协程切换开销几乎和函数调用一致
-
+   
 5. **协程特点**
 
    1. 必须在只有一个单线程里实现并发
@@ -6691,7 +6690,7 @@ for url in url_l:
 
    **缺点如下**：
 
-   1. 协程的本质是单线程下，无法利用多核，可以是一个程序开启多个进程，每个进程内开启多个线程，每个线程内开启协程
+   1. 协程的**本质**是单线程下，无法利用多核，可以是一个程序开启多个进程，每个进程内开启多个线程，每个线程内开启协程
    2. 协程指的是单个线程，因而一旦协程出现阻塞，将会阻塞整个线程
 
 ### 2. greenlet&gevent
@@ -6720,7 +6719,6 @@ def func2():
 - gevent
 
 1. greenlet模块
-   - 
 
 ```python
 # 完成切换
@@ -6893,6 +6891,10 @@ loop.run_until_complete(wait_obj)       # 没有返回值
 ```
 
 2. **有返回值**
+   - loop.creat_task(func(arg1, arg2 …))
+   - asyncio.wait([task1, taks2 …])：得到一个任务列表对象
+   - loop.run_until)_complete(wait_obj)
+   - task列表中即为返回值(**task对象**)
 
 ```python
 # 同步取返回值
@@ -6914,6 +6916,9 @@ for task in tasks:
 ```
 
 3. **异步取返回值**
+   - task = asyncio.ensure_future(func(arg1, arg2...))
+   - asyncio.as_compeleted(task_l)：可迭代对象
+   - i await i
 
 ```python
 import asyncio
