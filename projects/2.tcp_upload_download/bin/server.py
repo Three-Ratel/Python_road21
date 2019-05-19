@@ -148,6 +148,7 @@ class Myserver(BaseRequestHandler):
         settings.USER_DIR = os.path.join(settings.USER_DIR, dic['dir_name'])
         if dic['dir_name'] in user_home and os.path.isdir(settings.USER_DIR):
             flag = True
+        else:settings.USER_DIR = os.path.dirname(settings.USER_DIR)
         status_dic = {'status': flag}
         self.my_send(status_dic)
 
@@ -169,10 +170,11 @@ class Myserver(BaseRequestHandler):
         status_dic = {'status': flag}
         self.my_send(status_dic)
 
-    # def rm(self,dic):
-    #     if os.path.isdir(os.path.join(settings.USER_DIR, dic['file_name'])):
-    #         os.removedirs(os.path.join(settings.USER_DIR, dic['file_name']))
-    #     else:os.remove(os.path.join(settings.USER_DIR, dic['file_name']))
+    def rm(self, dic):
+        dir_name = os.path.join(settings.USER_DIR, dic['file_name'])
+        if os.path.isdir(dir_name):
+            os.removedirs(dir_name)
+        else:os.remove(dir_name)
 
     def handle(self):
         while True:

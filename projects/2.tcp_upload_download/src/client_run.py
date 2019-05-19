@@ -13,27 +13,36 @@ def run():
     sk.connect(settings.IP_PORT)
     obj = client.Client(sk)
     user = client.User(obj)
-    fun_dic = {'1': user.register, '2': user.login, '3': obj.upload, '4': obj.download, 'ls': obj.ls,
-               'cd':obj.cd, 'cd..': obj.cd_up, 'mkdir': obj.mkdir}
-    while True:
-        print("""
-            1.用户注册 2.用户登陆 3.上传文件 4.下载文件 ls. 查看文件列表 cd 进入子目录 cd.. 返回上级目录
-            mkdir 新建文件夹
+    print("""
+            1.用户注册 2.用户登陆 
+            download file_name / upload file_name
+            ls / cd / cd.. / mkdir
             """)
-        choice = input('请输入功能选项(Q)：').strip()
+
+    while True:
+
+        choice = input('>>>').strip()
         if choice.upper() == 'Q':
             obj.qu_fun('Q')
             return
-        if not fun_dic.get(choice): continue
-        try:
-            fun_dic[choice]()
-        except BrokenPipeError:
-            sk.close()
-            sk = socket.socket()
-            sk.connect(settings.IP_PORT)
-            obj = client.Client(sk)
-            user = client.User(obj)
-            print('请登陆后使用')
+        if choice == '1':
+            user.register()
+        elif choice == '2':
+            user.login()
+        else:
+            if ' ' not in choice:
+                choice = choice + ' '
+            choice = choice.split(' ')
+            try:
+                if choice[0] == 'cd..':choice[0] = 'cd_up'
+                if hasattr(obj, choice[0]): getattr(obj, choice[0])(choice[1])
+            except BrokenPipeError:
+                sk.close()
+                sk = socket.socket()
+                sk.connect(settings.IP_PORT)
+                obj = client.Client(sk)
+                user = client.User(obj)
+                print('请登陆后使用')
 
 
 run()

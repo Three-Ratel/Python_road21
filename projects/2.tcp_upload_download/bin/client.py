@@ -110,7 +110,7 @@ class Client():
             else:print('\033[31m\n文件上传失败\033[0m')
 
     @auth
-    def ls(self):
+    def ls(self, arg):
         dic = {'operator': 'ls'}
         self.my_send(dic)
         dic = self.my_recv()
@@ -118,40 +118,34 @@ class Client():
             print(i)
 
     @auth
-    def cd(self):
-        dir_name = input('请输入子目录：').strip()
+    def cd(self, dir_name):
         dic = {'operator': 'cd', 'dir_name':dir_name}
         self.my_send(dic)
         status_dic = self.my_recv()
-        if not status_dic['status']:print('%s不是一个有效的文件夹' % dir_name)
+        if not status_dic['status']:
+            print('%s不是一个有效的文件夹' % dir_name)
 
     @auth
-    def cd_up(self):
+    def cd_up(self, arg):
         dic = {'operator': 'cd_up'}
         self.my_send(dic)
         status_dic = self.my_recv()
         if not status_dic['status']: print('已经回到家目录')
 
     @auth
-    def mkdir(self):
-        dir_name = input('请输入文件夹名称：').strip()
+    def mkdir(self, dir_name):
         dic = {'operator': 'mkdir', 'dir_name': dir_name}
         self.my_send(dic)
         status_dic = self.my_recv()
         if not status_dic['status']:print('文件夹已存在')
 
-    # @auth
-    # def rm(self):
-    #     file_name = input('请输入文件名：').strip()
-    #     dic = {'operator': 'rm', 'file_name': file_name}
-    #     self.my_send(dic)
-
-
+    @auth
+    def rm(self,file_name):
+        dic = {'operator': 'rm', 'file_name': file_name}
+        self.my_send(dic)
 
     @auth
-    def download(self):
-        file_name = input('请输入要下载文件(Q)：')
-        if file_name.upper() == 'Q': return
+    def download(self, file_name):
         dic = {'file_name': file_name, 'operator': 'file_send'}
         self.my_send(dic)
         dic = self.my_recv()
@@ -159,13 +153,11 @@ class Client():
         else:print('您下载的文件不存在')
 
     @auth
-    def upload(self):
-        while True:
-            file_name = input('请输入要上传文件名(Q)：')
-            if file_name.upper() == 'Q': return
-            file_path = os.path.join(settings.USER_DIR, file_name)
-            if os.path.isfile(file_path): break
+    def upload(self, file_name):
+        file_path = os.path.join(settings.USER_DIR, file_name)
+        if not os.path.isfile(file_path):
             print('文件不存在,请重新输入')
+            return
         file_size = os.path.getsize(file_path)
         dic = {'file_name': file_name, 'file_size': file_size, 'operator': 'file_recv'}
         self.my_send(dic)
