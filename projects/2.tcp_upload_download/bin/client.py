@@ -117,6 +117,36 @@ class Client():
         for i in dic['content']:
             print(i)
 
+    @auth
+    def cd(self):
+        dir_name = input('请输入子目录：').strip()
+        dic = {'operator': 'cd', 'dir_name':dir_name}
+        self.my_send(dic)
+        status_dic = self.my_recv()
+        if not status_dic['status']:print('%s不是一个有效的文件夹' % dir_name)
+
+    @auth
+    def cd_up(self):
+        dic = {'operator': 'cd_up'}
+        self.my_send(dic)
+        status_dic = self.my_recv()
+        if not status_dic['status']: print('已经回到家目录')
+
+    @auth
+    def mkdir(self):
+        dir_name = input('请输入文件夹名称：').strip()
+        dic = {'operator': 'mkdir', 'dir_name': dir_name}
+        self.my_send(dic)
+        status_dic = self.my_recv()
+        if not status_dic['status']:print('文件夹已存在')
+
+    # @auth
+    # def rm(self):
+    #     file_name = input('请输入文件名：').strip()
+    #     dic = {'operator': 'rm', 'file_name': file_name}
+    #     self.my_send(dic)
+
+
 
     @auth
     def download(self):

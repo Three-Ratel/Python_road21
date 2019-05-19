@@ -31,8 +31,7 @@ class User(object):
                             if user_dic['ident'] == 'vip':
                                 VIP_L.add(user_dic['user_name'])
                             break
-                except:
-                    pass
+                except:pass
 
             dic = {'operator': flag}
             self.obj.my_send(dic)
@@ -47,8 +46,7 @@ class User(object):
                     user_dic = pickle.load(f)
                     if dic['user_name'] == user_dic['user_name']:
                         flag = False
-            except:
-                pass
+            except:pass
 
         if not flag:
             """用户名已存在"""
@@ -140,10 +138,41 @@ class Myserver(BaseRequestHandler):
             self.my_send(state_dic)
 
     def ls(self, dic):
-        print(settings.USER_DIR)
         user_home = os.listdir(settings.USER_DIR)
         user_home_dic = {'content': user_home}
         self.my_send(user_home_dic)
+
+    def cd(self, dic):
+        user_home = os.listdir(settings.USER_DIR)
+        flag = False
+        settings.USER_DIR = os.path.join(settings.USER_DIR, dic['dir_name'])
+        if dic['dir_name'] in user_home and os.path.isdir(settings.USER_DIR):
+            flag = True
+        status_dic = {'status': flag}
+        self.my_send(status_dic)
+
+    def cd_up(self, dic):
+        flag = False
+        home_name = os.path.basename(settings.USER_DIR)
+        settings.USER_DIR = os.path.dirname(settings.USER_DIR)
+        if settings.USER_DIR != settings.SER_DIR:
+            flag = True
+        else:settings.USER_DIR = os.path.join(settings.USER_DIR, home_name)
+        status_dic = {'status': flag}
+        self.my_send(status_dic)
+
+    def mkdir(self, dic):
+        flag = False
+        if not os.path.isdir(os.path.join(settings.USER_DIR, dic['dir_name'])):
+            flag = True
+            os.makedirs(os.path.join(settings.USER_DIR, dic['dir_name']))
+        status_dic = {'status': flag}
+        self.my_send(status_dic)
+
+    # def rm(self,dic):
+    #     if os.path.isdir(os.path.join(settings.USER_DIR, dic['file_name'])):
+    #         os.removedirs(os.path.join(settings.USER_DIR, dic['file_name']))
+    #     else:os.remove(os.path.join(settings.USER_DIR, dic['file_name']))
 
     def handle(self):
         while True:

@@ -32,8 +32,8 @@ os.path.getsize(file)
 """
 4. os.path.dirname()
 """
-v = os.path.dirname('test.py')
-print(v)
+# v = os.path.dirname('test.py')
+# print(v)
 
 
 """
@@ -76,3 +76,9 @@ print(v)
 #     print(c)
 #     print('--------')
 #     print('===========================')
+
+"""
+9. os.mkdir(path)
+"""
+os.mkdir('haha')
+

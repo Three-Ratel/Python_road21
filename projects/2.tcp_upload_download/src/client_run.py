@@ -13,10 +13,12 @@ def run():
     sk.connect(settings.IP_PORT)
     obj = client.Client(sk)
     user = client.User(obj)
-    fun_dic = {'1': user.register, '2': user.login, '3': obj.upload, '4': obj.download, '5': obj.ls}
+    fun_dic = {'1': user.register, '2': user.login, '3': obj.upload, '4': obj.download, 'ls': obj.ls,
+               'cd':obj.cd, 'cd..': obj.cd_up, 'mkdir': obj.mkdir}
     while True:
         print("""
-            1.用户注册 2.用户登陆 3.上传文件 4.下载文件 5. 查看文件列表
+            1.用户注册 2.用户登陆 3.上传文件 4.下载文件 ls. 查看文件列表 cd 进入子目录 cd.. 返回上级目录
+            mkdir 新建文件夹
             """)
         choice = input('请输入功能选项(Q)：').strip()
         if choice.upper() == 'Q':
