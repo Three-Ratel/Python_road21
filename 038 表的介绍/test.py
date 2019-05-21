@@ -3,69 +3,71 @@
 """
 9.4 cp模型/线程
 """
-import time,random
-from multiprocessing import Process, Queue
+# import time,random
+# from multiprocessing import Process, Queue
+#
+#
+# def producer(q, i):
+#     # time.sleep(random.random())
+#     q.put('hello python, hello world %s' % i)
+#
+#
+# def consumer(q):
+#     while True:
+#         flag = q.get()
+#         if not flag:
+#             q.put(None)
+#             break
+#         # print(flag)
+#
+# start = time.time()
+# q = Queue()
+# p_l = []
+# for i in range(1, 100):
+#     p = Process(target=producer, args=(q, i))
+#     p.start()
+#     p_l.append(p)
+# for i in range(5):
+#     Process(target=consumer, args=(q,)).start()
+# for p in p_l: p.join()
+# q.put(None)
+# print(time.time() - start)
 
-
-def producer(q, i):
-    # time.sleep(random.random())
-    q.put('hello python, hello world %s' % i)
-
-
-def consumer(q):
-    while True:
-        flag = q.get()
-        if not flag:
-            q.put(None)
-            break
-        # print(flag)
-
-start = time.time()
-q = Queue()
-p_l = []
-for i in range(1, 100):
-    p = Process(target=producer, args=(q, i))
-    p.start()
-    p_l.append(p)
-for i in range(5):
-    Process(target=consumer, args=(q,)).start()
-for p in p_l: p.join()
-q.put(None)
-print(time.time() - start)
 
 """
 JoinableQueue
 """
-import time, random
-from multiprocessing import Process, JoinableQueue
-from threading import Thread
+# import time, random
+# from multiprocessing import Process, JoinableQueue
+# from threading import Thread
+#
+#
+# def producer(q, i):
+#     # time.sleep(random.random())
+#     q.put('hello python, hello world %s' % i)
+#     q.join()
+#
+#
+# def consumer(q):
+#     while True:
+#         flag = q.get()
+#         # print(flag)
+#         q.task_done()
+#
+# start = time.time()
+# task_l = []
+# q = JoinableQueue()
+# for i in range(1, 100):
+#     p = Thread(target=producer, args=(q, i))
+#     p.start()
+#     task_l.append(p)
+# for i in range(5):
+#     p = Thread(target=consumer, args=(q,))
+#     p.daemon = True
+#     p.start()
+# for p in task_l: p.join()
+# print(time.time() - start)
 
-
-def producer(q, i):
-    # time.sleep(random.random())
-    q.put('hello python, hello world %s' % i)
-    q.join()
-
-
-def consumer(q):
-    while True:
-        flag = q.get()
-        # print(flag)
-        q.task_done()
-
-start = time.time()
-task_l = []
-q = JoinableQueue()
-for i in range(1, 100):
-    p = Thread(target=producer, args=(q, i))
-    p.start()
-    task_l.append(p)
-for i in range(5):
-    p = Thread(target=consumer, args=(q,))
-    p.daemon = True
-    p.start()
-for p in task_l: p.join()
-print(time.time() - start)
 
 
 """
@@ -74,29 +76,29 @@ print(time.time() - start)
 """
 单例模式
 """
-# import time
-# from threading import Thread, Lock
-#
-#
-# class Singleton:
-#     __instance = None
-#     lock = Lock()
-#
-#     def __new__(cls, *args, **kwargs):
-#         with cls.lock:
-#             if not cls.__instance:
-#                 time.sleep(0.1)
-#                 cls.__instance = object.__new__(cls)
-#             return cls.__instance
-#
-#
-# def main():
-#     print(id(Singleton()))
-#
-#
-# for i in range(20):
-#     t = Thread(target=main)
-#     t.start()
+import time
+from threading import Thread, Lock
+
+
+class Singleton:
+    __instance = None
+    lock = Lock()
+
+    def __new__(cls, *args, **kwargs):
+        with cls.lock:
+            if not cls.__instance:
+                time.sleep(0.1)
+                cls.__instance = super().__new__(cls)
+            return cls.__instance
+
+
+def main():
+    print(id(Singleton()))
+
+
+for i in range(20):
+    t = Thread(target=main)
+    t.start()
 
 
 """
