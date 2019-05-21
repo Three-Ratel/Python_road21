@@ -4,7 +4,6 @@
 1. gevent模块实现协程
 """
 # import gevent
-# from gevent import queue
 #
 #
 # def func1():
@@ -21,7 +20,7 @@
 #
 # g1 = gevent.spawn(func1)
 # g2 = gevent.spawn(func2)
-# g1.join()
+# gevent.joinall([g1, g2])
 
 """
 2. gevent 实现socket

@@ -16,7 +16,8 @@ def read_file(filename):
 def submit_func(tp, line=None, end=False, lines=[]):
     if line: lines.append(line.strip())
     if len(lines) == 100 or end:
-        tp.submit(print_line, copy(lines))
+        if lines:
+            tp.submit(print_line, copy(lines))
         lines.clear()
 
 
