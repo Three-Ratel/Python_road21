@@ -223,5 +223,16 @@ sudo -s launchctl unload -w /System/Library/LaunchDaemons/ftp.plist
 
 1. arp -a | wc -l
 2. fping 192.168.12.0/24 -g -a
-3. 
+
+```python
+arp -a | wc -l
+fping 192.168.12.0/24 -g -a
+# 取消文件的 @ 权限
+xattr -c -r *
+# 文件权限
+rwxrwxrwt
+# t为粘贴位，一个目录既使它的所有权限都开放，如果是设置了粘帖位，除非目录的属主和root用户有权限删除它，除此之外其它用户不能删除这个目录。
+```
+
+
 
