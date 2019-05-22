@@ -3,18 +3,20 @@
 """
 有一个文件，这个文件中有20000行数据，开启一个线程池，为每100行创建一个任务，打印这100行数据。
 """
+
+
 def print_line(lines):
     print(lines)
 
 
 def read_file(filename):
     with open(filename, encoding='utf-8') as f:
-        for line in f:
-            yield line
+        for i in f:
+            yield i
 
 
-def submit_func(tp, line=None, end=False, lines=[]):
-    if line: lines.append(line.strip())
+def submit_func(tp, i=None, end=False, lines=[]):
+    if i: lines.append(line.strip())
     if len(lines) == 100 or end:
         if lines:
             tp.submit(print_line, copy(lines))

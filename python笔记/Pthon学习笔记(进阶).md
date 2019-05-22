@@ -1,4 +1,4 @@
-# 第十章 数据库
+# 第十章 数据库mysql
 
 ## 10.1 数据库
 
@@ -71,7 +71,7 @@ default-storage-engine=INNODB
 # windows
 mysqld install
 net start mysql
-server net stop mysql
+#  server net stop mysql
 mysql -u'用户名' -p'密码'
 # 客户端，可以是python代码也可以是一个程序
 # mysql.exe是一个客户端
@@ -177,7 +177,7 @@ delete from 表 where id=1；
    - 支持**事务**：把多句操作，变成原子操作
    - 支持**外键**：通过外键(**有约束**)在其他表(**有约束**)中查找信息
 3. 方式3：**MEMORY**
-   - 存储文件个数：**表结构**
+   - 存储在内存：**表结构**， 表数据存储到硬盘上
    - **优势**：增删改查速度快
    - **劣势**：重启数据消失、容量有限
 4. **存储引擎介绍**
@@ -196,7 +196,7 @@ delete from 表 where id=1；
 show variables like '%engine%';
 show variables like "default_storage_engine";
 # 查看当前数据库支持的存储引擎
-show engines \G;
+show engines \g
 # 修改已经存在表的存储引擎
 alter table 表名 engine = innodb;
 # 查看与编码相关的配置
@@ -286,14 +286,14 @@ create tables t5(d1 decimal, d2 decimal(25, 20));
 3. 5.5版只能约束数字的显示宽度，5.6不受限制
 4. 5.6版插入数据超过最大长度会默认显示最大值，5.7版直接会提示：Out of range value
 
-#### 2.2 时间和日期
+#### 2.2 时间和日期(5)
 
-- data：年月日
-- time：时分秒
-- year：年份值
-- datetime：年月日时分秒
-- timestamp：年月日时分秒
-  - 1970-01-01 00:00:00/2038结束时间是第 **2147483647** 秒，北京时间 **2038-1-19 11:14:07**，格林尼治时间 2038年1月19日 凌晨 03:14:07
+1. **data**：年月日
+2. **time**：时分秒
+3. **year**：年份值
+4. **datetime**：年月日时分秒
+5. **timestamp**：年月日时分秒
+   - 1970-01-01 00:00:00/2038结束时间是第 **2147483647** 秒，北京时间 **2038-1-19 11:14:07**，格林尼治时间 2038年1月19日 凌晨 03:14:07
 
 ```mysql
 # 创建表
@@ -347,10 +347,423 @@ create table t8(name char(12),
 - MySQL架构总**共四层**，在上图中以虚线作为划分。 
   1. 最上层的服务并不是MySQL独有的，大多数给予网络的客户端/服务器的工具或者服务都有类似的架构。比如：连接处理、授权认证、安全等。 
   2. 第二层的架构包括大多数的MySQL的核心服务。包括：查询解析、分析、优化、缓存以及所有的内置函数（例如：日期、时间、数学和加密函数）。同时，所有的跨存储引擎的功能都在这一层实现：存储过程、触发器、视图等。
-  3. 第三层包含了存储引擎。存储引擎负责MySQL中数据的存储和提取。服务器通过API和存储引擎进行通信。这些接口屏蔽了不同存储引擎之间的差异，使得这些差异对上层的查询过程透明化。存储引擎API包含十几个底层函数，用于执行“开始一个事务”等操作。但存储引擎一般不会去解析SQL（InnoDB会解析外键定义，因为其本身没有实现该功能），不同存储引擎之间也不会相互通信，而只是简单的响应上层的服务器请求。
-  4. 第四层包含了文件系统，所有的表结构和数据以及用户操作的日志最终还是以文件的形式存储在硬盘上
+  3. 第三层包含了**存储引擎**。**存储引擎负责MySQL中数据的存储和提取**。服务器通过API和存储引擎进行通信。这些接口屏蔽了不同存储引擎之间的差异，使得这些差异对上层的查询过程透明化。存储引擎API包含十几个底层函数，用于执行“开始一个事务”等操作。但存储引擎一般不会去解析SQL（InnoDB会解析外键定义，因为其本身没有实现该功能），不同存储引擎之间也不会相互通信，而只是简单的响应上层的服务器请求。
+  4. 第四层包含了**文件系统**，所有的表结构和数据以及用户操作的日志最终还是以文件的形式存储在硬盘上
+
+## 10.3 表的完整性约束
+
+### 1. 约束
+
+- 5.6版必须指定字段名，否则会报
+-  unsigned：设置无符号
+
+1.  **NOT NULL** ：非空约束，指定某列不能为空； 
+2.  **UNIQUE** : 唯一约束，指定某列或者几列组合不能重
+3.  **PRIMARY KEY** ：主键，指定该列的值可以唯一地标识该列记
+4.  **FOREIGN KEY** ：外键，指定该行记录从属于主表中的一条记录，主要用于参照完整性
+
+#### 1.1 not null
+
+- 非空
+
+```mysql
+create table t1(id int not null,
+               name char(12) not null,
+               age int
+               );
+insert into t1(id, name) values(1, 'henry');
+```
+
+#### 1.2 default
+
+- 默认值
+
+```mysql
+create table t2(id int not null,
+               name char(12) not null,
+               gender enum('male', 'female') not null default 'male'
+               );       
+insert into t2(id, name) values(1, 'henry');
+```
+
+#### 1.3 unique
+
+- 不重复(**key UNI**)，所有的非空数据不重复
+
+```mysql
+create table t3(id int unique,
+               username char(12) not null unique,
+               pwd char(18)
+               );
+```
+
+- 联合唯一(**key MUL**)
+
+```mysql
+create table t4(id int not null unique,
+               ip char(15),
+               server char(10),
+               port int,
+               unique(ip, port))  # 联合唯一,不能同时重复
+```
+
+#### 1.4 auto_increment
+
+- 自增(只能用于数值)，**自带非空属性**
+- 设置自增字段必须是数字且唯一 **unique +  auto_increment**
+- 约束字段为自动增长，被约束的字段必须同时被key约束
+
+```mysql
+create table t5(id int unique auto_increment,
+               username char(10),
+               pwd char(18));
+
+insert into t5(username, pwd) values('henry', '123');
+# 自增大小只增不减
+# 对于自增的字段，在用delete删除后，再插入值，该字段仍按照删除前的位置继续增长
+```
+
+- 应该用**truncate清空表**，比起delete一条一条地删除记录，truncate是直接清空表，在删除大表时用它 mysql> truncate student;
+
+```mysql
+# 也可以创建表时指定auto_increment的初始值，注意初始值的设置为表选项，应该放到括号外
+create table student(id int primary key auto_increment,
+                     name varchar(20),
+                     gender enum('male','female') default 'male'
+                    )auto_increment=3;
+```
+
+- **mysql自增步长**
+
+```mysql
+#设置步长
+# sqlserver：自增步长
+# 基于表级别
+create table t1（id int...
+    ）engine=innodb,auto_increment=2 步长=2 default charset=utf8;
+# mysql自增的步长：
+show session variables like 'auto_inc%'; 
+# 基于会话级别
+set session auto_increment_increment=2; #修改会话级别的步长
+# 基于全局级别的
+set global auto_increment_increment=2; #修改全局级别的步长（所有会话都生效）
+# 查看设置，重新登陆有效,5.7版本直接失效
+show variables like 'auto_incre%'; 
+```
+
+- If the value of **auto_increment_offset(起始偏移量)** is greater than that of **auto_increment_increment(步长)**, the value of auto_increment_offset is ignored. 
+- **比如**：设置auto_increment_offset=3，auto_increment_increment=2
+
+#### 1.5 primary key
+
+- 一张表**只能**设置**一个主键**
+- **innodb**表中最好设置一个主键
+- 主键约束这个字段，非空且唯一即：**not null unique**
+
+```mysql
+create table t6(id int not null unique,
+               name char(10) not null unique);
+# 第一个指定为not null nuique 字段被定义为主键
+```
+
+```mysql
+create table t7(id int primary key,
+               name char(10) not null unique);
+```
+
+- 联合主键
+
+```mysql
+create table t8(id int,
+               ip char(15),
+               server char(10),
+               port int,
+               primary(ip, port))  # 联合主键
+```
+
+#### Note(4)
+
+1. 主键为了保证表中的每一条数据的**该字段**都是表格中的**唯一值**。换言之，它是用来独一无二地确认一个表格中的每一行数据。 
+2. 主键可以包含**一个**字段或**多个字段**。当主键包含多个栏位时，称为**组合键** (Composite Key),也可以叫**联合主键**。
+3. **主键**可以在建新表格时设定 (运用 CREATE TABLE 语句)，或是以改变现有的表格架构方式设定 (运用 ALTER TABLE)。
+4. **主键必须唯一**，主键值**非空**；可以是单一字段，也可以是多字段组合。
+
+#### 1.6 foreign key
+
+- 外键，涉及到两张表
+- 关联的数据类型必须一致
+- 被关联的表**必须唯一**，mysql最好关联主键
+- 先创建**外表**，再创建**关联表**
+
+```mysql
+create table staff(id int primary key auto_increment,
+                   age int,
+                   gender enum('male', 'female'),
+                   salary float(10,2),
+                   hire_date date,
+                   post_id int,
+                   foreign key(post_id) references dept(pid);
+                   
+create table dept(pid int primary key, name char(10) not null nuique);
+```
+
+- 级联删除和更新
+- foreign key(post_id) references dept(pid) **on update cascade on delete cascade**
+
+```mysql
+create table staff(id int primary key auto_increment,
+                   age int,
+                   gender enum('male', 'female'),
+                   salary float(10,2),
+                   hire_date date,
+                   post_id int,
+                   foreign key(post_id) references dept(pid) 
+                   on update cascade 
+                   on delete set null);
+                   
+create table dept(pid int primary key, name char(10) not null nuique);
+```
+
+### 2. 修改表结构
+
+- 创建项目之前
+- 项目开发、运行过程中
+
+#### 2.1 修改表名
+
+```mysql
+# 修改表名
+alter table 表名 rename 新表名;
+```
+
+#### 2.2 增加/删除字段
+
+```mysql
+# 添加字段
+alter table 表名 add 添加字段名 数据类型(宽度)  约束
+# 删除字段
+alter table 表名 drop 删除字段名;
+```
+
+#### 2.3 修改字段
+
+```mysql
+# 修改已经存在字段的类型、宽度 约束，不能修改字段名字
+alter table 表名 modify 字段名 类型() 约束
+# 修改已经存在字段的类型、宽度 约束、字段名字
+alter table 表名 change 字段名 新字段名 类型() 约束
+```
+
+#### 2.4 修改字段顺序
+
+```mysql
+# 把字段放在第一列
+alter table 表名 modify age 类型+约束 first；
+# 把字段放在id之后
+alter table 表名 modify age int not null after id；
+# 也可以与 add、change 连用
+```
+
+#### 2.5 修改字段约束
+
+```mysql
+#去掉null约束
+alter table t modify name char(10) null;
+# 添加null约束
+alter table t modify name char(10) not null;
+```
+
+```mysql
+# 去掉unique约束
+alter table 表名 drop index 字段名;
+# 添加unique约束
+alter table 表名 modify 字段名 int unique;
+```
+
+#### 2.6 修改库的默认编码
+
+```mysql
+alter database 库名 CHARACTER SET utf8;
+```
+
+#### 2.7 操作主键
+
+```mysql
+# 先删除主键，删除一个自增主键会报错
+# 需要先去掉主键的自增约束，然后再删除主键约束
+alter table 表名 drop primary key;
+# 增加主键
+alter table 表名 add primary key(id);
+```
+
+#### 2.8 操作外键
+
+```mysql
+# 添加外键
+alter table 表名 add constraint 外键名 foreign key(字段) references press(字段);
+# 删除外键
+alter table 表名 drop foreign key 外键名;
+```
+
+#### 2.9 删除表
+
+```mysql
+drop table 表名；
+```
+
+### 3. 操作数据
+
+两张表的数据关系：多对一、一对一、多对多(书、作者)
+
+#### 3.1 多对一
+
+- 永远在多的表中设置外键
+- **例如**：一对多（或多对一）：一个出版社可以出版多本书
+
+```mysql
+create table press(id int primary key auto_increment,
+                   name varchar(20));
+
+create table book(id int primary key auto_increment,
+                  name varchar(20),
+                  press_id int not null,
+                  foreign key(press_id) references press(id)
+                  on delete cascade
+                  on update cascade);
+
+insert into press(name) values('henry publisher'),
+('echo publisher'),('dean publisher');
+
+insert into book(name,press_id) values('henry',1),('echo',2),
+('dean',2),('brad',3),('dianel',2),('oleg',3);
+```
+
+#### 3.2 一对一
+
+- 外键+unique   
+- **后出现**的表中字段作为**外键**
+
+```mysql
+# 两张表：学生表和客户表
+create table customer(id int primary key auto_increment,
+                      name varchar(20) not null,
+                      qq varchar(10) not null,
+                      phone char(16) not null);
+
+create table student(id int primary key auto_increment,
+                     class_name varchar(20) not null,
+                     customer_id int unique, #该字段一定要是唯一的
+                     foreign key(customer_id) references customer(id) 
+                     on delete cascade
+                     on update cascade);
+# 增加客户
+insert into customer(name,qq,phone) values('henry', '12345', 12312312311), ('echo','123123123',12312312311),('dean', '283818181', 12312312311), ('brad','283818181',12312312311), ('oleg', '888818181', 12312312311), ('dianel','112312312',12312312311);
+# 增加学生
+insert into student(class_name,customer_id) values('1班',3),('2班',4),('3班',5);
+```
+
+#### 3.3 多对多
+
+- 利用第三张表，把两个关联关系的字段作为第三张表的外键
+
+```mysql
+create table author(id int primary key auto_increment,
+                    name varchar(20));
+create table book(id int primary key auto_increment,
+                    name varchar(20));
+# 这张表就存放作者表与书表的关系，即查询二者的关系查这表就可以了
+create table author_book(id int not null unique auto_increment,
+                         author_id int not null,
+                         book_id int not null,
+                         constraint fk_author foreign key(author_id) references author(id)
+                         on delete cascade
+                         on update cascade,
+                         constraint fk_book foreign key(book_id) references book(id)
+                         on delete cascade
+                         on update cascade,
+                         primary key(author_id,book_id));
+
+# 插入作者和书籍信息
+insert into author(name) values('henry'),('echo'),('dean'),('diane');
+insert into book(name) values('1'),('2'),('3'),('4'),('5'),('6')
+insert into author_book(author_id,book_id) values(1,1),(1,2),(1,3）,(1,4),(1,5),(1,6),(2,1),(2,6),(3,4),(3,5),(3,6),(4,1);
+```
+
+#### 3.4 on delete/update
+
+```mysql
+# 在父表上update/delete记录时，同步update/delete掉子表的匹配记录
+cascade方式	
+
+# 在父表上update/delete记录时，将子表上匹配记录的列设为null要注意子表的外键列不能为not null  
+set null方式 
+
+# 如果子表中有匹配的记录,则不允许对父表对应候选键进行update/delete操作
+No action方式
+
+# 同no action, 都是立即检查外键约束
+Restrict方式
+
+# 父表有变更时,子表将外键列设置成一个默认的值 但Innodb不能识别
+Set default方式
+```
+
+### 4. 记录操作
+
+#### 4.1 数据增加
+
+1. insert into 表名 values(值…)：一次性可以写入**多行**数据
+2. insert into 表名(字段名) values(值...)
+3. insert into 表名 value(值…)：一次性只可以写入**一**行数据
+
+```mysql
+# 写入一行数据
+insert into t1 values(1, 'henry', 19);
+insert into t1 value(1, 'henry', 19);
+# 写入多行数据
+insert into t1 values(1, 'henry', 19), (2, 'echo', 18);
+# 指定字段写入
+insert into t1(name, age) value('henry', 19);
+```
+
+#### 4.2 删除
+
+```mysql
+# 删除条件匹配到的数据
+delete form 表 where 条件;
+```
+
+#### 4.3 修改
+
+```mysql
+# 修改表中数据
+update 表 set 字段=值 where 条件;
+# 注意null只能使用 is 匹配
+where name is null;
+```
 
 
+
+
+
+## 10.4 查询
+
+### 1. 基本查询
+
+```mysql
+# 查看表中所有数据
+select * from 表
+# 查看指定字段
+select 字段1,字段2... from 表
+# 查看指定字段，自动去重
+select distinct 字段1,字段2... from 表
+# 数值型四则运算，并名别名显示
+select name,sarlary*12 (as) annual_sarlary form 表
+# 数值型四则运算，并名别名， 拼接显示
+select concat ('姓名：',name,'薪资：',sarlary*12) (as) annual_sarlary form 表
+# 使用':'进行拼接
+select concat_ws (':', name,sarlary*12 (as) annual_sarlary) form 表
+```
 
 
 
@@ -371,117 +784,3 @@ create table t8(name char(12),
 # 第十一章 前端开发
 
 # 第十二章 Django框架
-
-
-
-
-
-
-
-
-
-___
-
-___
-
-# 附录1:  常见报错
-
-1. SyntaxError: invalid syntax；语法错误：无效语法（变量定义不规范）
-
-2. SyntaxError: invalid character in identifier 语法错误；无效字符（中英文字符混乱）
-
-3. ValueError: invalid literal for int() with base 10: 'henry'；(非法类型转换)
-
-4. NameError: name 'D' is not defined ;（一般发生是变量不合法）
-
-5. ValueError: invalid literal for int() with base 10: '3  2'
-  
-   - 字符串没有，强制转换为int
-   
-6. TypeError: sequence item 0: expected str instance, int found
-  
-   - join 只能是str
-   
-7. ValueError: too many values to unpack (expected 2)
-  
-   - 赋值号两边参数不一致
-   
-   
-   
-8. [][Errno 9]OSError: [Errno 9] Bad file descriptor
-
-   - 因为关闭了套接字对象后，又再次去调用了套接字对象。
-
-9. BrokenPipeError:[Errno 32] Broken pipe
-
-  - 由于客户端请求的链接，在一次循环之后，产生的套接字关闭，没有新的客户端套接字进行请求连接，所以产生broken pipe错误
-
-10. BlockingIOError: [Errno 35] Resource temporarily unavailable
-
-  - 非阻塞模型中，接收不到client端发来的数据，此时会报错
-  - client端会出现 ConnectionResetError: [Errno 54] Connection reset by peer的报错
-
-11. [Errno 41] Protocol wrong type for socket
-
-12. ConnectionResetError: [Errno 54] Connection reset by peer
-
-   - tcp连接一旦断开，发送数据会报错
-   - 发送空字符不会报错
-
-# 附录2:  错误记录
-
-1. input() 的数据类型永远是 str
-2. 当 break在循环里时，有些时候可以省略 else
-3. while True的效率会更高
-4. 计数可以倒序(用于while循环)
-5. 一直要求用户输入，或者死循环需要使用 while True
-6. exit() 终止程序
-7. range(0, 100) # 此时可以省略0 ,tpye(range(100)).     <class 'range'>
-8. message = '登陆失败'。变量标记
-9. li.extend(s1) # 遍历 s1 中的每个元素，追加到list中
-10. li.pop(index) # 可以获取删除值
-11. li.remove('a') # list 删除指定元素，li中没有会报错
-12. ','.join(li) # 只要支持循环就支持 join，操作对象必须是 str 否则报错
-13. 当使用s.isdigit()时要注意，s 的数据类型,有空格和其他字符都会返回  False
-14. list(dic.keys()) # 可以强转为list，如果是items则list元素为tuple
-15. 集合之间操作时，如果元素为空，则输出set()
-16. 在循环里操作时，注意代码的有效范围
-17. info.get('key', '不存在'）  # 可以返回两种不同的结果
-18. 判断key是否在dict中只需：if key in info：
-19. type(i) is int   # 这里的 int 是类
-20. tyep(i) == int  # 可以判断数据类型, 地址和内容都是一样
-21. 集合之间操作时，如果元素为空，则输出set()
-22. 在循环里操作时，注意代码的有效范围
-23. info.get('key', '不存在'）  # 可以返回两种不同的结果
-24. 判断key是否在dict中只需：if key in info：
-25. type(i) is int   # 这里的 int 是类
-26. tyep(i) == int  # 可以判断数据类型, 地址和内容都是一样
-27. 集合之间操作时，如果元素为空，则输出set()
-28. 在循环里操作时，注意代码的有效范围
-29. info.get('key', '不存在'）  # 可以返回两种不同的结果
-30. 判断key是否在dict中只需：if key in info：
-31. type(i) is int   # 这里的 int 是类
-32. tyep(i) == int  # 可以判断数据类型, 地址和内容都是一样
-33. 只要是'_'.join 处理过的，都是srt
-34. s.split(',') :
-    - 默认是空白，实际应用中可以是字符或字符串；
-    - 循环去除；
-    - 但变量有且仅能是一个。
-35. 只要是'_'.join 处理过的，都是srt
-36. s.split(',') :
-    - 默认是空白，实际应用中可以是字符或字符串；
-    - 循环去除；
-    - 但变量有且仅能是一个。
-37. 程序一行太长显示不全，可以使用 \ 进行换行
-38. 函数传输文件名时，需要传输 str 类型
-39. line = line.strip('\n').split('|'),从左到右操作
-40. 如果需要双重甚至多重循环时， 可以考虑先构造一个子元素利用函数返回值默认时 None 可以实现 flag 标志功能
-41. range()是range类
-42. return 1， 2， 3 返回的是元组
-43. 注意：函数类似于变量，func 代指一块代码的内存地址。
-44. a = ('b', 3, 4)*2 ，tuple里面的数据重复2次，list 和 tuple都可以
-45. for循环是根据索引进行循环，删除元素后，后面要进行补位
-46. socket收发内容必须是**bytes**类型
-47. print和文件的读写都是io操作
-48. 使用线程可以有效规避io操作时间，提高程序的效率
-49. 解耦程序、默认参数是list

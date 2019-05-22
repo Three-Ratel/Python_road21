@@ -69,6 +69,53 @@ JoinableQueue
 # print(time.time() - start)
 
 
+"""
+进程中数据共享
+"""
+# from multiprocessing import Process, Manager, Lock
+#
+#
+# def func(dic, lock):
+#     with lock:
+#         dic['count'] -= 1
+#
+#
+# if __name__ == '__main__':
+#     lock = Lock()
+#     p_l = []
+#     with Manager() as m:
+#         dic = m.dict({'count': 100})
+#         for i in range(100):
+#             p = Process(target=func, args=(dic,lock))
+#             p.start()
+#             p_l.append(p)
+#         for p in p_l: p.join()
+#         print(dic)
+
+"""
+面向对象开启线程
+"""
+# from threading import Thread,current_thread
+#
+#
+# class MyThread(Thread):
+#
+#     def __init__(self, i):
+#         self.i = i
+#         super().__init__()
+#
+#     def run(self):
+#         print(self.i, self.ident, current_thread().ident)
+#
+#
+# t_l = []
+# for i in range(100):
+#     t = MyThread(i+1)
+#     t_l.append(t)
+#     t.start()
+#
+# for t in t_l: t.join()
+# print('主进程结束')
 
 """
 9.5 锁&池
@@ -76,29 +123,29 @@ JoinableQueue
 """
 单例模式
 """
-import time
-from threading import Thread, Lock
-
-
-class Singleton:
-    __instance = None
-    lock = Lock()
-
-    def __new__(cls, *args, **kwargs):
-        with cls.lock:
-            if not cls.__instance:
-                time.sleep(0.1)
-                cls.__instance = super().__new__(cls)
-            return cls.__instance
-
-
-def main():
-    print(id(Singleton()))
-
-
-for i in range(20):
-    t = Thread(target=main)
-    t.start()
+# import time
+# from threading import Thread, Lock
+#
+#
+# class Singleton:
+#     __instance = None
+#     lock = Lock()
+#
+#     def __new__(cls, *args, **kwargs):
+#         with cls.lock:
+#             if not cls.__instance:
+#                 time.sleep(0.1)
+#                 cls.__instance = super().__new__(cls)
+#             return cls.__instance
+#
+#
+# def main():
+#     print(id(Singleton()))
+#
+#
+# for i in range(20):
+#     t = Thread(target=main)
+#     t.start()
 
 
 """
