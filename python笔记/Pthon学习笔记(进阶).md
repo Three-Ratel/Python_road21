@@ -25,10 +25,17 @@
    4. 数据库管理员(DBA)
 8. 常见的数据库
    - 关系型数据库
-     1. sql server/sqllite
+     
+     - Relational Database Management System：(RDBMS)是指包括**相互联系的逻辑组织**和**存取这些数据的一套程序** (数据库管理系统软件)。关系数据库管理系统就是管理关系数据库，并将数据逻辑组织的系统。
+     
+     1. sql server/ sqllite/ db2/ access/ 
      2. oracle：收费，比较严谨，安全性高（国企、事业单位银行、金融行业）
      3. mysql：开源（小公司互联网公司）
-   - 非关系型数据库(key:value结构)eg：快递单号（redis、mongodb）
+     4. 注意：sql语句通用
+     
+   - 非关系型数据库(key:value结构)eg：快递单号（redis、mongodb、mongodb，redis、memcache）
+   
+   - 在 WEB 应用方面，MySQL是最好的 **RDBMS**(Relational Database Management System，关系数据库管理系统) 应用软件。
 
 ### 2. mysql的安装
 
@@ -45,7 +52,7 @@ default-character-set=utf8
 # server端
 [mysqld]
 #设置3306端口
-port = 3306 
+port = 3306
 # 设置mysql的安装目录
 basedir=C:\Program Files\mysql-5.6.39-winx64 
 # 设置mysql数据库的数据的存放目录
@@ -77,6 +84,12 @@ mysql -u'用户名' -p'密码'
 # mysql.exe是一个客户端
 ```
 
+```mysql
+# mac
+sudo mysql.server status
+sudo mysql.server start/stop/restart
+```
+
 #### 3.1 mysql中的用户和权限
 
 - 在安装数据库之后，有一个最高权限的用户root
@@ -88,17 +101,21 @@ mysql -u'用户名' -p'密码'
 #### 3.2 数据库中的概念
 
 - 库、表、数据
-  - 一条数据data(一行数据)
-  - 多条数据组成一个表
-  - 多个表组成一个库
+  - **描述事物的符号记录称为数据**，如：一条数据data(一行数据)
+  - **表就相当于文件，表中的一条记录就相当于文件的一行内容**，多条数据组成一个表
+  - **数据库即存放数据的仓库**，多个表组成一个库
   - 一般情况下：一个项目占用一个或以上个库
 
 #### 3.3 mysql的操作
 
 - sql语句(structure query language)
-  1. DDL语句 数据库定义语言：数据库，表，视图，索引，存储规程
-  2. DML语句 数据库操纵语言：插入数据insert，delete，update，alter
-  3. DCL语句 数据库控制语言：创建用户。grant    revoke 取消授权
+  
+  - SQL : 结构化查询语言(**Structured Query Language)**简称SQL(发音：/ˈes kjuː ˈel/ "S-Q-L")，是一种特殊目的的编程语言，是一种数据库查询和程序设计语言，用于存取数据以及查询、更新和管理关系数据库系统
+  - SQL语言主要用于存取数据、查询数据、更新数据和管理关系数据库系统,SQL语言由IBM开发。**SQL语言分为3种类型**：
+  
+  1. **DDL**语句 数据库定义语言：数据库，表，视图，索引，存储规程
+  2. **DML**语句 数据库操纵语言：插入数据insert，delete，update，alter
+  3. **DCL**语句 数据库控制语言：创建用户。grant    revoke 取消授权
 
 ```mysql
 # 查看当前用户
@@ -112,13 +129,22 @@ show databases;
 # 创建文件夹henry
 create databases henry；
 # 查看指定用户权限
-show grants for '用户名'@'网段.%';
+show grants for '用户名'(@'网段.%');
 # 授权 * 表示所有
 grant	all(select/insert) on henry.* to '用户名'@'ip网段.%';
 # 设置立即生效
 flush privileges
-# 创建账号并授权
+# 创建账号并授权,必须有密码
 grant all on herny.* to 'henry'@'%' identified by '123';
+#select, insert, update, delete, create, drop, index, alter, grant, references, reload, shutdown, process, file等14个权限
+
+# 取消用户权限
+revoke all on test.* from 'henry'@'%';
+# 删除用户
+delete from mysql.user where host='192.168.12.%' and user='test';
+drop user 'test'@'192.168.12
+# 修改指定用户密码
+update mysql.user set password=password('新密码') where User='test' and Host='%';
 ```
 
 - 库的操作
@@ -162,17 +188,22 @@ update 表 set 字段名=值 where id=2;
 delete from 表 where id=1；
 ```
 
+
+
 ## 10.2 表的介绍
 
-### 1. 表存储
+### 1. 存储引擎
+
+- 选择**如何存储和检索**你的数据的这种**灵活性**是MySQL为什么如此受欢迎的主要原因。其它数据库系统(包括大多数商业选择)仅支持一种类型的数据存储。
+- mysql5.6/5.7支持的存储引擎包括**InnoDB**、 **MyISAM**、 **MEMORY**、 **CSV**、 **BLACKHOLE**、 **FEDERATED**、 **MRG_MYISAM**、 **ARCHIVE**、 **PERFORMANCE_SCHEMA**。其中**NDB**和**InnoDB**提供**事务安全表**，其他存储引擎都是非事务安全表。
 
 #### 1.1 表的存储方式(3)
 
 1. 方式1：**MyISAM** mysql5.5- 默认存储方式
-   - 存储的文件个数：表结构、表中数据、索引
-   - 不支持行级锁、事务和外键
+   - 存储的文件个数：**表结构**、**表数据**、**索引**
+   - **不支持**行级锁、事务和外键
 2. 方式2：**InnoDB** mysql5.6+ 默认存储方式
-   - 存储文件个数：表结构、表中数据
+   - 存储文件个数：**表结构**、**表数据**
    - 支持**行级锁**(默认)：脏数据（+表级锁），支持数据并发
    - 支持**事务**：把多句操作，变成原子操作
    - 支持**外键**：通过外键(**有约束**)在其他表(**有约束**)中查找信息
@@ -180,7 +211,8 @@ delete from 表 where id=1；
    - 存储在内存：**表结构**， 表数据存储到硬盘上
    - **优势**：增删改查速度快
    - **劣势**：重启数据消失、容量有限
-4. **存储引擎介绍**
+
+#### 1.2 存储引擎介绍
 
 - **InnoDB**
   - 用于事务处理应用程序，支持**外键**和**行级锁**。如果应用对事物的完整性有比较高的要求，在并发条件下要求数据的一致性，数据操作除了插入和查询之外，还包括很多更新和删除操作，那么InnoDB存储引擎是比较合适的。InnoDB除了有效的降低由删除和更新导致的锁定，还可以确保事务的完整提交和回滚，对于类似**计费系统**或者**财务系统**等对数据准确要求性比较高的系统都是合适的选择。
@@ -189,7 +221,29 @@ delete from 表 where id=1；
 - **Memory**
   - 将所有的数据保存在**内存**中，在需要快速定位记录和其他类似数据的环境下，可以提供极快的访问。Memory的**缺陷是对表的大小有限制**，虽然数据库因为异常终止的话数据可以正常恢复，但是一旦数据库关闭，存储在内存中的数据都会丢失。
 
-#### 1.2 查看mysql所有的配置
+**其他存储引擎**
+
+1. InnoDB
+   - MySql 5.6 版本默认的存储引擎。InnoDB 是一个事务安全的存储引擎，它具备提交、回滚以及崩溃恢复的功能以保护用户数据。InnoDB 的行级别锁定以及 Oracle 风格的一致性无锁读提升了它的多用户并发数以及性能。InnoDB 将用户数据存储在聚集索引中以减少基于主键的普通查询所带来的 I/O 开销。为了保证数据的完整性，InnoDB 还支持外键约束。
+2. MyISAM
+   - MyISAM既不支持事务、也不支持外键、其优势是访问速度快，但是表级别的锁定限制了它在读写负载方面的性能，因此它经常应用于只读或者以读为主的数据场景。
+3. Memory
+   - 在内存中存储所有数据，应用于对非关键数据由快速查找的场景。Memory类型的表访问数据非常快，因为它的数据是存放在内存中的，并且默认使用HASH索引，但是一旦服务关闭，表中的数据就会丢失
+4. BLACKHOLE
+   - 黑洞存储引擎，类似于 Unix 的 /dev/null，Archive 只接收但却并不保存数据。对这种引擎的表的查询常常返回一个空集。这种表可以应用于 DML 语句需要发送到从服务器，但主服务器并不会保留这种数据的备份的主从配置中。
+5. CSV
+   - 它的表真的是以逗号分隔的文本文件。CSV 表允许你以 CSV 格式导入导出数据，以相同的读和写的格式和脚本和应用交互数据。由于 CSV 表没有索引，你最好是在普通操作中将数据放在 InnoDB 表里，只有在导入或导出阶段使用一下 CSV 表。
+6. NDB
+   - (又名 NDBCLUSTER)——这种集群数据引擎尤其适合于需要最高程度的正常运行时间和可用性的应用。注意：NDB 存储引擎在标准 MySql 5.6 版本里并不被支持。目前能够支持
+   - MySql 集群的版本有：基于 MySql 5.1 的 MySQL Cluster NDB 7.1；基于 MySql 5.5 的 MySQL Cluster NDB 7.2；基于 MySql 5.6 的 MySQL Cluster NDB 7.3。同样基于 MySql 5.6 的 MySQL Cluster NDB 7.4 目前正处于研发阶段。
+7. Merge
+   - 允许 MySql DBA 或开发者将一系列相同的 MyISAM 表进行分组，并把它们作为一个对象进行引用。适用于超大规模数据场景，如数据仓库。
+8. Federated
+   - 提供了从多个物理机上联接不同的 MySql 服务器来创建一个逻辑数据库的能力。适用于分布式或者数据市场的场景。
+9. Example
+   - 这种存储引擎用以保存阐明如何开始写新的存储引擎的 MySql 源码的例子。它主要针对于有兴趣的开发人员。这种存储引擎就是一个啥事也不做的 "存根"。你可以使用这种引擎创建表，但是你无法向其保存任何数据，也无法从它们检索任何索引。
+
+#### 1.3 查看mysql所有的配置
 
 ```mysql
 # 查看与存储引擎相关配置
@@ -197,6 +251,7 @@ show variables like '%engine%';
 show variables like "default_storage_engine";
 # 查看当前数据库支持的存储引擎
 show engines \g
+show engines;
 # 修改已经存在表的存储引擎
 alter table 表名 engine = innodb;
 # 查看与编码相关的配置
@@ -256,7 +311,13 @@ create table 表名(
 - 字符
 - **ENUM**和**SET**类型
 
-#### 2.1数字
+#### 2.1数值
+
+1. MySQL支持所有标准SQL数值数据类型。这些类型包括严格数值数据类型(**INTEGER**、 **SMALLINT**、 **DECIMAL**和**NUMERIC**)，以及近似数值数据类型(**FLOAT**、 **REAL**和**DOUBLE PRECISION**)。
+2. 关键字INT是INTEGER的同义词，关键字DEC是DECIMAL的同义词。
+3. MySQL支持的整数类型有TINYINT、MEDIUMINT和BIGINT。下面的表显示了需要的每个整数类型的存储和范围。
+4. 对于小数的表示，MYSQL分为**两种方式**：**浮点数和定点数**。浮点数包括float(单精度)和double(双精度),而**定点数**只有**decimal**一种，在mysql中**以字符串的形式存放**，比浮点数更精确，适合用来表示货币等精度高的数据。
+5. BIT数据类型保存位字段值，并且支持MyISAM、MEMORY、InnoDB和BDB表。
 
 - 整数(int)
 
@@ -310,6 +371,11 @@ create table t6(d1 date, y year,
 
 #### 2.3 字符串
 
+1. 字符串类型指**CHAR**、**VARCHAR**、BINARY、VARBINARY、BLOB、TEXT、**ENUM**和**SET**。该节描述了这些类型如何工作以及如何在查询中使用这些类型。
+2. BINARY 和 VARBINARY 类似于 CHAR 和 VARCHAR，不同的是它们包含二进制字符串而不要非二进制字符串。也就是说，它们包含字节字符串而不是字符字符串。这说明它们没有字符集，并且排序和比较基于列值字节的数值值。
+3. BLOB 是一个二进制大对象，可以容纳可变数量的数据。有 4 种 BLOB 类型：TINYBLOB、BLOB、MEDIUMBLOB 和 LONGBLOB。它们区别在于可容纳存储范围不同。
+4. 有 4 种 TEXT 类型：TINYTEXT、TEXT、MEDIUMTEXT 和 LONGTEXT。对应的这 4 种 BLOB 类型，可存储的最大长度不同，可根据实际情况选择。
+
 - char：定长字符串
   - 补齐指定长度的
   - 长度变化小的情况使用、浪费空间，存储效率较高
@@ -328,6 +394,9 @@ select concat(name2, '---') from t7;
 ```
 
 #### 2.4 enum和set类型
+
+1. ENUM中文名称叫枚举类型，它的值范围需要在创建表时通过枚举方式显示。ENUM**只允许从值集合中选取单个值，而不能一次取多个值**。
+2. SET和ENUM非常相似，也是一个**字符串对象**，里面可以包含0-64个成员。根据成员的不同，存储上也有所不同。set类型可以**允许值集合中任意选择1或多个元素进行组合**。对超出范围的内容将不允许注入，而对重复的值将进行自动去重。
 
 - en ENUM('male', 'female')：单选框
 - s set('')：多选框
@@ -354,7 +423,6 @@ create table t8(name char(12),
 
 ### 1. 约束
 
-- 5.6版必须指定字段名，否则会报
 -  unsigned：设置无符号
 
 1.  **NOT NULL** ：非空约束，指定某列不能为空； 
@@ -376,7 +444,7 @@ insert into t1(id, name) values(1, 'henry');
 
 #### 1.2 default
 
-- 默认值
+- 默认值，创建列时可以指定默认值，当插入数据时如果未主动设置，则自动添加默认值
 
 ```mysql
 create table t2(id int not null,
@@ -389,6 +457,7 @@ insert into t2(id, name) values(1, 'henry');
 #### 1.3 unique
 
 - 不重复(**key UNI**)，所有的非空数据不重复
+- 唯一约束，指定某列或者几列组合不能重复
 
 ```mysql
 create table t3(id int unique,
@@ -397,7 +466,7 @@ create table t3(id int unique,
                );
 ```
 
-- 联合唯一(**key MUL**)
+- **联合唯一**(**key MUL**)
 
 ```mysql
 create table t4(id int not null unique,
@@ -438,15 +507,15 @@ create table student(id int primary key auto_increment,
 ```mysql
 #设置步长
 # sqlserver：自增步长
-# 基于表级别
-create table t1（id int...
-    ）engine=innodb,auto_increment=2 步长=2 default charset=utf8;
+# 基于表级别,指定步为2，从0开始计数
+create table t1（id int unique auto_increment, age int
+    ）engine=innodb,auto_increment=2 default charset=utf8;
 # mysql自增的步长：
 show session variables like 'auto_inc%'; 
 # 基于会话级别
-set session auto_increment_increment=2; #修改会话级别的步长
+set session auto_increment_increment=2;# 修改会话级别的步长
 # 基于全局级别的
-set global auto_increment_increment=2; #修改全局级别的步长（所有会话都生效）
+set global auto_increment_increment=2; # 修改全局级别的步长（所有会话都生效）
 # 查看设置，重新登陆有效,5.7版本直接失效
 show variables like 'auto_incre%'; 
 ```
@@ -456,8 +525,7 @@ show variables like 'auto_incre%';
 
 #### 1.5 primary key
 
-- 一张表**只能**设置**一个主键**
-- **innodb**表中最好设置一个主键
+- 一张表**只能**设置**一个主键,innodb**表中最好设置一个主键
 - 主键约束这个字段，非空且唯一即：**not null unique**
 
 ```mysql
@@ -574,7 +642,7 @@ alter table t modify name char(10) not null;
 ```
 
 ```mysql
-# 去掉unique约束
+# 去掉unique约束,特殊
 alter table 表名 drop index 字段名;
 # 添加unique约束
 alter table 表名 modify 字段名 int unique;
@@ -586,7 +654,7 @@ alter table 表名 modify 字段名 int unique;
 alter database 库名 CHARACTER SET utf8;
 ```
 
-#### 2.7 操作主键
+#### 2.7 操作主键add/drop
 
 ```mysql
 # 先删除主键，删除一个自增主键会报错
@@ -596,7 +664,7 @@ alter table 表名 drop primary key;
 alter table 表名 add primary key(id);
 ```
 
-#### 2.8 操作外键
+#### 2.8 操作外键add/drop
 
 ```mysql
 # 添加外键
@@ -744,9 +812,18 @@ where name is null;
 
 
 
-
-
 ## 10.4 查询
+
+- select 语法
+
+```mysql
+SELECT DISTINCT 字段1,字段2... FROM 表名
+                              WHERE 条件
+                              GROUP BY field
+                              HAVING 筛选
+                              ORDER BY field
+                              LIMIT 限制条数
+```
 
 ### 1. 基本查询
 
@@ -765,7 +842,414 @@ select concat ('姓名：',name,'薪资：',sarlary*12) (as) annual_sarlary form
 select concat_ws (':', name,sarlary*12 (as) annual_sarlary) form 表
 ```
 
+```mysql
+# 结合CASE语句：
+SELECT(CASE
+       WHEN emp_name = 'jingliyang' THEN
+           emp_name
+       WHEN emp_name = 'alex' THEN
+           CONCAT(emp_name,'_BIGSB')
+       ELSE
+           concat(emp_name, 'SB')
+       END
+       ) as new_name FROM employee;
+```
 
+### 2 . where
+
+- **逐行过滤**
+
+1. 比较运算：<>/!= 不等于，> ，< ，>=，<=
+2. 范围筛选
+   - 多选一个
+   - 在一个模糊的范围里
+     - 在一个数值区间
+     - 字符串模糊查询
+     - 正则匹配
+3. 逻辑运算—条件拼接
+   - 与、或、非
+
+#### 2.1 比较/逻辑运算
+
+- **in / not in / is / is not** 
+
+```mysql
+select * from t1 where sarlary>1000;
+
+# 和数值类型无关
+select * from t1 where sarlary=20000 or sarlary=30000;
+# 逻辑运算
+select * from t1 where gender='male' and age=18;
+# 多选一,可以使用 in
+select 字段名，... from t1 where sarlary in (20000, 30000, 19000);
+# not in 
+select 字段名，... from t1 where sarlary not in (20000, 30000, 19000);
+
+# is is not 
+select 字段名 from t1 where 字段 is null;
+```
+
+#### 2.2 模糊查找(3)
+
+1. **between…and...**
+
+```mysql
+# between ... and ...
+select  name,sarlary from t1 where sarlary between 10000 and 20000;
+```
+
+2. **字符串**模糊匹配，**like**
+
+```mysql
+# like ， % 通配符，匹配任意长度，任意内容
+select * from t1 where name like '程%';
+# like ， _ 通配符，匹配一个任意字符
+select * from t1 where name like '程_';
+# like ， 以 n 结尾
+select * from t1 where name like '%n';
+```
+
+3. 正则匹配，**regexp**
+
+```mysql
+select * from t1 where name regexp 正则表达式;
+SELECT * FROM employee WHERE emp_name REGEXP 'on$';
+```
+
+### 3. 分组聚合
+
+#### 3.1 group by
+
+- group by 后的这个字段，也就是post字段中的每一个不同的项目保留下来
+- 并且把值是这一项的所有行归为一组，并**只显示组中第一个**
+
+```mysql
+# 显示一个组的第一个,必须有group的字段
+select post from employee group by post;
+# distinct 基于group by完成
+```
+
+#### 3.2 聚合函数
+
+- 把多行的同一字段进行一些统计，最终得到一个结果
+
+1. count(字段)：统计这个字段有多少项
+2. sum(字段)：统计这个字段对应的数值和，数值类型
+3. avg(字段)：平均值
+4. **min、max**：
+   - 只能取到最小、最大值，但不能取到对应的其他项(名字)，显示组中第一项
+   - 使用多表查询
+
+- **count**
+
+```mysql
+select count(*/ 主键) from employee;
+# 只算id不为空的字段个数
+select count(id) from employee;
+```
+
+- **avg/sum**
+
+```mysql
+select avg(salary) from employee;
+select sum(salary) from employee;
+```
+
+#### 3.3 分组聚合
+
+- group by
+
+```mysql
+# 分别对各个组,统计人数
+select post,count(*) from employee group by post;
+# 对某一组进行统计人数
+select post,count(*) from employee where post='teacher';
+# 各部门的平均薪资
+select post,avg(sarlary) from employee group by post;
+```
+
+```mysql
+# 最晚入职
+select max(hire_date) from employee;
+# 最早入职
+select min(hire_date) from employee group by post;
+```
+
+- **查询分组内所有成员名**
+
+```mysql
+# 查询岗位名以及岗位包含的所有员工名字
+select post, group_concat(emp_name) from employee group by post;
+# 查询岗位名以及各岗位内包含的员工个数
+select post, count(id) from employee group by post;
+# 查询公司内男员工和女员工的个数
+select sex, count(id) from employee group by sex;
+```
+
+#### Note2(2)
+
+1. 总是根据会重复的项进行分组
+2. 分组总是和聚合函数一起使用
+
+### 3. having
+
+- having 条件，**组过滤**， 一般与**group**一起使用
+-  **Where** 发生在分组**group by之前**，因而Where中可以有任意字段，但是**绝对不能**使用聚合函数。
+- **Having**发生在分**组group by之后**，因而Having中可以使用分组的字段，无法直接取到其他字段,可以使用**聚合函数**
+
+```mysql
+# 部门人数大于3
+select post from employee group by post having count(*) > 3;
+# 平均薪资大于10000
+select post from employee group by post having avg(salary) > 10000;
+# 过滤整张表,必须有 age 字段，否则报错
+select emp_name, age from employee having avg(age)>18;
+```
+
+- having 过滤示例
+
+```mysql
+# 查询各岗位内包含的员工个数小于2的岗位名、岗位内包含员工名字、个数
+select post,avg(salary) from employee group by post having avg(salary) > 10000;
+# 查询各岗位平均薪资大于10000的岗位名、平均工资
+select post,avg(salary) from employee group by post having 20000 >avg(salary) > 10000;
+# 查询各岗位平均薪资大于10000且小于20000的岗位名、平均工资
+select post,avg(salary) from employee group by post having avg(salary) > 10000 and avg(salary) < 20000;
+# 使用 between ... and...
+select post,avg(salary) from employee group by post having avg(salary) between 10000 and 20000;
+```
+
+### 4. order by
+
+```mysql
+# desc 表示降序排
+# asc 表示生序排列，默认值
+select * from employee order by salary desc;
+# 多个个字段排序，先根据第一个字段排列后，再根据第二个字段排列
+select * from employee order by age, salary desc;
+```
+
+- having 和 order by综合使用示例
+
+```mysql
+# 查询各岗位平均薪资大于10000的岗位名、平均工资,结果按平均薪资升序排列
+select post, avg(salary) from employee group by post having avg(salary) > 10000 order by avg(salary) asc;
+# 查询各岗位平均薪资大于10000的岗位名、平均工资,结果按平均薪资降序排列
+select post, avg(salary) from employee group by post having avg(salary) > 10000 order by avg(salary) desc;
+```
+
+### 5. limit
+
+```mysql
+# 分页显示
+# 默认从0开始，显示前5个
+select * from employee limit 5;
+# 显示下5个, 5+1 位置开始取
+# limit m,n 表示从m+1开始取到5个
+# limit n offset m等价于limit m,n
+select * from employee limit 5,5;
+# 显示下5个
+select * from employee limit 10,5;
+```
+
+#### Note3(3)
+
+1. **关键字执行的优先级(8)**
+   - **from**—> **where** —> **group by** —> **select** —> **distinct** —> **having** —> **order by** —>**limit**
+2. 用户认证—>解析、优化、执行sql、找到存储引擎
+3. select之前把行数限制在小的范围
+
+![sql语句执行顺序](/Users/henry/Documents/截图/Py截图/sql语句执行顺序.png)
+
+### 4. 多表查询
+
+- 数据准备
+
+```mysql
+#建表
+create table department(id int,
+                        name varchar(20) );
+
+create table staff(id int primary key auto_increment,
+                   name varchar(20),
+                   gender enum('male','female') not null default 'male',
+                   age int,
+                   dep_id int);
+#插入数据
+insert into department values(200,'技术'),(201,'人力资源'),(202,'销售'),(203,'运营');
+insert into staff(name,gender,age,dep_id) values
+('henry','male',18,200), 
+('echo','female',48,201),
+('dean','male',38,201),
+('diane','female',28,202),
+('oleg','male',18,200),
+('iris','female',18,204);
+
+#查看表结构和数据
+mysql> desc department;
+mysql> desc employee;
+
+mysql> select * from department;
+mysql> select * from employee;
+```
+
+#### 4.1 连表查询
+
+- **通常使用内连接和左外连接**
+
+```mysql
+select 字段列表
+    FROM 表1 INNER|LEFT|RIGHT JOIN 表2
+    ON 表1.字段 = 表2.字段;
+```
+
+1. **交叉连接：不适用任何匹配条件。生成笛卡尔积**
+
+```mysql
+# 笛卡尔积
+select 字段 from t1,t2 where 字段1=字段2;
+# 连表查询,staff,department 两个表，和 inner join 效果一致
+select * from staff, department as dept where dep_id=dept.id;
+```
+
+2. **内连接(inner join)**
+   - 两张表条件不匹配的项不出现结果中
+
+```mysql
+select 字段 from t1 inner join t2 on t1(字段1) = t2(字段2);
+```
+
+3. **外连接**
+   1. **左外连接(left join)：全量显示左边的表中数据**
+      - **本质**就是：在内连接的基础上增加**左边有右边没有**的结果
+   2. 右外连接(right join)：全量显示右边的表中数据
+      - **本质**就是：在内连接的基础上增加**右边有左边没有**的结果
+   3. 全外连接**(左外连接 union 右外连接)**：mysql没有全外连接
+      - **在内连接的基础上增加左边有右边没有的和右边有左边没有的结果**
+   4. **sqlserver**中有全外连接(**full join**)，没有右连接
+
+```mysql
+# t1连接t2，显示全量的左表，只显示匹配到的t2
+select 字段 from t1 left join t2 on t1(字段1) = t2(字段2);
+select 字段 from t1 right join t2 on t1(字段1) = t2(字段2);
+# 全连接
+select 字段 from t1 left join t2 on t1(字段1) = t2(字段2) union
+select 字段 from t1 right join t2 on t1(字段1) = t2(字段2);
+```
+
+```mysql
+# 通过左外、和全外连接示例
+select * from staff left join department as dept on dep_id = dept.id union (select * from staff right join department as dept on dep_id = dept.id);
+```
+
+- **注意 union与union all的区别：union会去掉相同的纪录**
+
+4. **连表查询示例**
+   - **连表查询效率更高**
+
+```mysql
+# 以内连接的方式查询staff和department表，并且staff表中的age字段值必须大于25,即找出年龄大于25岁的员工以及员工所在的部门
+select staff.name, dept.name from (staff left join department as dept on dep_id = dept.id) where age > 25;
+# 以内连接的方式查询staff和department表，并且以age字段的升序方式显示
+select * from (staff inner join department as dept on dep_id = dept.id) order by age;
+```
+
+#### 4.2 子查询
+
+1. 基本语法
+
+```mysql
+1：子查询是将一个查询语句嵌套在另一个查询语句中。
+2：内层查询语句的查询结果，可以为外层查询语句提供查询条件。
+3：子查询中可以包含：IN、NOT IN、ANY、ALL、EXISTS 和 NOT EXISTS等关键字
+4：还可以包含比较运算符：= 、 !=、> 、<等
+```
+
+```mysql
+# 子表中匹配到唯一值
+select name from emp where dep_id = (select id from department where name='技术');
+# 子表中匹配到多个值
+select name from emp where dep_id in (select id from department where name in ('技术', '销售'));
+```
+
+2. 带**in**关键字的查询
+
+```mysql
+# 查询平均年龄在25岁以上的部门名
+select name from department where id in (select dep_id from staff group by dep_id having avg(age) > 25);
+# 查看技术部员工姓名
+select name from staff where dep_id in (select id from department where name = '技术' )
+# 查看不足1人的部门名(子查询得到的是有人的部门id)
+select name from department where id not in (select dep_id from staff group by dep_id);
+```
+
+3. 带比较运算符
+
+```mysql
+# 查询大于所有人平均年龄的员工名与年龄
+select name, age from staff where age > (select avg(age) from staff);
+# 查询大于部门内平均年龄的员工名、年龄
+select name, age from staff t1 inner join (select dep_id, avg(age) avg_age from staff group by dep_id) t2 on t1.dep_id = t2.dep_id where t1.age > t2.avg_age;
+```
+
+4. 带EXISTS关键字的子查询
+
+- EXISTS关字键字表示存在。在使用EXISTS关键字时，内层查询语句不返回查询的记录。而是返回一个真假值。
+- 当返回True时，外层查询语句将进行查询；当返回值为False时，外层查询语句不进行查询
+
+```mysql
+# exists后为真
+select * from staff where exists (select id from department where id=200);
+# 输出staff中所有数据
+
+# exists后为假
+select * from staff where exists (select id from department where id=200);
+# 输出为空
+```
+
+5. **查询每个部门最新入职的那位员工**
+
+```mysql
+# 连表查询
+select t1.name, t1.hire_date, t1.post from employee as t1 inner join (select depart_id, max(hire_date) as max_date from employee group by depart_id) as t2 on t1.depart_id = t2.depart_id where t1.hire_date = t2.max_date;
+```
+
+```mysql
+# 子查询
+select t3.name,t3.post,t3.hire_date from employee as t3 where id in (select (select id from employee as t2 where t2.depart_id=t1.depart_id order by hire_date desc limit 1) from employee as t1 group by depart_id);
+```
+
+
+
+
+
+## 10.5 pymysql模块
+
+- 第三方模块
+
+```mysql
+mysql -uroot -p
+mysql.exe              # mysql的一个客户端
+```
+
+- **ip port 用户名 密码 使用的库** 连接mysqld的server端
+
+```python
+import pymysql
+con = pymysql.connect(host='127.0.0.1', user=None, password='123',
+                     database='test')
+# 数据库操作符，游标
+# dict取值，默认元组
+cur = con.cursor(pymysql.cursors.DictCursor)
+# 操作
+cur.execute('sql语句')
+# 获取返回值,cur类似操作文件的游标指针
+ret = cur.fetchone()/ fetchmany(n)/ fetchall()
+con.commit()
+con.close()
+```
+
+- localhost：不过网卡，127.0.0.1过网卡
 
 
 

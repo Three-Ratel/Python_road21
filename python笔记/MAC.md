@@ -1,8 +1,35 @@
 #  MAC
 
-##1. Homebrew 使用 
+## 1. Terminal
 
-###1.1 brew 安装
+### 1.1 网络相关
+
+```python
+arp -a | wc -l
+fping 192.168.12.0/24 -g -a
+# 取消文件的 @ 权限
+xattr -c -r *
+# 文件权限
+rwxrwxrwt
+# t为粘贴位，一个目录既使它的所有权限都开放，如果是设置了粘帖位，除非目录的属主和root用户有权限删除它，除此之外其它用户不能删除这个目录。
+```
+
+### 1.3 端口相关
+
+```python
+# 查看9000端口占用情况
+sudo lsof -i:9000 
+# 手动结束某一进程
+kill -9 pid
+# 
+  
+```
+
+
+
+##2. Homebrew 使用 
+
+###2.1 brew 安装
 
 ```python
 # 安装brew最新版本
@@ -29,7 +56,7 @@ sudo chown -R $(whoami) /usr/local
 （如果想重新开启安全设置，则重复1、2步骤，输入csrutil enable就可以了）
 ```
 
-###1.2 brew 常用命令
+###2.2 brew 常用命令
 
 ```python
 brew list       列出已安装的软件
@@ -39,7 +66,7 @@ brew info       显示软件信息
 brew deps       显示包依赖
 ```
 
-###1.3 brew 安装与卸载其他软件
+###2.3 brew 安装与卸载其他软件
 
 ```python
 brew install wget
@@ -47,7 +74,7 @@ brew uninstall wget
 brew search /wge*/
 ```
 
-### 1.4 brew 卸载
+### 2.4 brew 卸载
 
 ```python
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
@@ -77,7 +104,7 @@ rm -rf /usr/local/var/homebrew
 
 
 
-## 2. byobu
+## 3. byobu
 
 ```python
 # 安装
@@ -107,14 +134,14 @@ sudo apt-get install byobu
 
 
 
-## 3. brew 安装软件顺序
+## 4. brew 安装软件顺序
 
 ```python
 # 安装zsh 语法高亮
 brew install zsh-syntax-highlighting
 ```
 
-###3.1 cmake
+###4.1 cmake
 
 1. 什么是cmkae
 
@@ -122,9 +149,7 @@ brew install zsh-syntax-highlighting
 
 2. cmake 没有依赖关系
 
-
-
-##3.2 wget的依赖关系
+###4.2 wget的依赖关系
 
 ```python
 # wget 
@@ -136,9 +161,7 @@ openssl --> libevent and wget
 
 ![wget的依赖关系](/Users/henry/Documents/截图/Py截图/wget的依赖关系.png)
 
-
-
-## 4. 环境变量
+## 5. 环境变量
 
 ```python
 # Mac下配置环境变量文件：bash_profile
@@ -146,9 +169,9 @@ openssl --> libevent and wget
 source  .bash_profile 
 ```
 
-## 5. 文件的作用
+## 6. 文件的作用
 
-###5.1 ~/.CFUserTextEncoding
+###6.1 ~/.CFUserTextEncoding
 
 ```python
 # ~/.CFUserTextEncoding存储用户的默认文本编码和首选语言。
@@ -158,7 +181,7 @@ Core Foundation尝试访问用户的主目录以确定其默认文本编码（�
 #冒号左侧的第一个数字表示默认编码。我文件中的0代表kCFStringEncodingMacRoman。可以在CFString Reference
 ```
 
-### 5.2 .DS_Store 是什么
+### 6.2 .DS_Store 是什么
 
 ​	使用 Mac 的用户可能会注意到，系统经常会自动在每个目录生成一个隐藏的 .DS_Store 文件。.DS_Store(英文全称 Desktop Services Store)是一种由苹果公司的Mac OS X操作系统所创造的隐藏文件，目的在于存贮目录的自定义属性。
 
@@ -169,7 +192,7 @@ defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool TRUE
 defaults delete com.apple.desktopservices DSDontWriteNetworkStores
 ```
 
-### 5.3 缓存清理
+### 6.3 缓存清理
 
 ```python
 # 重启－开机看到白屏时，按command+option+r+p，电脑会黑屏然后重启。
@@ -185,27 +208,27 @@ defaults delete com.apple.desktopservices DSDontWriteNetworkStores
 2. 开机，在显示灰屏前同时按住Command+Option+P+R 键，
 3. 直到听见三次以上启动声后松开这些键，速度就恢复
 
-### 5.4 .idlerc 
+### 6.4 .idlerc 
 
 ```python
 # python idle相关文件
 ```
 
-### 5.5 macport相关
+### 6.5 macport相关
 
 ```python
 1. .profile 
 2. .macports 
 ```
 
-###5.6 vim 插件管理
+###6.6 vim 插件管理
 
 ```python
 # YouCompleteMe unavailable, 报错
 dlopen(/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/lib-dynload/itertools.so, 0x0002): code signature in (/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/lib-dynload/itertools.so) not valid for use in process: mapped file has no cdhash, completely unsigned? Code has to be at least ad-hoc signed.
 ```
 
-## 6. Mac 启用FTP服务
+## 7. Mac 启用FTP服务
 
 ```python
 # 启用FTP服务
@@ -219,20 +242,4 @@ sudo -s launchctl unload -w /System/Library/LaunchDaemons/ftp.plist
 # 然后输入你在Mac上的用户名和密码就可以了
 ```
 
-## 7. Terminal
-
-1. arp -a | wc -l
-2. fping 192.168.12.0/24 -g -a
-
-```python
-arp -a | wc -l
-fping 192.168.12.0/24 -g -a
-# 取消文件的 @ 权限
-xattr -c -r *
-# 文件权限
-rwxrwxrwt
-# t为粘贴位，一个目录既使它的所有权限都开放，如果是设置了粘帖位，除非目录的属主和root用户有权限删除它，除此之外其它用户不能删除这个目录。
-```
-
-
-
+## 
