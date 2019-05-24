@@ -173,6 +173,8 @@ show tables;
 drop table student;
 # 查看表结构
 desc student;
+# 删除多个表
+drop tables s2,s3,s4;
 ```
 
 - **操作表中数据(4)**
@@ -804,7 +806,7 @@ delete form 表 where 条件;
 #### 4.3 修改
 
 ```mysql
-# 修改表中数据
+# 修改表中数据， set 后的字段可以为一个或多个
 update 表 set 字段=值 where 条件;
 # 注意null只能使用 is 匹配
 where name is null;
@@ -929,7 +931,7 @@ select post from employee group by post;
 # distinct 基于group by完成
 ```
 
-#### 3.2 聚合函数
+#### 3.2 聚合函数(5)
 
 - 把多行的同一字段进行一些统计，最终得到一个结果
 
@@ -976,6 +978,7 @@ select min(hire_date) from employee group by post;
 ```
 
 - **查询分组内所有成员名**
+  - group_concat()
 
 ```mysql
 # 查询岗位名以及岗位包含的所有员工名字
@@ -991,11 +994,11 @@ select sex, count(id) from employee group by sex;
 1. 总是根据会重复的项进行分组
 2. 分组总是和聚合函数一起使用
 
-### 3. having
+#### 3.4 having
 
 - having 条件，**组过滤**， 一般与**group**一起使用
 -  **Where** 发生在分组**group by之前**，因而Where中可以有任意字段，但是**绝对不能**使用聚合函数。
-- **Having**发生在分**组group by之后**，因而Having中可以使用分组的字段，无法直接取到其他字段,可以使用**聚合函数**
+- **Having**发生在分**组group by之后**，因而Having中可以使用分组的字段，**无法直接取到其他字段**,可以使用**聚合函数**
 
 ```mysql
 # 部门人数大于3
@@ -1010,23 +1013,23 @@ select emp_name, age from employee having avg(age)>18;
 
 ```mysql
 # 查询各岗位内包含的员工个数小于2的岗位名、岗位内包含员工名字、个数
-select post,avg(salary) from employee group by post having avg(salary) > 10000;
+select post, group_concat(emp_name), count(*) from employee group by post having count(id) < 2;
 # 查询各岗位平均薪资大于10000的岗位名、平均工资
-select post,avg(salary) from employee group by post having 20000 >avg(salary) > 10000;
+select post,avg(salary) from employee group by post having avg(salary) > 10000;
 # 查询各岗位平均薪资大于10000且小于20000的岗位名、平均工资
 select post,avg(salary) from employee group by post having avg(salary) > 10000 and avg(salary) < 20000;
 # 使用 between ... and...
 select post,avg(salary) from employee group by post having avg(salary) between 10000 and 20000;
 ```
 
-### 4. order by
+#### 3.5 order by
 
 ```mysql
 # desc 表示降序排
 # asc 表示生序排列，默认值
 select * from employee order by salary desc;
 # 多个个字段排序，先根据第一个字段排列后，再根据第二个字段排列
-select * from employee order by age, salary desc;
+select * from employee order by age asc, salary desc;
 ```
 
 - having 和 order by综合使用示例
@@ -1038,7 +1041,7 @@ select post, avg(salary) from employee group by post having avg(salary) > 10000 
 select post, avg(salary) from employee group by post having avg(salary) > 10000 order by avg(salary) desc;
 ```
 
-### 5. limit
+#### 3.6 limit
 
 ```mysql
 # 分页显示
@@ -1055,6 +1058,7 @@ select * from employee limit 10,5;
 #### Note3(3)
 
 1. **关键字执行的优先级(8)**
+   - **join优先级要高于from**
    - **from**—> **where** —> **group by** —> **select** —> **distinct** —> **having** —> **order by** —>**limit**
 2. 用户认证—>解析、优化、执行sql、找到存储引擎
 3. select之前把行数限制在小的范围
@@ -1126,7 +1130,7 @@ select 字段 from t1 inner join t2 on t1(字段1) = t2(字段2);
       - **本质**就是：在内连接的基础上增加**右边有左边没有**的结果
    3. 全外连接**(左外连接 union 右外连接)**：mysql没有全外连接
       - **在内连接的基础上增加左边有右边没有的和右边有左边没有的结果**
-   4. **sqlserver**中有全外连接(**full join**)，没有右连接
+   4. **sqlserver**中有全外连接(**full join**)，没有右外连接
 
 ```mysql
 # t1连接t2，显示全量的左表，只显示匹配到的t2
@@ -1138,8 +1142,8 @@ select 字段 from t1 right join t2 on t1(字段1) = t2(字段2);
 ```
 
 ```mysql
-# 通过左外、和全外连接示例
-select * from staff left join department as dept on dep_id = dept.id union (select * from staff right join department as dept on dep_id = dept.id);
+# 通过左外、和右外连接实现全外连接示例
+select * from staff left join department as dept on dep_id = dept.id union select * from staff right join department as dept on dep_id = dept.id;
 ```
 
 - **注意 union与union all的区别：union会去掉相同的纪录**
@@ -1149,9 +1153,10 @@ select * from staff left join department as dept on dep_id = dept.id union (sele
 
 ```mysql
 # 以内连接的方式查询staff和department表，并且staff表中的age字段值必须大于25,即找出年龄大于25岁的员工以及员工所在的部门
-select staff.name, dept.name from (staff left join department as dept on dep_id = dept.id) where age > 25;
+# 此时括号可以省略
+select staff.name, dept.name from staff left join department as dept on dep_id = dept.id where age > 25;
 # 以内连接的方式查询staff和department表，并且以age字段的升序方式显示
-select * from (staff inner join department as dept on dep_id = dept.id) order by age;
+select * from staff inner join department as dept on dep_id = dept.id order by age;
 ```
 
 #### 4.2 子查询
@@ -1207,25 +1212,24 @@ select * from staff where exists (select id from department where id=200);
 # 输出为空
 ```
 
-5. **查询每个部门最新入职的那位员工**
+5. **示例**
+   - **查询每个部门最新入职的那位员工**
 
 ```mysql
 # 连表查询
-select t1.name, t1.hire_date, t1.post from employee as t1 inner join (select depart_id, max(hire_date) as max_date from employee group by depart_id) as t2 on t1.depart_id = t2.depart_id where t1.hire_date = t2.max_date;
+select t1.emp_name, t1.hire_date, t1.post from employee as t1 inner join (select depart_id, max(hire_date) as max_date from employee group by depart_id) as t2 on t1.depart_id = t2.depart_id where t1.hire_date = t2.max_date;
 ```
 
 ```mysql
 # 子查询
-select t3.name,t3.post,t3.hire_date from employee as t3 where id in (select (select id from employee as t2 where t2.depart_id=t1.depart_id order by hire_date desc limit 1) from employee as t1 group by depart_id);
+select t3.emp_name,t3.post,t3.hire_date from employee as t3 where id in (select (select id from employee as t2 where t2.depart_id=t1.depart_id order by hire_date desc limit 1) from employee as t1 group by depart_id);
 ```
-
-
 
 
 
 ## 10.5 pymysql模块
 
-- 第三方模块
+### 1. 第三方模块
 
 ```mysql
 mysql -uroot -p
@@ -1236,8 +1240,7 @@ mysql.exe              # mysql的一个客户端
 
 ```python
 import pymysql
-con = pymysql.connect(host='127.0.0.1', user=None, password='123',
-                     database='test')
+con = pymysql.connect(host='127.0.0.1', user='root', password='123', database='test')
 # 数据库操作符，游标
 # dict取值，默认元组
 cur = con.cursor(pymysql.cursors.DictCursor)
@@ -1251,7 +1254,35 @@ con.close()
 
 - localhost：不过网卡，127.0.0.1过网卡
 
+### 2. 事物和锁
 
+```mysql
+# 开启事务
+begin; 或者 start transction;
+# 查询id值，for update添加行锁；
+select * from emp where id = 1 for update;
+# 完成更新
+update emp set salary=10000 where id = 1;
+# 提交事务
+commit;
+```
+
+### 3. sql注入
+
+```mysql
+-- 表示注释掉之后的sql语句
+
+```
+
+- 怎么避免
+
+```python
+sql = 'select * from 表'
+# 参数为可迭代对象
+cur.execute(sql, (username, password))
+cur.close()
+con.close()
+```
 
 
 

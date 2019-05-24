@@ -25,6 +25,14 @@ kill -9 pid
   
 ```
 
+```mysql
+# for windows
+# 查看端口号占用情况
+netstat -ano | findstr '3306'
+```
+
+
+
 
 
 ##2. Homebrew 使用 
