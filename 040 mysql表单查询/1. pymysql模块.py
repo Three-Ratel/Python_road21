@@ -30,3 +30,22 @@ import pymysql
 # print(ret)
 # con.commit()
 # con.close()
+
+
+
+# import pymysql
+#
+# db = pymysql.connect(host='localhost', user='root', password='root', database='test')
+# cursor = db.cursor()
+# sql = """INSERT INTO lock_test(money)
+#          VALUES (300)"""
+# sql2 = """INSERT INTO lock_test(money)
+#          VALUES (200,300)"""
+#
+# try:
+#     cursor.execute(sql)
+#     # cursor.execute(sql2)
+#     db.commit()
+# except:
+#     db.rollback()  # 如果发生错误则回滚
+# db.close()
