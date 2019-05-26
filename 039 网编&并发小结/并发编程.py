@@ -1,6 +1,28 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 """
+9.3 面向对象开启进程
+"""
+# import os, time,random
+# from multiprocessing import Process, current_process
+#
+#
+# class MyProcess(Process):
+#
+#     def __init__(self, i):
+#         self.i = i
+#         super(MyProcess, self).__init__()
+#
+#     def run(self):
+#         time.sleep(random.random())
+#         print(current_process().name, os.getpid())
+#
+#
+#
+# for i in range(10):
+#     MyProcess(i).start()
+
+"""
 9.4 cp模型/线程
 """
 # import time,random
@@ -95,7 +117,7 @@ JoinableQueue
 """
 面向对象开启线程
 """
-# from threading import Thread,current_thread
+# from threading import Thread, current_thread
 #
 #
 # class MyThread(Thread):
@@ -105,17 +127,46 @@ JoinableQueue
 #         super().__init__()
 #
 #     def run(self):
-#         print(self.i, self.ident, current_thread().ident)
+#         print(self.i, self.name, self.ident, current_thread().ident, current_thread().is_alive(), current_thread().isDaemon())
 #
 #
 # t_l = []
 # for i in range(100):
-#     t = MyThread(i+1)
+#     t = MyThread(i + 1)
 #     t_l.append(t)
 #     t.start()
 #
 # for t in t_l: t.join()
 # print('主进程结束')
+
+
+"""
+线程的数据共享
+"""
+# from threading import Thread
+#
+# n = 1
+# num = 1000000
+#
+# def dec(num):
+#     global n
+#     for i in range(num):
+#         n -= 1
+#
+#
+# def add(num):
+#     global n
+#     for i in range(num):
+#         n += 1
+#
+#
+# t1 = Thread(target=dec, args=(num,))
+# t2 = Thread(target=add, args=(num,))
+# t1.start()
+# t2.start()
+# t1.join()
+# t2.join()
+# print(n)
 
 """
 9.5 锁&池
@@ -182,12 +233,12 @@ JoinableQueue
 # for i in ret:
 #     print(i.result())
 
+"""map提交任务"""
 # from concurrent.futures import ThreadPoolExecutor
 #
 #
 # def get_page(i):
 #     return i
-#
 #
 # pp = ThreadPoolExecutor(5)
 # t = map(get_page, range(1000))
@@ -205,8 +256,10 @@ JoinableQueue
 """
 gevent模块
 """
-# import gevent
-# from gevent import time
+# import gevent, time
+# # from gevent import time
+# from gevent import monkey
+# monkey.patch_all()
 #
 #
 # def func1():
@@ -291,7 +344,7 @@ asyncio模块
 # loop.run_until_complete(wait_obj)
 
 
-# 获取返回值
+# 同步获取返回值
 
 # import asyncio
 #
@@ -319,7 +372,7 @@ asyncio模块
 # print(t1.result(), t2.result())
 
 
-# 获取返回值
+# 异步获取返回值
 # import asyncio
 # from random import random
 #

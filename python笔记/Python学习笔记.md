@@ -5366,6 +5366,8 @@ print("Sent:     {}".format(data))
 print("Received: {}".format(received))
 ```
 
+
+
 # 第九章 并发编程
 
 ## 9.1 操作系统基础
@@ -5412,26 +5414,24 @@ print("Received: {}".format(received))
 
 ### 2. 进程
 
-####2.1 进程：运行中的程序
-   - 程序只是一个文件，进程是程序文件被cpu运行
-   - 进程是计算机中最小的**资源分配**单位
-   - 在OS中有唯一标示符**PID**
-####2.2 OS调度算法(4)
-   - 短作业优先
-   - 先来先服务
-   - 时间片轮转
-   - **多级反馈算法**：分时+先来先服务+短作业优先
-####2.3 并行与并发
-   - **并行**：程序分别独占cpu自由执行，看起来同时执行，实际每一个时间点都各自执行
+#### 2.1 进程：运行中的程序
 
-   - **并发**：多个程序共享同一cpu，每个程序交替使用cpu，看起来同时执行，实际上仍是串行
+- 程序只是一个文件，进程是程序文件被cpu运行
+- 进程是计算机中最小的**资源分配**单位
+- 在OS中有唯一标示符**PID**
 
-   - **并发的本质**：切换+保存状态
+#### 2.2 OS调度算法(4)
 
-     
+- 短作业优先
+- 先来先服务
+- 时间片轮转
+- **多级反馈算法**：分时+先来先服务+短作业优先
 
-   - **并发**（concurrency）：把任务在**不同的时间点**交给处理器进行处理。在同一时间点，任务并不会同时运行。
-- **并行**（parallelism）：把每一个任务分配给每一个处理器独立完成。在同一时间点，任务一定是同时运行。
+#### 2.3 并行与并发
+
+1. **并发**（concurrency）：把任务在**不同的时间点**交给处理器进行处理。看起来程序同时执行，实际在同一时间点，任务并不会同时运行。
+2. **并行**（parallelism）：把每一个任务分配给每一个处理器独立完成。在同一时间点，任务一定是同时运行。
+3. **并发的本质**：切换+保存状态
 
 ### 3. 同步异步阻塞非阻塞
 
@@ -5498,7 +5498,7 @@ print("Received: {}".format(received))
 
 1. **进程**（**Process**）是计算机中的程序关于**某数据集合上**的一次运行活动，是系统进行**资源分配和调度**的**基本单位**，是OS结构的基础。
 
-   
+     
 
 2. 在早期面向进程设计的计算机结构中，进程是程序的基本执行实体；在当代**面向线程设计**的计算机结构中，**进程是线程的容器**。程序是指令、数据及其组织形式的描述，**进程是程序的实体。**
 
@@ -5524,10 +5524,10 @@ print("Received: {}".format(received))
 
 1. 线程是进程中的一部分，不能脱离进程存在
 2. 任何进程中至少有一个线程，**只**负责执行代码，不负责存储共享的数据，也不负责资源分配
-4. 创建、销毁和切换的开销**远远小于**进程
-6. **线程**是计算机中能被**cpu调度的最小单位**
+3. 创建、销毁和切换的开销**远远小于**进程
+4. **线程**是计算机中能被**cpu调度的最小单位**
    - 爬虫使用需要配合前端
-7. 一个进程中的多个线程可以共享这个进程的数据——  **数据共享**
+5. 一个进程中的多个线程可以共享这个进程的数据——  **数据共享**
 
 #### 1.4 开销
 
@@ -5535,12 +5535,12 @@ print("Received: {}".format(received))
    - 需要一些开销(一个**存储局部变量**的数据结构，**记录状态**)
    - 创建、销毁、切换**开销**远**远小于**进程
 2. python中的线程比较特殊，所以进程也有可能被用到
-3. **进程**：数据隔离、开销大  同时执行几段代码
-4. **线程**：数据共享、开销小  同时执行几段代码
+3. **进程**：数据隔离、开销大、数据不安全、可以利用多核、os切换
+4. **线程**：数据共享、开销小 、数据不安全、不可以利用多核、os切换
 
 ### 2. 进程的创建
 
-- 仔细说来，multiprocess不是一个模块而是python中一个操作、管理进程的包。 之所以叫multi是取自multiple的多功能的意思,在这个包中几乎包含了和进程有关的所有子模块。由于提供的子模块非常多，为了方便大家归类记忆，我将这部分大致分为四个部分：**创建进程**部分，**进程同步**部分，**进程池**部分，进程之间**数据共享**。
+- 仔细说来，**multiprocess**不是一个模块而是python中一个操作、管理进程的包。 之所以叫multi是取自multiple的多功能的意思,在这个包中几乎包含了和进程有关的所有子模块。由于提供的子模块非常多，为了方便大家归类记忆，我将这部分大致分为四个部分：**创建进程**部分，**进程同步**部分，**进程池**部分，进程之间**数据共享**。
 
 #### 2.1 multiprocessing
 
@@ -5592,7 +5592,7 @@ ps：_\_name__ 只有两种情况，**文件名**或**双下划线**main字符�
 公司开发环境都是linux，无需考虑win中的缺陷
 # windows中相当于把主进程中的文件又从头执行了一遍
 
-# linux，macos不执行代码，直接执行调用的函数在Windows操作系统中由于没有fork(linux操作系统中创建进程的机制)，在创建子进程的时候会自动 import 启动它的这个文件，而在 import 的时候又执行了整个文件。因此如果将process()直接写在文件中就会无限递归创建子进程报错。所以必须把创建子进程的部分使用if __name__ ==‘__main__’ 判断保护起来，import 的时候  ，就不会递归运行了。
+# linux，macos不执行代码，直接执行调用的函数在Windows操作系统中由于没有fork(linux操作系统中创建进程的机制)，在创建子进程的时候会自动 import 启动它的这个文件，而在 import 的时候又执行了整个文件。因此如果将process() 直接写在文件中就会无限递归创建子进程报错。所以必须把创建子进程的部分使用if __name__ ==‘__main__’ 判断保护起来，import 的时候  ，就不会递归运行了。
 ```
 
 - 父进程(主进程)存活周期
@@ -5672,7 +5672,7 @@ if __name__ == '__main__':
 
 #### 1.2 Process的方法
 
-- p.**terminate**(), p.i**s_alive**()
+- p.**terminate**(), p.i**s_alive**()，current_process(current_process.ident/ **name**/ pid)
 - **异步非阻塞**
   - 使用terminate方法后，再查看进程是否还存活时，会发现进程还存活，并没有等待OS关闭进程，说明terminate方法请求后，程序会继续执行
 
@@ -5735,23 +5735,15 @@ if __name__ == '__main__':
 ### 2. 锁
 
 1. 在并发的场景下，设计某部分的内容
-
    - 需要修改一些所有进程共享数据资源
-
    - 需要加锁来维护数据的安全
-
 2. 在数据安全的基础上，才考虑效率问题
-
    - with lock：内部**有异常处理**
    - 在主进程中进行实例化
    - 把锁传递给子进程
-
 3. 在子进程中对需要加锁的代码进行with lock
-
    - with lock：相当于lock.acquire()和lock.release()
-
 4. 需要加锁的场景
-
    - 操作共享的数据资源
    - 对资源进行修改操作
    - 加锁之后能够保证数据的安全性，但会降低程序执行效率
@@ -5809,6 +5801,7 @@ for i in range(10):
   
  for p in li:p.join()
  print(n)
+
 ```
 
 #### 3.2 进程间通信
@@ -5837,6 +5830,7 @@ if __name__ == '__main__':
     p = Process(target=func, args=('1+2+3',q))
     p.start()
     print(q.get())
+
 ```
 
 ```python
@@ -5844,6 +5838,7 @@ from multiprocessing import Pipe
 pip = Pipe()
 pip.send()
 pip.recv()
+
 ```
 
 ```python
@@ -5866,12 +5861,14 @@ q.get()                                # 对列为空时，会发生阻塞
 try:
 	q.get_nowait()											 # 对列为空时，会报错，阻塞会取消
 except queue.Empty:pass
+
 ```
 
 ```python
 q.empty()                              # 有缺陷
 q.qsize()
 q.full()
+
 ```
 
 
@@ -5885,11 +5882,10 @@ q.full()
 - 把写在一起的功能分开成多个小的功能处理
   - 修改和复用，增加可读性
   - 计算速度有差异，执行效率最大化，节省进程
-
 - **生产者**：生产数据
 - **消费者**：处理数据
 
-![生产者消费者模型](/Users/henry/Documents/截图/Py截图/生产者消费者模型.jpg)
+![生产者消费者模型](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%9E%8B.jpg)
 
 #### 1.2 生产者和消费者
 
@@ -5934,6 +5930,7 @@ def cp(num1, num2):
 
 if __name__ == '__main__':
     cp(1, 4)
+
 ```
 
 ```python
@@ -5979,6 +5976,7 @@ if __name__ == '__main__':
     for i in p_l:
         i.join()
     q.put(None)
+
 ```
 
 #### 1.3 joinablequeue
@@ -5994,9 +5992,9 @@ if __name__ == '__main__':
 5. 队列阻塞结束代表消费者，把所有生产数据消费完（**jq.taks_done()操作**）
    - 使用者使用此方法发出信号，表示q.get()返回的项目已经被处理。如果调用此方法的次数大于从队列中删除的项目数量，将引发**ValueError**异常。
 
-![joinable_queue](/Users/henry/Documents/截图/Py截图/joinable_queue.png)
+![joinable_queue](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/joinable_queue.png)
 
-![joinable逻辑](/Users/henry/Documents/截图/Py截图/joinable逻辑.png)
+![joinable逻辑](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/joinable%E9%80%BB%E8%BE%91.png)
 
 ```python
 # joinable实现生产者、消费者模型
@@ -6025,13 +6023,14 @@ if __name__ = '__main__':
   jq = JoinableQueue()
   p = Processor(target=producer, args=(jq, 'henry', 'food'))
   p.start()
+
 ```
 
 ### 2. 进程间数据共享
 
 1. 与数据共享相关：**Manager模块**(Manager().list(), Manager().Queue)
 2. multiprocessing 中有一个manager类
-3. 封装了所有和进程相关的数据共享、数据传递
+3. 封装了所有和进程相关的**数据共享**、**数据传递**
 4. 但是对于dict、list这类进行数据操作时，会产生数据不安全
 5. m = Manager()也可以使用**with Manager() as m**:
 
@@ -6041,6 +6040,7 @@ if __name__ = '__main__':
 A manager object returned by Manager() controls a server process which holds Python objects and allows other processes to manipulate them using proxies.
 
 A manager returned by Manager() will support types list, dict, Namespace, Lock, RLock, Semaphore, BoundedSemaphore, Condition, Event, Barrier, Queue, Value and Array.
+
 ```
 
 ```python
@@ -6054,7 +6054,7 @@ if __name__ = '__main__':
   lock = Lock()
   with Manager() as m:
     l = Lock()
-    dic = m.dict({'count': 100})    							# 共享的dict
+    dic = m.dict({'count': 100})    							# 共享的dict,list li = m.list([1,2,3])
     p_l = []
     for i in range(100):
       p = Process(target=func, args=(dic,lock))
@@ -6062,32 +6062,35 @@ if __name__ = '__main__':
       p_l.append(p)
     for p in p_l:p.join()
     print(dic)
+
 ```
 
 ### 3. 线程
 
 1. **调度和切换**：线程**上下文切换**比进程上下文切换要快得多。
-2. cpython解释器当中的线程问题
-3. https：加证书，需要购买
-4. **四核八线程**
+2. **四核八线程**
    - 每个核心被虚拟成两个核心，可以同时执行8个线程。
    - 如果是计算复杂数据，会转换到四核
-5. 在多线程的操作系统中，通常是在一个进程中包括多个线程，每个线程都是作为利用CPU的基本单位，是花费最小开销的实体。
-6. **线程具有以下属性**
+   - https：加证书，需要购买
+3. 在多线程的操作系统中，通常是在一个进程中包括多个线程，**每个线程**都是作为**利用CPU的基本单位**，是花费最小开销的实体。
+4. **线程具有以下属性(4)**
    1. 线程中的实体基本上不拥有系统资源，只是**有一点必不可少的、能保证独立运行的资源**。
+      - 独立调度和分派的基本单位。
+      - 在多线程OS中，线程是能独立运行的基本单位，因而也是独立调度和分派的基本单位。由于线程很“轻”，故线程的切换非常迅速且开销小（在同一进程中的）。
    2. 线程的实体包括**程序**、**数据**和**TCB**。**线程是动态概念**，它的动态特性由线程控制块**TCB**（Thread Control Block）描述。
       - 线程状态。
       - 当线程不运行时，被保存的现场资源。
       - 一组执行堆栈。
-      - 存放每个线程的局部变量主存区。
+      - 存放每个线程的**局部变量主存区**。
       - 访问同一个进程中的主存和其它资源。
-      - 用于指示被执行指令序列的程序计数器、保留局部变量、少数状态参数和返回地址等的一组寄存器和堆栈。
-   3. 独立调度和分派的基本单位。
-      - 在多线程OS中，线程是能独立运行的基本单位，因而也是独立调度和分派的基本单位。由于线程很“轻”，故线程的切换非常迅速且开销小（在同一进程中的）。
-   4. 共享进程资源。
-      - 线程在同一进程中的各个线程，都可以共享该进程所拥有的资源，这首先表现在：所有线程都具有相同的进程id，这意味着，线程可以访问该进程的每一个内存资源；此外，还可以访问进程所拥有的已打开文件、定时器、信号量机构等。由于同一个进程内的线程共享内存和文件，所以线程之间互相通信不必调用内核
-   5. 可并发执行。
-      - 在一个进程中的多个线程之间，可以并发执行，甚至允许在一个进程中所有线程都能并发执行；同样，不同进程中的线程也能并发执行，充分利用和发挥了处理机与外围设备并行工作的能力。
+      - 用于指示被执行指令序列的**程序计数器**、**保留局部变量**、**少数状态参数**和**返回地址**等的一组寄存器和堆栈。
+   3. **共享进程资源**
+      - 线程在同一进程中的各个线程，都可以共享该进程所拥有的资源，
+      - 这首先表现在：**所有线程**都具有**相同的进程id**，这意味着，线程可以访问该进程的每一个内存资源；
+      - 此外，还可以访问进程所拥有的**已打开文件**、**定时器**、**信号量机构**等。由于同一个进程内的线程共享内存和文件，所以线程之间互相通信不必调用内核。
+   4. **可并发执行**
+      - 在一个进程中的多个线程之间，可以并发执行，甚至允许在一个进程中所有线程都能并发执行；
+      - 同样，不同进程中的线程也能并发执行，充分利用和发挥了处理机与外围设备并行工作的能力。
 
 #### 3.1垃圾回收机制
 
@@ -6136,6 +6139,7 @@ Thread(target=func).start()                 # 开启一个线程的速度非常�
 print('start')
 time.sleep(0.5)
 print('end', os.getpid())
+
 ```
 
 ```python
@@ -6151,6 +6155,7 @@ def func():
 for i in range(10):
   Thread(target=func).start()                 # 开启一个线程的速度非常快
   																					  # 线程的调度由OS决定
+
 ```
 
 #### 4.2 join方法
@@ -6176,6 +6181,7 @@ for i in range(10):
     t_l.append(t)
 for i in t_l:i.join()
 print('子线程执行结束')
+
 ```
 
 #### 4.3 面向对象启动线程
@@ -6202,9 +6208,10 @@ for i in range(100):
 
 for t in t_l: t.join()
 print('主进程结束')       
+
 ```
 
-#### 4.4 线程中的其他方法
+#### 4.4 线程中的其他方法(3大类)
 
 ```python
 from threading import current_thread, enumerate, active_count
@@ -6221,6 +6228,13 @@ print(current_thread().ident)                 # current_ident()在哪个线程�
 print(enumerate())					                  # 统计当前进程中多少线程活着，包含主线程
 print(active_count())				                  # 统计当前进程中多少线程活着，个数，包含主线程
                                               # 线程中不能从主线程结束一个子线程
+  
+  
+current_thread().name     									  # 当前线程名称
+current_thread().ident												# 当前线程id
+current_thread().isalive()										# 当前线程是否存活
+current_thread().isdaemon()										# 当前线程是否是守护线程
+
 ```
 
 #### 4.5 效率差
@@ -6250,6 +6264,7 @@ if __name__ == '__main__':
          t_l.append(t)
      for i in t_l:i.join()
      print(time.time() - start)
+
 ```
 
 #### 4.6 数据共享
@@ -6270,6 +6285,7 @@ for i in range(100):
     
 for t in t_l:t.join()
 print(n)
+
 ```
 
 #### 4.7 守护线程
@@ -6292,16 +6308,15 @@ t = Thread(target=son)
 t.daemon = True
 t.start()
 time.sleep(3)
+
 ```
 
-#### Note(4)
+#### Note3(2)
 
 1. 对**主进程**来说，运行完毕指的是主进程**代码运行完毕**
+   - 主进程在其代码结束后就已经运行完毕了（守护进程在此时就被回收），然后主进程会一直等非守护进程都运行完毕后回收子进程资源（否则会产生僵尸进程），才会结束。
 2. 对**主线程**来说，运行完毕指的是主线程所在的进程内所有**非守护线程执行完毕**
-3. 主进程在其代码结束后就已经运行完毕了（守护进程在此时就被回收），然后主进程会一直等非守护进程都运行完毕后回收子进程资源（否则会产生僵尸进程），才会结束
-4. 主线程在其他非守护线程运行完毕后才算运行完毕（守护线程在此时就被回收），因为主线程的结束意味着进程的结束，进程整体的资源都将被回收，而进程必须保证非守护线程都运行完毕后才能结束。
-
-
+   - 主线程在其他非守护线程运行完毕后才算运行完毕（守护线程在此时就被回收），因为主线程的结束意味着进程的结束，进程整体的资源都将被回收，而进程必须保证非守护线程都运行完毕后才能结束。
 
 ## 9.5 锁&池
 
@@ -6317,6 +6332,7 @@ def func():
   	global a
   	a += 1
 dis.dis(func)                                   # 返回cpu指令
+
 ```
 
 - 即便是线程，有GIL锁， 也会出现**数据不安全**的问题
@@ -6349,9 +6365,10 @@ t2.start()
 t1.join()
 t2.join()
 print(a)
+
 ```
 
-**互斥锁**：是锁中的一种：在同一线程中，不能连续lock.acquire()多次
+**互斥锁**：是锁中的一种，在同一线程中，不能连续lock.acquire()多次
 
 ```python
 from threading import Lock
@@ -6360,6 +6377,7 @@ lock.acquire()
 print('-------------')
 lock.acquite()
 print('-------------')
+
 ```
 
 #### 1.2 单例模式
@@ -6390,6 +6408,7 @@ for i in range(10):
     li.append(t)
     t.start()
 for t in li: t.join()
+
 ```
 
 ### 2. 死锁
@@ -6424,6 +6443,7 @@ def eat2(name,noddle_lock, fork_lock):
     print('%s放下面了'%name)
     fork_lock.release()
     print('%s放下叉子了'%name)
+
 ```
 
 #### 2.2 解决方案
@@ -6472,6 +6492,7 @@ Thread(target=eat1, args=(lst[0], noodle_lock, fork_lock)).start()
 Thread(target=eat2, args=(lst[1], noodle_lock, fork_lock)).start()
 Thread(target=eat1, args=(lst[2], noodle_lock, fork_lock)).start()
 Thread(target=eat2, args=(lst[3], noodle_lock, fork_lock)).start()
+
 ```
 
 3. **代码优化**
@@ -6507,6 +6528,7 @@ Thread(target=eat1, args=(lst[0], lock)).start()
 Thread(target=eat2, args=(lst[1], lock)).start()
 Thread(target=eat1, args=(lst[2], lock)).start()
 Thread(target=eat2, args=(lst[3], lock)).start()
+
 ```
 
 ### 3. 队列
@@ -6536,6 +6558,7 @@ pq.put((10, 'dean'))
 pq.get()
 pq.get()
 pq.get()
+
 ```
 
 - FIFO：所有的请求放在对列里，先来先服务思想
@@ -6579,6 +6602,7 @@ if __name__ == '__main__':
     for ret in ret_l:                             # 会阻塞，相当于q.get()
       	print('------>',ret.result())             # result，同步阻塞
     print('main', os.getpid())
+
 ```
 
 - 一个进程池中的任务个数，限制了我们程序的并发个数
@@ -6603,9 +6627,10 @@ for ret in ret_l:
   	print('------->', ret.result())
 p.shutdown()
 print('main')
+
 ```
 
-- tp.map(func, 可迭代对象)：参数只能传输一个
+- tp.map(func, **可迭代对象**)：参数只能传输一个
 
 ```python
 # 线程池。p.submit(), p.shutdown(), ret.result()
@@ -6620,6 +6645,7 @@ def func(i):
 tp = ThreadPoolExecutor(20)                     # 线程个数一般为cpu核心数4-5倍
 ret = tp.map(func, range(20))				          	# tp.map()方法
 for i in ret:print(i)														# ret 为生成器对象
+
 ```
 
 #### 4.3 回调函数
@@ -6640,13 +6666,43 @@ for url in url_l:
   	ret = get_page(url)
     ret.add_done_callback(parserpage)          # 先执行完，先调用parserpage函数
     																	       	 # ret=add_done_callback(函数名)
+
 ```
+
+```python
+from concurrent.futures import ProcessPoolExecutor
+import requests
+import os
+
+def get_page(url):
+    print('<进程%s> get %s' % (os.getpid(), url))
+    respone = requests.get(url)
+    if respone.status_code == 200:
+        return {'url': url, 'text': respone.text}
+
+def parse_page(res):
+    res = res.result()
+    print('<进程%s> parse %s' % (os.getpid(), res['url']))
+    parse_res = 'url:<%s> size:[%s]\n' % (res['url'], len(res['text']))
+    with open('db.txt', 'a') as f:
+        f.write(parse_res)
+
+if __name__ == '__main__':
+    urls = ['https://www.baidu.com', 'https://www.openstack.org', 'http://www.sina.com.cn/', 'https://www.tencent.com']
+    p = ProcessPoolExecutor(3)
+    for url in urls:
+        p.submit(get_page, url).add_done_callback(parse_page)  # parse_page拿到的是一个future对象obj，需要用obj.result()拿到结果
+
+
+```
+
+
 
 ## 9.6 协程
 
- ### 1. 协程概念
+### 1. 协程概念
 
-1. **协程**：是单线程下的并发，又称**微线程**，**纤程**。英文名**Coroutine**。一句话说明什么是协程：**协程是一种用户态的轻量级线程，即协程是由用户程序自己控制调度的**
+1. **协程**：是单线程下的并发，又称**微线程**，**纤程**。英文名**Coroutine**。一句话说明什么是协程：**协程是一种用户态的轻量级线程，即协程是由用户程序自己控制调度的**，多个任务在一条线程上来回切换。
 
 2. **协程**：用户级别，自己写的py代码；控制切换是OS不可见的
 
@@ -6657,23 +6713,22 @@ for url in url_l:
    4. 规避了每个任务的io操作，减少了线程的个数，减轻了OS负担
 
 3. 在**Cpython**解释器：**协程和线程**都不能利用**多核**
+
    1. 由于多线程本身不能利用多核
    2. 即便开启了多线程也只能**轮流在一个cpu上执行**
    3. 协程如果把所有**io操作都规避掉**，只剩下需要使用cpu的操作
 
 4. 线程和协程**对比**
+
    1. **线程**
-     - 切换需要OS，开销大，os不可控，给os的压力大
-     
+      - 切换需要OS，开销大，os不可控，给os的压力大
       - os对io操作的感知更加敏感
-     
    2. **协程**
-   
+
    - 切换需要py代码，开销小，用户操作可控，完全不会增加os压力
-   
-   - 用户级别对io操作感知较低
-      - 协程切换开销几乎和函数调用一致
-   
+     - 用户级别对io操作感知较低
+       - 协程切换开销几乎和函数调用一致
+
 5. **协程特点**
 
    1. 必须在只有一个单线程里实现并发
@@ -6691,7 +6746,7 @@ for url in url_l:
    **缺点如下**：
 
    1. 协程的**本质**是单线程下，无法利用多核，可以是一个程序开启多个进程，每个进程内开启多个线程，每个线程内开启协程
-   2. 协程指的是单个线程，因而一旦协程出现阻塞，将会阻塞整个线程
+   2. **协程指的是单个线程**，因而一旦协程出现阻塞，将会**阻塞整个线程**
 
 ### 2. greenlet&gevent
 
@@ -6711,6 +6766,7 @@ def func2():
   	g = func1()
     next(g)
     next(g)
+
 ```
 
 #### 2.2 C语言完成的py模块
@@ -6740,9 +6796,11 @@ def func2():
 g1 = greenlet(func1)
 g2 = greenlet(func2)
 g1.switch()
+
 ```
 
 2. **协程切换原理**
+   - **事件循环**：第三者一直在循环所有任务调度所有任务
 
 ```python
 def sleep(num):
@@ -6762,9 +6820,8 @@ g1.next()
 min_t = min(lst)
 time.sleep(min_t - time.time())
 g2.next()
-```
 
-- **事件循环**：第三者一直在循环所有任务调度所有任务
+```
 
 3. gevent模块
    - 基于greenlet
@@ -6799,6 +6856,7 @@ for i in range(10):
   	g = gevent.spawn(func1)
     g_l.append(g)
 gevent.joinall(g_l)
+
 ```
 
 ```python
@@ -6821,12 +6879,14 @@ g1 = gevent.spawn(func1)
 g2 = gevent.spawn(func2)
 gevent.joinall([g1, g2])									  # 阻塞列表中的所有协程
 print('main')
+
 ```
 
 - 获取返回值
 
 ```python
 print(g1.value )                            # value是属性，如果没有执行则为None
+
 ```
 
 - 协程实现socket
@@ -6849,6 +6909,7 @@ def chat(con):
 while True:
     con, _ = sk.accept()
     gevent.spawn(chat, con)
+
 ```
 
 ### 3. asynico
@@ -6871,6 +6932,7 @@ async def demo():                       # 必须要async修饰，协程方法
 loop = asyncio.get_event_loop()         # 创建一个事件循环
 loop.run_until_complete(demo())         # 阻塞，直到协程执行完毕
 																				# 把demo任务丢到事件循环中执行
+
 ```
 
 #### 3.2 启动多个任务
@@ -6891,6 +6953,7 @@ async def demo():                       # 必须要async修饰，协程方法
 loop = asyncio.get_event_loop()         # 创建一个事件循环
 wait_obj = asyncio.wait([demo(), demo(), demo()])
 loop.run_until_complete(wait_obj)       # 没有返回值
+
 ```
 
 2. **有返回值**
@@ -6917,6 +6980,7 @@ wait_obj = asyncio.wait([t1, t2])
 loop.run_until_complete(wait_obj)
 for task in tasks:
  	 	print(t.result())                   # 获取返回值
+
 ```
 
 3. **异步取返回值**
@@ -6943,6 +7007,7 @@ async def main():
         
 loop = asyncio.get_event_loop() 
 loop.run_until_compeleted(main())
+
 ```
 
 #### Note3(2)
@@ -6954,16 +7019,16 @@ loop.run_until_compeleted(main())
 ### 4. 协程的上下文切换
 
 1. 在一个基于协程的应用程序中，可能会产生数以千计的协程，所有这些协程，会有一个的**调度器来统一调度**。
-2. 另外我们知道，高性能的程序首要注意的就是避免程序阻塞。
+2. 另外我们知道，高性能的程序首要注意的就是**避免程序阻塞**。
 3. 那么，在以**协程为最小运行单位**的程序中，同样也需要确保这一点，即每一个协程都不能发生阻塞。
 4. 因为**只要某一个协程发生了阻塞**，那么整个调度器就阻塞住了，后续等待的协程得不到运行，整个程序此时也将死翘翘了。
-5. CPU**只认识线程**，不会像线程一样把上下文保存在CPU寄存器，协程是用户控制的。
+5. CPU**只认识线程**，不会像线程一样把**上下文保存在CPU寄存器**，协程是用户控制的。
 6. 协程的**优缺点**
-   1. 协程的好处
+   1. **优点**
       - 无需线程上下文切换的开销，用yield的时候，只是在函数之间来回切换
-      - 无需原子操作锁定及同步的开销，没有异步锁之类的东西，因为协程就是单线程
+      - 无需原子操作锁定及同步的开销，**没有异步锁**之类的东西，因为协程就是单线程
       - 方便切换控制流，简化编程模型
-      - 高并发-高扩展-低成本，一个CPU支持上万个协程都不成问题
+      - 高并发-高扩展-低成本，一个CPU支持**上万个协程**都不成问题
    2. **缺点**
       - 由于是单线程的无法利用多核资源，协程本质上是单线程
       - 协程需要和进程配合才能运行在多CPU上
@@ -6971,169 +7036,55 @@ loop.run_until_compeleted(main())
 
 ## 小结
 
-1. 协程
-   1. 概念：多个任务在一条线程上来回切换
-   2. 目的：
-      - 在一条线程上最大限度提高CPU的使用率
-      - 在一个任务中遇到IO的时候就切换到其他任务
-   3. 特点：开销很小，是用户级别(从用户级别能够感知的IO操作)，不能利用多核，数据共享，**协程之间数据安全**
-   4. 模块
-      1. gevent：基于greenlet切换
-         - 导入模块
-         - 导入monkey，执行pathc_all
-         - 写一个函数但做协程要执行的任务
-         - 协程对象 = gevent.spawn(函数名, 参数，)
-         - 协程对象.join(), gevent.joinall([g1, g2…])
-      2. 分辨gevent是否识别了我们写的代码中的io操作
-         - patch_all：queue.get()
-         - print()：在patch_all前后打印io操作的函数地址
-      3. asyncio：基于yield切换
-         - async：标识一个协程函数
-         - await：后面跟着一个asyncio模块提供的io操作的函数
-         - loop：事件循环，负责在多个任务之间进行切换
-2. 什么是GIL
+### 1. 协程
+
+1. **概念**：多个任务在一条线程上来回切换
+2. **目的**：
+   - 在一条线程上最大限度提高CPU的使用率
+   - 在一个任务中遇到IO的时候就切换到其他任务
+3. **特点**：开销很小，是用户级别(从用户级别能够感知的IO操作)，不能利用多核，数据共享，**协程之间数据安全**
+4. **模块**
+   1. gevent：基于greenlet切换
+      - 导入模块
+      - 导入monkey，执行patch_all
+      - 写一个函数但做协程要执行的任务
+      - 协程对象 = gevent.spawn(函数名, 参数，)
+      - 协程对象.join(), gevent.joinall([g1, g2…])
+   2. 分辨gevent是否识别了我们写的代码中的io操作
+      - patch_all：queue.get()
+      - print()：在**patch_all前后打印**io操作的函数地址
+   3. asyncio：**基于yield切换**
+      - **async**：标识一个协程函数
+      - **await**：后面跟着一个asyncio模块提供的io操作的函数
+      - **loop**：事件循环，负责在多个任务之间进行切换
+
+### 2. 进程和线程
+
+1. 什么是GIL
    1. 全局解释器锁
    2. 由Cpython解释器提供的
    3. 导致了一个进程中的多个线程同一时刻只能有一个线程访问CPU
-3. 进程、线程中都需要用到锁
-   1. 互斥锁：在一个线程中不能连续acquire多次，效率高，产生死锁的几率大
-   2. 递归锁：在一个线程中能连续acquire多次，效率低，一把锁永远不死锁
-4. 进程、线程、协程特点（开销，数据隔离/共享，能不能利用多核，数据安全，用户还是os）
+2. 进程、线程中都需要用到锁
+   1. **互斥锁**：在一个线程中不能连续acquire多次，效率高，产生死锁的几率大
+   2. **递归锁**：在一个线程中能连续acquire多次，效率低，一把锁永远不死锁
+3. 进程、线程、协程特点（**开销**，**数据隔离/共享**，**能不能利用多核**，**数据安全**，**用户还是os**）
    1. 进程：开销大，数据隔离，可以利用多核，数据不安全，os控制
    2. 线程：开销中，数据共享，cpython解释器中不能利用多核，数据不安全，os控制
    3. 协程：开销小，数据共享，不能利用多核，数据安全，用户控制
-5. 在哪些地方用到了线程和协程
+4. 在哪些地方用到了线程和协程
    1. 自己用线程、协程完成爬虫任务
    2. 但是，后来有了比较丰富的爬虫框架
-      - 了解到爬虫scrapy、beautyful soup、aiohttp爬虫框架，哪些用到了线程、哪些用到了协程
+      - 了解到爬虫**scrapy**、**beautyful soup**、**aiohttp**爬虫框架，哪些用到了线程、哪些用到了协程
    3. web框架中，并发是如何实现的
-      - 传统框架：django线程实现，flask(优先选择协程、其次使用线程)
+      - 传统框架：**django**线程实现，flask(优先选择协程、其次使用线程)
       - socket server：多线程实现
-      - 异步框架：tornado，sanic都是协程实现
-6. IPC
-   - 进程间通信机制
-   - 内置模块(基于文件)：queue，pipe
-   - 第三方工具(基于网络)：redis，kafka，memcache，rabbitmq
-   - 第三方：发挥的都是消息中间件的功能
-7. 线程相关：
+      - 异步框架：**tornado**，**sanic**都是协程实现
+5. IPC
+   1. 进程间通信机制
+   2. 内置模块(基于文件)：queue，pipe
+   3. 第三方工具(基于网络)：redis，kafka，memcache，rabbitmq
+   4. 第三方：发挥的都是消息中间件的功能
+6. 线程相关：
    1. 开启线程时间很短，satrt是一个异步非阻塞方法
    2. 同步数据安全
    3. 列表的操作，无论是同步还是异步都是数据安全的
-
-# 第十章 数据库
-
-# 第十一章 前端开发
-
-# 第十二章 Django框架
-
-
-
-
-
-
-
-
-
-___
-
-___
-
-# 附录1:  常见报错
-
-1. SyntaxError: invalid syntax；语法错误：无效语法（变量定义不规范）
-
-2. SyntaxError: invalid character in identifier 语法错误；无效字符（中英文字符混乱）
-
-3. ValueError: invalid literal for int() with base 10: 'henry'；(非法类型转换)
-
-4. NameError: name 'D' is not defined ;（一般发生是变量不合法）
-
-5. ValueError: invalid literal for int() with base 10: '3  2'
-  
-   - 字符串没有，强制转换为int
-   
-6. TypeError: sequence item 0: expected str instance, int found
-  
-   - join 只能是str
-   
-7. ValueError: too many values to unpack (expected 2)
-  
-   - 赋值号两边参数不一致
-   
-   
-   
-8. [][Errno 9]OSError: [Errno 9] Bad file descriptor
-
-   - 因为关闭了套接字对象后，又再次去调用了套接字对象。
-
-9. BrokenPipeError:[Errno 32] Broken pipe
-
-  - 由于客户端请求的链接，在一次循环之后，产生的套接字关闭，没有新的客户端套接字进行请求连接，所以产生broken pipe错误
-
-10. BlockingIOError: [Errno 35] Resource temporarily unavailable
-
-  - 非阻塞模型中，接收不到client端发来的数据，此时会报错
-  - client端会出现 ConnectionResetError: [Errno 54] Connection reset by peer的报错
-
-11. [Errno 41] Protocol wrong type for socket
-
-12. ConnectionResetError: [Errno 54] Connection reset by peer
-
-   - tcp连接一旦断开，发送数据会报错
-   - 发送空字符不会报错
-
-# 附录2:  错误记录
-
-1. input() 的数据类型永远是 str
-2. 当 break在循环里时，有些时候可以省略 else
-3. while True的效率会更高
-4. 计数可以倒序(用于while循环)
-5. 一直要求用户输入，或者死循环需要使用 while True
-6. exit() 终止程序
-7. range(0, 100) # 此时可以省略0 ,tpye(range(100)).     <class 'range'>
-8. message = '登陆失败'。变量标记
-9. li.extend(s1) # 遍历 s1 中的每个元素，追加到list中
-10. li.pop(index) # 可以获取删除值
-11. li.remove('a') # list 删除指定元素，li中没有会报错
-12. ','.join(li) # 只要支持循环就支持 join，操作对象必须是 str 否则报错
-13. 当使用s.isdigit()时要注意，s 的数据类型,有空格和其他字符都会返回  False
-14. list(dic.keys()) # 可以强转为list，如果是items则list元素为tuple
-15. 集合之间操作时，如果元素为空，则输出set()
-16. 在循环里操作时，注意代码的有效范围
-17. info.get('key', '不存在'）  # 可以返回两种不同的结果
-18. 判断key是否在dict中只需：if key in info：
-19. type(i) is int   # 这里的 int 是类
-20. tyep(i) == int  # 可以判断数据类型, 地址和内容都是一样
-21. 集合之间操作时，如果元素为空，则输出set()
-22. 在循环里操作时，注意代码的有效范围
-23. info.get('key', '不存在'）  # 可以返回两种不同的结果
-24. 判断key是否在dict中只需：if key in info：
-25. type(i) is int   # 这里的 int 是类
-26. tyep(i) == int  # 可以判断数据类型, 地址和内容都是一样
-27. 集合之间操作时，如果元素为空，则输出set()
-28. 在循环里操作时，注意代码的有效范围
-29. info.get('key', '不存在'）  # 可以返回两种不同的结果
-30. 判断key是否在dict中只需：if key in info：
-31. type(i) is int   # 这里的 int 是类
-32. tyep(i) == int  # 可以判断数据类型, 地址和内容都是一样
-33. 只要是'_'.join 处理过的，都是srt
-34. s.split(',') :
-    - 默认是空白，实际应用中可以是字符或字符串；
-    - 循环去除；
-    - 但变量有且仅能是一个。
-35. 只要是'_'.join 处理过的，都是srt
-36. s.split(',') :
-    - 默认是空白，实际应用中可以是字符或字符串；
-    - 循环去除；
-    - 但变量有且仅能是一个。
-37. 程序一行太长显示不全，可以使用 \ 进行换行
-38. 函数传输文件名时，需要传输 str 类型
-39. line = line.strip('\n').split('|'),从左到右操作
-40. 如果需要双重甚至多重循环时， 可以考虑先构造一个子元素利用函数返回值默认时 None 可以实现 flag 标志功能
-41. range()是range类
-42. return 1， 2， 3 返回的是元组
-43. 注意：函数类似于变量，func 代指一块代码的内存地址。
-44. a = ('b', 3, 4)*2 ，tuple里面的数据重复2次，list 和 tuple都可以
-45. for循环是根据索引进行循环，删除元素后，后面要进行补位
-46. socket收发内容必须是**bytes**类型
-47. 
