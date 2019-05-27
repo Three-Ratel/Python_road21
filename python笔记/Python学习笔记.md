@@ -1823,17 +1823,14 @@ print(code)
 	print(result)		# py2直接返回
   print(list(resutl)) # py3会返回一个object，可用list()查看
   ```
-```
   
   - **filter**
   
   ```python
-  # 结果为True的时候，才返回数据
-v = [1, 2, 3, 'welcome', 4, 'hello']
+  v = [1, 2, 3, 'welcome', 4, 'hello']
   result = filter(lambda x: type(x) == int, v) # 生成新list
-print(list(result))
-```
-
+  print(list(result)
+  ```
   - **reduce**
 
   ```python
@@ -1846,17 +1843,23 @@ print(result)
   - **zip**
 
   ```python
-  a = [1,2,3]
-  b = [4,5,6]
-  c = [4,5,6,7,8]
-  zipped = zip(a,b)     # 打包为元组的列表
-  [(1, 4), (2, 5), (3, 6)]
-  zip(a,c)             
-  # 元素个数与最短的列表一致
-  [(1, 4), (2, 5), (3, 6)]
-  zip(*zipped)          
-  # 与 zip 相反，*zipped 可理解为解压，返回二维矩阵式
-  [(1, 2, 3), (4, 5, 6)]
+a = [1,2,3]
+b = [4,5,6]
+c = [4,5,6,7,8]
+zipped = zip(a,b)     # 打包为元组的列表
+[(1, 4), (2, 5), (3, 6)]
+zip(a,c)             
+# 元素个数与最短的列表一致
+[(1, 4), (2, 5), (3, 6)]
+zip(*zipped)          
+# 与 zip 相反，*zipped 可理解为解压，返回二维矩阵式
+[(1, 2, 3), (4, 5, 6)]
+  
+# 两组序列，转字典
+list1 = ['key1','key2','key3']
+list2 = ['1','2','3']
+info = dict(zip(list1,list2))
+print(info)
   ```
 
   
@@ -5439,9 +5442,9 @@ print("Received: {}".format(received))
    - **一个功能调用时，没有得到结果之前，就不会返回，可以说是一种操作方式。**
 2. **异步**：程序同时运行，没有**依赖**和**等待**关系，调用一个方法，**不等待**这个方法**结束**，不关心这个方法做了什么
 3. **阻塞**：cpu不工作
-   - **阻塞调用**是指调用结果返回之前，**当前线程**会被挂起。函数只有在得到结果之后才会返回
+   - **阻塞调用**是指调用结果返回之前，**当前线程**会被挂起。函数只有在得到结果之后才会返回。
 4. **非阻塞**：cpu工作
-   - 调用指在不能立刻得到结果之前，该**调用不会阻塞当前线程**。
+   - 指调用在不能立刻得到结果之前，该**调用不会阻塞当前线程**。
 5. **同步阻塞**
    - con.recv()，socket阻塞的tcp协议
 6. **同步非阻塞**
@@ -6820,7 +6823,6 @@ g1.next()
 min_t = min(lst)
 time.sleep(min_t - time.time())
 g2.next()
-
 ```
 
 3. gevent模块
@@ -6886,7 +6888,6 @@ print('main')
 
 ```python
 print(g1.value )                            # value是属性，如果没有执行则为None
-
 ```
 
 - 协程实现socket

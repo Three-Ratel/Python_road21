@@ -11,7 +11,7 @@ while True:
     count += 1
     sk.send('hello'.encode('utf-8'))
     msg = sk.recv(1024).decode('utf-8')
-    print(msg,count)
+    print(msg, count)
     time.sleep(0.1)
 
 # import time
