@@ -65,10 +65,10 @@ cur = con.cursor(pymysql.cursors.DictCursor)
 
 """6. 求出本⽉月各商品的销售总⾦金金额和个数，按照个数排序"""
 
-sql = "select buy_num,price*buy_num total_money from (select * from (select * from orders inner join goods_orders on order_id=o_id) og1 inner join goods on og1.g_id=goods_id) t group by t.g_id order by buy_num"
-cur.execute(sql)
-ret = cur.fetchall()
-print(ret)
+# sql = "select buy_num,price*buy_num total_money from (select * from (select * from orders inner join goods_orders on order_id=o_id) og1 inner join goods on og1.g_id=goods_id) t group by t.g_id order by buy_num"
+# cur.execute(sql)
+# ret = cur.fetchall()
+# print(ret)
 
 cur.close()
 con.close()
