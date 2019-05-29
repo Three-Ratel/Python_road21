@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文本样式</title>
+    <style>
+        *{
+            margin: 0;
+        }
+        html{
+            font-size: 10px;
+        }
+        #box{
+            font-family: "Apple Braille";
+            font-size:20px;
+
+        }
+
+        #box .unit{
+            font-size: 5rem;
+            /*font-style: italic;*/
+            /*font-weight: bolder;*/
+            /*font-weight: bold;*/
+            font-weight: lighter;
+            background-color:yellowgreen;
+            letter-spacing: 10px;
+            word-spacing: 100px;
+            text-indent: 2rem;
+        }
+
+
+    </style>
+</head>
+
+<body id="box">
+<p>hello python</p>
+<p class="unit">hello python</p>
+<p class="unit" style="letter-spacing: 0; word-spacing: 0;text-indent:0;">hello python</p>
+
+
+
+</body>
+</html>
