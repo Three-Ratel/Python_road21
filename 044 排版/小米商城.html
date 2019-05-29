@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>小米商城</title>
+    <style>
+        *{
+            margin: 0;
+            font-size: 12px;
+            line-height: 40px;
+        }
+        /*导航栏信息*/
+        .topbar{
+            height:40px;
+            background-color: #333333;
+        }
+        .topbar .active{
+            height: 40px;
+            width: 1226px;
+            margin: 0 auto;
+        }
+
+        .topbar .active .navbar{
+            width: 667px;
+            float:left;
+        }
+
+        .topbar .active .userbar{
+            float:right;
+            margin-right: 3rem;
+        }
+
+        .topbar .active .shopcar{
+            width: 120px;
+            float: right;
+            background-color: #424242;
+            text-align:center;
+        }
+
+
+        a{
+            text-decoration: none;
+            color: #919191;
+        }
+
+        .topbar a:hover{
+            color: #ffffff;
+        }
+
+        #shopcar:hover{
+            background-color:white;
+        }
+
+        .shopcar:hover{
+            color:#ff6700;
+            font-weight: bold;
+        }
+
+        .active span{
+            color: #424242;
+        }
+
+
+        /*头部栏配置信息*/
+        .headbar{
+            height: 100px;
+            /*background-color:greenyellow;*/
+        }
+        .headli{
+            width: 1226px;
+            background-color:white;
+            height: 100px;
+            margin: 0 auto;
+        }
+
+        .headicon{
+            margin-top:22px;
+            float: left;
+            margin-right: 127px;
+        }
+
+        .headnav{
+            float: left;
+        }
+        .li{
+            float: left;
+            font-size: 16px;
+            color:#333;
+            line-height: 100px;
+        }
+        .li:hover{
+            color: #ee702e;
+        }
+
+        .tblank{
+            margin-top:22px;
+            width:20px;
+            background-color:transparent;
+            float: left;
+        }
+        .li a{
+            text-decoration: none;
+            color: #333333;
+            font-size: 16px;
+        }
+        .li a:hover{
+            color: #ee702e;
+        }
+
+        form{
+            height: 60px;
+            margin-top: 20px;
+            display: inline-block;
+            float: right;
+            border-color: red;
+        }
+        input[type="search"]{
+            height:100px;
+
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="topbar">
+    <div class="active">
+        <div class="navbar">
+            <a href="https://www.mi.com/index.html">小米商城</a>
+            <span>|</span>
+            <a href="https://www.miui.com/">MIUI</a>
+            <span>|</span>
+            <a href="https://iot.mi.com/index.html">LoT</a>
+            <span>|</span>
+            <a href="https://i.mi.com/">云服务</a>
+            <span>|</span>
+            <a href="https://jr.mi.com/?from=micom">金融</a>
+            <span>|</span>
+            <a href="https://youpin.mi.com/">有品</a>
+            <span>|</span>
+            <a href="https://xiaoai.mi.com/">小爱开放平台</a>
+            <span>|</span>
+            <a href="https://qiye.mi.com/">企业团购</a>
+            <span>|</span>
+            <a href="https://www.mi.com/aptitude/list/?id=41">资质证照</a>
+            <span>|</span>
+            <a href="https://www.mi.com/aptitude/list/">协议规则</a>
+            <span>|</span>
+            <a href="https://www.mi.com/appdownload/">下载app</a>
+            <span>|</span>
+            <a href="https://www.mi.com/index.html#J_modal-globalSites">Select Region</a>
+        </div>
+
+        <a href="https://static.mi.com/cart/" class="shopcar">
+            <div id="shopcar" class="shopcar"><img src="./icon_cart.png" alt="" height="20">购物车(0) </div>
+        </a>
+
+
+        <div class="userbar">
+            <a href="https://account.xiaomi.com/pass/serviceLogin?callback=https%3A%2F%2Forder.mi.com%2Flogin%2Fcallback%3Ffollowup%3Dhttps%253A%252F%252Fwww.mi.com%252Findex.html%26sign%3DMjM0MWU0NjBlOTU1YzY4NGQzOTc3MDk4N2M2MjQ5Y2ZiZTMxNTFlZQ%2C%2C&sid=mi_eshop&_bannerBiz=mistore&_qrsize=180">登录</a>
+            <span>|</span>
+            <a href="https://cn.account.xiaomi.com/pass/register">注册</a>
+            <span>|</span>
+            <a href="https://account.xiaomi.com/pass/serviceLogin?callback=https%3A%2F%2Forder.mi.com%2Flogin%2Fcallback%3Ffollowup%3Dhttps%253A%252F%252Forder.mi.com%252Fmessage%252Flist%26sign%3DMjEyY2NkOTg5NjAzZmMyNWUyMDBhNzE2MDczNWJkYzFkMTg1Yjc0MQ%2C%2C&sid=mi_eshop&_bannerBiz=mistore&_qrsize=180">消息通知</a>
+        </div>
+    </div>
+</div>
+
+<div class="headbar">
+    <div class="headli">
+        <div class="headicon">
+            <img src="http://s01.mifile.cn/i/logo.png" alt="">
+        </div>
+
+        <div class="headnav">
+            <ul type="none">
+                <li class="li">小米手机</li>
+                <div class="tblank"></div>
+                <li class="li">Redmi红米</li>
+                <div class="tblank"></div>
+                <li class="li">电视</li>
+                <div class="tblank"></div>
+                <li class="li">笔记本</li>
+                <div class="tblank"></div>
+                <li class="li">家电</li>
+                <div class="tblank"></div>
+                <li class="li">路由器</li>
+                <div class="tblank"></div>
+                <li class="li">智能硬件</li>
+                <div class="tblank"></div>
+                <li class="li"><a href="https://www.mi.com/service/">服务</a></li>
+                <div class="tblank"></div>
+                <li class="li"><a href="http://www.xiaomi.cn">社区</a></li>
+            </ul>
+        </div>
+        <div>
+            <form action="">
+                <input type="text" value="" style="margin-top: 9px;width:220px">
+                <input type="button"  value="搜索" style="width: 50px;">
+
+            </form>
+        </div>
+    </div>
+</div>
+    
+
+
+
+</body>
+</html>
