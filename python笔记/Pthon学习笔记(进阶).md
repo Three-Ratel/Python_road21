@@ -1956,7 +1956,7 @@ type还有circle，默认实体的circle
 3. 标题独占一行
 4. **%** 表示空格
 
-#### 4. 标签分类
+### 5. 标签分类
 
 1. **行内标签**:一行显示、不可设置宽高
 
@@ -2091,7 +2091,7 @@ td/th
 <head>
     <style>
         #box{
-          backgroud=greenyellow;
+        backgroud=greenyellow;
         }
     </style>
     <link href='css/index.css' rel='stylesheet'>
@@ -2119,15 +2119,15 @@ td/th
 
 #### 4.1 基础选择器
 
-1. id选择器
+1. **id选择器**
    - \#id，id是唯一
    - 选择有特定属性的元素(即标签element)
    - 权重1000
-2. 类选择器
+2. **类选择器**
    - .xxx类可以重复，可设置多个
    - class.active. .active 类是可以重复，可设置多个
    - 权重100
-3. 标签选择器
+3. **标签选择器**
    - 权重1
 
 ```html
@@ -2191,7 +2191,7 @@ td/th
   - width：**内容宽度**
   - height：**内容高度**
   - border：**边框**
-  - padding：
+  - padding：**内填充**
   - margin：**外边距**
 
 - **外边距**
@@ -2302,7 +2302,7 @@ td/th
 
 1. **块级标签**：**独占一行**，**可设置宽高**(默认是父标签的100%宽度)
 2. **行内标签**：**一行显示**，**不可设置宽高**，尽量**不要嵌套块**
-3. i**nput / img**是**行内块**，可以设置宽高 **display** **inline-block**;
+3. i**nput / img**是**行内块**，可以设置宽高 **display** **inline-block**/**inline(不可设置宽高)**
 4. body默认8px、p默认16px、ul默认有margin
 5. 块级标签可以嵌套块级和行内标签
 6. **p标签不要嵌套div和p标签**，可以嵌套**a、img、表单控件**
@@ -2417,7 +2417,7 @@ input[type='text']{
 4. **同时操作before和first-letter，first-letter会失效**
 
 ```css
- p::first-letter{
+p::first-letter{
             color:red;
         }
 P::before{
@@ -2496,6 +2496,16 @@ letter-spacing:2px;
 word-spacing:2px;
 ```
 
+#### 2.7 对齐
+
+- justify：**两端对齐，英文**
+
+```css
+text-align:left/right/center/justify;
+```
+
+- table中的内容始终是居中显示
+
 ### 3. 盒子模型
 
 #### 3.1 padding
@@ -2517,6 +2527,7 @@ border:1px solid #000;
 border-width:4px 10px;
 border-sytle:solid dotted dashed double;
 border-color:black purple;
+
 border-top:1px solid #000;
 ```
 
@@ -2525,7 +2536,7 @@ border-top:1px solid #000;
 1. **nth-chirld**：css3的选择器
 2. **只要有宽高的都是盒模型**
 3. margin**水平方向可以叠加**
-4. 垂直方向的**外边距会合并现象**，**塌陷**
+4. 垂直方向的**外边距会合并现象**，**塌陷**，在标准文档流下有效
 
 ```css
 <style>

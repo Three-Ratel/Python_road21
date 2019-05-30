@@ -9,6 +9,6 @@ con, addr = sk.accept()
 msg = con.recv(1024)
 print(msg)
 con.send(b"HTTP/1.1 200 OK \r\n\r\n")
-with open('execrises043.html', mode='r', encoding='utf8') as f:
+with open('小米商城.htm', mode='r', encoding='utf8') as f:
     data=f.read()
 con.send(data.encode("utf-8"))

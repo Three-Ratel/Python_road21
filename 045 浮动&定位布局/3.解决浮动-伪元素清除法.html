@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>伪元素清除法</title>
+    <style>
+        .box{
+            width:800px;
+            border:1px solid black;
+        }
+        .box .active1{
+            height:100px;
+            background-color:skyblue;
+            float: left;
+        }
+        .box .active2{
+            height:100px;
+            background-color:pink;
+            float: left;
+        }
+
+        .clearfix::after{
+            content:".";
+            display: block;
+            clear:both;
+            visibility: hidden;
+            height: 0;
+        }
+
+    </style>
+
+
+</head>
+<body>
+<div class="box clearfix">
+    <div class="active1">1</div>
+    <div class="active2">2</div>
+</div>
+</body>
+</html>

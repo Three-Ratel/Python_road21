@@ -60,6 +60,10 @@
             color: #424242;
         }
 
+        img:hover{
+
+        }
+
 
         /*头部栏配置信息*/
         .headbar{
@@ -85,7 +89,7 @@
         .li{
             float: left;
             font-size: 16px;
-            color:#333;
+            color:#333333;
             line-height: 100px;
         }
         .li:hover{
@@ -112,12 +116,22 @@
             margin-top: 20px;
             display: inline-block;
             float: right;
-            border-color: red;
+            margin-left: 0;
         }
-        input[type="search"]{
-            height:100px;
 
+        input[type="text"]{
+            height:40px;
+            width: 220px;
+            border:1px solid orange;
+            font-size: 14px;
         }
+
+        /*input[type="submit"]{*/
+            /*width:40px;*/
+            /*height: 40px;*/
+            /*border:1px solid orange;*/
+            /*font-size: 14px;*/
+        /*}*/
 
     </style>
 </head>
@@ -152,7 +166,7 @@
         </div>
 
         <a href="https://static.mi.com/cart/" class="shopcar">
-            <div id="shopcar" class="shopcar"><img src="./icon_cart.png" alt="" height="20">购物车(0) </div>
+            <div id="shopcar" class="shopcar"><img src="./icon_cart2.png" alt="" style="height:30px;padding:5px 0 5px 15px; float: left">  购物车(0) </div>
         </a>
 
 
@@ -195,8 +209,10 @@
         </div>
         <div>
             <form action="">
-                <input type="text" value="" style="margin-top: 9px;width:220px">
-                <input type="button"  value="搜索" style="width: 50px;">
+                <input type="text" value="">
+                <!--<input type="submit" id="submit" value="搜索">-->
+
+                <input type="submit" id="submit" value="搜索" style="width: 100px;height: 100px">
 
             </form>
         </div>

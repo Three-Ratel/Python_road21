@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>内墙法</title>
+    <style>
+
+        .box{
+            width:800px;
+            border:1px solid black;
+        }
+        .box .active1{
+            height:100px;
+            background-color:skyblue;
+            float: left;
+        }
+        .box .active2{
+            height:100px;
+            background-color:pink;
+            float: left;
+        }
+        /*设置给最后一个浮动元素添加一个**空的块级标**签，并设置该标签属性，为clear:both*/
+        .clear{
+            clear: both;
+        }
+    </style>
+
+
+</head>
+<body>
+<div class="box">
+    <div class="active1">1</div>
+    <div class="active2">2</div>
+    <div class="clear"></div>
+</div>
+</body>
+</html>
