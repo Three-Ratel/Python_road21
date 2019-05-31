@@ -2573,6 +2573,618 @@ rgba(0,0,0, .5)
 
 
 
+## 11.4 浮动&定位布局
+
+### 1. 浮动
+
+#### 1.1 浮动现象
+
+1. **脱离标准文档流，不在页面占位置，'脱标'**
+2. **贴边现象**
+3. **浮动盒子撑不起父盒子的高度**
+   - 父盒子不设置高度时，由内容撑起
+   - **文字环绕**，设置浮动属性的初衷
+   - 盒子设置浮动之后，会找浮动盒子的边，如果找不到，则会贴到父元素的边，如果找到，则会贴浮动盒子边，**贴边现象**
+4. **收缩效果**
+
+#### 1.2 解决父盒子高度(4)
+
+1. **为父盒子设置高度**
+   - 不灵活，后期不易维护。一般用于导航栏
+2. **内墙法(只要是块级就行)**
+   - 给最后一个浮动元素添加一个**空的块级标**签，并设置该标签属性，为clear:both;
+   - 冗余性
+
+```css
+.clear{
+  clear:both;
+}
+
+<div class='father'>
+	...
+	<div class="clear"></div>
+</div>
+```
+
+3. **伪元素清除法**
+
+```css
+.clearfix::after{
+  content:".";
+  display:block;
+  clear:both;
+  visibility:hidden;
+  height:0;
+}
+<div class='father clearfix'></div>
+```
+
+4. **overflow(5)**
+
+- **overflow介绍**
+
+```css
+body{
+  overflow:hidden;
+}
+.box{
+  width:200px;
+  height:300px;
+  border:1px solid #000;
+  overflow:visible/hidden/scroll/auto/inherit;(visible 不产生bfc)
+}
+<div class="box">
+		hello bugs
+</div>
+```
+
+1. 利用hideden(**一旦设置块级盒子除了overflow:visible,会形成bfc**(blcok formatting context))
+2. **BFC**：**布局规则**(内部浮动元素)，会自动计算最高的浮动元素高度，以撑起父元素高度
+3. 计算bfc高度，浮动元素也参与计算
+   - **子标签的内容超出父盒子，且设置overflow:hidden时，无法显示**
+
+```css
+.father{
+	overflow:hidden;
+}
+
+<div class='father'>
+	...
+	<div></div>
+</div>
+```
+
+#### Note(2)
+
+1. 只要我们让父盒子形成BFC的区域，那么它就会清除区域中浮动元素带来的影响
+2. 浮动元素，不区分行内、行内块，可设置宽高
+
+### 2. BFC
+
+#### 2.1 BFC简介
+
+1. 了解BFC前先一了解一下Box和Formatting Context
+2. **B: BOX**即盒子，页面的基本构成元素。分为 **inline** 、 **block** 和 **inline-block**三种类型的BOX
+3. **FC**: Formatting Context是**W3C的规范中的一种概念**。它是页面中的一块渲染区域，并且有一套渲染规则，它决定了其子元素将如何定位，以及和其他元素的关系和相互作用。
+4. **常见的 Formatting Context 有 Block fomatting context (简称BFC)和 Inline formatting context (简称IFC)**
+5. **BFC 定义**
+   - **BFC(Block formatting context)**直译为"块级格式化上下文"。它是一个独立的渲染区域，只有Block-level box参与， 它规定了内部的Block-level Box如何布局，并且与这个区域外部毫不相干。
+
+#### 2.2 BFC布局规则(6)
+
+1. 内部的Box会在垂直方向，一个接一个地放置。
+2. Box**垂直方向**的距离由margin决定。属于同一个BFC的两个相邻Box的**margin会发生重叠**(塌陷)。
+3. 每个元素的margin box的左边， 与包含块border box的左边相接触(对于从左往右的格式化，否则相反)。即使**存在浮动也是如此**。
+4. BFC的区域不会与float 元素重叠。
+5. BFC就是页面上的一个**隔离的独立容器**，容器里面的子元素不会影响到外面的元素。反之也如此。
+6. **计算BFC的高度时，浮动元素也参与计算**
+
+#### 2.3 形成BFC的元素(5)
+
+1. **根元素**
+2. **display**为**inline-block**
+3. **float**属性**不为none**
+4. **overflow不为visible**
+5. **position**为**absolute**或**fixed**
+
+### 3. 定位布局
+
+- stastic、relative、absolute、fixed;
+
+#### 3.1 默认
+
+- **所有元素默认都是静态定位**
+
+```css
+position:static|relative|absolute|fixed;
+```
+
+#### 3.2 相对定位
+
+1. **relative**
+2. **元素仍然保持其未定位前的形状，它原本所占的空间仍保留。**
+3. 与标准文档流下的盒子没有任何区别(原本的位置仍会占用，**影响布局**)
+4. 应用：微调元素、子绝父相布局
+5. **要浮动一起浮动、有浮动清除浮动**，实现元素并排
+6. **层级提高效果**
+
+```css
+/*style中*/
+*{
+  margin: 0;
+  padding: 0;
+}
+.box{
+  width: 300px;
+  height: 300px;
+  border: 1px solid black;
+
+}
+.box1{
+  height: 100px;
+  background-color: greenyellow;
+}
+.box2{
+  height: 100px;
+  background-color: skyblue;
+  position:relative;
+  top: 10px;
+  left: 10px;
+}
+.box3{
+  height: 100px;
+  background-color: pink;
+}
+
+/*body中*/
+<div class="box">
+    <div class="box1"></div>
+    <div class="box2"></div>
+    <div class="box3"></div>
+</div>
+```
+
+#### 3.3 绝对定位(7)
+
+1. 要比标准文档流和浮动的盒子**层级较高**
+2. "**子绝父相**"
+3. **脱离标准文档流**(可以做**压盖**现象)
+4. 以top描述，以**最近的父级**(**相对定位**)元素左上角为参考位置
+5. **以bottom描述，以浏览器的左下角为参考点**
+6. img、input、加粗：**vertival-align**：middle/top/bottom
+7. **rgba(0,0,0, .5)透明度设置**
+
+```css
+/*style中*/
+*{
+  margin: 0;
+  padding: 0;
+}
+.box{
+  width: 300px;
+  height: 300px;
+  border: 1px solid black;
+  margin-left: 100px;
+  position: relative;
+}
+.box1{
+  width: 100px;
+  height: 100px;
+  background-color: greenyellow;
+}
+.box2{
+  width: 100px;
+  height: 100px;
+  background-color: skyblue;
+  position:absolute;
+  bottom: 10px;
+  left: 10px;
+}
+.box3{
+  width: 100px;
+  height: 100px;
+  background-color: pink;
+}
+/*body中*/
+<div class="box">
+    <div class="box1"></div>
+    <div class="box2"></div>
+    <div class="box3"></div>
+</div>4
+```
+
+### 4. iconfont的使用
+
+#### 4.1 下载到本地
+
+1. 在iconfont的帮助文档中粘贴代码
+2. 添加.iconfont设置
+3. 修改fonts路径
+
+```css
+@font-face {font-family: 'iconfont';
+    src: url('../fonts/iconfont.eot');
+    src: url('../fonts/iconfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/iconfont.woff') format('woff'),
+    url('../fonts/iconfont.ttf') format('truetype'),
+    url('../fonts/iconfont.svg#iconfont') format('svg');
+}
+
+.iconfont{
+    font-family:"iconfont" !important;
+    font-size:16px;font-style:normal;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-stroke-width: 0.2px;
+    -moz-osx-font-smoothing: grayscale;}
+```
+
+#### 4.2 online方式
+
+1. 在iconfont网站生成代码
+2. 添加.iconfont设置
+
+```css
+@font-face {
+  font-family: 'iconfont';  /* project id 1219895 */
+  src: url('//at.alicdn.com/t/font_1219895_hukxb7x79s7.eot');
+  src: url('//at.alicdn.com/t/font_1219895_hukxb7x79s7.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_1219895_hukxb7x79s7.woff2') format('woff2'),
+  url('//at.alicdn.com/t/font_1219895_hukxb7x79s7.woff') format('woff'),
+  url('//at.alicdn.com/t/font_1219895_hukxb7x79s7.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_1219895_hukxb7x79s7.svg#iconfont') format('svg');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  /*font-size: 16px;*/
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+```
+
+3. **iconfont的使用**
+
+- &#xe607unicode码
+
+```css
+<i class="iconfont">&#xe607;
+```
+
+z-index:取值越大，优先级越高
+
+数据驱动视图
+
+## 11.5 属性应用
+
+### 1. 固定定位
+
+- 设备的左上角为参考点
+- 脱标
+- 固定不变
+- **提高层级**
+- position:fixed;
+
+```css
+/*head-style*/
+body{
+  padding-top: 100px;
+}
+.fix{
+  width: 100%;
+  height: 50px;
+  background-color: greenyellow;
+  position: fixed;
+  top: 0;
+  left: 0;
+
+}
+.fix2{
+  width: 100%;
+  height: 100px;
+  background-color: skyblue;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+/*body中*/
+<p>哈喽</p>
+<p>哈喽</p>
+<p>哈喽</p>
+<p>哈喽</p>
+<p>哈喽</p>
+<p>哈喽</p>
+<p>哈喽</p>
+<p>哈喽</p>
+<p>哈喽</p>
+
+<div class="fix2">python</div>
+<div class="fix">hello</div>
+```
+
+### 2. z-index
+
+1. z-index只应用在定位的元素，默认**z-index:auto;**
+2. z-index取值为整数，**数值越大，它的层级越高**
+   - 与标签的结构有关即(body)中的内容
+3. 如果元素设置了定位，**没有**设置z-index，那么**谁写在最后面的，表示谁的层级越高。**
+4. **从父现象。**通常布局方案我们采用`子绝父相`，比较的是父元素的z-index值，哪个父元素的z-index值越大，表示子元素的层级越高。
+
+```css
+/*head-style*/
+.box1{
+  width: 100px;
+  height: 100px;
+  background-color: yellow;
+  position: absolute;
+  z-index: 10;
+}
+.box2{
+  width: 100px;
+  height: 110px;
+  background-color: skyblue;
+  position: absolute;
+  z-index: 11;
+}
+/*body*/
+<div class="father" style="z-index: 12;position: absolute">
+    <div class="box1">
+        hello world!
+    </div>
+</div>
+
+<div class="box2">
+    你好！
+</div>
+```
+
+### 3. 背景(background)
+
+1. **background:url no-repeat center top;**
+   - 设置背景图、实现平铺
+   - background-repeat:repeat;**默认**/repeat-x;/repeat-y；
+2. **background-position:0 0;默认**
+   - 调整背景图的位置
+   - **CSS雪碧图技术：即CSS Sprite,也有人叫它精灵图，是一种图像拼合技术。**
+   - **cursor:pointer;**
+
+```css
+.box{
+  width: 1000px;
+  height: 500px;
+  border-radius: 10px;
+  border: 1px solid lightgreen;
+  /*background-image: url(dog.jpg);*/
+  background:url("dog.jpg") repeat-y 100px 100px;
+  cursor: pointer;
+}
+
+/*body*/
+<div class="box">
+```
+
+3. 小米轮播图示例
+
+```css
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>小米轮播图</title>
+    <style>
+      *{
+        margin: 0;
+        padding: 0;
+      }
+      .swiper{
+        width: 1226px;
+        margin: 0 auto;
+        position: relative;
+      }
+      .swiper span{
+        display: inline-block;
+        width: 40px;
+        height: 68px;
+        background: url("icon-slides.png") no-repeat 0 0;
+        position: absolute;
+        top: 50%;
+        cursor: pointer;
+        margin-top: -34px;
+      }
+      .swiper span.prev{
+        background-position: -84px 0;
+        left: 234px;
+      }
+      .swiper span.next{
+        background-position: -124px 0;
+        left: 1180px;
+      }
+      .swiper span.prev:hover {
+        background-position: 0 0;
+        left: 234px;
+      }
+      .swiper span.next:hover{
+        background-position: -41px 0;
+        left: 1180px;
+      }
+    </style>
+
+</head>
+<body>
+
+<div class="swiper">
+    <img src="xmad.jpg" alt="" width=1226px>
+    <span class="prev"></span>
+    <span class="next"></span>
+</div>
+</body>
+```
+
+
+
+### 4. border
+
+1. border:1px solid skyblue;
+   - **border-radius:100px 50px;**
+2.  **W3C** 对于重合曲线有这样的**规范**：如果两个相邻的角的半径和**超过了对应的盒子的边的长度**，那么浏览器要重新计算保证它们不会重合。
+3. 如果左上角的圆角半径被设置成了100%，那么圆角就会从这个方形左下角跨到右上角，相当于把圆角半径设置成为150px（也就是方形的大小）。
+4. 如果同时把右上角的圆角半径也设置成为100%，则两个相邻圆角合起来就有200%。这种情况自然是不允许出现的，所以浏览器就会重新就算，匀出空间给右边的圆角，同时缩放两个圆角的半径直到它们可以刚好符合这个方形，所以半径就变成了50%。
+
+```css
+.box{
+  width: 200px;
+  height: 200px;
+  background-color: skyblue;
+  border-color: yellow;
+  border-radius: 200px / 100px;
+  border-top-right-radius: 100%;
+  border-bottom-left-radius: 100%;
+  /*border-top-left-radius: 100px;*/
+  /*border-bottom-right-radius: 200px;*/
+  /*border-radius: 50px 100px 200px;*/
+}
+```
+
+### 5. 阴影(定位)
+
+1. box-shadow:水平 垂直 模糊 内外；
+
+   1. **h-shadow**
+   2. **v-shadow**
+   3. blur
+   4. color
+   5. inset/outset
+
+   ```css
+   .box{
+     width:100px;
+     height: 100px;
+     margin: 0 auto;
+     position: relative;
+     border: 1px solid lightblue;
+     background-color: yellow;
+     transition: all .5s linear;
+   }
+   .box:hover{
+     top: 10px;
+     box-shadow: 0 0 20px red;
+   }
+   ```
+
+### 6. 水平&垂直居中
+
+#### 6.1 文本居中
+
+1. **line-height/text-align**
+2. display:table-cell,vertical-align: middle/ top/ bottom/ inherit;
+
+```css
+/*head-style*/
+.box{
+  position: relative;
+  width: 500px;
+  height: 500px;
+  border: 1px solid skyblue;
+  margin: 0 auto;
+}
+/*使用table-cell*/
+.center{
+  width: 100px;
+  height: 100px;
+  border: 1px solid yellow;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+
+/*body中*/
+<div class="box">
+    <div class="center">
+        hello
+    </div>
+</div>
+```
+
+
+
+#### 6.2 定位的块居中
+
+- 当给定**absolute**参数时，内容元素大小的**margin**使用**auto**，**会自适应即居中**
+
+1. **设置postion值**
+
+```css
+.box{
+    position: relative;
+    width: 500px;
+    height: 500px;
+    border: 1px solid skyblue;
+    margin: 0 auto;
+  }
+
+/*使用margin自适应*/
+.center{
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border: 1px solid red;
+    margin:auto;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
+```
+
+2. **转行内块**
+
+```css
+inline-block；
+```
+
+3. **使用left和top**
+
+```css
+left:50%;
+margin-left:-当前盒子的一半px；
+top:50%;
+margin-top:-当前盒子的一半px；
+.box{
+    position: relative;
+    width: 500px;
+    height: 500px;
+    border: 1px solid skyblue;
+    margin: 0 auto;
+  }
+
+.center{
+    position: absolute;
+    width: 98px;
+    height: 98px;
+    border: 1px solid red;
+    top: 50%;
+    margin-top: -50px;
+    left: 50%;
+    margin-left: -50px;
+  }
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

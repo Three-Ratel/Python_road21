@@ -1,0 +1,169 @@
+*{
+    margin: 0;
+    font-size: 12px;
+    line-height: 40px;
+}
+
+a{
+    text-decoration: none;
+    color: #919191;
+}
+/*导航栏信息*/
+.topbar{
+    height:40px;
+    background-color: #333333;
+    position: relative;
+}
+.active{
+    width: 1226px;
+    margin: 0 auto;
+    background-color: yellowgreen;
+    position: absolute;
+}
+
+.navbar{
+    width: 667px;
+    float:left;
+}
+
+.userbar{
+    float:right;
+    margin-right: 3rem;
+}
+
+.shopcar{
+    width: 120px;
+    height: 40px;
+    float: right;
+    font-size: 12px;
+    background-color: #424242;
+    text-align: center;
+}
+
+.topbar a:hover{
+    color: #ffffff;
+}
+.navbar span{
+    color: #424242;
+}
+
+.shopcar:hover div{
+    color:#ff6700;
+    background-color:white;
+}
+
+
+
+/*头部栏配置信息*/
+.headbar{
+    /*height: 100px;*/
+    position: absolute;
+    top:40px;
+    background-color: yellow;
+}
+
+.headicon{
+    margin-top:22px;
+    float: left;
+}
+
+.headnav{
+    float: left;
+}
+
+.li{
+    float: left;
+    font-size: 16px;
+    color:#333333;
+    line-height: 100px;
+    margin:0 10px;
+}
+.li:hover{
+    color: #ff6700;
+}
+
+.li a{
+    text-decoration: none;
+    color: #333333;
+    font-size: 16px;
+}
+.li a:hover{
+    color: #ff6700;
+}
+
+/*搜索框*/
+form{
+    height: 60px;
+    margin-top: 20px;
+    display: inline-block;
+    float: right;
+    margin-left: 0;
+}
+
+
+/*form表单中的元素添加悬浮效果*/
+.headbar form:hover input{
+    border-color: #b0b0b0;
+}
+
+.headbar input[type="submit"]:hover{
+    background-color: #ff6700;
+    color: white;
+    border: 0;
+}
+
+form input[type="text"]{
+    border:1px solid #e0e0e0;
+    outline: 0;
+    width: 223px;
+    height:48px;
+    font-size: 18px;
+    margin-top: 8px
+}
+
+form input[type="submit"]{
+    border:1px solid #e0e0e0;
+    outline: 0;
+    width:52px;
+    height: 52px;
+    font-size: 20px;
+    margin-left: -5px;
+    background-color: white;
+}
+
+.tag{
+    position:relative;
+    left:240px;
+    top: 35px;
+    background-color: #eeeeee;
+    padding-left:4px;
+    padding-right:4px;
+}
+
+.tag:hover{
+    background-color: #ff6700;
+    color: white;
+}
+
+.blank{
+    width: 117px;
+    height: 60px;
+    float: left;
+    margin-top: 22px;
+    margin-right: 10px;
+    position: relative;
+}
+
+/*.home-container{*/
+    /*position: absolute;*/
+    /*left: 100px;*/
+    /*top: 100px;*/
+    /*background-color:#ff6700;*/
+/*}*/
+
+/*.active{*/
+    /*width: 1226px;*/
+    /*margin: 0 auto;*/
+    /*position: relative;*/
+    /*background-color: gold;*/
+/*}*/

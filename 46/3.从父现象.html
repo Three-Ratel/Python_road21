@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>从父现象</title>
+    <style>
+        .box1{
+            width: 100px;
+            height: 100px;
+            background-color: yellow;
+            position: absolute;
+            z-index: 10;
+        }
+
+        .box2{
+            width: 100px;
+            height: 110px;
+            background-color: skyblue;
+            position: absolute;
+            z-index: 11;
+        }
+    </style>
+</head>
+<body>
+<div class="father" style="z-index: 12;position: absolute">
+    <div class="box1">
+        hello world!
+    </div>
+</div>
+
+<div class="box2">
+    你好！
+</div>
+
+
+
+
+
+
+
+
+</body>
+</html>
