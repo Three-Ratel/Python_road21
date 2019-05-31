@@ -1,6 +1,6 @@
-# 第十章 数据库mysql
+# 数据库mysql
 
-## 10.1 数据库
+## 1.1 数据库
 
 ### 1. 概念
 
@@ -204,7 +204,7 @@ delete from 表 where id=1；
 
 
 
-## 10.2 表的介绍
+## 1.2 表的介绍
 
 ### 1. 存储引擎
 
@@ -445,7 +445,7 @@ create table t8(name char(12),
   3. 第三层包含了**存储引擎**。**存储引擎负责MySQL中数据的存储和提取**。服务器通过API和存储引擎进行通信。这些接口屏蔽了不同存储引擎之间的差异，使得这些差异对上层的查询过程透明化。存储引擎API包含十几个底层函数，用于执行“开始一个事务”等操作。但存储引擎一般不会去解析SQL（InnoDB会解析外键定义，因为其本身没有实现该功能），不同存储引擎之间也不会相互通信，而只是简单的响应上层的服务器请求。
   4. 第四层包含了**文件系统**，所有的表结构和数据以及用户操作的日志最终还是以文件的形式存储在硬盘上
 
-## 10.3 表的完整性约束
+## 1.3 表的完整性约束
 
 ### 1. 约束
 
@@ -858,7 +858,7 @@ where name is null;
 
 
 
-## 10.4 查询
+## 1.4 查询
 
 - select 语法
 
@@ -1295,7 +1295,7 @@ select t1.emp_name, t1.hire_date, t1.post from employee as t1 inner join (select
 select t3.emp_name,t3.post,t3.hire_date from employee as t3 where id in (select (select id from employee as t2 where t2.depart_id=t1.depart_id order by hire_date desc limit 1) from employee as t1 group by depart_id);
 ```
 
-## 10.5 mysql索引
+## 1.5 mysql索引
 
 ### 1. 存储过程
 
@@ -1649,7 +1649,7 @@ mysql> source /root/db1.sql
 
 
 
-## 10.6 pymysql模块
+## 1.6 pymysql模块
 
 ### 1. 第三方模块
 
