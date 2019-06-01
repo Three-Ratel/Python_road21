@@ -2,16 +2,13 @@
     margin: 0;
     padding: 0;
     font-size: 12px;
-    line-height: 40px;
 }
 
 a{
     text-decoration: none;
     color: #919191;
 }
-body{
-    overflow: hidden;
-}
+
 /*导航栏信息*/
 .topbar{
     width: 100%;
@@ -25,6 +22,7 @@ body{
     position: absolute;
     left: 0;
     right: 0;
+    line-height: 40px;
      /*background-color: yellowgreen;*/
 }
 
@@ -142,8 +140,8 @@ form input[type="text"]{
 form input[type="submit"]{
     border:1px solid #e0e0e0;
     outline: 0;
-    width:52px;
-    height: 52px;
+    width:50px;
+    height: 50px;
     font-size: 20px;
     margin-left: -5px;
     background-color: white;
@@ -164,24 +162,57 @@ form input[type="submit"]{
     color: white;
 }
 
-
+.container::after{
+    content: ".";
+    display: inline-block;
+    clear: both;
+    visibility: hidden;
+    height: 0;
+}
 
 /*主页*/
-.main{
+.main-container{
     position: relative;
     width: 1226px;
     margin: 0 auto;
 }
 
-.home{
-    position: relative;
-    float: left;
-    width: 1226px;
+.home-img{
+    position: absolute;
     height: 460px;
-    margin: 0 auto;
-    background:url("") no-repeat 0 0;
     cursor: pointer;
 }
+
+
+.home-img span{
+    display: inline-block;
+    background: url("../images/icon-slides.png") no-repeat 0 0;
+    width: 40px;
+    height: 68px;
+    position: absolute;
+    left: 234px;
+    top: 50%;
+    margin-top: -34px;
+    cursor: pointer;
+}
+.home-img span.prev{
+    background-position: -84px 0;
+    left: 234px;
+}
+.home-img span.next{
+    background-position: -124px 0;
+    left: 1180px;
+    right: 0;
+}
+.home-img span.prev:hover {
+    background-position: 0 0;
+    left: 234px;
+}
+.home-img span.next:hover{
+    background-position: -41px 0;
+    left: 1180px;
+}
+
 
 .main-home-list{
     position: relative;
@@ -199,7 +230,7 @@ form input[type="submit"]{
     top: 0;
     bottom: 0;
     margin: auto 0;
-
+    line-height: 40px;
 }
 
 .home-li{
@@ -224,10 +255,141 @@ form input[type="submit"]{
 }
 
 
+/*广告图*/
+.home-ad-img{
+    margin-top: 14px;
+    position: relative;
+}
+
+.home-slide-ul{
+    float: left;
+    width: 228px;
+    height: 164px;
+    padding: 3px;
+    margin:0 0 26px;
+    background-color: #5e5751;
+    position: relative;
+}
 
 
+.home-slide-li{
+    float: left;
+    position: relative;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+.six-block{
+    float: left;
+    width: 70px;
+    height: 82px;
+    color: #cfcdcb;
+    padding: 0 3px;
+    text-align: center;
+    line-height: 82px;
+}
+
+.six-block:hover{
+    color: white;
+}
+
+/*home的三个广告图*/
+.home-ad-ul{
+    display: inline-block;
+    position: relative;
+    width: 978px;
+    height: 170px;
+    margin-left: 14px;
+
+}
+
+.home-ad-li1{
+    display: inline-block;
+    float: left;
+    width: 316px;
+    height: 170px;
+}
+
+.home-ad-li{
+    display: inline-block;
+    float: left;
+    width: 316px;
+    height: 170px;
+    margin-left: 15px;
+}
+
+.slide-icon{
+    font-size: 20px !important;
+    display: block;
+    height: 20px;
+}
+
+/*手机页面*/
+.page{
+    background-color: #f5f5f5;
+    position: relative;
+    width: 100%;
+    float: left;
+}
+
+.page-nav{
+    position: relative;
+    left: 0;
+    right: 0;
+    width: 1226px;
+    margin: 0 auto;
+}
+
+.phone{
+    float: left;
+    width: 1226px;
+    height: 628px;
+    margin: 0 auto;
+}
+
+.title{
+    float: left;
+    font-size: 16px;
+    height: 58px;
+    line-height: 58px;
+    color: #424242;
+}
+
+.tips{
+    float: right;
+    font-size: 16px;
+    height: 58px;
+    line-height: 58px;
+    color: #424242;
+    color: rgba(0,0,0, .5);
+}
 
 
+.tips:hover{
+    color: #ff6700;
+}
+
+
+.phone-ul{
+    float: left;
+}
+
+.phone-uls{
+    float: left;
+    width: 978px;
+}
+.pohone-imgs{
+    float: left;
+    width: 234px;
+    height: 260px;
+    padding: 20px 0;
+    margin: 0 0 14px 14px;
+    background-color: white;
+
+}
 
 
 
