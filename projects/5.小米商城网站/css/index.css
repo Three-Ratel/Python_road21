@@ -43,7 +43,24 @@ a{
     font-size: 12px;
     text-align: center;
     background-color: #424242;
+    position: relative;
 }
+
+.shopcar-show{
+    position: absolute;
+    left: -196px;
+    right: 0;
+    width: 316px;
+    height: 100px;
+    background-color: yellowgreen;
+    z-index: 1000;
+    display: none;
+    text-align: center;
+    line-height: 100px;
+    transition:all .4s;
+    /*border: 1px solid #424242;*/
+}
+
 
 .topbar a:hover{
     color: #ffffff;
@@ -55,6 +72,7 @@ span{
 .shopcar:hover div{
     color:#ff6700;
     background-color:white;
+    display: block;
 }
 
 
