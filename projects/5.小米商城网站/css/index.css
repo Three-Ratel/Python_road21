@@ -498,21 +498,15 @@ form input[type="submit"]{
 
 .footer{
     float: left;
-    /*display: block;*/
-    /*position: relative;*/
-    /*left: 0;*/
-    /*top: 0;*/
+    width: 100%;
 }
 
 .footer-bar{
-    position: absolute;
-    left: 0;
-    right: 0;
     margin: 0 auto;
     width: 1226px;
     height: 80px;
     border-bottom: 1px solid #b0b0b0;
-    background-color:yellow;
+    /*background-color:yellow;*/
 }
 
 .footer-li1{
@@ -544,3 +538,89 @@ form input[type="submit"]{
 .footer-li:hover{
     color:#ff6700;
 }
+
+.footer-link{
+    float: left;
+    width: 100%;
+    /*background-color: yellow;*/
+}
+
+.footer-div{
+    width: 1226px;
+    height: 192px;
+    margin: 0 auto;
+    padding: 40px 0;
+    /*background-color:yellowgreen;*/
+}
+
+.footer-link-ul{
+    float: left;
+    width: 160px;
+    height: 112px;
+}
+
+.footer-link-li1{
+    width: 160px;
+    height: 17px;
+    margin: -1px 0 26px;
+    font-size: 14px;
+    line-height: 1.25;
+    color: #787878;
+}
+
+.footer-link-li{
+    width: 160px;
+    height: 18px;
+    font-size: 12px;
+    margin-top: 10px;
+    color: #b0b0b0;
+}
+
+.footer-link-li:hover{
+    color:#ff6700;
+}
+
+.phone-num{
+    float: right;
+    width: 252px;
+    height: 112px;
+    text-align: center;
+    border-left: 1px solid #e0e0e0;
+
+}
+
+
+.phone-num-detail{
+    color:#ff6700;
+    font-size: 22px;
+}
+
+.footer-info{
+    display: block;
+}
+.service{
+    border: 1px solid #ff6700;
+    width: 118px;
+    height: 28px;
+    margin: 16px auto 0;
+    text-align: center;
+    line-height: 28px;
+    color: #ff6700;
+    transition: all .4s;
+}
+
+.only-charge{
+    color: #b0b0b0;
+}
+
+.service:hover{
+    color: white;
+    background-color:#ff6700;
+}
+
+
+
+
+
+
+
