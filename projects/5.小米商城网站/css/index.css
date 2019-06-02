@@ -49,16 +49,16 @@ a{
 .shopcar-show{
     position: absolute;
     left: -196px;
-    right: 0;
     width: 316px;
+    top: 40px;
     height: 100px;
-    background-color: yellowgreen;
     z-index: 1000;
     display: none;
     text-align: center;
     line-height: 100px;
     transition:all .4s;
-    /*border: 1px solid #424242;*/
+    box-shadow: 0 0 5px  #b0b0b0;
+    color: #424242;
 }
 
 
@@ -76,12 +76,10 @@ span{
 }
 
 
-
 /*头部栏配置信息*/
 .headbar{
     height: 100px;
     position: relative;
-    /*background-color: yellow;*/
 }
 
 .headicon{
@@ -505,15 +503,6 @@ form input[type="submit"]{
     margin: 28px 0 22px;
 }
 
-.clearfix::after{
-    content: "";
-    clear: both;
-    visibility: hidden;
-    height: 0;
-    display: inline-block;
-
-}
-
 .footer{
     float: left;
     width: 100%;
@@ -525,6 +514,10 @@ form input[type="submit"]{
     height: 80px;
     border-bottom: 1px solid #b0b0b0;
     /*background-color:yellow;*/
+}
+
+.footer-iconfont{
+    font-size: 20px !important;
 }
 
 .footer-li1{
