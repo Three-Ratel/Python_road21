@@ -31,6 +31,15 @@ kill -9 pid
 netstat -ano | findstr '3306'
 ```
 
+### 1.4 常用
+
+1. 定时关机
+
+```python
+# 晚上给8点关机
+sudo shutdown -h 20:00
+```
+
 
 
 

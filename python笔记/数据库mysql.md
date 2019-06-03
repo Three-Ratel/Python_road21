@@ -359,7 +359,7 @@ create tables t4(f1 float(5,2), double(5,2));
 # 不指定长度，单精度和双精度
 create tables t4(f1 float, double);
 # decimal精度,默认存储（10，0）整数
-create tables t5(d1 decimal, d2 decimal(25, 20));
+create table t5(d1 decimal, d2 decimal(25, 20));
 # decimal内部存储是按照字符串存的
 
 ```

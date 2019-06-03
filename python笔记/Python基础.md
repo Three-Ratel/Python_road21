@@ -1244,10 +1244,8 @@ v = 前面 if 条件 else 后面
 ```python
 # 用户输入，如果是整数，则转换，否则赋值为None
 data = input('>>>')
-value = int(data) if data.isdecimal() else None
+value = int(data) if data.isdecimal() else Non
 ```
-
-
 
 ## 5.2 函数基础
 
@@ -1737,44 +1735,41 @@ print(v1)			# 'alex'
 ### 4. 内置函数（30）
 
 - 自定义函数
-
 - **内置函数**（31）
-
-  1. 强制转换(7)：int()，str,  bool,  list，dict，tuple，set
-  2. 输入输出(2)：print, input
-  3. 其他(5)：type, id, range, open, len
-  4. 数学(7)
-     - abs，round，float（int(55.5)保留整数部分）
-     - max，min，sum，
-     - **divmod**（两数相除，得商和余数, 两个值）
+1. 强制转换(7)：int()，str,  bool,  list，dict，tuple，set
+2. 输入输出(2)：print, input
+3. 其他(5)：type, id, range, open, len
+4. 数学(7)
+   - abs，round，float（int(55.5)保留整数部分）
+   - max，min，sum，
+   - **divmod**（两数相除，得商和余数, 两个值）
 5. 面向对象相关(4)：dir，super，issubclass，isinstance
-  
-  ```python
-  # divmod. 练习
-  USER_LIST = []
-  for i in range(1, 836):
-    tem = {name':'hello-%s' % i, 'email':'XXXX%s@qq.com' %s}
-    USER_LIST.append(tem)
-  """
-  	要求：
-  		每页展示10条
-  		根据用户输入的页码，查看
-  """
-  ```
+
+```python
+# divmod. 练习
+USER_LIST = []
+for i in range(1, 836):
+  tem = {name':'hello-%s' % i, 'email':'XXXX%s@qq.com' %s}
+  USER_LIST.append(tem)
+"""
+	要求：
+		每页展示10条
+		根据用户输入的页码，查看
+"""
 ```
-  
+
 6. 进制转换(3)：**bin**（0b，int<—>bin），**oct**（0o，int<—>oct），int(其他进制转int)，**hex**（0x，int<—>hex）
-  
-  ```python
-  # base 默认为 10
-  v1 = '0b1101'
-  result = int(v1, base = 2)
-  # 转8进制
-  v1 = '0o1101'
-  result = int(v1, base = 8)
-  # 转16进制
-  v1 = '0x1101'
-  result = int(v1, base = 16)
+
+```python
+# base 默认为 10
+v1 = '0b1101'
+result = int(v1, base = 2)
+# 转8进制
+v1 = '0o1101'
+result = int(v1, base = 8)
+# 转16进制
+v1 = '0x1101'
+result = int(v1, base = 16)
 ```
 
   ```python
@@ -1852,28 +1847,24 @@ b = [4,5,6]
 c = [4,5,6,7,8]
 zipped = zip(a,b)     # 打包为元组的列表
 [(1, 4), (2, 5), (3, 6)]
-zip(a,c)             
+zip(a,c) 
+  
+  # 与 zip 相反，*zipped 可理解为解压，返回二维矩阵式
+  [(1, 2, 3), (4, 5, 6)]
+  # 两组序列，转字典
+  list1 = ['key1','key2','key3']
+  list2 = ['1','2','3']
+  info = dict(zip(list1,list2))
+  print(info)
   ```
-# 元素个数与最短的列表一致
-[(1, 4), (2, 5), (3, 6)]
-zip(*zipped)          
-# 与 zip 相反，*zipped 可理解为解压，返回二维矩阵式
-[(1, 2, 3), (4, 5, 6)]
-
-# 两组序列，转字典
-list1 = ['key1','key2','key3']
-list2 = ['1','2','3']
-info = dict(zip(list1,list2))
-print(info)
-  ```
-
+  
   
 
 ## 5.5 函数闭包
 
 ### 1. 函数闭包
 
-​```python
+  ```python
 def func(name):
   def inner():
     print(name)

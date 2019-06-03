@@ -390,6 +390,7 @@ form input[type="submit"]{
 
 
 .phone-ul{
+    position: relative;
     float: left;
     transition: all .2s linear;
     height: 614px;
@@ -629,6 +630,70 @@ form input[type="submit"]{
     background-color:#ff6700;
 }
 
+
+.fixed-bar{
+    position: fixed;
+    right: 70px;
+    bottom: 145px;
+}
+
+.fixed-ul{
+    padding: 0;
+    margin: 0;
+    background-color: white;
+}
+.fixed-li1{
+    position: relative;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 20px;
+    padding-top: 9px;
+}
+
+.show-up{
+    width: 100px;
+    height: 100px;
+    margin: 20px 14px;
+    background: #fff;
+    border: 0;
+    position: absolute;
+    left: -120px;
+    bottom: -81px;
+    display: none;
+}
+
+
+
+.fixed-li{
+    position: relative;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 20px;
+    border-top: 1px solid #dddddd;
+    padding-top: 9px;
+}
+
+.fixed-slide{
+    color: #b0b0b0;
+}
+
+
+.fixed-blank{
+    padding: 0;
+    margin-top: 9px;
+    background-color: white;
+}
+
+.fixed-back{
+    position: relative;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 20px;
+    padding-top: 9px;
+}
 
 
 
