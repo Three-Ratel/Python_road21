@@ -79,23 +79,40 @@ var arr = ['red' , 'green', 'blue', 'yellow'];
 // names.splice(1, 1);                            // 从索引1位置删除1个值
 // names.splice(1, 1, 'xixixi');                  // 从索引1位置替换1个
 
-arr.forEach(function(item, index){
-  console.log(index);
-  console.log(item);
-  });
-
-function fn(){
-  console.log(arguments);                 // arguments不是数组，伪数组
-  for (var i = 0; i < arguments.length; i++){
-    console.log(arguments[i]);
-  }
-}
-fn(2,3,4);
-fn.length;
-
-
+// arr.forEach(function(item, index){
+//   console.log(index);
+//   console.log(item);
+//   });
+//
+// function fn(){
+//   console.log(arguments);                 // arguments不是数组，伪数组
+//   for (var i = 0; i < arguments.length; i++){
+//     console.log(arguments[i]);
+//   }
+// }
+// fn(2,3,4);
+// fn.length;
 
 
+
+var time = new Date();
+console.log(time);
+console.log(time.getDate());
+console.log(time.getFullYear());
+console.log(time.getMonth()+1);
+console.log(time.getDay());
+console.log(time.getHours());
+console.log(time.getMinutes());
+console.log(time.getSeconds());
+
+console.log(time.toLocaleString());                 //2019/6/3 下午11:50:36
+var weeks = ['星期天','星期一','星期二','星期三','星期四','星期五','星期六'];
+console.log(weeks[time.getDay()]);
+var day = weeks[time.getDay()];
+document.write(`<a href="#">${day}</a>`)
+
+var a =  1 < 2 ? "yes": "no";
+console.log(a);
 
 
 
