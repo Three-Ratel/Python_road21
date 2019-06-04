@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>遍历</title>
+	</head>
+	<body>
+		<ul id="box">
+			
+		</ul>
+		<script type="text/javascript">
+			var data = [
+				{id:1, name:'henry', age:19},
+				{id:2, name:'echo', age:18},
+				{id:3, name:'dean', age:28},
+				{id:4, name:'oleg', age:26},
+				{id:5, name:'diane', age:27}
+			]
+			for (var i = 0; i < data.length; i++){
+				console.log(data[i].name);
+				var li = document.createElement('li');
+				li.innerHTML = `<p>${data[i].id}</p> <p>${data[i].name}</p><p>${data[i].age}</p>`;
+				box.appendChild(li)
+			}
+			
+			
+			
+			
+		</script>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>属性操作</title>
+		<style>
+			p{
+				width: 200px;
+				background-color: yellow;
+			}
+			.a{
+				font-size: 48px;
+
+			}
+			.b{
+				color:aqua;
+
+			}
+			
+		</style>
+	</head>
+	<body>
+		<p title="嘻嘻哈哈" id="p1" class="a">
+			嘻嘻哈哈
+		</p>
+		
+		<script type="text/javascript">
+			var p = window.document.getElementById('p1');
+			console.dir(p);
+			// p.className += ' b';
+			// p.className = 'b';
+			p.self = '123';			
+			// p.setAttribute('self', 'active'); 
+			isTrue = true;
+			p.onmouseover = function(){
+				if (isTrue){
+					this.className += ' b';
+					isTrue = false;
+				}else{
+					this.className = 'a';
+					isTrue = true;
+				}
+			}
+			
+			
+		</script>
+		
+		
+		
+	</body>
+</html>

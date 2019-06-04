@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>节点操作</title>
+		<style type="text/css">
+			.active,a{
+				text-decoration: none;
+				color:red;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<ul id="box">
+		</ul>
+		
+		<script type='text/javascript'>
+			var box = document.getElementById('box');
+			var li1 = document.createElement('li');
+			var li2 = document.createElement('li');
+			
+			li1.innerText = '123';
+			li1.innerHTML = "<a href=''>456</a>";
+			li1.setAttribute('class', 'active')
+			box.appendChild(li1);
+			box.insertBefore(li2, li1);
+			
+			box.removeChild(li1);
+			
+			
+			
+			
+		</script>
+		
+		
+	</body>
+</html>

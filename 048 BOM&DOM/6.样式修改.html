@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>样式修改</title>
+		<style>
+			#box{
+				width: 200px;
+				height: 200px;
+				background-color: yellowgreen;
+			}
+			.active{
+				color: red;
+				font-size: 30px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="box">
+			hello javascript
+		</div>
+		<script type="text/javascript">
+			var box = window.document.getElementById('box');
+			// console.log(box);
+			// // 绑定事件
+			// box.onmouseover = function(){
+			// 	this.style.backgroundColor = 'red';
+			// }
+			// box.onmouseout = function(){
+			// 	this.style.backgroundColor = 'yellowgreen';
+			// }
+			
+			var isRed = true;
+			box.onclick = function(){
+				if (isRed){
+					this.style.backgroundColor = 'yellow';
+					isRed = false;
+				}else{
+					this.style.backgroundColor = 'red';
+					isRed = true;
+				}
+			}
+			
+			setInterval (function(){
+				if (isRed){
+					box.style.backgroundColor = 'yellow';
+					isRed = false;
+				}else{
+					box.style.backgroundColor = 'red';
+					isRed = true;}
+			},1000);
+			
+			
+			
+
+		</script>
+		
+		
+		
+	</body>
+</html>

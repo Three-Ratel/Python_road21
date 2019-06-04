@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		
+	<!-- 	<script type="text/javascript">
+			var i = 0;
+			timer = setTimeout(function(){
+			  console.log('hello world');
+			}, 1000);
+			// 清除定时器
+			clearTimeout(timer);
+			timer = setTimeout(function(){
+			  console.log('test your speed');
+			}, 1000);
+			console.log("i'm the first");
+
+			
+		</script> -->
+		
+		
+		
+		
+		<script type="text/javascript">
+			var i = 0;
+			timer = setInterval(function(){
+				i++;
+				console.log(i);
+				if (i === 10){
+					clearInterval(timer);
+				}
+			}, 1000);
+		</script>
+	</body>
+</html>

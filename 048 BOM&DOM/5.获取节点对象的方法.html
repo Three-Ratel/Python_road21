@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			/* .active{
+				background-color: yellowgreen;
+			} */
+			
+			.active-li{
+				color: red;
+				/* background-color: yellowgreen; */
+			}
+		</style>
+	</head>
+	<body>
+
+		<ul id="box" class="active">
+			<li class="active-li">1</li>
+			<li>2</li>
+			<li>3</li>
+			<li>4</li>
+			<li>5</li>
+			<li>6</li>
+		</ul>
+
+		<script type='text/javascript'>
+			// var box = document.getElementById('box');
+			// console.log(box);
+			// console.log(box.children);
+			
+			
+			// 遍历li
+			var li = document.getElementsByTagName('li');
+			for (var i = 0; i < li.length; i++){
+				// console.log(li[i]);
+				this.onclick = function(){
+					for (var j = 0; j < li.length; j++){
+						this.className = '';
+					}
+					this.className='active-li';
+				};
+				
+				
+				
+				
+			}
+			
+			
+			
+			
+			
+			// var act = document.getElementsByClassName('active');
+			// console.log(act);
+			// console.log(act.children);
+			
+		</script>
+	</body>
+</html>
