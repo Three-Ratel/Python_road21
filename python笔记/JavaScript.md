@@ -323,7 +323,7 @@ console.log(Person.age);
 2. **点语法,set&get**
 
 - 函数中的this不一定widow
-- 对象中的this指向当前obj
+- **对象**和**绑定事件**中的this指向当前obj
 - 全局this指向window
 - 一切皆对象
 
@@ -338,7 +338,7 @@ obj.fav();
 console.log(this);              // this window
 ```
 
-- es6用class来创建对象
+- **es6用class来创建对象**
 
 ```js
 var obj = {name:'echo'};
@@ -353,8 +353,8 @@ function add(x, y){
 };
 
 add();                           // 不可以改变this指向
-add.call(obj, 1, 2);            // 可以改变this指向
-add.apply(null, [1, 2]);          // 可以改变this指向
+add.call(obj, 1, 2);             // 可以改变this指向
+add.apply(null, [1, 2]);         // 可以改变this指向
 console.dir(add);
 ```
 
@@ -481,13 +481,14 @@ num.slice(-3,-1)                      // 倒数第三个到倒数第一个
 num.slice(-3,-4)                      // 取不到值
 ```
 
-9. 位置方法indexOf(0)
+9. **位置方法indexOf(0)**
 
 - 返回索引
 - 查不到返回-1
 - lastindexof();
 
 ```js
+num = [1,2,3,4,5,4,3,2,1]
 var a = num.indexOf(4);               // 3
 var a = num.lastIndexOf(4);           // 5
 ```
@@ -795,7 +796,7 @@ alert(Math.round(num));          //26
 alert(Math.round(num2));         //25
 ```
 
-5. **radom** :（0-1）
+5. **random** :（0-1）
    - 产生min-max之间的随机数
 
 ```js
@@ -925,6 +926,7 @@ console.log('看看阻不阻塞')
 2. **周期性循环**
 
 - 垃圾回收机制，这里回收不了
+- 网页动画
 
 ```js
 var i = 0;
@@ -942,8 +944,8 @@ timer = setInterval(function(){
 
 - window中的属性
 - 浏览器自带缓存和记录功能
-- hash模式：带#
-- histroy模式：不带#
+- **hash模式：带#**
+- **histroy模式：不带#**
 
 ```js
 console.log(window.location);
@@ -953,7 +955,8 @@ console.log(window.location.herf);
 console.log(window.location.origin);
 console.log(window.location.port);
 // console.log(window.location.reload());
-reload: f reload()  // 方法
+reload: f reload();                                    // 方法
+location.reload();
 ```
 
 - **ajax**在不重载页面的情况下，对网页就进行操作
@@ -967,12 +970,17 @@ setInterval(function(){
 }, 2000);
 ```
 
+
+
+
 ### 2. DOM
 
-- document object modle
+- document object model
 - 对象：用户自定义对象、内建对象(native object)、宿主对象(window)(浏览器提供)
 - node节点。元素节点（p, a, div...）
-- 节点对象(元素节点(**属性节点**)(**文本节点**) 注释节点)
+- 节点对象(元素节点(**属性节点**)(**文本节点**) (**注释节点**)) 
+
+- **document.body  document.documentElement**
 
 #### 2.1 获取元素节点(3)
 
@@ -992,7 +1000,7 @@ console.dir(box);                                 // 查看box所有属性和方
 
 ```js
 var box = document.getElementsByTagName('div');
-// 使用拍他思想，操作标签，点击任意一个改变样式，即改变类名
+// 使用拍它思想，操作标签，点击任意一个改变样式，即改变类名
 var li = document.getElementsByTagName('li');
 			for (var i = 0; i < li.length; i++){
 				// console.log(li[i]);
@@ -1020,7 +1028,18 @@ console.log(box.children);
 - onmouseover()
 - onmouseout()
 
-#### 2.2 样式操作
+#### 2.2 文档、body、html
+
+```js
+// 当前文档啊
+console.log(document);
+// html中的body
+console.log(document.body);
+// html
+console.log(document.documentElement);
+```
+
+#### 2.3 样式操作
 
 ```js
 // 属性全部使用驼峰式
@@ -1029,6 +1048,7 @@ box.style.backgroudColor
 ```
 
 - 更改局部样式时，需要使用**id获取元素**对象操作
+- 或者通过类名，利用索引找到具体某一个元素
 
 ```js
 var box = window.document.getElementById('box');
@@ -1067,7 +1087,7 @@ setInterval (function(){
 },1000);
 ```
 
-#### 2.3 属性设置
+#### 2.4 属性设置(2)
 
 1. **追加类**
 
@@ -1115,7 +1135,7 @@ p.onmouseover = function(){
 }
 ```
 
-#### 2.4 节点操作
+#### 2.5 节点操作
 
 ```js
 var ul = document.getElementById('box');
@@ -1157,7 +1177,7 @@ box.insertBefore(li2, li1);
 box.removeChild(li1);
 ```
 
-#### 2.5 遍历操作节点
+#### 2.6 遍历操作节点
 
 ```js
 var data = [
@@ -1175,7 +1195,7 @@ for (var i = 0; i < data.length; i++){
 }
 ```
 
-#### 2.6 示例
+#### 2.7 示例
 
 ```js
 var box = document.getElementById('imgBox');

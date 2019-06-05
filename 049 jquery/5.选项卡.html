@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			button.active{
+				color: red;
+			}
+			.hide{
+				display: none;
+			}
+			p{
+				display: none;
+			}
+			p.active{
+				display: block;
+			}
+		</style>
+	</head>
+	<body>
+		<button class="active">热门</button>
+		<button>电脑影音</button>
+		<button>电脑</button>
+		<button>家电</button>
+		<p class="active">热门</p>
+		<p>电脑影音</p>
+		<p>电脑</p>
+		<p>家电</p>
+		
+		<script type="text/javascript">
+			var btns = document.getElementsByTagName('button');
+			var p = document.getElementsByTagName('p');
+			//  方法一
+			// for (var i = 0; i < btns.length; i++){
+			// 	btns[i].index = i;
+			// 	btns[i].onclick = function(){
+			// 		for (var j = 0; j < btns.length; j++){
+			// 			// console.log(this);
+			// 			btns[j].className = '';
+			// 			p[j].className = '';
+			// 		}
+			// 	this.className = 'active';
+			// 	p[this.index].className = 'active';
+			// 	}	
+			// }
+			
+			// 方法二
+			for (let i = 0; i < btns.length; i++){
+				btns[i].onclick = function(){
+					for (var j = 0; j < btns.length; j++){
+						btns[j].className = '';
+						p[j].className = '';
+					}
+					this.className = 'active';
+					p[i].className = 'active';
+				}
+			}
+			
+			
+		</script>
+		
+		
+		
+		
+	</body>
+</html>

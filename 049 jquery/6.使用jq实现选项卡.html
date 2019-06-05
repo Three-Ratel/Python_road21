@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>jq实现选项卡</title>
+		<style type="text/css">
+			button.active{
+				color: red;
+			}
+			p{
+				display: none;
+			}
+			p.active{
+				display: block;
+			}
+		</style>
+	</head>
+	<body>
+		<button class="active">热门</button>
+		<button>电脑影音</button>
+		<button>电脑</button>
+		<button>家电</button>
+		<p class="active">热门</p>
+		<p>电脑影音</p>
+		<p>电脑</p>
+		<p>家电</p>
+		
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript">
+			console.log($('button'));
+			$('button').click(function(){
+				// 处理点击的选项卡
+				console.log($(this));
+				$(this).addClass('active').siblings('button').removeClass('active');
+				// 获取当前对象的索引
+				console.log(($(this).index()));
+				$('p').eq($(this).index()).addClass('active').siblings('p').removeClass('active');
+			});
+		</script>
+		
+		
+		
+		
+	</body>
+</html>

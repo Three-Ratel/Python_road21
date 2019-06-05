@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>事件</title>
+		<script type="text/javascript">
+			function message() {
+				console.log('请输入用户名')
+			}
+
+			function message2() {
+				console.log('请正确输入用户名')
+			}
+		</script>
+	</head>
+	<body>
+		<form action="">
+			<p> <label for="text">用户名</label> <input type="text" name="" id="text" value="" placeholder="请输入用户名" onfocus="message();"
+				 onblur="message2()" /> </p>
+			<p> <label for="pwd">密&nbsp;&nbsp;&nbsp;&nbsp;码</label> <input type="password" name="" id="pwd" value="" placeholder="请输入密码" />
+			</p>
+			<p> <input type="submit" name="" id="" value="登陆" /> </p>
+		</form>
+	</body>
+</html>
