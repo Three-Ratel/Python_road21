@@ -1225,7 +1225,7 @@ setInterval(function(){
 2. **nodeValue**：节点的值
 3. **nodeType**: 节点的类型
 
-#### 1.nodeName属性
+#### 3.1 nodeName属性
 
 - 节点的名称，是只读
 
@@ -1234,7 +1234,7 @@ setInterval(function(){
 3. **文本节点的nodeName永远是#text**
 4. **文档节点的nodeName永远是#document**
 
-#### 2.nodeValue属性
+#### 3.2 nodeValue属性
 
 - 节点的值
 
@@ -1242,7 +1242,7 @@ setInterval(function(){
 2. 文本节点的 nodeValue 是文本自身 
 3. 属性节点的 nodeValue 是属性的值
 
-#### 3.nodeType 属性
+#### 3.3 nodeType 属性
 
 - 节点的类型，是只读的。
 
@@ -1259,7 +1259,7 @@ setInterval(function(){
 - attributes属性是获取到该节点对象上的所有属性的集合
 - childNodes属性是获取到该节点对象的所有子节点的集合
 
-#### 4. 示例
+#### 3.4 示例
 
 ```js
 <!DOCTYPE html>
@@ -1290,6 +1290,724 @@ setInterval(function(){
 </html>
 ```
 
+1. onchange
+2. onselect
+3. onsubmit
+4. onload
+5. onfocus
+6. onblur
+
+## 3. jquery
+
+### 1. jQuery
+
+- bootstrap(twitter)
+- bootCDN(前端，在线外接资源)
+- vue：没有html结构（ssr、nuxt）
+
+#### 1.1 简介
+
+1. **html文档遍历和操作**、**事件处理**、**动画**和**Ajax**
+   - **操作**：获取节点元素、属性、样式、类名、节点对象创建删除添加和替换
+2. 基于面向对象、封装**大量方法**到对象(长度属性)
+3. **js包含jQery**(write less，do more)
+
+#### 1.2 jquery的使用
+
+1. jquery.js(开发) / jquery.min.js(生产)
+   - 生产环境会对代码优化
+   - jquery.min.js代码文件大小会进行压缩
+   - 严格模式和非严格模式(this指向问题)
+
+```js
+// 非严格模式
+function fn(){
+  // this是window
+  console.log(this);
+}
+// 严格模式
+function fn(){
+  'use strict';
+  // this是undifinded
+  console.log(this);
+}
+```
+
+2. **基础选择器**
+
+- id、类、标签
+
+```js
+console.dir($);                           // jquery包含大量方法的对象
+console.log($('#box'));                   // jquery对象，伪数组
+console.log($('#box')[0]);                // jquery对象转节点对像
+var box = document.getElementById('box'); // js对象
+$(box)；                                  // js转jq对象
+```
+
+3. **高级选择器**
+   - 子代、后代、组合、交集
+   - 没有值代表没有获取到
+
+```js
+console.log($('.box>p'))                  // 子代选择器，jquery对象
+console.log($('.box>p')[1])
+// 组合选择器
+$('box,active')
+// 交集选择器
+$('div.active')
+// js对象
+console.log($('input[type=text]'));       // 属性选择器
+```
+
+4. **绑定事件**
+   - **样式操作是css方法**
+   - **$('#box.active').click(function(){})**
+   - **绑定事件中的this指向当前的对象**
+
+```js
+$('#box.active').click(function(){
+  // this指向当前js节点对象
+  console.log(this);
+  // 样式操作
+  this.style....
+  // js转换为jq，操作样式,不会覆盖
+  $(this).css('color', 'red');
+  $(this).css('font-size'(或使用驼峰), '20px');
+ 	// 或使用对象传值，遍历对象进行赋值
+  $(this).css({'color':'red', 'font-size':40});
+ 	console.log($(this).css('color'));
+});
+```
+
+- 样式修改之**css()**
+  - css('color')：是获取属性
+  - css({'color':'red', …}):设置属性
+
+```js
+// 单独设置样式。不同种类的样式不会覆盖
+$(this).css('font-size', '40px');
+$(this).css('color','lightblue');
+// 共同设置样式
+$(this).css({
+  'font-size':'40px',
+  'color':'red',
+})
+// 获取属性值
+console.log($(this).css('color'));\
+```
+
+5. **过滤选择器**
+
+```js
+// eq,gt,lt，odd，even，first，last
+console.log($('ul li')[1];                        // js对象
+console.log($('ul li:eq(1)'));                    // jq对象
+console.log($('ul li:gt(1)'));                    // 。。。
+console.log($('ul li:lt(1)'));                    // 。。。
+console.log($('ul li:odd'));                      // 。。。
+console.log($('ul li:even'));                     // 。。。
+console.log($('ul li:first'));                    // 。。。
+console.log($('ul li:last'));                     // 。。。
+```
+
+6. **筛选选择器**
+
+- **find**、**children**、**parent**
+
+```js
+// 选中后代所有的span/a .find()
+console.log($('ul').find('span'));
+console.log($('ul').find('a'));
+// 选中子代中的元素
+console.log($('ul').children());
+// parent(), document-html-body-...
+console.log($('span').parent());
+// 
+console.log($('ul li').eq(1));
+// siblings(),实现选项卡，排他性
+console.log($('li').addClass('active').siblings('button').removeClass('active'));
+// 当前点击元素索引
+var index = $(this).index();
+$('p').eq($(this).index()).addClass('active').siblings('p').removeClass('active')
+```
+
+- **链式编程**
+
+```js
+console.log($('span').parent().parent().parent().parent().parent());
+```
+
+7. **选项卡**
+
+- **let可以把this限制在局部作用域中**
+
+```js
+// 选项卡方法一
+for (var i = 0; i < btns.length; i++){
+  btns[i].index = i;
+  btns[i].onclick = function(){
+    for (var j = 0; j < btns.length; j++){
+      // console.log(this);
+      btns[j].className = '';
+      p[j].className = '';
+    }
+    this.className = 'active';
+    p[this.index].className = 'active';
+  }	
+}
+// 选项卡方法二
+for (let i = 0; i < btns.length; i++){
+  btns[i].onclick = function(){
+    for (var j = 0; j < btns.length; j++){
+      btns[j].className = '';
+      p[j].className = '';
+    }
+    this.className = 'active';
+    p[i].className = 'active';
+  }
+}
+```
+
+8. **jq实现选项卡**
+
+- addClass('类1 类2...')
+- removeClass('类1 类2...')
+- toggoleClass('类')：开关式切换类名
+
+```js
+<!DOCTYPE html>
+<html>
+		<head>
+        <meta charset="utf-8">
+        <title>jq实现选项卡</title>
+        <style type="text/css">
+          	button.active{
+              color: red;
+            }
+            p{
+              display: none;
+            }
+            p.active{
+              display: block;
+            }
+				</style>
+		</head>
+<body>
+    <button class="active">热门</button>
+    <button>电脑影音</button>
+    <button>电脑</button>
+    <button>家电</button>
+    <p class="active">热门</p>
+    <p>电脑影音</p>
+    <p>电脑</p>
+    <p>家电</p>
+
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript">
+        console.log($('button'));
+        $('button').click(function(){
+            // 处理点击的选项卡
+            console.log($(this));
+            $(this).addClass('active').siblings('button').removeClass('active');
+            // 获取当前对象的索引
+            console.log(($(this).index()));
+            $('p').eq($(this).index()).addClass('active').siblings('p').removeClass('active');
+    });
+    </script>
+
+	</body>
+</html>
+```
+
+### 2. 动画
+
+#### 2.0 操作值的方法
+
+1. **$('#btn').text('显示')**：修改btn的text内容为显示
+   - 没有参数则是获得
+2. **$('#btn').html(<p>hello</p>)**
+   - html()：既获得标签，又获得文本
+3. **$('#btn').val()**
+   - 只针对于表单控件
+
+#### 2.1 show/hide(毫秒,回调)
+
+- 左上角，改变宽高
+
+```js
+$('#button').click(function(){
+  // $('#box').show(2000);
+  if($(this).text() === '显示'){
+    
+    $('#box').show(2000 function(){
+      $('#button').text() === '隐藏');
+    });
+  })else{
+    $(this).text() === '显示');
+    $('#box').hide(2000);
+  }
+```
+
+#### 2.2 slideDown/Up(毫秒,回调)
+
+- 卷帘门，只改变盒子的高度
+
+```js
+// 在开启定时器时，需要先停止之前的定时器
+$('#box').stop().toggle(2000);
+$('#box').slideDown(2000);
+$('#box').slideUp(2000); 
+```
+
+#### 2.3 fadeIn/Out(毫秒,回调)
+
+- 淡入淡出，快速显示，通过透明度控制
+- opacity:0-1 透明(0)
+
+```js
+$('#box').fadeIn(2000);
+$('#box').fadeOut(2000);
+// 动画不支持背景色，需要插件支持
+$('#box').animater([params], speed, callback);
+```
+
+#### 2.4 toggle(毫秒,回调)
+
+- 动画开关
+- **slideToggole()**
+
+```js
+$('#box').toggle(2000, function(){});
+```
+
+#### 2.5 自定义动画
+
+- animate({样式属性},毫秒,callback())
+- display中的block和none的切换
+
+```html
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        div {
+            position: absolute;
+            left: 20px;
+            top: 30px;
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+    </style>
+    <script src="js/jquery.js"></script>
+    <script>
+        jQuery(function () {
+            $("button").click(function () {
+                var json = {"width": 500,
+					"height": 500, 
+					"left": 300, 
+					"top": 300, 
+					"border-radius": 100};
+					
+                var json2 = {
+                    "width": 100,
+                    "height": 100,
+                    "left": 100,
+                    "top": 100,
+                    "border-radius": 100,
+                    "background-color": "red"
+                };
+
+                //自定义动画
+				$("div").animate(json, 1000, function () {
+                    $("div").animate(json2, 1000, function () {
+                        alert("动画执行完毕！");
+                    });
+                });
+
+            })
+        })
+    </script>
+</head>
+<body>
+<button>自定义动画</button>
+<div></div>
+</body>
+</html>
+```
+
+
+
+## 4. 属性&文档操作和ajax
+
+### 1. 属性操作
+
+#### 1.1 attri/removeAttr
+
+- setAttribute/get...
+- **只能获取标签上的属性**
+
+```js
+// 文档加载jq中
+$(document).ready(function(){$('p')});
+// 文档加载完成后，调用回调函数，无覆盖现象
+jQuery(function(){});
+$(function(){
+  $('p').attr('title', 'henry');
+  $('p').attr({'title':'henry',
+              'color':'red'});
+  // 获得属性,需要一个属性名
+  $('p').attr('title');
+  // 移除(一个或多个)
+  $('p').removeAttr('title id a');
+})；
+
+// js中使用,js中的事件有覆盖现象
+window.onload = function(){
+  console.log(222);
+};
+window.onload = function(){
+  console.log(111);
+}
+```
+
+#### 1.2 prop/removeProp
+
+- 只能在**对象内部**可以看到（console中）
+- 用于input
+- 获取当前**对象的属性**
+
+```js
+$(function(){
+  $('input[type=radio]').eq(0).prop('checked');
+$('input[type=radio]').eq(0).prop('type');
+// 只能操作标签上的属性
+$('input[type=radio]').eq(0).attr('a'， 1);
+// 可以操作对象内部的属性
+$('input[type=radio]').eq(0).prop('type');  
+});
+```
+
+#### 1.3 h5
+
+- jq22.com
+
+```js
+<h2>视频</h2>
+<video width="" height="" controls="controls">
+  <source src="知乎.mp4" type="video/mp4"></source>
+</video>
+// controls表示播放按钮
+<h2>音频</h2>
+<audio src="海贼王%20-%20ビンクスの酒(独唱).mp3" controls="controls">音频</audio>
+```
+
+### 2. 文档方法
+
+#### 2.1 插入
+
+1. append
+
+- 父元素.append(子元素)；
+- 通常谁调用返回值就是那个对象
+
+```js
+$('#box').append('henry');
+// 追加一个标签
+$('#box').append('<h2>echo</h2>');
+$('#box').append(js对象);
+// 如果参数是jq对象相当于移动操作
+$('#box').append(jq对象);
+```
+
+2. appendTo
+
+- 子元素.appendTo(父元素)；
+
+```js
+$('<a href="">百度一下  </a>').appendTo('#box');
+// 链式编程思想，可以直接修改样式
+$('<a href="">百度一下  </a>').appendTo('#box').css('yellow');
+```
+
+3. prepend
+
+- 前置添加
+- 用户最新数据的插入(博客园)
+
+```js
+$('#box').prepend('<h2>echo</h2>');
+```
+
+4. prependTo
+
+- 前置添加
+
+```js
+$('<a href="">百度一下  </a>').prependTo('#box');
+```
+
+5. before/after
+
+```js
+$('h2'）.before('henry');
+```
+
+6. insertBefore/After
+
+```js
+$('<a href="">百度一下  </a>').insertBefore('h2');
+```
+
+#### 2.2 替换
+
+- replace
+- 创建一个标签并替换
+
+```js
+$('#box ul').replaceWith('<a href="">百度一下</a>');
+// .replaceAll()和.replaceWith()功能类似，但是目标和源相反。
+$('<a href="">百度一下</a>').replaceAll('#box ul');
+```
+
+#### 2.3 删除
+
+- remove
+- 既移除标签又移除事件
+
+```js
+// 删除
+$('button').click(function(){
+    alert(111);
+    $(this).css('color', 'red');
+    $('#box').append($(this).remove());
+})
+
+```
+
+#### 2.4 detach
+
+- 保留事件
+
+```js
+// 不删除事件
+$('button').click(function(){
+    alert(111);
+    $(this).css('color', 'red');
+    $('#box').append($(this).detach());
+})
+```
+
+#### 2.5 清空
+
+```js
+$('#box').empty();
+$('#box').html('');
+```
+
+### 3. 事件
+
+#### 3.1 click()
+
+- 单击事件
+
+#### 3.2 dblclick()
+
+- 双击事件
+- **解决单双击的冲突问题**
+- setTimeout
+
+#### 3.3 mousedown()/up()
+
+- 鼠标按下/弹起触发事件
+
+#### 3.4 mouseover()/out()
+
+- 父元素设置，会波及到自元素
+- 鼠标穿过父元素和子元素都会调用
+
+```js
+$('#box').mouseover(function(){
+  console.log('进来了');
+})
+$('#box').mouseout(function(){
+  console.log('出去了');
+})
+```
+
+```js
+// mouseover的传播效应
+$('#box').mouseover(function(){
+  console.log('进来了');
+  $('#child').stop().slideDown(1000);
+})
+$('#box').mouseout(function(){
+  console.log('出去了');
+  $('#child').stop().slideUp(1000);
+})
+```
+
+#### 3.5 mouseenter()/leave()
+
+- 鼠标移入、移出事件
+- 只对绑定元素有效
+- 使用动画时，**先使用stop()**在使用动画
+
+```js
+// mouseenter
+$('#box').mouseenter(function(){
+  console.log('进来了');
+  $('#child').stop().slideDown(1000);
+})
+$('#box').mouseleave(function(){
+  console.log('出去了');
+  $('#child').stop().slideUp(1000);
+})
+```
+
+#### 3.6 合成事件
+
+```js
+$('#box').hover(function(){
+  
+},function(){})
+```
+
+#### 3.7 聚焦和失焦
+
+```js
+// 默认加载页面，聚焦
+$('input[type=text]').focus();
+// 聚焦事件
+$('input[type=text]').focus(function(){
+  console.log('聚焦了');
+})
+// 失焦事件
+$('input[type=text]').blur(function(){
+  console.log('失焦了');
+})
+```
+
+#### 3.8 键盘按下
+
+- **e**为jQuery对像，称为jq事件对象
+- keyCode为按键的code
+
+```js
+$('input[type=text]').keydown(function(e){
+  console.log(e.keyCode);
+  switch (e.keyCode){
+    	case 8:
+      	$(this).val('');
+     		break;
+    	default:
+      	break;
+  }
+})
+```
+
+#### 3.9 change
+
+- 表单元素发生改变
+
+#### 3.10 select
+
+#### 3.11 submit
+
+- 表单提交事件，默认的表单提交会优先响应
+- sumit会触发form中的action行为
+- **preventDefault**
+
+```js
+// 阻止默认事件方法1
+<a href='javascript:void(0);'>;
+<a href='javascript:;'>;
+<form action='javascript:;'>;
+
+// 阻止默认事件方法2
+<script type="text/javascript">
+    $('form').submit(function(e){
+        e.preventDefault();
+        console.log('11111');
+ 	 	})
+</script>
+```
+
+### 4. ajax的使用
+
+1. 绑定事件需要等待响应后
+2. 请求头/体
+3. 响应头/体
+4. XHR
+
+#### 4.1 ajax的使用
+
+```js
+// ajax，只针对与当前页面的局部进行刷新
+var name = $('input[type=text]').val();
+var pwd = $('input[type=password]').val();
+$.ajax({
+  url:'',
+  method:'post';
+  data:{
+    a:name,
+    b:pwd
+	},
+  success:function(res){
+  	// {data:200}
+  	if (res.data==200){
+      setTimeout(function(){
+        windown.open('网址', '_self')
+      },3000)
+    }
+	}
+});
+```
+
+#### 4.2 ajax实例
+
+```js
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="js/jquery.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<div id="box">
+		</div>
+		
+		<script type="text/javascript">
+			$(function(){
+				$.ajax({
+					url:'https://api.apeland.cn/api/banner/',
+					methods:'get',
+					success:function(res){
+						console.log(res);
+            // 根据响应中的data，判断响应是否成功，以及就数据进行操作
+						if (res.code === 0 ){
+							var name = res.data[0].name;
+							var cover = res.data[0].cover;
+							$('#box').append(`<img src=${cover} alt=${name}>`);
+						}
+					},
+          // 出现错误时的操作
+					err:function(err){
+						console.log(err);
+					},
+					
+				})
+			})
+		</script>
+		
+	</body>
+</html>
+
+```
 
 
 
@@ -1310,3 +2028,12 @@ setInterval(function(){
 
 
 
+
+
+
+
+
+
+
+1. 数据库中没bool值
+2. tinyint(1) / tinyint(0)

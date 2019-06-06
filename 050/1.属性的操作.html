@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>属性操作</title>
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript">
+			// $(document).ready(function(){
+			// 	console.log($('p'));
+			// })
+			// jQuery(function(){
+			// 	console.log($('p').attr('title', 'henry'));
+			// 	console.log($('p').attr({
+			// 		'a':1,
+			// 		'b':2
+			// 	}))
+			// 	console.log($('p').attr('title'));
+			// 	console.log($('p').removeAttr('a b'));
+			// })
+			
+			
+			
+			// // js的操作会有覆盖现象
+			// window.onload = function(){
+			// 	console.log(222);
+			// };
+			// window.onload = function(){
+			// 	console.log(111);
+			// }
+			
+			// $(function(){
+			// 	console.log($('p').attr('title'));
+			// })
+			// 
+			// 
+			$(function(){
+				// // 获取节点属性
+				// console.log($('input[type=radio]').eq(0).attr('checked'));
+				// console.log($('input[type=radio]').eq(1).attr('checked'));
+				// 获取对象中的属性
+				console.log($('input[type=radio]').eq(1).prop('checked'));
+				console.log($('input[type=radio]').eq(1).prop('title', 'xixi'));
+				console.log($('input[type=radio]').eq(1).removeProp('title'));
+
+				
+				
+			})
+			
+			
+			
+			
+			
+		</script>
+	</head>
+	<body>
+		<p>henry</p>
+		<input type="radio" name='gender' checked >男
+		<input type="radio" name="gender">女
+	</body>
+</html>

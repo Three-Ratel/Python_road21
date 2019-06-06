@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<div id="header">
+			<ul>
+
+			</ul>
+		</div>
+		
+		<div class="content">
+			<ul>
+				
+			</ul>
+		</div>
+		<script src="js/jquery.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			
+			/* {
+				"error_no": 0,
+				"data": [{
+					"id": 1,
+					"name": "Python",
+					"hide": false,
+					"category": 1
+				}, {
+					"id": 2,
+					"name": "Linux运维",
+					"hide": false,
+					"category": 4
+				}, {
+					"id": 4,
+					"name": "Python进阶",
+					"hide": false,
+					"category": 1
+				}, {
+					"id": 7,
+					"name": "开发工具",
+					"hide": false,
+					"category": 1
+				}, {
+					"id": 9,
+					"name": "Go语言",
+					"hide": false,
+					"category": 1
+				}, {
+					"id": 10,
+					"name": "机器学习",
+					"hide": false,
+					"category": 3
+				}, {
+					"id": 11,
+					"name": "技术生涯",
+					"hide": false,
+					"category": 1
+				}]
+			} */
+			$(function(){
+				var sub_category = 0;
+				//向导的内容
+				$.ajax({
+					url:'https://www.luffycity.com/api/v1/course_sub/category/list/',
+					methods:'get',
+					success:function(res){
+						console.log(res);
+						if(res.error_no === 0){
+							res.data.unshift({
+								id:sub_category,
+								name:'全部'
+							})
+							
+							res.data.forEach(function(item,index){
+								$(`<li>${item.name}<\/li>`).appendTo('#header ul').attr('id',item.id);
+							})
+							
+						}
+					}
+				})
+				getCourseList(sub_category);
+				
+				function getCourseList(sub_category){
+					$.ajax({
+						url:`https:\/\/www.luffycity.com/api/v1/courses/?sub_category=${sub_category}&ordering=`,
+						methods:'get',
+						success:function(res){
+							console.log(res);
+							if(res.error_no === 0){
+								$('.content ul').empty();
+								res.data.forEach(function(item,index){
+									
+									$(`<li><h3>${item.name}<\/h3><\/li>`).appendTo('.content ul');
+								})
+							}
+						}
+					})
+				}
+				
+				$('#header ul').on('click','li',function(){
+					
+					sub_category =  $(this).attr('id');
+					getCourseList(sub_category);
+				})
+				
+				
+			})
+		</script>
+	</body>
+</html>

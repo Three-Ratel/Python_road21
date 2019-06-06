@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="js/jquery.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<div id="box">
+			
+		</div>
+		
+		<script type="text/javascript">
+			$.ajax(function(){
+				url:'',
+				methods:'get',
+				success:function(res){
+					console.log(res);
+					if (res.code===0){
+						var cover = res.data[0].cover;
+						var name = res.data[0].name;
+						console.log(cover);
+						$('#box').append('<img src=${cover} alt=${name}>');	
+					}
+				},
+				error:function(err){
+					console.log(err);
+				}
+			})
+		</script>
+	</body>
+</html>

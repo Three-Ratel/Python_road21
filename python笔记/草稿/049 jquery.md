@@ -237,6 +237,8 @@ for (let i = 0; i < btns.length; i++){
 
 ### 2. 动画
 
+- **$('#btn').text('显示')**：修改btn的text内容为显示
+
 #### 2.1 show/hide(毫秒数)
 
 ```js
@@ -253,17 +255,83 @@ $('#button').click(function(){
   }
 ```
 
+#### 2.2 slideDown/Up(毫秒)
+
 ```js
 // 在开启定时器时，需要先停止之前的定时器
 $('#box').stop().toggle(2000);
 $('#box').slideDown(2000);
 $('#box').slideUp(2000); 
-$('#box').slideToggle(2000, function(){});
+```
 
+#### 2.3 fadeIn/Out(毫秒)
+
+```js
 $('#box').fadeIn(2000);
 $('#box').fadeOut(2000);
 // 动画不支持背景色，需要插件支持
 $('#box').animater([params], speed, callback);
+```
+
+#### 2.4 toggle(毫秒, 回调函数)
+
+```js
+$('#box').toggle(2000, function(){});
+```
+
+#### 2.5 自定义动画
+
+```html
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        div {
+            position: absolute;
+            left: 20px;
+            top: 30px;
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+    </style>
+    <script src="js/jquery.js"></script>
+    <script>
+        jQuery(function () {
+            $("button").click(function () {
+                var json = {"width": 500,
+					"height": 500, 
+					"left": 300, 
+					"top": 300, 
+					"border-radius": 100};
+					
+                var json2 = {
+                    "width": 100,
+                    "height": 100,
+                    "left": 100,
+                    "top": 100,
+                    "border-radius": 100,
+                    "background-color": "red"
+                };
+
+                //自定义动画
+				$("div").animate(json, 1000, function () {
+                    $("div").animate(json2, 1000, function () {
+                        alert("动画执行完毕！");
+                    });
+                });
+
+            })
+        })
+    </script>
+</head>
+<body>
+<button>自定义动画</button>
+<div></div>
+</body>
+</html>
 ```
 
 
