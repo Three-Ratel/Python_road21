@@ -11,7 +11,7 @@
 
 2. 只是通过文件操作，改变数据是非常繁琐的
 
-3. 解决对于多台机器或多个进程操作同一份数据我们需要自己解决并发和安全问题比较麻烦
+3. 解决对于**多台机器**或**多个进程**操作同一份数据我们需要自己**解决并发**和**安全问题**比较麻烦
 
 4. 自己处理数据备份，容错措施
 
@@ -45,9 +45,9 @@
      3. mysql：开源（小公司互联网公司）
      4. 注意：sql语句通用
 
-   - 非关系型数据库(key:value结构)eg：快递单号（redis、mongodb、mongodb，redis、memcache）
+   - 非关系型数据库(key:value结构)eg：快递单号（redis、mongodb、memcache）
 
-   - 在 WEB 应用方面，MySQL是最好的 **RDBMS**(Relational Database Management System，关系数据库管理系统) 应用软件。
+   - 在 WEB 应用方面，MySQL是最好的 **RDBMS**(关系数据库管理系统) 应用软件。
 
 ### 2. mysql的安装
 
@@ -108,7 +108,9 @@ sudo mysql.server start/stop/restart
 - mysql server端的ip 用户名/密码
 - Mysql -h192.168.12.87 -uroot -p123
 
-**Note**：可以连接网络上的某一个数据库
+#### Note1
+
+1. 可以连接网络上的某一个数据库
 
 #### 3.2 数据库中的概念
 
@@ -122,8 +124,8 @@ sudo mysql.server start/stop/restart
 
 - sql语句(structure query language)
 
-  - SQL : 结构化查询语言(**Structured Query Language)**简称SQL(发音：/ˈes kjuː ˈel/ "S-Q-L")，是一种特殊目的的编程语言，是一种数据库查询和程序设计语言，用于存取数据以及查询、更新和管理关系数据库系统
-  - SQL语言主要用于存取数据、查询数据、更新数据和管理关系数据库系统,SQL语言由IBM开发。**SQL语言分为3种类型**：
+  - SQL : 结构化查询语言(**Structured Query Language)**简称SQL(发音：/ˈes kjuː ˈel/ "S-Q-L")，是一种特殊目的的编程语言，是一种数据库查询和程序设计语言，用于存取数据以及查询、更新和管理关系数据库系统。
+  - SQL语言主要用于存取数据、查询数据、更新数据和管理关系数据库系统,SQLsu语言由IBM开发。**SQL语言分为3种类型**：
 
   1. **DDL**语句 数据库定义语言：数据库，表，视图，索引，存储规程
   2. **DML**语句 数据库操纵语言：插入数据insert，delete，update，alter
@@ -133,9 +135,11 @@ sudo mysql.server start/stop/restart
 # 查看当前用户
 select user(); 
 # 设置密码，password 表示密文存储
-set password = password('123');
+set password for root@localhost = password('123');
 # 创建用户
 create user '用户名'@'网段.%' identified by '密码';
+# 查看用户状态，用户信息都存储在mysql中的user表中
+select host,user from mysql.user;
 # 查看当前库
 show databases;
 # 创建文件夹henry
@@ -214,19 +218,19 @@ delete from 表 where id=1；
 #### 1.1 表的存储方式(3)
 
 1. 方式1：**MyISAM**
-   - mysql5.5- 默认存储方式
-   - 存储的文件个数：**表结构**、**表数据**、**索引**
-   - **不支持**行级锁、事务和外键
+   1. mysql5.5- 默认存储方式
+   2. 存储的文件个数：**表结构**、**表数据**、**索引**
+   3. **不支持**行级锁、事务和外键
 2. 方式2：**InnoDB** 
-   - mysql5.6+ 默认存储方式
-   - 存储文件个数：**表结构**、**表数据**
-   - 支持**行级锁**(默认)：脏数据（+表级锁），支持数据并发
-   - 支持**事务**：把多句操作，变成原子操作
-   - 支持**外键**：通过外键(**有约束**)在其他表(**有约束**)中查找信息
+   1. mysql5.6+ 默认存储方式
+   2. 存储文件个数：**表结构**、**表数据**
+   3. 支持**事务**：把多句操作，变成原子操作
+   4. 支持**外键**：通过外键(**有约束**)在其他表(**有约束**)中查找信息
+   5. 支持**行级锁**(默认)：脏数据（+表级锁），支持数据并发
 3. 方式3：**MEMORY**
-   - 存储在内存：**表结构**存储到硬盘中， 表数据存储到内存上
-   - **优势**：增删改查速度快
-   - **劣势**：重启数据消失、容量有限
+   1. 存储在内存：**表结构**存储到硬盘中， 表数据存储到内存上
+   2. **优势**：增删改查速度快
+   3. **劣势**：重启数据消失、容量有限
 
 #### 1.2 存储引擎介绍
 
@@ -364,7 +368,7 @@ create table t5(d1 decimal, d2 decimal(25, 20));
 
 ```
 
-#### Note1(3)
+#### Note2(4)
 
 1. 默认int类型有符号
 2. int类型数据范围不被**宽度**约束
@@ -373,7 +377,7 @@ create table t5(d1 decimal, d2 decimal(25, 20));
 
 #### 2.2 时间和日期(5)
 
-1. **data**：年月日
+1. **date**：年月日
 2. **time**：时分秒
 3. **year**：年份值
 4. **datetime**：年月日时分秒
@@ -415,7 +419,6 @@ create table t7(name1 char(5), name2 varchar(5));
 insert into t7 values('echo', 'echo')
 select concat(name1, '---') from t7;
 select concat(name2, '---') from t7;
-
 ```
 
 #### 2.4 enum和set类型
@@ -425,14 +428,12 @@ select concat(name2, '---') from t7;
 
 - en ENUM('male', 'female')：单选框
 - s set('')：多选框
-- 5.6版本取交集，5.7版本必须完全一样，不然会报错
+- 5.6版本取交集，5.7版本插入的数据必须和指定数据一致，不然会报错
 
 ```mysql
 create table t8(name char(12), 
                 gender ENUM('male', 'female'),
-               hobby set('play', 'drink', 'eat')s
-               );
-
+               hobby set('play', 'drink', 'eat'));
 ```
 
 ### 3. mysql工作流程
@@ -441,9 +442,9 @@ create table t8(name char(12),
 
 - MySQL架构总**共四层**，在上图中以虚线作为划分。 
   1. 最上层的服务并不是MySQL独有的，大多数给予网络的客户端/服务器的工具或者服务都有类似的架构。比如：**连接处理**、**授权认证**、**安全等**。 
-  2. 第二层的架构包括大多数的MySQL的**核心服务**。包括：查询解析、分析、优化、缓存以及所有的内置函数（例如：日期、时间、数学和加密函数）。同时，所有的跨存储引擎的功能都在这一层实现：存储过程、触发器、视图等。
+  2. 第二层的架构包括大多数的MySQL的**核心服务**。包括：查询解析、分析、优化、缓存以及所有的内置函数（例如：日期、时间、数学和加密函数）。同时，所有的跨存储引擎的功能都在这一层实现：**存储过程**、**触发器**、**视图等**。
   3. 第三层包含了**存储引擎**。**存储引擎负责MySQL中数据的存储和提取**。服务器通过API和存储引擎进行通信。这些接口屏蔽了不同存储引擎之间的差异，使得这些差异对上层的查询过程透明化。存储引擎API包含十几个底层函数，用于执行“开始一个事务”等操作。但存储引擎一般不会去解析SQL（InnoDB会解析外键定义，因为其本身没有实现该功能），不同存储引擎之间也不会相互通信，而只是简单的响应上层的服务器请求。
-  4. 第四层包含了**文件系统**，所有的表结构和数据以及用户操作的日志最终还是以文件的形式存储在硬盘上
+  4. 第四层包含了**文件系统**，所有的表结构和数据以及用户操作的日志最终还是以文件的形式存储在硬盘上。
 
 ## 1.3 表的完整性约束
 
@@ -452,9 +453,10 @@ create table t8(name char(12),
 - unsigned：设置无符号
 
 1. **NOT NULL** ：非空约束，指定某列不能为空； 
-2. **UNIQUE** : 唯一约束，指定某列或者几列组合不能重
-3. **PRIMARY KEY** ：主键，指定该列的值可以唯一地标识该列记
-4. **FOREIGN KEY** ：外键，指定该行记录从属于主表中的一条记录，主要用于参照完整性
+2. **DEFAULT**：默认值，当同一数据大量出现时使用；
+3. **UNIQUE** : 唯一约束，指定某列或者几列组合不能重；
+4. **PRIMARY KEY** ：**主键**，指定该列的值可以唯一地标识该列记；
+5. **FOREIGN KEY** ：外键，指定该行记录从属于主表中的一条记录，主要用于参照完整性。
 
 #### 1.1 not null
 
@@ -463,10 +465,8 @@ create table t8(name char(12),
 ```mysql
 create table t1(id int not null,
                name char(12) not null,
-               age int
-               );
+               age int);
 insert into t1(id, name) values(1, 'henry');
-
 ```
 
 #### 1.2 default
@@ -508,11 +508,10 @@ create table t4(id int not null unique,
 
 #### 1.4 auto_increment
 
-- 自增(只能用于数值)，**自带非空属性**
-- 设置自增字段必须是数字且唯一 **unique +  auto_increment**
-- 约束字段为自动增长，被约束的字段必须同时被key约束
-- 如果事务**rollback**了这个**auto_increment**值就会浪费掉，从而造成间隙
-- AUTO_INCREMENT数据列序号的最大值受该列的数据类型约束，一旦达到上限，**AUTO_INCREMENT**就会**失效**。
+1. 自增(只能用于数值)，**自带非空 唯一属性*s
+2. 约束字段为自动增长，被约束的字段必须同时被key约束
+3. 如果事务**rollback**了这个**auto_increment**值就会浪费掉，从而造成间隙
+4. AUTO_INCREMENT数据列序号的最大值受该列的数据类型约束，一旦达到上限，**AUTO_INCREMENT**就会**失效**。
 
 ```mysql
 create table t5(id int unique auto_increment,
@@ -548,7 +547,7 @@ show session variables like 'auto_inc%';
 set session auto_increment_increment=2;# 修改会话级别的步长
 # 基于全局级别的
 set global auto_increment_increment=2; # 修改全局级别的步长（所有会话都生效）
-# 查看设置，重新登陆有效,5.7版本直接失效
+# 查看设置，重新登陆5.7版本直接失效
 show variables like 'auto_incre%'; 
 ```
 
@@ -557,8 +556,8 @@ show variables like 'auto_incre%';
 
 #### 1.5 primary key
 
-- 一张表**只能**设置**一个主键,innodb**表中最好设置一个主键
-- 主键约束这个字段，非空且唯一即：**not null unique**
+1. 一张表**只能**设置**一个主键,innodb**表中最好设置一个主键
+2. 主键约束这个字段，非空且唯一即：**not null unique**
 
 ```mysql
 create table t6(id int not null unique,
@@ -593,10 +592,10 @@ create table t8(id int,
 
 #### 1.6 foreign key
 
-- 外键，涉及到两张表
-- 关联的数据类型必须一致
-- 被关联的表**必须唯一**，mysql最好关联主键
-- 先创建**外表**，再创建**关联表**
+1. 外键，涉及到两张表
+2. 关联的数据类型必须一致
+3. 被关联的表**必须唯一**，mysql最好关联主键
+4. 先创建**外表**，再创建**关联表**
 
 ```mysql
 create table staff(id int primary key auto_increment,
@@ -687,7 +686,6 @@ alter table 表名 modify 字段名 int unique;
 
 ```mysql
 alter database 库名 CHARACTER SET utf8;
-
 ```
 
 #### 2.7 操作主键add/drop
@@ -698,7 +696,6 @@ alter database 库名 CHARACTER SET utf8;
 alter table 表名 drop primary key;
 # 增加主键
 alter table 表名 add primary key(id);
-
 ```
 
 #### 2.8 操作外键add/drop
@@ -715,12 +712,11 @@ alter table 表名 drop foreign key 外键名;
 
 ```mysql
 drop table 表名；
-
 ```
 
 ### 3. 操作数据
 
-两张表的数据关系：多对一、一对一、多对多(书、作者)
+两张表的数据关系：**多对一**、**一对一**、**多对多**(书、作者)
 
 #### 3.1 多对一
 
@@ -816,7 +812,6 @@ Restrict方式
 
 # 父表有变更时,子表将外键列设置成一个默认的值 但Innodb不能识别
 Set default方式
-
 ```
 
 ### 4. 记录操作
@@ -853,7 +848,6 @@ delete form 表 where 条件;
 update 表 set 字段=值 where 条件;
 # 注意null只能使用 is 匹配
 where name is null;
-
 ```
 
 
@@ -869,7 +863,6 @@ SELECT DISTINCT 字段1,字段2... FROM 表名
                               HAVING 筛选
                               ORDER BY field
                               LIMIT 限制条数
-
 ```
 
 ### 1. 基本查询
@@ -882,26 +875,24 @@ select 字段1,字段2... from 表
 # 查看指定字段，自动去重
 select distinct 字段1,字段2... from 表
 # 数值型四则运算，并名别名显示
-select name,sarlary*12 (as) annual_sarlary form 表
+select name,salary*12 (as) annual_salary form 表
 # 数值型四则运算，并名别名， 拼接显示
-select concat ('姓名：',name,'薪资：',sarlary*12) (as) annual_sarlary form 表
+select concat ('姓名：',name,'薪资：',salary*12) (as) annual_salary form 表
 # 使用':'进行拼接
-select concat_ws (':', name,sarlary*12 (as) annual_sarlary) form 表
-
+select concat_ws (':', name,salary*12 (as) annual_salary) form 表
 ```
 
 ```mysql
 # 结合CASE语句：
 SELECT(CASE
-       WHEN emp_name = 'jingliyang' THEN
+       WHEN emp_name = 'henry' THEN
            emp_name
-       WHEN emp_name = 'alex' THEN
-           CONCAT(emp_name,'_BIGSB')
+       WHEN emp_name = 'echo' THEN
+           CONCAT(emp_name,'_prefect')
        ELSE
-           concat(emp_name, 'SB')
+           concat(emp_name, '_nice')
        END
        ) as new_name FROM employee;
-
 ```
 
 ### 2 . where
@@ -923,20 +914,17 @@ SELECT(CASE
 - **in / not in / is / is not** 
 
 ```mysql
-select * from t1 where sarlary>1000;
-
+select * from t1 where salary>1000;
 # 和数值类型无关
-select * from t1 where sarlary=20000 or sarlary=30000;
+select * from t1 where salary=20000 or slary=30000;
 # 逻辑运算
 select * from t1 where gender='male' and age=18;
 # 多选一,可以使用 in
-select 字段名，... from t1 where sarlary in (20000, 30000, 19000);
+select 字段名，... from t1 where salary in (20000, 30000, 19000);
 # not in 
-select 字段名，... from t1 where sarlary not in (20000, 30000, 19000);
-
-# is is not 
+select 字段名，... from t1 where salary not in (20000, 30000, 19000);
+# is /is not 
 select 字段名 from t1 where 字段 is null;
-
 ```
 
 #### 2.2 模糊查找(3)
@@ -945,8 +933,7 @@ select 字段名 from t1 where 字段 is null;
 
 ```mysql
 # between ... and ...
-select  name,sarlary from t1 where sarlary between 10000 and 20000;
-
+select  name,salary from t1 where salary between 10000 and 20000
 ```
 
 2. **字符串**模糊匹配，**like**
@@ -980,7 +967,6 @@ SELECT * FROM employee WHERE emp_name REGEXP 'on$';
 # 显示一个组的第一个,必须有group的字段
 select post from employee group by post;
 # distinct 基于group by完成
-
 ```
 
 #### 3.2 聚合函数(5)
@@ -1021,16 +1007,14 @@ select post,count(*) from employee group by post;
 # 对某一组进行统计人数
 select post,count(*) from employee where post='teacher';
 # 各部门的平均薪资
-select post,avg(sarlary) from employee group by post;
-
+select post,avg(salary) from employee group by post;
 ```
 
 ```mysql
 # 最晚入职
-select max(hire_date) from employee;
+select max(hire_date) from employee group by post;
 # 最早入职
 select min(hire_date) from employee group by post;
-
 ```
 
 - **查询分组内所有成员名**
@@ -1042,10 +1026,10 @@ select post, group_concat(emp_name) from employee group by post;
 # 查询岗位名以及各岗位内包含的员工个数
 select post, count(id) from employee group by post;
 # 查询公司内男员工和女员工的个数
-select sex, count(id) from employee group by sex;
+select gender, count(id) from employee group by gender;
 ```
 
-#### Note2(2)
+#### Note3(2)
 
 1. 总是根据会重复的项进行分组
 2. 分组总是和聚合函数一起使用
@@ -1086,7 +1070,6 @@ select post,avg(salary) from employee group by post having avg(salary) between 1
 select * from employee order by salary desc;
 # 多个个字段排序，先根据第一个字段排列后，再根据第二个字段排列
 select * from employee order by age asc, salary desc;
-
 ```
 
 - having 和 order by综合使用示例
@@ -1096,7 +1079,6 @@ select * from employee order by age asc, salary desc;
 select post, avg(salary) from employee group by post having avg(salary) > 10000 order by avg(salary) asc;
 # 查询各岗位平均薪资大于10000的岗位名、平均工资,结果按平均薪资降序排列
 select post, avg(salary) from employee group by post having avg(salary) > 10000 order by avg(salary) desc;
-
 ```
 
 #### 3.6 limit
@@ -1112,7 +1094,6 @@ limit n offset m等价于limit m,n
 select * from employee limit 5,5;
 # 显示下5个
 select * from employee limit 10,5;
-
 ```
 
 #### Note3(3)
@@ -1174,7 +1155,6 @@ select 字段列表
 select 字段 from t1,t2 where 字段1=字段2;
 # 连表查询,staff,department 两个表，和 inner join 效果一致
 select * from staff, department as dept where dep_id=dept.id;
-
 ```
 
 2. **内连接(inner join)**
@@ -1182,7 +1162,6 @@ select * from staff, department as dept where dep_id=dept.id;
 
 ```mysql
 select 字段 from t1 inner join t2 on t1(字段1) = t2(字段2);
-
 ```
 
 3. **外连接**
@@ -1201,13 +1180,11 @@ select 字段 from t1 right join t2 on t1(字段1) = t2(字段2);
 # 全连接
 select 字段 from t1 left join t2 on t1(字段1) = t2(字段2) union
 select 字段 from t1 right join t2 on t1(字段1) = t2(字段2);
-
 ```
 
 ```mysql
 # 通过左外、和右外连接实现全外连接示例
 select * from staff left join department as dept on dep_id = dept.id union select * from staff right join department as dept on dep_id = dept.id;
-
 ```
 
 - **注意 union与union all的区别：union会去掉相同的纪录**
@@ -1221,7 +1198,6 @@ select * from staff left join department as dept on dep_id = dept.id union selec
 select staff.name, dept.name from staff left join department as dept on dep_id = dept.id where age > 25;
 # 以内连接的方式查询staff和department表，并且以age字段的升序方式显示
 select * from staff inner join department as dept on dep_id = dept.id order by age;
-
 ```
 
 #### 4.2 子查询
@@ -1233,7 +1209,6 @@ select * from staff inner join department as dept on dep_id = dept.id order by a
 2：内层查询语句的查询结果，可以为外层查询语句提供查询条件。
 3：子查询中可以包含：IN、NOT IN、ANY、ALL、EXISTS 和 NOT EXISTS等关键字
 4：还可以包含比较运算符：= 、 !=、> 、<等
-
 ```
 
 ```mysql
@@ -1241,10 +1216,11 @@ select * from staff inner join department as dept on dep_id = dept.id order by a
 select name from emp where dep_id = (select id from department where name='技术');
 # 子表中匹配到多个值
 select name from emp where dep_id in (select id from department where name in ('技术', '销售'));
-
 ```
 
 2. **带in关键字的查询**
+
+- 使用in时，后面的表中字段只能有一个字段
 
 ```mysql
 # 查询平均年龄在25岁以上的部门名
@@ -1253,17 +1229,15 @@ select name from department where id in (select dep_id from staff group by dep_i
 select name from staff where dep_id in (select id from department where name = '技术' )
 # 查看不足1人的部门名(子查询得到的是有人的部门id)
 select name from department where id not in (select dep_id from staff group by dep_id);
-
 ```
 
 3. **带比较运算符**
 
 ```mysql
-# 查询大于所有人平均年龄的员工名与年龄
+# 查询大于所有人平均年龄的员工名、年龄
 select name, age from staff where age > (select avg(age) from staff);
 # 查询大于部门内平均年龄的员工名、年龄
 select name, age from staff t1 inner join (select dep_id, avg(age) avg_age from staff group by dep_id) t2 on t1.dep_id = t2.dep_id where t1.age > t2.avg_age;
-
 ```
 
 4. 带EXISTS关键字的子查询
@@ -1275,11 +1249,9 @@ select name, age from staff t1 inner join (select dep_id, avg(age) avg_age from 
 # exists后为真
 select * from staff where exists (select id from department where id=200);
 # 输出staff中所有数据
-
 # exists后为假
 select * from staff where exists (select id from department where id=200);
 # 输出为空
-
 ```
 
 5. **示例**
@@ -1385,7 +1357,7 @@ ALTER TABLE table_name DELAY_KEY_WRITE= 1;
    - 对**区分度高的列**建索引，重复率超过10%就不适合创建索引
    - 尽量选择区分度高的列作为索引,区分度的公式是**count(distinct 字段)/count(\*)**，表示字段不重复的比例。
 
-3. 索引特点
+3. 索引特点(2)
 
    - 加速读取，但牺牲了写的速度
    - 每个节点存储**数据的地址**
@@ -1413,19 +1385,18 @@ ALTER TABLE table_name DELAY_KEY_WRITE= 1;
    # 由于实际的数据页只能按照一棵B+树进行排序，因此每张表只能拥有一个聚集索引。
    1. 在多数情况下，查询优化器倾向于采用聚集索引。因为聚集索引能够在B+树索引的叶子节点上直接找到数据。
    2. 此外由于定义了数据的逻辑顺序，聚集索引能够特别快地访问针对范围值得查询。
-   
    ```
-
-   - 可以通过添加主键的方式完成索引的建立
-
-   ```mysql
+   
+- 可以通过添加主键的方式完成索引的建立
+   
+```mysql
    alter table t1 add primary key(id);
    alter table t1 modify id not null unique;
    ```
-
-   - **聚集索引的好处之一：**它对主键的排序查找和范围查找速度非常快，叶子节点的数据就是用户所要查询的数据。
+   
+- **聚集索引的好处之一：**它对主键的排序查找和范围查找速度非常快，叶子节点的数据就是用户所要查询的数据。
    - **聚集索引的好处之二：范围查询（range query）**，即如果要查找主键某一范围内的数据，通过叶子节点的上层中间节点就可以得到页的范围，之后直接读取数据页即可。
-
+   
 3. **辅助索引**：数据不直接存储在树中
 
    - **需要回表**
@@ -1448,7 +1419,7 @@ ALTER TABLE table_name DELAY_KEY_WRITE= 1;
       - 每张表可以有多个非聚集索引，需要更多磁盘和内容
       - 多个索引会影响insert和update的速度
 
-5. innodb**中聚集索引和辅助索引**并存**（都是b+树）
+5. innodb**中聚集索引和辅助索引**并存（都是b+树）
 
    - 数据和索引存在一起
    - 除了**主键**之外所有的索引都是**辅助索引**
@@ -1460,9 +1431,8 @@ ALTER TABLE table_name DELAY_KEY_WRITE= 1;
 
 7. **需要注意的是**：**innodb**表的索引会存放于**s1.ibd**文件中，而**myisam**表的索引则会有单独的索引文件**table1.MYI**
 
-8. MySAM索引文件和数据文件是分离的，**索引文件仅保存数据记录的地址**。而在innodb中，表数据文件本身就是按照B+Tree（BTree即Balance Tree）组织的一个索引结构，这棵树的叶节点data域保存了完整的数据记录。这个索引的key是数据表的主键，因此**innodb表数据文件本身就是主索引**。因为inndob的数据文件要按照主键聚集，所以innodb要求表必须要有主键（Myisam可以没有），如果没有显式定义，则mysql系统会自动选择一个可以唯一标识数据记录的列作为主键，如果不存在这种列，则mysql会自
+8. MySAM索引文件和数据文件是分离的，**索引文件仅保存数据记录的地址**。而在innodb中，表数据文件本身就是按照B+Tree（BTree即Balance Tree）组织的一个索引结构，这棵树的叶节点data域保存了完整的数据记录。这个索引的key是数据表的主键，因此**innodb表数据文件本身就是主索引**。因为inndob的数据文件要按照主键聚集，所以innodb要求表必须要有主键（Myisam可以没有），如果没有显式定义，则mysql系统会自动选择一个可以唯一标识数据记录的列作为主键，如果不存在这种列，则mysql会自动为innodb表生成一个隐含字段作为主键，这字段的长度为6个字节，类型为长整型.
 
-9. 动为innodb表生成一个隐含字段作为主键，这字段的长度为6个字节，类型为长整型.
 
 ### 3. 使用索引
 
@@ -1479,7 +1449,7 @@ ALTER TABLE table_name DELAY_KEY_WRITE= 1;
    - NDB 支持事务，支持行级别锁定，支持 Hash 索引，不支持 B-tree、Full-text 等索引；
    - Archive 不支持事务，支持表级别锁定，不支持 B-tree、Hash、Full-text 等索引；
 3. 除此之外还有全文索引，即**FULLTEXT**用于搜索**很长一篇文章**的时候，效果最好。用在比较短的文本，如果就一两行字的，普通的 INDEX 也可以。但其实对于全文搜索，我们并不会使用MySQL自带的该索引，而是会选择**第三方软件如Sphinx**，专门来做全文搜索。
-4. 其他的如空间索引SPATIAL，了解即可，几乎不用
+4. 其他的如空间索引SPATIAL，了解即可，几乎不用。
 
 #### 3.2 索引的种类
 
@@ -1633,7 +1603,6 @@ mysqldump -uroot -p123 db1 table1 table2 > db1-table1-table2.sql
 mysqldump -uroot -p123 --databases db1 db2 mysql db3 > db1_db2_mysql_db3.sql
 # 备份所有库
 mysqldump -uroot -p123 --all-databases > all.sql 
-
 ```
 
 ```mysql
@@ -1644,7 +1613,6 @@ mysql> use db1;
 # 关闭二进制日志，只对当前session生效
 mysql> SET SQL_LOG_BIN=0;  
 mysql> source /root/db1.sql
-
 ```
 
 
@@ -1766,4 +1734,3 @@ db.close()
 - sql优化：索引、尽力那个把条件范围都写在where里，尽量用连表查
 - 如何创建表：把固定长度的字段放在前面、分库分表
 - innodb中的外键是特有的
-- **守护线程可以被**join

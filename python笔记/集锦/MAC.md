@@ -40,10 +40,6 @@ netstat -ano | findstr '3306'
 sudo shutdown -h 20:00
 ```
 
-
-
-
-
 ##2. Homebrew 使用 
 
 ###2.1 brew 安装
