@@ -1,11 +1,9 @@
-## 1. javascript基础
+##   1. javascript基础
 
 - javascript 在网页中占据很重要的地位
 - 解释型语言。与网页交互的语言
 - Node.js
-- html描述的网页结构
-- css描述网页样式
-- js网页交互
+- html描述的网页结构、css描述网页样式、js网页交互
 - **ECMA4.1(浏览器上最多)** ECMASript5.0
 
 ### 1.  js的引入方式
@@ -101,7 +99,7 @@ arr.length;
 
 ```javascript
 //Object，定义在对象中的函数，即对象的方法
-var obj = {name:'echo', age:19;
+var obj = {name:'echo', age:19,
           fav:function(){
             console.log(this)
           }};
@@ -147,12 +145,14 @@ a++;
 console.log(a)；
 // a++ 的迷惑
 var a = 4;
-var c = a++;                 //先赋值后++
+//先赋值后++
+var c = a++;
 console.log(c);
 console.log(a);
 // ++a 的迷惑
 var a = 4;
-var c = ++a;                 //先++后赋值
+//先++后赋值
+var c = ++a;
 console.log(c);
 console.log(a);
 ```
@@ -171,12 +171,14 @@ var str = `${name}今年${age}岁`;
 - 解释器遇到var声明的变量，会把var声明的**变量提升**到全局变量作用域下，js文件最上方
 - 函数名也会有此现象，函数中的变量没有
 
+1. 数组的创建
+
 ```js
 var arr = [1, 2, 'henry'];
-//索引取值
+// 索引取值
 arr[0];
-//遍历
-//预解释，变量提升
+// 遍历
+// 预解释，变量提升
 // var c=2; 
 for	(var i = 0; i < arr.length; i++){
 		console.log(arr[i]);
@@ -185,7 +187,7 @@ for	(var i = 0; i < arr.length; i++){
 
 2. **多维数组**
 
-- 数组中包含数组的话称之为多维数组。(数组的嵌套)
+- 数组中包含数组的话称之为多维数组。(**数组的嵌套**)
 - 可以通过将两组方括号链接在一起来访问数组中的另一个数组。
 
 ```js
@@ -322,7 +324,7 @@ console.log(Person.age);
 
 2. **点语法,set&get**
 
-- 函数中的this不一定widow
+- 函数中的this不一定是widow
 - **对象**和**绑定事件**中的this指向当前obj
 - 全局this指向window
 - 一切皆对象
@@ -338,7 +340,7 @@ obj.fav();
 console.log(this);              // this window
 ```
 
-- **es6用class来创建对象**
+3. **es6用class来创建对象**
 
 ```js
 var obj = {name:'echo'};
@@ -358,7 +360,7 @@ add.apply(null, [1, 2]);         // 可以改变this指向
 console.dir(add);
 ```
 
-- 构造函数创建对象
+4. **构造函数创建对象**
 
 ```js
 function Point(x, y) {
@@ -372,8 +374,6 @@ Point.prototype.toString = function () {
 
 var p = new Point(1, 2);
 ```
-
-
 
 #### 3.2 Array
 
@@ -426,11 +426,11 @@ console.log(arr.push('xixixi'));; // 返回值为res，最新数组长度
 console.log(arr);
 ```
 
-3. unshift方法
+3. **unshift方法**
 
 ```js
 shift()
-unshift()            
+unshift()
 var val = arr.unshift('heiheihei', 'hahaha');// 往数组的前面填充内容
 console.log(arr);
 console.log(val);                            // 返回数组最新长度    
@@ -485,7 +485,7 @@ num.slice(-3,-4)                      // 取不到值
 
 - 返回索引
 - 查不到返回-1
-- lastindexof();
+- lastIndexof();
 
 ```js
 num = [1,2,3,4,5,4,3,2,1]
@@ -577,7 +577,7 @@ s = 'henry&echo';
 s.indexof('o');                   // 数据类型要一致
 ```
 
-9. lastindexof
+9. lastIndexof
 
 ```js
 s = 'henry&echo';
@@ -602,7 +602,7 @@ s.toLowerCase();
 s.toUpperCase();
 ```
 
-#### 3.5 data内置对像
+#### 3.5 date内置对像
 
 1. 创建日期对象
 
@@ -656,11 +656,20 @@ time.getSeconds();
 9. 格式化方法 tolocalString
 
 ```js
-time.toString();                          // "Tue Jun 04 2019 09:23:58 GMT+0800 (中国标准时间)"
-time.toLocaleString();                    //"2019/6/4 上午9:23:58
-time.toDateString();                       // "Tue Jun 04 2019"
-time.toLocaleDateString();                 //"2019/6/4"
-time.toGMTString();                        //"Tue, 04 Jun 2019 01:23:58 GMT"
+1.time.toString();
+// Sun Jun 09 2019 17:13:35 GMT+0800 (CST)
+2.time.toLocaleString(); 
+//6/9/2019, 5:13:35 PM
+3.time.toDateString();
+// "Sun Jun 09 2019"
+4.time.toLocaleDateString();
+// "6/9/2019"
+5.time.toTimeString()
+// "17:27:04 GMT+0800 (CST)"
+6.time.toLocaleTimeString()
+// "5:27:04 PM"
+7.time.toGMTString(); 
+// "Sun, 09 Jun 2019 09:27:04 GMT"
 ```
 
 10. 时间综合示例
@@ -1047,7 +1056,6 @@ box.style.color
 box.style.backgroudColor
 ```
 
-- 更改局部样式时，需要使用**id获取元素**对象操作
 - 或者通过类名，利用索引找到具体某一个元素
 
 ```js
@@ -1641,7 +1649,7 @@ $('#box').toggle(2000, function(){});
 
 
 
-## 4. 属性&文档操作和ajax
+## 4. jquery之ajax
 
 ### 1. 属性操作
 
@@ -2006,7 +2014,68 @@ $.ajax({
 		
 	</body>
 </html>
+```
 
+- **ajax练习**
+
+```js
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>ajax练习</title>
+		<script src="js/jquery.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<div id="box">
+			<ul  type='none'></ul>
+		</div>
+		<div id="content">
+			<ul></ul>
+		</div1>
+	
+		<script type="text/javascript">
+			// 获取导航头
+			$.ajax({
+				url:'https://www.luffycity.com/api/v1/course_sub/category/list/',
+				methods:'get',
+				success:function(res){
+					console.log(res);
+					$(`<li style='font-weight:bold')>全部<\/li>`).appendTo('#box ul').attr('id', 0);
+					if (res.error_no===0){
+						res.data.forEach(function(item,index){
+							$(`<li type='none' style='font-weight:bold')>${item.name}<\/li>`).appendTo('#box ul').attr('id', item.id);
+							
+						})
+					}
+				}
+			})
+			
+			// 获取课程
+			var sub_category = 0;
+			function get_course_list(sub_category){
+				$.ajax({
+					url:`https:\/\/www.luffycity.com/api/v1/courses/?sub_category=${sub_category}&ordering=`,
+					method:'get',
+					success:function(res){
+						$('#content ul').empty();
+						if (res.error_no===0){
+							res.data.forEach(function(item, index){
+								$(`<li>${item.name}<\/li>`).appendTo('#content ul').attr('id', item.id);	
+							})
+						}
+					}
+				})
+			}
+			get_course_list(sub_category);
+			// jq中的事件委托
+			$('#box ul').on('click', 'li', function(){
+				var sub_category = $(this).attr('id');
+				get_course_list(sub_category);
+			});
+		</script>
+	</body>
+</html>
 ```
 
 
@@ -2031,9 +2100,3 @@ $.ajax({
 
 
 
-
-
-
-
-1. 数据库中没bool值
-2. tinyint(1) / tinyint(0)

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>ajax练习</title>
+		<script src="js/jquery.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<div id="box">
+			<ul  type='none'></ul>
+		</div>
+		<div id="content">
+			<ul></ul>
+		</div1>
+	
+		<script type="text/javascript">
+			// 获取导航头
+			$.ajax({
+				url:'https://www.luffycity.com/api/v1/course_sub/category/list/',
+				methods:'get',
+				success:function(res){
+					console.log(res);
+					$(`<li style='font-weight:bold')>全部<\/li>`).appendTo('#box ul').attr('id', 0);
+					if (res.error_no===0){
+						res.data.forEach(function(item,index){
+							$(`<li type='none' style='font-weight:bold')>${item.name}<\/li>`).appendTo('#box ul').attr('id', item.id);
+							
+						})
+					}
+				}
+			})
+			
+			// 获取课程
+			var sub_category = 0;
+			function get_course_list(sub_category){
+				$.ajax({
+					url:`https:\/\/www.luffycity.com/api/v1/courses/?sub_category=${sub_category}&ordering=`,
+					method:'get',
+					success:function(res){
+						$('#content ul').empty();
+						if (res.error_no===0){
+							res.data.forEach(function(item, index){
+								$(`<li>${item.name}<\/li>`).appendTo('#content ul').attr('id', item.id);	
+							})
+						}
+					}
+				})
+			}
+			get_course_list(sub_category);
+			
+			$('#box ul').on('click', 'li', function(){
+				var sub_category = $(this).attr('id');
+				get_course_list(sub_category);
+			});
+			
+			
+			
+		</script>
+	</body>
+</html>
