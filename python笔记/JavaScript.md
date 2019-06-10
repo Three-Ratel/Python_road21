@@ -1422,6 +1422,7 @@ console.log($('ul li:last'));                     // 。。。
 6. **筛选选择器**
 
 - **find**、**children**、**parent**
+- 获取索引方法：$(选择器).index()
 
 ```js
 // 选中后代所有的span/a .find()
@@ -1950,6 +1951,7 @@ $('input[type=text]').keydown(function(e){
 2. 请求头/体
 3. 响应头/体
 4. XHR
+5. **ajax实现前后端分离**
 
 #### 4.1 ajax的使用
 
