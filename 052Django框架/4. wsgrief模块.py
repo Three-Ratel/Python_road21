@@ -15,7 +15,7 @@ def index(url):
     return bytes(s, encoding='utf-8')
 
 
-url_li = {'/index': index, '/home': home}
+url_li = {'/index/': index, '/home': home}
 
 
 def run(environ, start_response):
