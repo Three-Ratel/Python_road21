@@ -10,5 +10,12 @@ def login(request):
         username = request.POST['username']
         pwd = request.POST['pwd']
         res = models.Info.objects.filter(username=username, pwd=pwd)
-        if res: return redirect('https://www.baidu.com')
+        if res:
+            # return redirect('https://www.baidu.com')
+            return redirect('/index/')
+
     return render(request, 'login.html')
+
+
+def index(request):
+    return render(request, 'index.html')
