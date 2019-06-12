@@ -20,9 +20,7 @@ rwxrwxrwt
 # 查看9000端口占用情况
 sudo lsof -i:9000 
 # 手动结束某一进程
-kill -9 pid
-# 
-  
+kill -9 pid号
 ```
 
 ```mysql
@@ -39,6 +37,15 @@ netstat -ano | findstr '3306'
 # 晚上给8点关机
 sudo shutdown -h 20:00
 ```
+
+### 1.5 查看pip安装包路径
+
+```python
+pip3 list
+pip3 show packagename
+```
+
+
 
 ##2. Homebrew 使用 
 

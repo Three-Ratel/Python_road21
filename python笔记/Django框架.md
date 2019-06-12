@@ -4,6 +4,8 @@
 
 ### 1.1 本质
 
+#### 1. 实现socket服务器
+
 - 实现socket服务端
 
 ```python
@@ -22,7 +24,7 @@ while True:
 sk.close()
 ```
 
-### 1.2 返回html文件
+#### 2. 返回html文件
 
 ```python
 #!/usr/bin/env python
@@ -61,7 +63,7 @@ while True:
 sk.close()
 ```
 
-### 1.3 返回动态网页
+#### 3. 返回动态网页
 
 ```python
 # 返回动态页面
@@ -147,7 +149,7 @@ sk.close()
 8. CONNECT
    - HTTP/1.1协议中预留给能够将连接**改为管道方式**的代理服务器。通常用于**SSL加密服务器的链接**（经由非加密的HTTP代理服务器）。
 
-#### Note(2)
+#### Note1(2)
 
 1. 方法名称是**区分大小写**的。当某个请求所针对的**资源不支持**对应的请求方法的时候，服务器应当返回状态码405（Method Not Allowed），当服务器**不认识或者不支持对应的请求方法**的时候，应当返回状态码501（Not Implemented）。
 2. HTTP服务器至少应该实现GET和HEAD方法，其他方法都是可选的。当然，所有的方法支持的实现都应当匹配下述的方法各自的语义定义。此外，除了上述方法，特定的HTTP服务器还能够扩展自定义的方法。例如PATCH（由 RFC 5789 指定的方法）用于将局部修改应用到资源*。*
@@ -167,57 +169,45 @@ sk.close()
 
 - http:默认端口是80(可省略)，https默认是443
 
-1. 超文本传输协议（HTTP）的统一资源定位符将从因特网获取信息的五个基本元素包括在一个简单的地址中
-   1. 传送协议。
-   2. 层级URL标记符号(为[//],固定不变)
+1. 超文本传输协议（HTTP）的统一资源定位符将从因特网获取信息的**五个基本元素**包括在一个简单的地址中
+   1. **传送协议**。
+   2. **层级URL标记符号**(为[//],固定不变)
    3. 访问资源需要的凭证信息（可省略）
-   4. 服务器。（通常为域名，有时为IP地址）
-   5. 端口号。（以数字方式表示，若为HTTP的默认值“:80”可省略）
-   6. 路径。（以“/”字符区别路径中的每一个目录名称）
-   7. 查询。（**GET模式的窗体参数**，以“?”字符为起点，每个参数以“&”隔开，再以“=”分开参数名称与数据，通常以UTF8的URL编码，避开字符冲突的问题）
-   8. **片段**。以“#”字符为起点，锚点
+   4. **服务器**。（通常为域名，有时为IP地址）
+   5. **端口号**。（以数字方式表示，若为HTTP的默认值“:80”可省略）
+   6. **路径**。（以“/”字符区别路径中的每一个目录名称）
+   7. 查询。（**GET模式的窗体参数**，以“**?**”字符为起点，每个参数以“&”隔开，再以“=”分开参数名称与数据，通常以UTF8的URL编码，避开字符冲突的问题）
+   8. **片段**。以“#”字符为起点，锚点(history模式)
+   
+   
+   
+2. **浏览器发送请求和接受响应的过程？**
 
-#### 7. http请求格式
+   - HTTP/1.1默认是短暂的长链接，保持一个阈值时间
+
+   1. 在浏览器中地址栏输入url，发送get请求
+   2. 服务器接收到请求，获取url的路径，根据路径做不同操作，把返回的数据封装到响应体中，返回给浏览器
+   3. 浏览器接收响应，双发断开链接
+   4. 浏览器从响应体中获取数据，进行解析渲染
+
+#### 7. http请求和响应格式
+
+- 请求格式
 
 ![http请求格式](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/http%E8%AF%B7%E6%B1%82%E6%A0%BC%E5%BC%8F.jpg)
 
-#### 8. 响应格式
+- 响应格式
 
 ![http响应格式](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/http%E5%93%8D%E5%BA%94%E6%A0%BC%E5%BC%8F.jpg)
 
-#### 小结：
-
-1. 请求和应答的应用层协议
-
-2. 状态码：1xx需要等待服务器处理，2xx成功，3xx重定向，4xx请求错误，5xx服务器错误
-
-3. 请求方式：8种，get、post
-
-4. url:协议、域名和端口、路径和参数
-
-5. 请求：浏览器给服务器发送的消息，request
-
-   - get请求没有请求数据
-
-   1. 请求方式 路径 版本号 \r\n
-   2. 请求头：**name:value** \r\n
-   3. \r\n 数据 \r\n\r\n
-
-6. 响应：server发送给浏览器，response
-
-   1. 响应行：协议版本 状态码 状态码描述 \r\n
-   2. 响应头：xx\r\n
-   3. \r\n 响应数据(响应体) \r\n\r\n
-
 ### 1.3 web框架的功能
 
-1. socket收发消息(wsgiref、uwsgi)
+1. socket收发消息(wsgiref(测试)、**uwsgi(线上)**)
 2. 根据不同的路径返回不同内容
 3. 返回动态页面
-4. **分类**
-   - Django支持：2和3
-   - Flask支持：2（轻量级，其他功能需要其他模块）
-   - Tornado支持：1、2和3(**异步非阻塞**)（同flask）
+4. **Django**:支持2和3；**Flask**:支持2（轻量级，其他功能需要其他模块）；**Tornado**:支持1、2和3(**异步非阻塞**)（同flask）
+
+
 
 ## 2. 服务器程序和应用程序
 
@@ -302,11 +292,11 @@ if __name__ == '__main__':
 
 1. Django1.11最后一个版本支持python2.7
 2. 命令行：pip3 install django==1.11.21 -i 指定源地址
-3. Pycharm:settings-解释器
+3. Pycharm:settings-解释器-下载django
 
 ### 3.2 Django项目
 
-#### 3.1 创建
+#### 1. 创建
 
 1. 命令行
    1. 项目文件夹：**django-admin startproject 项目名称**
@@ -325,7 +315,7 @@ mysite/
     └── wsgi.py  # runserver命令就使用wsgiref模块做简单的web server
 ```
 
-#### 3.2 启动
+#### 2 启动
 
 1. 命令行
 
@@ -361,7 +351,7 @@ urlpatterns = [
 
 - 项目中的文件夹名尽量不要更改
 
-#### 3.3 Django基础必备三件套
+#### 3. Django基础必备三件套
 
 ```python
 from django.shortcuts import HttpResponse, render, redirect
@@ -396,6 +386,297 @@ def index(request):
 ```
 
 ![redirection](/Users/henry/Documents/截图/Py截图/redirection.png)
+
+# 2.Django简介
+
+## 1. 静态文件
+
+- 静态文件包括：css，javascript，images
+
+### 1.1 静态文件配置流程
+
+- **配置**
+
+```python
+# 配置静态文件夹路径
+STATIC_URL='/staic/'
+STATICFILES_DIRS=[
+  os.path.join(BASE_DIR, 'static'),
+  os.path.join(BASE_DIR, 'static1'),
+  os.path.join(BASE_DIR, 'static2'),
+]
+
+# 创建一个static文件夹，存放静态文件
+css，js和img文件夹，plugins文件夹
+# static是STATIC_URL='/staic/'中的static
+<link rel='stylesheet' href='/static/css/xxx.css'></link>
+```
+
+### 1.2 简单使用
+
+#### 1. form中的元素
+
+1. 可以建立多个static文件夹
+2. 如果静态资源有重名的文件，则按照静态文件夹路径中的列表顺序(一旦找到即停止)
+3. input中可以使用**autofocus**，即请求页面自动聚焦
+4. form表单提交使用：action和method='post'
+5. 所有的input框需要**name属性**，使用sumbit或button
+6. 提交post请求，**把settings中的MIDDLEWARE：csrfvirew注释掉即可**
+
+#### 2. 提交表单中的方法
+
+1. **获取请求方式**：request.method(GET/POST)
+2. form表单中的数据：request.POST **querydict对像**，可以使用dict方式取值,可以使用get方法
+3. 导入django中的redirect
+4. /index/第一个/是根目录，如果没有根目录，则进行路径拼接.响应头：Location。/index/
+
+```python
+# 在view.py文件中处理请求数据，如认证操作
+def login(request):
+    if request.method == 'POST':
+      	# 获取用户名和密码
+        username = request.POST['username']
+        pwd = request.POST['pwd']
+     # 重定向，返回一个网址，或当前网站资源的路径
+     return redirect('/index/')
+```
+
+## 2. app
+
+- 把功能进行划分
+
+### 2.1 命令行
+
+#### 1. 创建app
+
+```python
+python manage.py startapp app1
+# 放置迁移文件
+migrations
+# django提供后台管理，对数据库表结构进行增删改查
+admin.py
+# 和ORM相关
+models.py
+# 测试文件
+test.py
+# 视图，函数位置
+views.py
+```
+
+#### 2. 注册app
+
+```python
+# 在settings中的installed_apps
+直接添加app名称
+# 推荐使用
+或app01.apps.App01Config
+```
+
+### 2.2 pycharm
+
+- 创建Django项目时，可以添加app(和templates一同)，pycharm创建并注册
+
+```python
+# 创建
+tools --> runmanage.py task --> 
+startapp app02(名称)
+```
+
+```python
+# 注册,修改settings中的INSTALLED_APPS
+INSTALLED_APPS = [
+	...
+    'app01',
+    'app01.apps.App01Config',  # 推荐写法
+]
+# 重复注册会报错
+```
+
+## 3. ORM
+
+### 3.1 概念
+
+1. 对像关系映射(Object Relational Mapping,ORM)
+2. ORM在业务逻辑层和数据库层之间充当了桥梁的作用
+
+### 3.2 特点
+
+1. 专注业务逻辑，提高开发效率
+2. 牺牲了程序的执行效率
+3. orm操作是有限的
+
+### 3.3 Django使用mysql(6)
+
+#### 1. 创建mysql数据库
+
+```python
+create database django53;
+```
+
+#### 2. settings.py
+
+- django链接mysql，settings中的文件是明文的
+
+```python
+# 使用mysql数据库
+DATABASES = {
+  'default':{
+        # 引擎
+      'ENGINE':'django.db.backbends.mysql',
+      'NAME':'django53',
+      'HOST':'127.0.0.1',
+      'PORT':3306,
+      'USER':'root',
+      'PASSWORD':'123',
+    }
+  } 
+```
+
+#### 3. _\_init__.py
+
+- 配置链接模块，与settings同级
+- django默认使用**mysqldb**模块(只支持py2)
+
+```python
+# 与settings同级目录下的__init__.py文件中添加，替换默认
+import pymysql
+pymysql.install_as_MySQLdb()
+```
+
+#### 4. models.py
+
+1. 通过**models**创建表
+
+```python
+from django import models
+class User(models.Model):
+  # 在db中创建一个varchar(32)的username字段
+  username = models.CharField(max_length=32)
+  pwd = models.CharField(max_length=32)  
+```
+
+#### 5. mysql的迁移(2)
+
+- 命令行输入
+
+```python
+# 检查每个注册app的models中是否有变化，即更新models.py
+python manage.py makemigrations
+# 同步变更记录到数据库中，一开始生成表名app名称+类名(小写)
+python manage.py migrate
+```
+
+- 创建超级用户
+
+```python
+python manage.py createsuperuser
+# 输入以上命令后，根据提示输入用户名、邮箱、密码、确认密码。密码的要求至少是不八位，不能和邮箱太接近，两次密码需要一致。
+```
+
+#### 6. views.py
+
+- **orm操作**，获取所有数据
+
+```python
+from app01 import models
+def orm_test(request):
+  # 获取表中所有数据，ret为QuerysSet，对象列表
+  ret = models.User.objects.all()
+  for i in ret:
+    print(i.username, i.password)
+```
+
+- 获取符合条件数据，**获取不到或多个会报错**
+
+```python
+from app01 import models
+def orm_test(request):
+  # 获取表中一条数据,User object
+  ret = models.User.objects.get(username='herny', password='123')
+  print(ret.username, ret.password)
+```
+
+- 使用**filter方法**做认证
+
+```python
+from app01 import models
+def orm_test(request):
+  # 获取满足条件的对象，没有获取到即为空即False
+  ret = models.User.objects.filter(username='herny')
+  print(ret.username, ret.password)
+```
+
+#### 3.4 ORM中的批量操作
+
+1.数据模型定义
+
+```python
+# 创建商品表对象
+from django.db import models
+class Product(models.Model):
+    name = models.CharField(max_length=200)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+```
+
+2.批量插入数据
+
+- 批量插入数据的时候，首先要**创建一个对象的列表**，然后调用**bulk_create**方法，一次将列表中的数据插入到数据库中。
+
+```python
+product_list_to_insert = list()
+for i in range(10):
+  		product_list_to_insert.append(Product(name='producet name ' + str(i), price))
+Product.objects.bulk_create(product_list_to_insert)
+```
+
+3.批量更新数据
+
+- 批量更新数据时，先进行数据过滤，然后再调用**update**方法进行一次性地更新。下面的语句将生成类似update....from....的SQL语句。
+
+```python
+Product.objects.filter(name__contains='name').update(name='new name')
+```
+
+4.批量删除数据
+
+- 批量更新数据时，先是进行数据过滤，然后再调用**delete**方法进行一次性删除。下面的语句讲生成类似delete from ... where ... 的SQL语句。
+
+```python
+Product.objects.filter(name__contains='name query').delete()
+```
+
+## 4. Django框架
+
+### 1. MVC和MTV
+
+- MVC，全名是**Model View Controller**，是软件工程中的一种软件架构模式，把软件系统分为三个基本部分：**模型(Model)**、**视图(View)**和**控制器(Controller)**，具有耦合性低、重用性高、生命周期成本低等优点。
+
+![MTV框架](/Users/henry/Documents/截图/Py截图/MTV框架.png)
+
+- Django框架的设计模式借鉴了MVC框架的思想，也是分成三部分，来降低各个部分之间的耦合性。
+- Django框架的不同之处在于它拆分的三部分为：Model（模型）、Template（模板）和View（视图），也就是MTV框架。
+
+### 2. Django的MTV模式
+
+1. **Model(模型)**：负责业务对象与数据库的对象(ORM)
+2. **Template(模版)**：负责如何把页面展示给用户
+3. **View(视图)**：负责业务逻辑，并在适当的时候调用Model和Template
+
+- 此外，Django还有一个**urls分发器**，它的**作用是将一个个URL的页面请求分发给不同的view处理，view再调用相应的Model和Template**
+
+![Django框架](/Users/henry/Documents/截图/Py截图/Django框架.png)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
