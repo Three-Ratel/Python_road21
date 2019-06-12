@@ -496,14 +496,23 @@ INSTALLED_APPS = [
 
 ### 3.1 概念
 
-1. 对像关系映射(Object Relational Mapping,ORM)
-2. ORM在业务逻辑层和数据库层之间充当了桥梁的作用
+- **对象关系映射**（Object Relational Mapping，简称**ORM**）模式是一种为了**解决面向对象与关系数据库存在的互不匹配的现象的技术。**
+- 简单的说，ORM是通过使用描述对象和数据库之间映射的**元数据**，将**程序中的对象自动持久化到关系数据库中。**
+- **ORM在业务逻辑层和数据库层之间充当了桥梁的作用**。
 
 ### 3.2 特点
 
-1. 专注业务逻辑，提高开发效率
-2. 牺牲了程序的执行效率
-3. orm操作是有限的
+#### 1.优势
+
+1. ORM解决的主要问题是对象和关系的映射。它通常将一个类和一张表一一对应，类的每个实例对应表中的一条记录，类的每个属性对应表中的每个字段。 
+2. ORM提供了对数据库的映射，不用直接编写SQL代码，只需操作对象就能对数据库操作数据。
+3. 专注业务逻辑，提高开发效率
+
+#### 2. 劣势
+
+1. 牺牲了程序的执行效率
+2. ORM的缺点是会在一定程度上牺牲程序的执行效率。
+3. ORM的操作是有限的，也就是ORM定义好的操作是可以完成的，一些复杂的查询操作是完成不了。
 
 ### 3.3 Django使用mysql(6)
 
@@ -534,7 +543,7 @@ DATABASES = {
 
 #### 3. _\_init__.py
 
-- 配置链接模块，与settings同级
+- 配置链接模块，与settings同级，导入pymysql告诉Django使用其链接数据库
 - django默认使用**mysqldb**模块(只支持py2)
 
 ```python
@@ -576,6 +585,7 @@ python manage.py createsuperuser
 #### 6. views.py
 
 - **orm操作**，获取所有数据
+- views可以视为python的回调函数
 
 ```python
 from app01 import models
@@ -666,6 +676,36 @@ Product.objects.filter(name__contains='name query').delete()
 
 ![Django框架](/Users/henry/Documents/截图/Py截图/Django框架.png)
 
+### 3. Model
+
+#### 1. model简介
+
+- **在Django中model是你数据的单一、明确的信息来源**。它包含了你存储的数据的重要字段和行为。通常，一个模型（model）映射到一个数据库表。
+
+#### 2. 基本情况：
+
+- 每个模型都是一个Python类，它是django.db.models.Model的子类。
+- 模型的每个属性都代表一个数据库字段。
+- 综上所述，Django为您提供了一个自动生成的数据库访问API
+
+![ORM与DB](/Users/henry/Documents/截图/Py截图/ORM与DB.png)
+
+#### Note2(4)
+
+- model一些说明
+
+```mysql
+CREATE TABLE myapp_person (
+    "id" serial NOT NULL PRIMARY KEY,
+    "first_name" varchar(30) NOT NULL,
+    "last_name" varchar(30) NOT NULL
+);
+```
+
+1. **表app名称_类名(小写)的名称是自动生成的**，如果你要自定义表名，需要在**model的Meta类中指定 db_table 参数**，强烈建议使用**小写**表名，特别是使用MySQL作为数据库时。
+2. id字段是自动添加的，如果你想要指定自定义主键，只需在其中一个字段中指定 primary_key=True 即可。如果Django发现你已经明确地设置了Field.primary_key，它将不会添加自动ID列。
+3. 本示例中的CREATE TABLE SQL使用PostgreSQL语法进行格式化，但值得注意的是，Django会根据配置文件中指定的数据库类型来生成相应的SQL语句。
+4. Django支持MySQL5.5及更高版本。
 
 
 
@@ -677,8 +717,13 @@ Product.objects.filter(name__contains='name query').delete()
 
 
 
+## 番外篇：
 
+1.查看django版本
 
+```django
+python -m django --version
+```
 
 
 

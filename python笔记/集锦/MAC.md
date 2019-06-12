@@ -45,6 +45,14 @@ pip3 list
 pip3 show packagename
 ```
 
+### 1.6 文件相关
+
+```python
+brew install tree
+# 查看某一目录结构
+tree
+```
+
 
 
 ##2. Homebrew 使用 
