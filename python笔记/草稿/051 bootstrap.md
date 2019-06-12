@@ -26,8 +26,6 @@
 
 ### 1. jquery插件
 
-404 前端bug
-
 1. jquery树，主要是文件夹树
 
 ### 2. bootstrap
@@ -51,7 +49,7 @@
 16. 状态类：active悬停、success绿、info蓝、waring黄、danger红
 17. &times；
 
-## 1.jQuery的插件
+## 1. jQuery的插件
 
 ```css
 https://www.jq22.com
@@ -95,24 +93,21 @@ https://www.jq22.com
 
 ### 4. 栅格系统
 
-1. Bootstrap 提供了一套响应式、移动设备优先的流式栅格系统，随着屏幕或视口（viewport）尺寸的增加，系统会自动分为最多12列。
-2. 包含了易于使用的预定义类，还有强大的[mixin 用于生成更具语义的布局。
-3. 简介
-   - 用于通过一系列的行(row)与列(col)的组合来创建页面布局。
-   - “行（row）”必须包含在 `.container` （固定宽度）或 `.container-fluid` （100% 宽度）中，以便为其赋予合适的排列（aligment）和内补（padding）。
-   - 通过“行（row）”在水平方向创建一组“列（column）”。
-   - 你的内容应当放置于“列（column）”内，并且，只有“列（column）”可以作为行（row）”的直接子元素。
-   - 类似 `.row` 和 `.col-xs-4` 这种预定义的类，可以用来快速创建栅格布局。Bootstrap 源码中定义的 mixin 也可以用来创建语义化的布局。
-   - 通过为“列（column）”设置 `padding` 属性，从而创建列与列之间的间隔（gutter）。通过为 `.row` 元素设置负值 `margin` 从而抵消掉为 `.container` 元素设置的 `padding`，也就间接为“行（row）”所包含的“列（column）”抵消掉了`padding`。
-   - 负值的 margin就是下面的示例为什么是向外突出的原因。在栅格列中的内容排成一行。
-   - 栅格系统中的列是通过指定1到12的值来表示其跨越的范围。例如，三个等宽的列可以使用三个  `.col-xs-4` 来创建。
-   - 如果一“行（row）”中包含了的“列（column）”大于 12，多余的“列（column）”所在的元素将被作为一个整体另起一行排列。
-   - 栅格类适用于与屏幕宽度大于或等于分界点大小的设备 ， 并且针对小屏幕设备覆盖栅格类。 因此，在元素上应用任何 `.col-md-*` 栅格类适用于与屏幕宽度大于或等于分界点大小的设备 ， 并且针对小屏幕设备覆盖栅格类。 因此，在元素上应用任何 `.col-lg-*` 不存在， 也影响大屏幕设备。
-4. 类前缀
-   1. .col-xs-
-   2. .col-sm-
-   3. .col-md-
-   4. .col-lg-
+#### 4.1 简介
+
+- Bootstrap 提供了一套响应式、移动设备优先的流式栅格系统，随着屏幕或视口（viewport）尺寸的增加，系统会自动分为最多12列。
+- 包含了易于使用的预定义类，还有强大的[mixin 用于生成更具语义的布局。
+
+1. 用于通过一系列的行(row)与列(col)的组合来创建页面布局。
+2. “行（row）”必须包含在 `.container` （固定宽度）或 `.container-fluid` （100% 宽度）中，以便为其赋予合适的排列（aligment）和内补（padding）。
+3. 通过“行（row）”在水平方向创建一组“列（column）”。
+4. 你的内容应当放置于“列（column）”内，并且，只有“列（column）”可以作为行（row）”的直接子元素。
+5. 类似 `.row` 和 `.col-xs-4` 这种预定义的类，可以用来快速创建栅格布局。Bootstrap 源码中定义的 mixin 也可以用来创建语义化的布局。
+6. 通过为“列（column）”设置 `padding` 属性，从而创建列与列之间的间隔（gutter）。通过为 `.row` 元素设置负值 `margin` 从而抵消掉为 `.container` 元素设置的 `padding`，也就间接为“行（row）”所包含的“列（column）”抵消掉了`padding`。
+7. 负值的 margin就是下面的示例为什么是向外突出的原因。在栅格列中的内容排成一行。
+8. 栅格系统中的列是通过指定1到12的值来表示其跨越的范围。例如，三个等宽的列可以使用三个  `.col-xs-4` 来创建。
+9. 如果一“行（row）”中包含了的“列（column）”大于 12，多余的“列（column）”所在的元素将被作为一个整体另起一行排列。
+10. 栅格类适用于与屏幕宽度大于或等于分界点大小的设备 ， 并且针对小屏幕设备覆盖栅格类。 因此，在元素上应用任何 `.col-md-*` 栅格类适用于与屏幕宽度大于或等于分界点大小的设备 ， 并且针对小屏幕设备覆盖栅格类。 因此，在元素上应用任何 `.col-lg-*` 不存在， 也影响大屏幕设备。
 
 ### 5. 排版
 
@@ -501,17 +496,17 @@ form
 - 全局组件：不管哪个页面，始终不变如：导航栏
 - 局部组件
 
-1. 字体图标：不要和其他组件混合使用，嵌套一个span标签，
-2. font-awesome
-3. 图标类不能和其它组件直接联合使用。它们不能在同一个元素上与其他类共同存在。应该创建一个嵌套的 `<span>` 标签，并将图标类应用到这个 `<span>` 标签上。
-4. 图标类只能应用在不包含任何文本内容或子元素的元素上。
+**字体图标使用注意**
 
-可以把它们应用到按钮、工具条中的按钮组、导航或输入框等地方。
+1. 字体图标：不要和其他组件混合使用，嵌套一个span标签，font-awesome(字体图标)
+2. 图标类不能和其它组件直接联合使用。它们不能在同一个元素上与其他类共同存在。应该创建一个嵌套的 `<span>` 标签，并将图标类应用到这个 `<span>` 标签上。
+3. 图标类只能应用在不包含任何文本内容或子元素的元素上。可以把它们应用到按钮、工具条中的按钮组、导航或输入框等地方。
 
-### 2. 常用组件
+### 2. 下拉菜单和按钮
 
 #### 1.下拉菜单
 
+- **类.dropdown/up, divider(分割线)，dropdown-toggle**
 - 将下拉菜单触发器和下拉菜单都包裹在 **.dropdown** 里，或者另一个声明了 `position: relative;` 的元素。然后加入组成菜单的 HTML 代码。
 - 通过为下拉菜单的父元素设置 **.dropup** 类，可以让菜单向上弹出（**默认是向下弹出的**）。
 
@@ -530,6 +525,343 @@ form
     <li><a href="#">Separated link</a></li>
   </ul>
 </div>
+```
+
+#### 2. 按钮组
+
+- 当为 `.btn-group` 中的元素应用工具提示或弹出框时，必须指定 `container: 'body'` 选项，这样可以避免不必要的副作用（例如工具提示或弹出框触发时，会让页面元素变宽和/或失去圆角）。
+
+1. **类为.btn-group, 还有各种颜色类：btn-defalut(primary, info, success, warning, danger)**
+
+```html
+<div class="btn-group" role="group" aria-label="...">
+			<button type="button" class="btn btn-default">Left</button>
+			<button type="button" class="btn btn-primary">Middle</button>
+			<button type="button" class="btn btn-success">Right</button>
+</div>
+```
+
+2. **按钮工具栏，在.btn-toolbar中内嵌.btn-group**
+3. 只要给 `.btn-group` 加上 `.btn-group-*` 类，就省去为按钮组中的每个按钮都赋予尺寸类了，如果包含了多个按钮组时也适用。(btn-group-lg/sm/xs)
+4. 想要把下拉菜单混合到一系列按钮中，只须把 `.btn-group` 放入另一个 `.btn-group` 中。
+
+```html
+<div class="btn-group" role="group" aria-label="...">
+		<button type="button" class="btn btn-warning">Right</button>
+		<button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">
+			  Dropdown<span class="caret"></span>
+		</button>
+				<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+            <li class="disabled"><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <!--分割符-->
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+				</ul>
+		</button>
+</div>
+```
+
+- 垂直排列 .btn-group-vertical
+
+```html
+<div class="btn-group-vertical" role="group" aria-label="...">
+  ...
+</div>
+```
+
+5. 两端对齐排列的按钮组
+   - 让一组按钮拉长为相同的尺寸，填满父元素的宽度。对于按钮组中的按钮式下拉菜单也同样适用。
+
+6.  **btn-group-justified**
+   - 为了将 `<button>` 元素用于两端对齐的按钮组中，**必须将每个按钮包裹进一个按钮组中**
+
+7. 单按钮下拉菜单
+   - 按钮尺寸类 **btn-lg/sm/xs**
+
+```html
+<div class="btn-group">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			Action <span class="caret"></span>
+		</button>
+		<ul class="dropdown-menu">
+			<li><a href="#">Action</a></li>
+			<li><a href="#">Another action</a></li>
+			<li><a href="#">Something else here</a></li>
+			<li role="separator" class="divider"></li>
+			<li><a href="#">Separated link</a></li>
+		</ul>
+</div>
+```
+
+8. 分裂式按钮
+
+```html
+<div class="btn-group">
+		<button type="button" class="btn btn-danger">Action</button>
+		<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<span class="caret"></span>
+			<span class="sr-only">Toggle Dropdown</span>
+		</button>
+		<ul class="dropdown-menu">
+			<li><a href="#">Action</a></li>
+			<li><a href="#">Another action</a></li>
+			<li><a href="#">Something else here</a></li>
+			<li role="separator" class="divider"></li>
+			<li><a href="#">Separated link</a></li>
+		</ul>
+</div>
+```
+
+9. 向上弹出式菜单
+   - 给父元素添加 `.dropup` 类就能使触发的下拉菜单朝上方打开。
+
+```html
+<div class="btn-group dropup">
+  <button type="button" class="btn btn-default">Dropup</button>
+  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="caret"></span>
+    <span class="sr-only">Toggle Dropdown</span>
+  </button>
+  <ul class="dropdown-menu">
+    <!-- Dropdown menu links -->
+  </ul>
+</div>
+```
+
+### 3. 输入框组
+
+- 通过在文本输入框 `<input>` 前面、后面或是两边加上文字或按钮，可以实现对表单控件的扩展。为 `.input-group` 赋予 `.input-group-addon` 或 `.input-group-btn` 类，可以给 `.form-control` 的前面或后面添加额外的元素。
+- 不支持在输入框的单独一侧添加多个额外元素（.input-group-addon 或 .input-group-btn）。
+- 我们不支持在单个输入框组中添加多个表单控件。
+
+#### 3.1 input-group
+
+```html
+<div class="input-group">
+  <input type="text" class="form-control" placeholder="Recipient's username" aria-describedby="basic-addon2">
+  <span class="input-group-addon" id="basic-addon2">@example.com</span>
+</div>
+```
+
+#### 3.2 input-group-lg/sm
+
+- 为 .input-group 添加相应的尺寸类，其内部包含的元素将自动调整自身的尺寸。不需要为输入框组中的每个元素重复地添加控制尺寸的类。
+- **没有xs尺寸**
+
+```html
+<div class="input-group input-group-sm">
+	  <input type="text" class="form-control" placeholder="Recipient's username" aria-describedby="basic-addon2">
+	  <span class="input-group-addon" id="basic-addon2">@example.com</span>
+</div>
+```
+
+#### 3.3 input-group-addon
+
+- 可以将多选框或单选框作为额外元素添加到输入框组中。
+
+```html
+<div class="row">
+  <div class="col-lg-6">
+    <div class="input-group">
+      <span class="input-group-addon">
+        <input type="checkbox/radio" aria-label="...">
+      </span>
+      <input type="text" class="form-control" aria-label="...">
+    </div><!-- /input-group -->
+  </div>
+</div>
+```
+
+#### 3.4 input-group-btn
+
+- 为输入框组添加按钮需要额外添加一层嵌套，不是 `.input-group-addon`，而是添加 `.input-group-btn` 来包裹按钮元素
+
+```html
+<div class="row">
+	  <div class="col-lg-6">
+      <div class="input-group">
+        <span class="input-group-btn">
+        <button class="btn btn-default" type="button">Go!</button>
+        </span>
+        <input type="text" class="form-control" placeholder="Search for...">
+      </div>
+	  </div>
+</div>
+```
+
+- 在一侧加入多个按钮
+
+```html
+<div class="input-group">
+  <div class="input-group-btn">
+    <!-- Buttons -->
+  </div>
+  <input type="text" class="form-control" aria-label="...">
+</div>
+```
+
+### 4. 导航
+
+- Bootstrap 中的导航组件都依赖同一个 **.nav** 类，状态类也是共用的。改变修饰类可以改变样式。
+- 不要将 role 属性添加到 `<ul>` 上，因为这样可以被辅助设备（残疾人用的）上被识别为一个真正的列表。
+
+#### 4.1 nav-taels
+
+- 注意 `.nav-tabs` 类依赖 `.nav` 基类。
+
+```html
+<ul class="nav nav-tabs">
+  <li role="presentation" class="active"><a href="#">Home</a></li>
+  <li role="presentation"><a href="#">Profile</a></li>
+  <li role="presentation"><a href="#">Messages</a></li>
+</ul>
+```
+
+#### 4.2 nav-pills
+
+- 胶囊式
+
+```html
+<ul class="nav nav-pills">
+  <li role="presentation" class="active"><a href="#">Home</a></li>
+  <li role="presentation"><a href="#">Profile</a></li>
+  <li role="presentation"><a href="#">Messages</a></li>
+</ul>
+```
+
+#### 4.3 nav-stacked
+
+- 胶囊是标签页也是可以垂直方向堆叠排列的。只需添加 `.nav-stacked` 类。
+
+```html
+<ul class="nav nav-pills nav-stacked">
+  ...
+</ul>
+```
+
+#### 4.4 .nav-justified
+
+- 已经弃用
+
+```html
+<ul class="nav nav-tabs nav-justified">
+  ...
+</ul>
+<ul class="nav nav-pills nav-justified">
+  ...
+</ul>
+```
+
+#### 4.5 .disabled
+
+- 对任何导航组件（标签页、胶囊式标签页），都可以添加 `.disabled` 类，从而实现**链接为灰色且没有鼠标悬停效果**。
+
+```html
+<li role="presentation" class="disabled"><a href="#">Profile</a></li>
+```
+
+### 5. 导航条
+
+- 务必使用 `<nav>` 元素，或者，如果使用的是通用的 `<div>` 元素的话，务必为导航条设置 `role="navigation"` 属性，这样能够让使用辅助设备的用户明确知道这是一个导航区域。
+
+#### 5.1 示例
+
+```html
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Brand</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
+        <li><a href="#">Link</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">One more separated link</a></li>
+          </ul>
+        </li>
+      </ul>
+      <form class="navbar-form navbar-left">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Search">
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+      </form>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Link</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+```
+
+#### 5.2 .navbar-brand
+
+- navbar-primary/Info/warning/danger
+- navbar-header
+- 图标
+
+```html
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">
+        <img alt="Brand" src="...">
+      </a>
+    </div>
+  </div>
+</nav>
+```
+
+#### 5.3 .navbar-form
+
+- `.navbar-form` 和 `.form-inline` 的大部分代码都一样，内部实现使用了 mixin。
+- navbar-collapse
+- 如果你没有为输入框添加 `label` 标签，屏幕阅读器将会遇到问题。对于导航条内的表单，可以通过添加 `.sr-only` 类隐藏 `label` 标签。
+
+```html
+<form class="navbar-form navbar-left" role="search">
+  <div class="form-group">
+    <input type="text" class="form-control" placeholder="Search">
+  </div>
+  <button type="submit" class="btn btn-default">Submit</button>
+</form>
+```
+
+#### 5.4 .navbar-btn
+
+- 对于不包含在 `<form>` 中的 `<button>` 元素，加上 `.navbar-btn` 后，可以让它在导航条里垂直居中。
+
+```html
+<button type="button" class="btn btn-default navbar-btn">Sign in</button>
 ```
 
 
