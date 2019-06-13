@@ -6,8 +6,6 @@
 
 #### 1. 实现socket服务器
 
-- 实现socket服务端
-
 ```python
 import socket
 sk = socket.socket()

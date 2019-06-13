@@ -5,7 +5,7 @@ from app01 import models
 
 # 列出所有的出版社
 def list_publisher(request):
-    all_publisher = models.Publisher.objects.all()
+    all_publisher = models.Publisher.objects.all().order_by('pid')
     return render(request, 'list_publisher.html', {'all_publisher': all_publisher})
 
 
