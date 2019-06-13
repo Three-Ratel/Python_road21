@@ -325,7 +325,7 @@ mysite/
 python manage.py runserver
 # 修改默认端口,指定端口80
 python manage.py runserver 80
-# 修改默认ip,指定ip和端口0.0.0.0:80
+# 修改默认ip,指定ip和端口0.0.0.0:80, 上线时使用
 python manage.py runserver 0.0.0.0:80 
 # 修改settings
 ALLOWED_HOSTS=['*']
@@ -414,32 +414,46 @@ css，js和img文件夹，plugins文件夹
 
 ### 1.2 简单使用
 
-#### 1. form中的元素
+#### 1. form中的元素(4)
 
-1. 可以建立多个static文件夹
-2. 如果静态资源有重名的文件，则按照静态文件夹路径中的列表顺序(一旦找到即停止)
-3. input中可以使用**autofocus**，即请求页面自动聚焦
-4. form表单提交使用：action和method='post'
-5. 所有的input框需要**name属性**，使用sumbit或button
-6. 提交post请求，**把settings中的MIDDLEWARE：csrfvirew注释掉即可**
+- 可以建立多个static文件夹
+- 如果静态资源有重名的文件，则按照静态文件夹路径中的列表顺序(一旦找到即停止
+
+1. input中可以使用**autofocus**，即请求页面自动聚焦
+2. form表单提交使用：action和method='post'
+3. 所有的input框需要**name属性**，使用sumbit或button
+4. 提交post请求，**把settings中的MIDDLEWARE：csrfvirew注释掉即可**，即禁用csrf校验
 
 #### 2. 提交表单中的方法
 
 1. **获取请求方式**：request.method(GET/POST)
 2. form表单中的数据：request.POST **querydict对像**，可以使用dict方式取值,可以使用get方法
 3. 导入django中的redirect
-4. /index/第一个/是根目录，如果没有根目录，则进行路径拼接.响应头：Location。/index/
+4. /index/第一个**/是根目录**，如果没有根目录，**则进行路径拼接**.
+   - **响应头**：Location。/index/
 
 ```python
 # 在view.py文件中处理请求数据，如认证操作
 def login(request):
     if request.method == 'POST':
-      	# 获取用户名和密码
+      	# 获取用户名和密码，form表单中数据
         username = request.POST['username']
+        # username = request.POST.get('username', '用户不存在')
         pwd = request.POST['pwd']
      # 重定向，返回一个网址，或当前网站资源的路径
      return redirect('/index/')
 ```
+
+#### **3. get和post**
+
+- **get**
+  1. **获取数据，传递参数(在url中)**
+  2. **提交数据暴露在url中**
+  3. **django获取参数**
+     - **request.GET.get('username')**
+- **post**
+  1. **数据是隐藏的(在请求体中)**
+  2. **request.POST**
 
 ## 2. app
 
@@ -468,7 +482,7 @@ views.py
 ```python
 # 在settings中的installed_apps
 直接添加app名称
-# 推荐使用
+# 推荐使用,执行类
 或app01.apps.App01Config
 ```
 
@@ -570,7 +584,7 @@ class User(models.Model):
 
 ```python
 # 检查每个注册app的models中是否有变化，即更新models.py
-python manage.py makemigrations
+python manage.py makemigrations (app名称可选)
 # 同步变更记录到数据库中，一开始生成表名app名称+类名(小写)
 python manage.py migrate
 ```
@@ -584,7 +598,11 @@ python manage.py createsuperuser
 
 #### 6. views.py
 
-- **orm操作**，获取所有数据
+- **orm操作**，获取数据
+  - models.User.objects.all()
+  - models.User.objects.get()
+  - models.User.objects.filter()
+  - **获取的是一个列表**
 - views可以视为python的回调函数
 
 ```python
@@ -612,7 +630,7 @@ def orm_test(request):
 from app01 import models
 def orm_test(request):
   # 获取满足条件的对象，没有获取到即为空即False
-  ret = models.User.objects.filter(username='herny')
+  ret = models.User.objects.filter(username='herny', password='123')
   print(ret.username, ret.password)
 ```
 
@@ -707,7 +725,150 @@ CREATE TABLE myapp_person (
 3. 本示例中的CREATE TABLE SQL使用PostgreSQL语法进行格式化，但值得注意的是，Django会根据配置文件中指定的数据库类型来生成相应的SQL语句。
 4. Django支持MySQL5.5及更高版本。
 
+# 3. Django实例
 
+## 1. 展示
+
+### 1. 创建数据库
+
+```python
+# 命令行，mysql中
+create database database dj_bookmanager
+```
+
+### 2. settings.py
+
+1. BASE_DIR：项目根目录
+2. debug = True(开发) / False(上线)
+3. INSTALL_APPS：注册app
+4. MIDDLEWARW：注释掉csrf校验
+5. TEMPLATES：模版文件目录
+6. DATABASES：配置mysql数据库(6)
+7. STATICFILES_DIRS：配置静态文件 ？
+
+### 3. models.py
+
+- 在__init.py中导入pymysql模块，替换默认链接方式
+- 并创建model类，并**指定约束**
+  1. models.AutoField(primary_key = True)
+  2. models.CharField(max_length=32, unqiue/default)
+
+```python
+from django.db import models
+
+class Publisher(models.Model):
+  pid = models.AutoField(primary_key = True)
+  name = models.CharField(max_length=32, unique=True)
+  # 后续添加，需要指定默认值
+  addr = models.CharField(max_length=32, default='xxx')
+  # 或者更改迁移文件
+```
+
+### 4. 迁移数据库
+
+```python
+python manage.py makemigrations
+python manage.py migrate
+# 插入数据
+```
+
+### 5. urls.py
+
+```python
+from django.conf.urls import url
+from django.contrib import admin
+# 导入视图模块
+from app1 import views
+# 添加调用关系
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    url(r'login', views.publisher_list),
+]
+```
+
+### 6. views.py
+
+```python
+from django.shortcuts import render, HttpResponse, redirect
+def publisher_list(request):
+  # 业务逻辑
+    all_pubulisher = models.Pbulisher.objects.all().order_by(pk)
+    return render(request, 'publisher_list.html', {'all_pubulisher':all_pubulisher})
+```
+
+### 7. xxx.html
+
+1. 这里使用的是django的渲染语法(在创建app也可以指定jinja2)
+2. {{变量}}，{% for 循环%}{%endfor%}(需要闭合)
+3. 如果没有参数传入时，html中的{{变量}}在页面中不显示
+
+```django
+{# for循环中有 forloop.counter 自动记录循环次数#}
+{% for publisher in all_publisher %}
+	<tr>
+    <td>{{forloop.counter}}</td>
+    <td>{{publisher.pid/pk}}</td>
+    <td>{{publisher.name}}</td>
+	</tr>
+{% endfor %}
+```
+
+## 2. 新增
+
+```python
+# orm插入数据
+obj = models.Publisher.objects.create(name=publisher_name)
+# publisher object
+print(obj)
+```
+
+## 3. 删除
+
+- obj.delete()，obj_list.delete()
+- 对像和对象列表都有delete方法
+
+```python
+pk = request.GET.get('id')
+obj_list = models.Publisher.objects.filter(pk=pk)
+# 删除对象
+if not obj_list:
+  return HttpResponse('删除数据不存在')
+obj_list.delete()
+```
+
+## 4. 编辑
+
+```python
+# 从url中获取的参数，不是get请求的数据
+pk = request.GET.get('id')
+obj_list = models.Publiser.objects.fieter(pk=pk)
+if not obj_list:
+  return HttpResponse('编辑数据不存在')
+
+obj = obj_list[0]
+# 内存中修改
+obj.name = publisher_name
+# 内存中数据，提交到数据库
+obj.save()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 
 
 
 

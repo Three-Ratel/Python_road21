@@ -152,6 +152,8 @@ git status
 # 做标记
 git commit -m 'test'
 # git push origin master
+# commit历史阻止pull命令
+# git pull origin master --allow-unrelated-histories
 ```
 
 ![删除remote端文件2](/Users/henry/Documents/截图/Py截图/删除remote端文件2.png)
