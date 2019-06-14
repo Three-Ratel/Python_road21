@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>publisher</title>
+    <title>list_book</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/static/css/dashboard.css">
     <link rel="stylesheet" href="/static/plugins/bootstrap-3.3.7/css/bootstrap.css">
-    <script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
 </head>
 
 <body>
@@ -24,15 +23,14 @@
             <a class="navbar-brand" href="#">图书馆管理系统</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-            {#            <ul class="nav navbar-nav navbar-right">#}
-            {#                <li><a href="#">Dashboard</a></li>#}
-            {#                <li><a href="#">Settings</a></li>#}
-            {#                <li><a href="#">Profile</a></li>#}
-            {#                <li><a href="#">Help</a></li>#}
-            {#            </ul>#}
+{#            <ul class="nav navbar-nav navbar-right">#}
+{#                <li><a href="#">Dashboard</a></li>#}
+{#                <li><a href="#">Settings</a></li>#}
+{#                <li><a href="#">Profile</a></li>#}
+{#                <li><a href="#">Help</a></li>#}
+{#            </ul>#}
             <form class="navbar-form navbar-right">
-                <submit type="submit" class="btn btn-primary" name="id" value="True"><a
-                                            href="/logout/?flag=True" style="color:white;">登出</a></submit>
+                <input type="text" class="form-control" placeholder="Search...">
             </form>
         </div>
     </div>
@@ -41,40 +39,43 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
-            <ul class="nav nav-sidebar" id='mysiderbar'>
-                <li><a href="/list_book/">书籍信息<span class="sr-only">(current)</span></a></li>
-                <li class="active"><a href="">出版社信息</a></li>
-                {#                <li><a href="#">Analytics</a></li>#}
-                {#                <li><a href="#">Export</a></li>#}
+            <ul class="nav nav-sidebar">
+                <li class="active"><a href="">书籍信息 <span class="sr-only">(current)</span></a></li>
+                <li><a href="/list_publisher/">出版社信息</a></li>
+{#                <li><a href="#">Analytics</a></li>#}
+{#                <li><a href="#">Export</a></li>#}
             </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <div class="panel panel-primary">
-                <div class="panel-heading" style="text-align: center;"><h2>出版社表</h2></div>
+                <div class="panel-heading" style="text-align: center;"><h2>书籍信息表</h2></div>
                 <div class="panel-body">
-                    <button type="button" class="btn btn-primary"><a href="/add_publisher/?id={{ publisher.pk }}"
-                                                                     style="color: white">增加</a></button>
+                    <button type="button" class="btn btn-primary"><a href="/add_book/?id={{ book.pk }}"
+                                                                     style="color: white">录入书籍</a></button>
                     <table class="table table-striped table-hover">
                         <thead>
                         <tr>
                             <th>序号</th>
                             <th style="cursor: default;">ID<em class=" NormalCss SortDescCss"></em></th>
-                            <th style="cursor: default;">出版社名称<em class=" NormalCss SortDescCss"></em></th>
+                            <th style="cursor: default;">书名<em class=" NormalCss SortDescCss"></em></th>
+                            <th style="cursor: default;">出版社<em class=" NormalCss SortDescCss"></em></th>
                             <th>操作</th>
                         </tr>
                         </thead>
                         <tbody id="UserList">
-                        {% for publisher in all_publisher %}
+                        {% for book in all_books%}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td>{{ publisher.pk }}</td>
-                                <td style="text-align: left">{{ publisher.name }}</td>
+                                <td>{{ book.pk }}</td>
+                                <td style="text-align: left">{{ book.title }}</td>
+                                <td style="text-align: left">{{ book.pub.name }}</td>
+
                                 <td>
                                     <button type="button" class="btn btn-primary"><a
-                                            href="/edit_publisher/?id={{ publisher.pk }}"
+                                            href="/edit_book/?id={{ book.pk }}"
                                             style="color: white">编辑</a></button>
                                     <button type="button" class="btn btn-danger"><a
-                                            href="/del_publisher/?id={{ publisher.pk }}"
+                                            href="/del_book/?id={{ book.pk }}"
                                             style="color: white">删除</a></button>
                                 </td>
                             </tr>
@@ -87,17 +88,7 @@
     </div>
 </div>
 
-
-
-<script type="text/javascript">
-    $('#mysiderbar li').click(function () {
-        // 处理点击的选项卡
-        $(this).addClass('active').siblings('li').removeClass('active');
-        // 获取当前对象的索引
-        $('p').eq($(this).index()).addClass('active').siblings('p').removeClass('active');
-    });
-</script>
-
+{#<img src="/static/img/1.jpg" style="position: absolute; margin: 0px; padding: 0px; border: none; width: 1440px; height: 1280px; max-height: none; max-width: none; z-index: -999999; left: 0px;right: 0px; top: -405px;">#}
 
 </body>
 

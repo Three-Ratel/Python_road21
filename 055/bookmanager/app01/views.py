@@ -2,52 +2,13 @@ from django.shortcuts import render, redirect, HttpResponse
 
 from app01 import models
 
-USER = ''
 
-
-def wrapper(func):
-    global USER
-
-    def inner(*args, **kwargs):
-        res = redirect('/login/')
-        if USER: res = func(*args)
-        return res
-
-    return inner
-
-
-def login(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        pwd = request.POST['pwd']
-        res = models.Info.objects.get(username=username, pwd=pwd)
-        if res:
-            global USER
-            USER = username
-            res.status = True
-            res.save()
-            return redirect('/list_book/')
-    return render(request, 'login.html')
-
-
-def logout(request):
-    if request.method == 'GET':
-        flag = request.GET.get('flag')
-        if flag:
-            global USER
-            user = models.Info.objects.get(username=USER)
-            user.status = False
-            user.save()
-            USER = ''
-            return redirect('/login/')
-
-@wrapper
 # 列出所有书籍
 def list_book(request):
     all_books = models.Book.objects.all()
     return render(request, 'list_book.html', {'all_books': all_books})
 
-@wrapper
+
 # 添加书籍
 def add_book(request):
     error = ''
@@ -69,7 +30,7 @@ def add_book(request):
     all_publisher = models.Publisher.objects.all()
     return render(request, 'add_book.html', {'all_publisher': all_publisher, 'error': error})
 
-@wrapper
+
 # 删除书籍
 def del_book(request):
     if request.method == 'GET':
@@ -77,7 +38,7 @@ def del_book(request):
         models.Book.objects.filter(id=pk).delete()
         return redirect('/list_book/')
 
-@wrapper
+
 # 编辑书籍
 def edit_book(request):
     error = ''
@@ -101,13 +62,13 @@ def edit_book(request):
     all_publisher = models.Publisher.objects.all().order_by('pid')
     return render(request, 'edit_book.html', {'book': book, 'all_publisher': all_publisher, 'error': error})
 
-@wrapper
+
 # 列出所有的出版社
 def list_publisher(request):
     all_publisher = models.Publisher.objects.all().order_by('pid')
     return render(request, 'list_publisher.html', {'all_publisher': all_publisher})
 
-@wrapper
+
 # 增加出版社
 def add_publisher(request):
     error = ''
@@ -122,7 +83,7 @@ def add_publisher(request):
             return redirect('/list_publisher/')
     return render(request, 'add_publisher.html', {'error': error})
 
-@wrapper
+
 # 删除出版社
 def del_publisher(request):
     if request.method == 'GET':
@@ -131,7 +92,7 @@ def del_publisher(request):
         if obj_li: obj_li.delete()
         return redirect('/list_publisher/')
 
-@wrapper
+
 # 修改出版社
 def edit_publisher(request):
     pk = request.GET.get('id')

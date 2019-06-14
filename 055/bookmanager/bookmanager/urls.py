@@ -19,9 +19,6 @@ from app01 import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^login/', views.login),
-    url(r'^logout/?', views.logout),
-
     url(r'^list_publisher/', views.list_publisher),
     url(r'^add_publisher/', views.add_publisher),
     url(r'^del_publisher/', views.del_publisher),
