@@ -731,7 +731,7 @@ CREATE TABLE myapp_person (
 
 ```python
 # 命令行，mysql中
-create database database dj_bookmanager
+create database dj_bookmanager
 ```
 
 ### 2. settings.py
@@ -797,11 +797,11 @@ def publisher_list(request):
 ### 7. xxx.html
 
 1. 这里使用的是django的渲染语法(在创建app也可以指定jinja2)
-2. {{变量}}，{% for 循环%}{%endfor%}(需要闭合)
+2. **{{变量}}**，**{% for 循环%}{%endfor%}(需要闭合)**
 3. 如果没有参数传入时，html中的{{变量}}在页面中不显示
 
 ```django
-{# for循环中有 forloop.counter 自动记录循环次数#}
+{# for循环中有 forloop.counter 自动记录循环次数 #}
 {% for publisher in all_publisher %}
 	<tr>
     <td>{{forloop.counter}}</td>
@@ -813,6 +813,8 @@ def publisher_list(request):
 
 ## 2. 新增
 
+- **models.类名.objects.create(字段=值)**
+
 ```python
 # orm插入数据
 obj = models.Publisher.objects.create(name=publisher_name)
@@ -820,9 +822,18 @@ obj = models.Publisher.objects.create(name=publisher_name)
 print(obj)
 ```
 
+- 实例化方式
+
+```python
+obj = models.Publisher(name=publisher_name)
+obj.save()
+# obj打印结果：Publisher obj
+print(obj) 
+```
+
 ## 3. 删除
 
-- obj.delete()，obj_list.delete()
+- **obj.delete()，obj_list.delete()**
 - 对像和对象列表都有delete方法
 
 ```python
@@ -835,6 +846,9 @@ obj_list.delete()
 ```
 
 ## 4. 编辑
+
+- obj.字段=值
+- obj.save() 更新数据到数据库
 
 ```python
 # 从url中获取的参数，不是get请求的数据
@@ -884,7 +898,24 @@ obj.save()
 python -m django --version
 ```
 
+2. When to use include()
 
+```python
+You should always use `include()` when you include other URL patterns. `admin.site.urls` is the only exception to this.
+# 项目中如果有其他的urls.py，这时就需要使用include()
+# 当admin.site.urls
+```
+
+3. django中的路由机制是由**urls.py**完成的
+4. settings.py
+   - If you set DEBUG to **False**, you also need to properly set the **ALLOWED_HOSTS**setting.
+   - 修改配置文件名称需要同步修改wsgi中的**DJANGO_SETTINGS_MODULE**
+5. Default settings
+   1. A Django settings file doesn’t have to define any settings if it doesn’t need to. Each setting has a sensible default value. These defaults live in the module `django/conf/global_settings.py`.
+   2. Here’s the algorithm Django uses in compiling settings:
+      1. Load settings from `global_settings.py`.
+      2. Load settings from the specified settings file, overriding the global settings as necessary.
+   3. **Note** that a settings file should *not* import from `global_settings`, because that’s redundant
 
 
 

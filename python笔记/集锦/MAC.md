@@ -36,6 +36,8 @@ netstat -ano | findstr '3306'
 ```python
 # 晚上给8点关机
 sudo shutdown -h 20:00
+  
+sudo shutdown -h 1702231800
 ```
 
 ### 1.5 查看pip安装包路径
