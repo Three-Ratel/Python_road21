@@ -725,16 +725,18 @@ CREATE TABLE myapp_person (
 
 # 3. Django实例
 
-## 1. 展示
+## 1.出版社管理
 
-### 1. 创建数据库
+### 1. 展示
+
+#### 1. 创建数据库
 
 ```python
 # 命令行，mysql中
 create database dj_bookmanager
 ```
 
-### 2. settings.py
+#### 2. settings.py
 
 1. BASE_DIR：项目根目录
 2. debug = True(开发) / False(上线)
@@ -744,7 +746,7 @@ create database dj_bookmanager
 6. DATABASES：配置mysql数据库(6)
 7. STATICFILES_DIRS：配置静态文件 ？
 
-### 3. models.py
+#### 3. models.py
 
 - 在__init.py中导入pymysql模块，替换默认链接方式
 - 并创建model类，并**指定约束**
@@ -762,7 +764,7 @@ class Publisher(models.Model):
   # 或者更改迁移文件
 ```
 
-### 4. 迁移数据库
+#### 4. 迁移数据库
 
 ```python
 python manage.py makemigrations
@@ -770,7 +772,7 @@ python manage.py migrate
 # 插入数据
 ```
 
-### 5. urls.py
+#### 5. urls.py
 
 ```python
 from django.conf.urls import url
@@ -784,7 +786,7 @@ urlpatterns = [
 ]
 ```
 
-### 6. views.py
+#### 6. views.py
 
 ```python
 from django.shortcuts import render, HttpResponse, redirect
@@ -794,7 +796,7 @@ def publisher_list(request):
     return render(request, 'publisher_list.html', {'all_pubulisher':all_pubulisher})
 ```
 
-### 7. xxx.html
+#### 7. xxx.html
 
 1. 这里使用的是django的渲染语法(在创建app也可以指定jinja2)
 2. **{{变量}}**，**{% for 循环%}{%endfor%}(需要闭合)**
@@ -809,9 +811,13 @@ def publisher_list(request):
     <td>{{publisher.name}}</td>
 	</tr>
 {% endfor %}
+{# if条件判断 #}
+{% if 条件判断 %}
+{% else %} / {% elif %}
+{% endif %}
 ```
 
-## 2. 新增
+### 2. 新增
 
 - **models.类名.objects.create(字段=值)**
 
@@ -831,7 +837,7 @@ obj.save()
 print(obj) 
 ```
 
-## 3. 删除
+### 3. 删除
 
 - **obj.delete()，obj_list.delete()**
 - 对像和对象列表都有delete方法
@@ -845,7 +851,7 @@ if not obj_list:
 obj_list.delete()
 ```
 
-## 4. 编辑
+### 4. 编辑
 
 - obj.字段=值
 - obj.save() 更新数据到数据库
@@ -863,6 +869,137 @@ obj.name = publisher_name
 # 内存中数据，提交到数据库
 obj.save()
 ```
+
+## 2. 书籍管理
+
+### 1. 创建表结构
+
+#### 1. book表
+
+- name、作者、出版社、出版时间
+
+```python
+class Book(models.Model):
+  title = models.CharField(max_length=32)
+  pub_id = models.ForeignKey(to=Publisher,on_delete=models.SET(字段))
+  # on_delete=models.CASCADE（默认）
+  # on_delete=models.SET(‘具体值’)
+  # on_delete=models.SET_DEFAULT， defalut='xxx'
+  # on_delete=models.SET_NULL
+	# on_delete参数在django2.0之后必填
+  # 通过反射获取, on_delete默认级联删除
+  pub = models.ForeignKey('Publisher', on_delete=models.SET_NULL)
+```
+
+#### 2. 数据库迁移
+
+```python
+python manage.py makemigrations
+python manage.py migrate
+# 外键名django自动加 _id
+# django.migrations也会在数据库中创建
+```
+
+### 2. 查询
+
+- models.py 
+- models中的**pub**是被**关联类的对象**
+- django会自动生成 pub_id
+
+```python
+for book in all_Book.objects.all():
+    # book类中属性
+    print(book.pk)
+    print(book.title)
+    print(book.pub_id)
+    print(book.pub, type(book.pub))
+    # publisher中属性
+    # print(book.pub_id)只需要出版社id，建议使用
+    print(book.pub.pk)
+    print(book.name)
+```
+
+```python
+for+table,自动补全，pycharm提供
+# __str__方法
+print(book.pub)
+```
+
+### 3. 展示
+
+```python
+def list_book(request):
+    all_books = models.Book.objects.all()
+    return render(request, 'list_book.html', {'all_books': all_books})
+```
+
+### 4. 添加
+
+- views.py
+
+```python
+def add_book(request):
+    error = ''
+    if request.method == 'POST':
+        title = request.POST.get('book_name')
+        pk = request.POST.get('id')
+        print(title, pk)
+        # 可以使用多个字段进行查找
+        book_set = models.Book.objects.filter(title=title, pub_id=pk)
+        if book_set:
+            error = '书籍已存在'
+        if not title: error = '请输入书名'
+        if not error:
+            models.Book.objects.create(title=title, pub_id=pk)
+            return redirect('/list_book/')
+    all_publisher = models.Publisher.objects.all()
+    return render(request, 'add_book.html', {'all_publisher': all_publisher, 'error': error})
+```
+
+### 5. 删除
+
+- 数据库查询到的对象 或 query set 都可以使用delete方法直接删除数据
+
+```python
+def del_book(request):
+    if request.method == 'GET':
+        pk = request.GET.get('id')
+        models.Book.objects.filter(id=pk).delete()
+        return redirect('/list_book/')
+```
+
+### 6. 修改
+
+- 通过 GET 、 POST 获取的数据一般为 **字符串类型**
+- 获取的 pub_id 是 str 类型，注意和数据库中字段类型一样
+
+```python
+def edit_book(request):
+    error = ''
+    pk = request.GET.get('id')
+    book = models.Book.objects.get(pk=pk)
+    if request.method == 'POST':
+        title = request.POST.get('book_name')
+        # 获取的 pub_id 是 str 类型，注意和数据库中字段类型一样
+        pub_id = request.POST.get('id')
+        print(type(title), type(book.title), type(pub_id), type(book.pub_id))
+        # 判断 书名+出版社 是否被修改
+        if book.title == title and book.pub_id == int(pub_id):
+            error = '未做任何修改'
+        if not title: error = '请输入书名'
+        # 判断 书名+出版社 是否唯一
+        if models.Book.objects.filter(title=title, pub_id=pub_id):
+            error = '该书籍已存在'
+        if not error:
+            book.title = title
+            book.pub_id = pub_id
+            book.save()
+            return redirect('/list_book/')
+    all_publisher = models.Publisher.objects.all().order_by('pid')
+    return render(request, 'edit_book.html', {'book': book, 'all_publisher': all_publisher, 'error': error})
+```
+
+
 
 
 
