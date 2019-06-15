@@ -1,6 +1,19 @@
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, redirect
 
 from app1 import models
+
+USER = ''
+
+
+def warrper(func):
+    def inner(*args):
+        global USER
+        if USER:
+            return func(*args)
+        else:
+            return redirect('/login/')
+
+    return inner
 
 
 def login(request):
@@ -8,19 +21,26 @@ def login(request):
         username = request.POST.get('username')
         pwd = request.POST.get('pwd')
         if models.User.objects.filter(username=username, pwd=pwd):
+            global USER
+            USER = username
             return redirect('/list_student/')
     return render(request, 'login.html')
 
 
 def logout(request):
+    global USER
+    USER = ''
     return redirect('/login/')
 
+
 # 学生管理函数
+@warrper
 def list_student(request):
     all_student = models.Student.objects.all()
     return render(request, 'list_student.html', {'all_student': all_student})
 
 
+@warrper
 def add_student(request):
     error = ''
     if request.method == 'POST':
@@ -30,6 +50,8 @@ def add_student(request):
         grade_id = request.POST.get('id')
         if not (name and age and gender):
             error = '学生信息不完整'
+        elif not str(age).isdecimal():
+            error = '年龄必须为纯数字'
         if models.Student.objects.filter(name=name):
             error = '学生信息已存在'
         if not error:
@@ -39,6 +61,7 @@ def add_student(request):
     return render(request, 'add_student.html', {'error': error, 'all_grade': all_grade})
 
 
+@warrper
 def del_student(request):
     sid = request.GET.get('id')
     obj = models.Student.objects.filter(sid=int(sid))
@@ -46,6 +69,7 @@ def del_student(request):
     return redirect('/list_student/')
 
 
+@warrper
 def edit_student(request):
     error = ''
     sid = request.GET.get('id')
@@ -71,11 +95,13 @@ def edit_student(request):
 
 
 # 班级管理函数
+@warrper
 def list_grade(request):
     all_grade = models.Grade.objects.all().order_by('title')
     return render(request, 'list_grade.html', {'all_grade': all_grade})
 
 
+@warrper
 def add_grade(request):
     error = ''
     if request.method == 'POST':
@@ -90,6 +116,7 @@ def add_grade(request):
     return render(request, 'add_grade.html', {'error': error})
 
 
+@warrper
 def del_grade(request):
     gid = request.GET.get('id')
     obj = models.Grade.objects.filter(id=gid)
@@ -97,6 +124,7 @@ def del_grade(request):
     return redirect('/list_grade/')
 
 
+@warrper
 def edit_grade(request):
     error = ''
     gid = request.GET.get('id')
