@@ -31,15 +31,12 @@ def login(request):
 
 
 def logout(request):
-    if request.method == 'GET':
-        flag = request.GET.get('flag')
-        if flag:
-            global USER
-            user = models.Info.objects.get(username=USER)
-            user.status = False
-            user.save()
-            USER = ''
-            return redirect('/login/')
+    global USER
+    user = models.Info.objects.get(username=USER)
+    user.status = False
+    user.save()
+    USER = ''
+    return redirect('/login/')
 
 @wrapper
 # 列出所有书籍
