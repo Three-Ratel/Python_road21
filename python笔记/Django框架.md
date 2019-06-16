@@ -493,6 +493,11 @@ INSTALLED_APPS = [
 # 重复注册会报错
 ```
 
+### 2.3 注意事项
+
+1. app更名需要同步到数据库中
+2. 有关app名称里面的模块导入时，也需要更改为响应的app名称
+
 ## 3. ORM
 
 ### 3.1 概念
@@ -848,7 +853,7 @@ obj_list.delete()
 ```python
 # 从url中获取的参数，不是get请求的数据
 pk = request.GET.get('id')
-obj_list = models.Publiser.objects.fieter(pk=pk)
+obj_list = models.Publiser.objects.filter(pk=pk)
 if not obj_list:
   return HttpResponse('编辑数据不存在')
 
