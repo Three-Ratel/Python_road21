@@ -9,8 +9,48 @@ def list_author(request):
     return render(request, 'list_author.html', {'all_author': all_author})
 
 
+# 删除指定作者
+def del_author(request):
+    pk = request.GET.get('pk')
+    models.Author.objects.filter(pk=pk).delete()
+    return redirect('/list_author/')
 
 
+# 编辑作者
+def edit_author(request):
+    error = ''
+    pk = request.GET.get('pk')
+    author = models.Author.objects.get(pk=pk)
+    if request.method == 'POST':
+        author_name = request.POST.get('author_name')
+        books = request.POST.getlist('books')
+        if not author_name:
+            error = '请输入作者姓名'
+        if not error:
+            author.name = author_name
+            author.save()
+            author.books.set(books)
+            return redirect('/list_author/')
+    all_book = models.Book.objects.all()
+    return render(request, 'edit_author.html', {'author': author, 'all_book': all_book, 'error': error})
+
+
+# 增加作者
+def add_author(request):
+    error = ''
+    if request.method == 'POST':
+        author_name = request.POST.get('author_name')
+        if models.Author.objects.filter(name=author_name):
+            error = '作者已存在'
+        books = request.POST.getlist('books')
+        if not (author_name and books):
+            error = '作者和作品信息不完整'
+        if not error:
+            author = models.Author.objects.create(name=author_name)
+            author.books.set(books)
+            return redirect('/list_author/')
+    all_book = models.Book.objects.all()
+    return render(request, 'add_author.html', {'all_book': all_book, 'error': error})
 
 
 
