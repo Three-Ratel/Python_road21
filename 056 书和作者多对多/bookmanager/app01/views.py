@@ -53,22 +53,6 @@ def add_author(request):
     return render(request, 'add_author.html', {'all_book': all_book, 'error': error})
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # 列出所有书籍
 def list_book(request):
     all_books = models.Book.objects.all()
@@ -180,5 +164,26 @@ def edit_publisher(request):
             obj.name = name
             obj.save()
             return redirect('/list_publisher/')
-    print(error)
     return render(request, 'edit_publisher.html', {'name': obj.name, 'error': error})
+
+
+def add_info(request):
+    error = ''
+    all_publisher = models.Publisher.objects.all()
+    if request.method == 'POST':
+        author_name = request.POST.get('author_name')
+        book_name = request.POST.get('book_name')
+        pub_id = request.POST.get('publisher')
+        if models.Book.objects.filter(title=book_name, pub_id=pub_id):
+            error = '书籍信息已存在'
+        if models.Author.objects.filter(name=author_name):
+            error = '作者信息已存在'
+        if not (author_name and book_name):
+            error = '信息不完整'
+        if not request.POST.get('cancel'):
+            if not error:
+                author = models.Author.objects.create(name=author_name, )
+                book = models.Book.objects.create(title=book_name, pub_id=pub_id)
+                author.books.set([str(book.pk)])
+            return redirect('/list_author/')
+    return render(request, 'add_info.html', {'all_publisher': all_publisher, 'error': error})
