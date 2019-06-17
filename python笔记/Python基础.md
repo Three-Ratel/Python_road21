@@ -2931,14 +2931,14 @@ ctime = datetim.now().strftime('%Y-%m-%d %H:%M:%S')
 ![序列化](/Users/henry/Documents/截图/Py截图/序列化.png)
 
 - **json**， 所有语言通用，**只能**序列化指定的基本数据类型
-  - dumps/loads/ dump/load
-  - 所有字符串必须都是**双引号**
-  - **最外层**只能是**dict/list**
-  - 不能支持load多次
-  - dict中**key**只能是**str**
+  1. dumps/loads/ dump/load
+  2. 所有字符串必须都是**双引号**
+  3. **最外层**只能是**dict/list**
+  4. 不能支持load多次
+  5. dict中**key**只能是**str**
 - **pickle**，几乎支持所有python东西（socket对象），序列化的内容只能用python
-  - dumps/loads/ dump/load
-  - 支持连续load多次
+  1. dumps/loads/ dump/load
+  2. 支持连续load多次
 
 ### **1. json**
 
@@ -2979,7 +2979,7 @@ import pickle
 v = {1, 2, 3}
 val = pickle.dumps(v)
 print(val, typ(val))
-val = pickle.loads(v)
+val = pickle.loads(val)
 print(val, typ(val))
 # json dump 得到的是str， pickle得到的是bytes
 ```

@@ -1,3 +1,5 @@
+
+
 # 1. Django基础
 
 ## 1. web框架的本质
@@ -575,7 +577,7 @@ class User(models.Model):
 - 命令行输入
 
 ```python
-# 检查每个注册app的models中是否有变化，即更新models.py
+# 检查每个注册app的models中是否有变化，即变更记录models.py
 python manage.py makemigrations (app名称可选)
 # 同步变更记录到数据库中，一开始生成表名app名称+类名(小写)
 python manage.py migrate
@@ -822,11 +824,11 @@ obj = models.Publisher.objects.create(name=publisher_name)
 print(obj)
 ```
 
-- 实例化方式
+- **实例化方式**
 
 ```python
 obj = models.Publisher(name=publisher_name)
-obj.save()
+obj.save()   # 保存到数据库中
 # obj打印结果：Publisher obj
 print(obj) 
 ```
