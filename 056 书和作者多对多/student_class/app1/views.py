@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 
 from app1 import models
 
-USER = 'henry'
+USER = ''
 
 
 def wrapper(func):
@@ -51,10 +51,9 @@ def add_teacher(request):
         if models.Teacher.objects.filter(name=name):
             error = '教师信息已存在'
         if not request.POST.get('cancel'):
-            return redirect('/list_teacher/')
-        if not error:
-            tea = models.Teacher.objects.create(name=name)
-            tea.grade.set(grades)
+            if not error:
+                tea = models.Teacher.objects.create(name=name)
+                tea.grade.set(grades)
             return redirect('/list_teacher/')
     all_grade = models.Grade.objects.all()
     return render(request, 'add_teacher.html', {'error': error, 'all_grade': all_grade})
@@ -109,8 +108,9 @@ def add_student(request):
             error = '年龄必须为纯数字'
         if models.Student.objects.filter(name=name):
             error = '学生信息已存在'
-        if not error:
-            models.Student.objects.create(name=name, age=age, gender=gender, grade_id=grade_id)
+        if not request.POST.get('cancel'):
+            if not error:
+                models.Student.objects.create(name=name, age=age, gender=gender, grade_id=grade_id)
             return redirect('/list_student/')
     all_grade = models.Grade.objects.all()
     return render(request, 'add_student.html', {'error': error, 'all_grade': all_grade})
@@ -165,8 +165,9 @@ def add_grade(request):
             error = '请输入班级名称'
         if models.Grade.objects.filter(title=class_name):
             error = '班级名称不能重复'
-        if not error:
-            models.Grade.objects.create(title=class_name)
+        if not request.POST.get('cancel'):
+            if not error:
+                models.Grade.objects.create(title=class_name)
             return redirect('/list_grade/')
     return render(request, 'add_grade.html', {'error': error})
 

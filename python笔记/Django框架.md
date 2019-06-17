@@ -378,6 +378,13 @@ def index(request):
 
 # 2.Django简介
 
+**django处理请求流程**
+
+1. 浏览器地址输入url，发送get请求
+2. wsgi服务器接受到请求
+3. 根据url路径找到对应的函数
+4. 执行函数，返回响应给wsgi按照http协议格式返回浏览器
+
 ## 1. 静态文件
 
 - 静态文件包括：css，javascript，images
@@ -994,6 +1001,120 @@ def edit_book(request):
     all_publisher = models.Publisher.objects.all().order_by('pid')
     return render(request, 'edit_book.html', {'book': book, 'all_publisher': all_publisher, 'error': error})
 ```
+
+## 3. 作者的管理
+
+### 1.设计作者表和外键
+
+```python
+# models.py
+class Author(models.Model):
+  name.CharField(max_length=32)
+  # books为关系管理对象,django会自动生成第三张表
+	books = models.ManyToMangField('Book')
+```
+
+### 2. 数据库迁移
+
+### 3. 关系管理对象
+
+```python
+# 关系管理对象，books为外键
+auther.books  # books.None
+# queryset类型的书籍对象
+auther.books.all()
+```
+
+### 4. 模版
+
+- 模版里面方法不用加括号，会自动调用
+
+```python
+# forloop.last为bool值，最后一次为真
+{% if forloop.last/first %}
+```
+
+### 5. 增加作者
+
+```python
+# get只能拿到一个值
+books = request.POST.get('books')
+# 获取一个list
+books = request.POST.getlist('books')
+```
+
+```python
+# 更新数据库, set方法设置第三张表
+# ORM操作
+# 插入作者信息
+author_obj = models.Auther.objects.create(name=author_name)
+# 通过关系管理对象插入数据
+author_obj.books.set(books)
+# 重定向
+```
+
+### 6. 删除作者
+
+```python
+# 通过pk查找到作者的对象，利用.delete()进行删除
+```
+
+### 7. 编辑作者
+
+```python
+# 使用getlist获取books
+books = request.POST.getlist('books')
+# 每次重新设置，会有覆盖操作，把数据写入到第三张表中
+author_obj.books.set(books)
+```
+
+### 8. 多对多建表
+
+#### 1. ManyToManyField(关联类)
+
+- 不在author产生外键字段
+
+```python
+# django 生成的第三张表
+class Author(models.Model):
+  name.CharField(max_length=32)
+  # books为关系管理对象，不在author产生字段
+	books = models.ManyToMangField('Book')
+```
+
+![django的多对多外键](/Users/henry/Documents/截图/Py截图/django的多对多外键.png)
+
+#### 2. 自己创建第三张表
+
+```python
+class Author(models.Model):
+  name.CharField(max_length=32)
+  
+class AuthorBook(models.Model):
+  author = models.ForeignKey('Author', on_delete=models.CASCADE)
+  book = models.ForeignKey('Book', on_delete=models.CASCADE)
+  date = models.DateField()
+```
+
+#### 3. 自己建表和django关联
+
+- 通过**through**参数，查询上有优势，插入时需要操作第三张表
+
+```python
+class Author(models.Model):
+  name.CharField(max_length=32)
+  # books为关系管理对象
+	books = models.ManyToMangField('Book', through='AuthorBook', through_fields=['author', 'book'])
+
+class AuthorBook(models.Model):
+  author = models.ForeignKey('Author',related_name='a',on_delete=models.CASCADE)
+  book = models.ForeignKey('Book',related_name='b',`on_delete=models.CASCADE)
+  recomm = models.ForeignKey('Author', on_delete=models.CASCADE)
+  
+  date = models.DateField()
+```
+
+
 
 
 
