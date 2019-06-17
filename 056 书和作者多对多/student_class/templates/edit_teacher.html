@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>edit_author</title>
+    <link rel="stylesheet" href="/static/plugins/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-md-8 col-md-offset-2">
+            <div class="panel panel-default panel-primary" style="margin: 10% 0">
+                <div class="panel-heading">
+                    <label for="teacher" class="control-label">编辑教师</label>
+                </div>
+                <div class="panel-body">
+                    <form action="" method="post">
+                        <div class="form-group">
+                            <div class="col-sm-10">
+                                <p><input type="text" name="tea_name" class="form-control" id="teacher"
+                                       placeholder="请输入教师姓名" value="{{ teacher.name }}"></p>
+                                <select name="grades" id="" multiple>
+                                    {% for i in all_grade %}
+                                        {% if i in teacher.grade.all %}
+                                            <option value="{{ i.pk }}" selected>{{ i.title }}</option>
+                                        {% else %}
+                                            <option value="{{ i.pk }}">{{ i.title }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                <p>{{ error }}</p>
+                                <button type="submit" class="btn btn-primary">提交</button>
+{#                                <a href="/list_teacher/"><button type="submit" class="btn btn-primary">取消</button></a>#}
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
