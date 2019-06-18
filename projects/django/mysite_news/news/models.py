@@ -19,8 +19,9 @@ class Article(models.Model):
         return self.headline
 
 
-class User(models.Model):
+class Users(models.Model):
     name = models.CharField(max_length=20)
+    age = models.IntegerField()
 
 
 class Question(models.Model):

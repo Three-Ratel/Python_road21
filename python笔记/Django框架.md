@@ -1,5 +1,3 @@
-
-
 # 1. Django基础
 
 ## 1. web框架的本质
@@ -207,7 +205,7 @@ sk.close()
 3. **应用程序则负责具体的逻辑处理**。为了方便应用程序的开发，就出现了众多的Web框架，例如：Django、Flask、web.py 等。不同的框架有不同的开发方式，但是无论如何，开发出的应用程序都要和服务器程序配合，才能为用户提供服务。
 4. **WSGI（Web Server Gateway Interface）就是一种规范**，它定义了使用Python编写的web应用程序与web服务器程序之间的接口格式，实现web应用程序与web服务器程序间的解耦。
 5. 常用的WSGI服务器有**uwsgi(线上)**、**Gunicorn**。而Python标准库提供的独立WSGI服务器叫**wsgiref**(性能较差，用于测试)，**Django**开发环境用的就是这个模块来做服务器。
-   - negix：把静态页面返回，不经过Django，动态交给uwsgi用于Django处理，在返回
+   - negix：把静态页面返回，不经过Django，动态交给uwsgi用于Django处理，再返回
 
 ### 2.2 wsgiref
 
@@ -674,63 +672,19 @@ Product.objects.filter(name__contains='name').update(name='new name')
 Product.objects.filter(name__contains='name query').delete()
 ```
 
-## 4. Django框架
+### 3.4 已有数据库加入一个字段
 
-### 1. MVC和MTV
+#### 1. 表中添加字段
 
-- MVC，全名是**Model View Controller**，是软件工程中的一种软件架构模式，把软件系统分为三个基本部分：**模型(Model)**、**视图(View)**和**控制器(Controller)**，具有耦合性低、重用性高、生命周期成本低等优点。
-
-![MTV框架](/Users/henry/Documents/截图/Py截图/MTV框架.png)
-
-- Django框架的设计模式借鉴了MVC框架的思想，也是分成三部分，来降低各个部分之间的耦合性。
-- Django框架的不同之处在于它拆分的三部分为：Model（模型）、Template（模板）和View（视图），也就是MTV框架。
-
-### 2. Django的MTV模式
-
-1. **Model(模型)**：负责业务对象与数据库的对象(ORM)
-2. **Template(模版)**：负责如何把页面展示给用户
-3. **View(视图)**：负责业务逻辑，并在适当的时候调用Model和Template
-
-- 此外，Django还有一个**urls分发器**，它的**作用是将一个个URL的页面请求分发给不同的view处理，view再调用相应的Model和Template**
-
-![Django框架](/Users/henry/Documents/截图/Py截图/Django框架.png)
-
-### 3. Model
-
-#### 1. model简介
-
-- **在Django中model是你数据的单一、明确的信息来源**。它包含了你存储的数据的重要字段和行为。通常，一个模型（model）映射到一个数据库表。
-
-#### 2. 基本情况：
-
-- 每个模型都是一个Python类，它是django.db.models.Model的子类。
-- 模型的每个属性都代表一个数据库字段。
-- 综上所述，Django为您提供了一个自动生成的数据库访问API
-
-![ORM与DB](/Users/henry/Documents/截图/Py截图/ORM与DB.png)
-
-#### Note2(4)
-
-- model一些说明
-
-```mysql
-CREATE TABLE myapp_person (
-    "id" serial NOT NULL PRIMARY KEY,
-    "first_name" varchar(30) NOT NULL,
-    "last_name" varchar(30) NOT NULL
-);
-```
-
-1. **表app名称_类名(小写)的名称是自动生成的**，如果你要自定义表名，需要在**model的Meta类中指定 db_table 参数**，强烈建议使用**小写**表名，特别是使用MySQL作为数据库时。
-2. id字段是自动添加的，如果你想要指定自定义主键，只需在其中一个字段中指定 primary_key=True 即可。如果Django发现你已经明确地设置了Field.primary_key，它将不会添加自动ID列。
-3. 本示例中的CREATE TABLE SQL使用PostgreSQL语法进行格式化，但值得注意的是，Django会根据配置文件中指定的数据库类型来生成相应的SQL语句。
-4. Django支持MySQL5.5及更高版本。
+1. 可以使用pycharm提供的图形化界面进行插入或通过终端进行插入
+2. 更新models.py 中的类属性
+3. 更新迁移文件中的对应字段，至此完成
 
 # 3. Django实例
 
 ## 1.出版社管理
 
-### 1. 展示
+### 1.1 展示
 
 #### 1. 创建数据库
 
@@ -747,14 +701,15 @@ create database dj_bookmanager
 4. MIDDLEWARW：注释掉csrf校验
 5. TEMPLATES：模版文件目录
 6. DATABASES：配置mysql数据库(6)
-7. STATICFILES_DIRS：配置静态文件 ？
+7. STATICFILES_DIRS：配置静态文件 
 
 #### 3. models.py
 
-- 在__init.py中导入pymysql模块，替换默认链接方式
+- 在__init.py中导入**pymysql**模块，替换默认链接方式
 - 并创建model类，并**指定约束**
-  1. models.AutoField(primary_key = True) #自增并指定主键
-  2. models.CharField(max_length=32, unqiue/default)
+  1. models.AutoField(**primary_key = True**) #**自增并指定主键**
+  2. models.CharField(max_length=32, **unqiue/default=xxx**)
+  3. models.IntegerField(default=0)
 
 ```python
 from django.db import models
@@ -820,7 +775,7 @@ def publisher_list(request):
 {% endif %}
 ```
 
-### 2. 新增
+### 1.2 新增
 
 - **models.类名.objects.create(字段=值)**
 
@@ -840,7 +795,7 @@ obj.save()   # 保存到数据库中
 print(obj) 
 ```
 
-### 3. 删除
+### 1.3 删除
 
 - **obj.delete()，obj_list.delete()**
 - 对像和对象列表都有delete方法
@@ -854,7 +809,7 @@ if not obj_list:
 obj_list.delete()
 ```
 
-### 4. 编辑
+### 1.4 编辑
 
 - obj.字段=值
 - obj.save() 更新数据到数据库
@@ -875,7 +830,7 @@ obj.save()
 
 ## 2. 书籍管理
 
-### 1. 创建表结构
+### 2.1 创建表结构
 
 #### 1. book表
 
@@ -903,7 +858,7 @@ python manage.py migrate
 # django.migrations也会在数据库中创建
 ```
 
-### 2. 查询
+### 2.2 查询
 
 - models.py 
 - models中的**pub**是被**关联类的对象**
@@ -928,7 +883,7 @@ for+table,自动补全，pycharm提供
 print(book.pub)
 ```
 
-### 3. 展示
+### 2.3 展示
 
 ```python
 def list_book(request):
@@ -936,7 +891,7 @@ def list_book(request):
     return render(request, 'list_book.html', {'all_books': all_books})
 ```
 
-### 4. 添加
+### 2.4 添加
 
 - views.py
 
@@ -959,7 +914,7 @@ def add_book(request):
     return render(request, 'add_book.html', {'all_publisher': all_publisher, 'error': error})
 ```
 
-### 5. 删除
+### 2.5 删除
 
 - 数据库查询到的对象 或 query set 都可以使用delete方法直接删除数据
 
@@ -971,7 +926,7 @@ def del_book(request):
         return redirect('/list_book/')
 ```
 
-### 6. 修改
+### 2.6 修改
 
 - 通过 GET 、 POST 获取的数据一般为 **字符串类型**
 - 获取的 pub_id 是 str 类型，注意和数据库中字段类型一样
@@ -1004,7 +959,7 @@ def edit_book(request):
 
 ## 3. 作者的管理
 
-### 1.设计作者表和外键
+### 3.1 设计作者表和外键
 
 ```python
 # models.py
@@ -1014,9 +969,9 @@ class Author(models.Model):
 	books = models.ManyToMangField('Book')
 ```
 
-### 2. 数据库迁移
+### 3.2 数据库迁移
 
-### 3. 关系管理对象
+### 3.3 关系管理对象
 
 ```python
 # 关系管理对象，books为外键
@@ -1025,7 +980,7 @@ auther.books  # books.None
 auther.books.all()
 ```
 
-### 4. 模版
+### 3.4 模版
 
 - 模版里面方法不用加括号，会自动调用
 
@@ -1034,7 +989,7 @@ auther.books.all()
 {% if forloop.last/first %}
 ```
 
-### 5. 增加作者
+### 3.5 增加作者
 
 ```python
 # get只能拿到一个值
@@ -1053,13 +1008,13 @@ author_obj.books.set(books)
 # 重定向
 ```
 
-### 6. 删除作者
+### 3.6 删除作者
 
 ```python
 # 通过pk查找到作者的对象，利用.delete()进行删除
 ```
 
-### 7. 编辑作者
+### 3.7 编辑作者
 
 - request.POST.getlist('key')
 
@@ -1070,7 +1025,7 @@ books = request.POST.getlist('books')
 author_obj.books.set(books)
 ```
 
-### 8. 多对多建表
+### 3.8 多对多建表
 
 #### 1. ManyToManyField(关联类)
 
@@ -1100,7 +1055,8 @@ class AuthorBook(models.Model):
 
 #### 3. 自己建表和django关联
 
-- 通过**through**参数，查询上有优势，插入时需要操作第三张表
+- 通过**through**参数，查询上有优势
+- 插入时需要**操作第三张表**，没有**set**方法
 
 ```python
 class Author(models.Model):
@@ -1116,12 +1072,62 @@ class AuthorBook(models.Model):
   date = models.DateField()
 ```
 
-# 4. django模版系统
+# 4. Django框架
+
+## 1. MVC和MTV
+
+- MVC，全名是**Model View Controller**，是软件工程中的一种软件架构模式，把软件系统分为三个基本部分：**模型(Model)**、**视图(View)**和**控制器(Controller)**，具有耦合性低、重用性高、生命周期成本低等优点。
+
+![MTV框架](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/MTV%E6%A1%86%E6%9E%B6.png)
+
+- Django框架的设计模式借鉴了MVC框架的思想，也是分成三部分，来降低各个部分之间的耦合性。
+- Django框架的不同之处在于它拆分的三部分为：Model（模型）、Template（模板）和View（视图），也就是MTV框架。
+
+## 2. Django的MTV模式
+
+1. **Model(模型)**：负责业务对象与数据库的对象(ORM)
+2. **Template(模版)**：负责如何把页面展示给用户
+3. **View(视图)**：负责业务逻辑，并在适当的时候调用Model和Template
+
+- 此外，Django还有一个**urls分发器**，它的**作用是将一个个URL的页面请求分发给不同的view处理，view再调用相应的Model和Template**
+
+![Django框架](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/Django%E6%A1%86%E6%9E%B6.png)
+
+## 3. Model
+
+### 1. model简介
+
+- **在Django中model是你数据的单一、明确的信息来源**。它包含了你存储的数据的重要字段和行为。通常，一个模型（model）映射到一个数据库表。
+
+### 2. 基本情况：
+
+- 每个模型都是一个Python类，它是django.db.models.Model的子类。
+- 模型的每个属性都代表一个数据库字段。
+- 综上所述，Django为您提供了一个自动生成的数据库访问API
+
+![ORM与DB](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/ORM%E4%B8%8EDB.png)
+
+#### Note2(4)
+
+- model一些说明
+
+```mysql
+CREATE TABLE myapp_person (
+    "id" serial NOT NULL PRIMARY KEY,
+    "first_name" varchar(30) NOT NULL,
+    "last_name" varchar(30) NOT NULL
+);
+```
+
+1. **表app名称_类名(小写)的名称是自动生成的**，如果你要自定义表名，需要在**model的Meta类中指定 db_table 参数**，强烈建议使用**小写**表名，特别是使用MySQL作为数据库时。
+2. id字段是自动添加的，如果你想要指定自定义主键，只需在其中一个字段中指定 primary_key=True 即可。如果Django发现你已经明确地设置了Field.primary_key，它将不会添加自动ID列。
+3. 本示例中的CREATE TABLE SQL使用PostgreSQL语法进行格式化，但值得注意的是，Django会根据配置文件中指定的数据库类型来生成相应的SQL语句。
+4. Django支持MySQL5.5及更高版本。
+
+## 4. Templates
 
 1. MVC：model view(html) controller(控制器，路由传递指令，业务逻辑)
 2. MTV：model(ORM操作) template(html) view(业务逻辑)
-
-## 1. 常用语法
 
 - {{ }}表示变量，在模板渲染的时候替换成值，{% %}表示逻辑相关的操作。
 
