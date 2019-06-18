@@ -224,7 +224,9 @@ vim .gitingore
 # 设置好.gitignore 文件后，下次就可以任性的使用git add . 的操作了。
 ```
 
-## 八、版本回滚
+## 八、文件管理
+
+### 1. 版本回滚
 
 当我们本地文件误删或者更改后，想恢复之前的状态，如果已经进行commit，可以通过命令进行回滚
 
@@ -242,6 +244,62 @@ $ git relog
 # 回退版本后，想取消回滚操作
 $ git reset --hard HEAD^
 ```
+
+### 2. 工作区和暂存区
+
+- 工作区(Working Directory)：当前git仓库的目录
+- 版本库(Repository)
+  1. 工作区有一个隐藏目录**.git**，这个不算工作区，而是Git的版本库。
+  2. Git的版本库里存了很多东西，其中最重要的就是称为**stage（或者叫index）的暂存区**，还有Git为我们自动创建的第一个分支**master**，以及指向maste的一个**指针**叫**HEAD**。
+
+```python
+# 把要提交的所有修改放到暂存区（Stage）
+$ git add 文件名/. 
+# 查看暂存区的状态
+$ git status
+# 一次性把暂存区的所有修改提交到分支。
+$ git commit -m '标记'
+# 推送到remote端
+$ git push origin master
+```
+
+- 查看工作区和版本库里面最新版本的区别
+
+```python
+$ git diff HEAD -- 文件名
+```
+
+- 查看当前工作区状态
+
+```python
+$ git status
+```
+
+- Git会告诉你，`git checkout -- file`可以丢弃工作区修改
+
+```python
+# 在stage之前使用
+$ git checkout -- 文件名
+# -- 很重要，如果没加表示切换分支
+```
+
+- 把暂存区的修改撤销掉（unstage），重新放回工作区
+
+```python
+# 在stage之后使用
+$ git reset HEAD <file>
+```
+
+- 删除文件
+
+- git checkout其实是用版本库里的版本替换工作区的版本，无论工作区是修改还是删除，都可以“一键还原”。
+
+```python
+$ git rm test.txt
+$ git commit -m 'del test'
+```
+
+
 
 
 
