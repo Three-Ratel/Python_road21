@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>my_test</title>
+</head>
+<body>
+{{ hobby.2 }}
+{{ dic.3.1 }}
+<br>
+{{ dic.keys }}
+<br>
+{{ dic.values }}
+<br>
+{{ dic.items }}
+<br>
+{{ person_obj }}
+<br>
+{{ person_obj.talk }}
+<br>
+{{ test|default:'' }}
+<br>
+{{ file_size|filesizeformat }}
+<br>
+{{ hobby | add:hobby }}
+<br>
+{{ hello |title }}
+<br>
+{{ hello |length }}
+<br>
+{{ li |slice:'-2::-1' }}
+<br>
+{{ li| first }}
+<br>
+{{ test| join:'-' }}
+<br>
+{{ s| truncatechars:10 }}
+{{ s1| truncatewords:1 }}
+<br>
+{{ now | date:'Y-m-d H:i:s'}}
+<br>
+{{ now }}
+<br>
+{{ a|safe }}
+<br>
+{{ value|safe }}
+<br>
+{#{{ js|safe }}#}
+<br>
+{% load my_test %}
+{{ test| henry:test}}
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,4 +1,4 @@
-# 一. Git
+## 一. Git
 
 	Git是用于代码托管工具。
 	
@@ -62,7 +62,7 @@ git config --list
 git config user.name
 ```
 
-# 二、Git建立仓库的两种方法
+## 二、Git建立仓库的两种方法
 
 1. 本地建立新git 仓库（repository ）
 
@@ -91,7 +91,7 @@ git config user.name
 
 Note： git 不仅支持http协议，还支持ssh 传输协议
 
-# 三、常见报错及处理
+## 三、常见报错及处理
 
 ```python
 # 报错1
@@ -124,7 +124,7 @@ git push -u origin master	# 重新推送即可
 git push origin master -f # -f 表示强制上传，不建议经常使用
 
 ```
-# 四、本地仓库文件状态
+## 四、本地仓库文件状态
 
 	本地仓库中的任意文件只有两种状态：tracked （追踪）或者untracked（待追踪）。
 	
@@ -161,7 +161,7 @@ git commit -m 'test'
 
 Note: 登陆remote端，即可看到已经删除文件记录
 
-# 六、强制同步（慎用）
+## 六、强制同步（慎用）
 
 ```python
 # 本步骤，主要针对于小白，无法解决远端和本地同步问题
@@ -176,7 +176,7 @@ Note: 登陆remote端，即可看到已经删除文件记录
 - **这样会用local端刚push的数据完全覆盖remote 端**
 
 
-# 七. 忽略指定文件
+## 七. 忽略指定文件
 
 ```python
 # 在使用git的过程中，我们为了省事经常会使用 git add . 添加所有文件，但是又一些 .**的文件会同时被 track 到，这个时候我们就需要使用选择性忽略
@@ -222,6 +222,25 @@ vim .gitingore
 
 ```python
 # 设置好.gitignore 文件后，下次就可以任性的使用git add . 的操作了。
+```
+
+## 八、版本回滚
+
+当我们本地文件误删或者更改后，想恢复之前的状态，如果已经进行commit，可以通过命令进行回滚
+
+- 查看提交记录
+- commit id 不用完全写完，git会自动寻找，但也不能太短，必须唯一
+
+```python 
+# 可以查看到commit的id以及自己添加的标记
+$ git log 
+# 数据进行回滚到指定的commit记录
+$ git reset --hard commit的id号
+HEAD is now at 83b0afe append GPL
+# 查看操作记录
+$ git relog
+# 回退版本后，想取消回滚操作
+$ git reset --hard HEAD^
 ```
 
 

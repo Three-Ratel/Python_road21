@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'news.apps.NewsConfig'
+    'news.apps.NewsConfig',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +64,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'string_if_invalid':'变量不存在'
         },
     },
 ]
@@ -116,10 +117,11 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
 
+DATETIME_FORMAT = 'Y-m-d H:i:s'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/

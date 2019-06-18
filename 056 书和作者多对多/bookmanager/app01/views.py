@@ -32,6 +32,7 @@ def edit_author(request):
             author.books.set(books)
             return redirect('/list_author/')
     all_book = models.Book.objects.all()
+    print(all_book, type(all_book))
     return render(request, 'edit_author.html', {'author': author, 'all_book': all_book, 'error': error})
 
 
