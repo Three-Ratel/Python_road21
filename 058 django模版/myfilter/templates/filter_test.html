@@ -5,27 +5,42 @@
     <title>filter_test</title>
 </head>
 <body>
-加法{{ a }} + {{ b }} =
-{{ a|add:b }}
-<br>
-减法
-{{ a }} - 2 =
-{{ a|add:-2 }}
-<br>
-乘法
-{{ a }} * {{ b }} =
-{% widthratio a 1 b %}
-<br>
-除法
-{{ a }} * {{ b }} =
-{% widthratio a b 1 %}
-<br>
-{% load show_a %}
-{{ 'https://www.baidu.com'|show_a:'百度'}}
-<br>
-{% load show_a %}
-{{ 'https://www.baidu.com'|show_b:'百度'}}
-<br>
-{{ x|default:'123' }}
+<table border="1px">
+    <tbody>
+    <tr>
+        <th>hobby1</th>
+        <th>hobby2</th>
+        <th>hobby3</th>
+        <th>hobby4</th>
+    </tr>
+
+    {% for i in dic1 %}
+        <tr>
+            {% for i in i %}
+                {% if forloop.counter|divisibleby:2 and forloop.parentloop.counter|divisibleby:2 %}
+                    <td style="color:red">
+                        {{ i }}
+                    </td>
+                {% else %}
+                    <td>
+                        {{ i }}
+                    </td>
+                {% endif %}
+            {% endfor %}
+            {% empty %}
+            <td colspan="4"style="text-align:center;"> 空的</td>
+        </tr>
+    {% endfor %}
+
+    </tbody>
+</table>
+
+{% with dic.0 as h %}
+{{ h }}
+{% endwith %}
+
+
+
+
 </body>
 </html>

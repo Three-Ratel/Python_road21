@@ -66,7 +66,7 @@ def add_book(request):
     if request.method == 'POST':
         title = request.POST.get('book_name')
         pk = request.POST.get('id')
-        print(title, pk)
+        # print(title, pk)
         book_set = models.Book.objects.filter(title=title, pub_id=pk)
 
         if book_set:
@@ -98,7 +98,7 @@ def edit_book(request):
     if request.method == 'POST':
         title = request.POST.get('book_name')
         pub_id = request.POST.get('id')
-        print(type(title), type(book.title), type(pub_id), type(book.pub_id))
+        # print(type(title), type(book.title), type(pub_id), type(book.pub_id))
         if book.title == title and book.pub_id == int(pub_id):
             error = '未做任何修改'
         if not title: error = '请输入书名'
@@ -188,3 +188,7 @@ def add_info(request):
                 author.books.set([str(book.pk)])
             return redirect('/list_author/')
     return render(request, 'add_info.html', {'all_publisher': all_publisher, 'error': error})
+
+
+def tags_test(request):
+    return render(request, 'tags_test.html')

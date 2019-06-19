@@ -1,0 +1,47 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>layout</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static "css/dashboard.css" %}">
+    <link rel="stylesheet" href="{% static "plugins/bootstrap-3.3.7/css/bootstrap.css" %}">
+    <script src="{% static "plugins/bootstrap-3.3.7/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "js/jquery.js" %}"></script>
+</head>
+
+<body>
+
+{% include 'componet.html' %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar" id="mysiderbar">
+                <li class="active"><a href="/list_book/">书籍信息 <span class="sr-only">(current)</span></a></li>
+                <li><a href="/list_author/">作者信息</a></li>
+                <li><a href="/list_publisher/">出版社信息</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+
+            {% block atable %}
+            {% endblock %}
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('#mysiderbar li').click(function () {
+        // 处理点击的选项卡
+        $(this).addClass('active').siblings('li').removeClass('active');
+        // 获取当前对象的索引
+        $('p').eq($(this).index()).addClass('active').siblings('p').removeClass('active');
+    });
+</script>
+
+</body>
+</html>

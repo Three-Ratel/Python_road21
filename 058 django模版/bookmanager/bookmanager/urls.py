@@ -35,5 +35,6 @@ urlpatterns = [
     url(r'^add_author/', views.add_author),
 
     url(r'^add_info/', views.add_info),
+    url(r'^tags_test/', views.tags_test),
 
 ]
