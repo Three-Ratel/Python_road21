@@ -21,7 +21,11 @@
 {% widthratio a b 1 %}
 <br>
 {% load show_a %}
-{{ 'www.baidu.com'|show_a:'百度'|urlize  }}
-
+{{ 'https://www.baidu.com'|show_a:'百度'}}
+<br>
+{% load show_a %}
+{{ 'https://www.baidu.com'|show_b:'百度'}}
+<br>
+{{ x|default:'123' }}
 </body>
 </html>

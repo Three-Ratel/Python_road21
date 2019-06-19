@@ -8,4 +8,5 @@ def filter_test(request):
                   {'a': 10,
                    'b': 2,
                    'string': 'Django',
+                   'dic': [1, 2, 3],
                    })

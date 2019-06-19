@@ -1077,6 +1077,7 @@ class AuthorBook(models.Model):
 ## 1. MVC和MTV
 
 - MVC，全名是**Model View Controller**，是软件工程中的一种软件架构模式，把软件系统分为三个基本部分：**模型(Model)**、**视图(View)**和**控制器(Controller)**，具有耦合性低、重用性高、生命周期成本低等优点。
+  - controller：调度和传递指令
 
 ![MTV框架](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/MTV%E6%A1%86%E6%9E%B6.png)
 
@@ -1131,13 +1132,13 @@ CREATE TABLE myapp_person (
 
 - {{ }}表示变量，在模板渲染的时候替换成值，{% %}表示逻辑相关的操作。
 
-### 1. 变量
+### 4.1 变量
 
 - 通过key取值
-- 传值时，是本质是字符串的替换
+- 传值时，是**本质是字符串的替换**
 - .索引、.key、.属性、.方法
 - 变量的 . 方法的优先级是：**dict —> 属性、方法—>索引**
-- {{ 变量名 }}变量名由**字母****数字**和**下划线**组成。
+- {{ 变量名 }}变量名由**字母数字**和**下划线**组成。
 - **点（.）**在模板语言中有特殊的含义，用来获取对象的相应属性值。
 
 #### 1. 取值
@@ -1154,7 +1155,7 @@ hobby = ['movies', 'musics', 'reading', 'play badminton']
 **2. 字典**
 
 - **通过key取值**
-- 没有get方法
+- 没有get方法。也可以使用**request**对象取值
 - 模版里方法不用加括号
 
 ```django
@@ -1167,6 +1168,8 @@ dic = {1: a, 2: b, 3: hobby}
 {{ dic.values }}
 <br>
 {{ dic.items }}
+<br>
+{{ request }}
 ```
 
 **3. 类**
@@ -1194,14 +1197,15 @@ def my_test(request):
 ```django
 {{ person_obj }}
 <br>
-{{ person_obj.talk }}s
+{#此时talk不能传参#}
+{{ person_obj.talk }}
 ```
 
 #### 2. filter(过滤器)
 
-- 修改变量的显示结果
-- 语法：{{value|filter_name:参数}}
-- **default用法**，变量不存在或为空显示默认值
+- 作用：**修改变量的显示结果**
+- 语法：**{{value|filter_name:参数}}**
+- **default用法**，变量为**False**显示默认值
 - **default和指定值之间不能有空格**
 
 **1. default**
@@ -1216,6 +1220,7 @@ def my_test(request):
 
 ```python
 # settings.py中的templates中的options中设置
+# 只有变量不存在时有效
 'string_if_invalid' = '变量不存在'
 ```
 
@@ -1245,18 +1250,16 @@ hobby = ['movies', 'musics', 'reading', 'play badminton']
 # add:hobby之间不能有任何空格，否则会报错
 ```
 
-**4. lower / upper**
+**4. lower / upper / title(所有单词首字母大写)**：
 
-**5. title**：所有单词首字母大写
-
-**6. ljust / rjust / center**
+**5. ljust / rjust / center**
 
 ```django
 "{{'Django'|center:"15" }}"
 Ifvalueis"Django",theoutputwillbe" Django ".
 ```
 
-**7. length**
+**6. length**
 
 - 计算长度
 
@@ -1267,7 +1270,7 @@ li = [1,2]
 {{li|length}}
 ```
 
-**8. slice**
+**7. slice**
 
 - **string** 和**list**
 
@@ -1280,19 +1283,21 @@ li = [1,2,3,4]
 {{ li |slice:'::-1' }} # [4, 3, 2, 1]
 ```
 
-**9. first /last**
+**8. first /last**
+
+- 取当前第一个
 
 ```django
 {{li|last}}
 ```
 
-**10. join**
+**9. join**
 
 ```django
 {{li|join':'}}
 ```
 
-**11. truncatechars**
+**10. truncatechars**
 
 - 其后必须有参数，少于3时均为**...**
 
@@ -1302,10 +1307,10 @@ string = 'welcome to China, welcome to BeiJing'
 # 会有三个点,也要占位
 welcome...
 {{string|truncatewords:'10'}} 
-# 对中文无效，10个单词
+# 对中文无效，10个单词，10个单词+3个点
 ```
 
-**12. date**
+**11. date**
 
 - {{ value|date:"Y-m-d H:i:s"}}
 - django模版中的日期格式化，**和python中不同**
@@ -1319,10 +1324,12 @@ now = datetime.datetime.now()
 ```python
 # settings.py
 DATETIME_FORMAT = 'Y-m-d H:i:s'
+DATE_FORMAT = 'Y-m-d'
+TIME_FORMAT = 'H:i:s'
 USE_L10N = False
 ```
 
-**13. safe****
+**12. safe/urlize**
 
 - Django的模板中会对HTML标签和JS等语法标签进行自动转义
 - 安全，告诉Django不用做转义
@@ -1337,7 +1344,7 @@ USE_L10N = False
 #### 3. 自定义filter
 
 1. 在app下创建一个名为**templatetags**的python包(包名是固定的)
-2. 创建xxx.py 文件，文件名自定义(my_tags)
+2. 创建xxx.py 文件，文件名自定义(**my_tags**)
 3. 导入模块、添加装饰器
 4. 文件夹名和register
 
@@ -1366,6 +1373,24 @@ def add_(value, arg):
 {% load my_tags %}
 {{'henry'|henry:'hello'}}
 ```
+
+- 取消转义
+
+```python
+value = 'https://www.baidu.com'
+# 自定义,不会转义
+@register.filter(is_safe=True)
+def add_(value, arg):
+  return '{}{}'.format(value, arg=None)
+
+# 自定义，不会转义
+from django.utils.safestring import mark_safe
+@register.filter
+def add_(value, arg):
+  return mark_safe('{}-{}'.format(value, arg))
+```
+
+
 
 **4. 示例**
 
