@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 
 from app1 import models
 
-USER = ''
+USER = 'henry'
 
 
 def wrapper(func):
@@ -37,7 +37,7 @@ def logout(request):
 @wrapper
 def list_teacher(request):
     all_teacher = models.Teacher.objects.all()
-    return render(request, 'list_teacher.html', {'all_teacher': all_teacher})
+    return render(request, 'list_teacher.html', {'all_teacher': all_teacher, 'user': USER})
 
 
 @wrapper
@@ -91,7 +91,7 @@ def edit_teacher(request):
 @wrapper
 def list_student(request):
     all_student = models.Student.objects.all()
-    return render(request, 'list_student.html', {'all_student': all_student})
+    return render(request, 'list_student.html', {'all_student': all_student, 'user': USER})
 
 
 @wrapper
@@ -153,7 +153,7 @@ def edit_student(request):
 @wrapper
 def list_grade(request):
     all_grade = models.Grade.objects.all().order_by('title')
-    return render(request, 'list_grade.html', {'all_grade': all_grade})
+    return render(request, 'list_grade.html', {'all_grade': all_grade, 'user': USER})
 
 
 @wrapper

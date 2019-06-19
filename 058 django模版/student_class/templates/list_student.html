@@ -1,89 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Student_info</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <link rel="stylesheet" href="/static/plugins/bootstrap-3.3.7-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/css/dashboard.css">
-</head>
-<body>
-
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
-                    aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="">校园管理系统</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-            <form class="navbar-form navbar-right" action="/logout/">
-                <a href="/logout/"><button class="btn btn-primary">登出</button></a>
-            </form>
-        </div>
+{% extends 'base.html' %}
+{% block grade %}
+{% endblock %}
+{% block teacher %}
+{% endblock %}
+{% block student %}
+    active
+{% endblock %}
+{% block content %}
+    <div class="panel-heading" style="text-align: center;"><h2>STUDENT-INFO-LIST</h2></div>
+    <div class="panel-body">
+        <a href="/add_student/" style="color: white">
+            <button type="button" class="btn btn-primary">添加学生</button>
+        </a>
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th style="cursor: default;">ID<em class=" NormalCss SortDescCss"></em></th>
+                <th style="cursor: default;">姓名<em class=" NormalCss SortDescCss"></em></th>
+                <th style="cursor: default;">年龄<em class=" NormalCss SortDescCss"></em></th>
+                <th style="cursor: default;">性别<em class=" NormalCss SortDescCss"></em></th>
+                <th style="cursor: default;">班级<em class=" NormalCss SortDescCss"></em></th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="UserList">
+            {% for i in all_student %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ i.sid }}</td>
+                    <td>{{ i.name }}</td>
+                    <td>{{ i.age }}</td>
+                    <td>{{ i.gender }}</td>
+                    <td>{{ i.grade.title }}</td>
+                    <td>
+                        <a href="/edit_student/?id={{ i.pk }}" style="color: white">
+                            <button type="button" class="btn btn-info">修改</button>
+                        </a>
+                        <a href="/del_student/?id={{ i.pk }}" style="color: white">
+                            <button type="button" class="btn btn-danger">删除</button>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
-</nav>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-            <ul class="nav nav-sidebar">
-                <li class="active"><a href="">STUDENT-INFO  <span class="sr-only">(current)</span></a></li>
-                <li><a href="/list_teacher/">TEACHER-INFO</a></li>
-                <li><a href="/list_grade/">GRADE-INFO</a></li>
-            </ul>
-        </div>
-
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <div class="panel panel-primary">
-                <div class="panel-heading" style="text-align: center;"><h2>STUDENT-INFO-LIST</h2></div>
-                <div class="panel-body">
-                    <a href="/add_student/" style="color: white">
-                        <button type="button" class="btn btn-primary">添加学生</button>
-                    </a>
-                    <table class="table table-striped table-hover">
-                        <thead>
-                        <tr>
-                            <th>序号</th>
-                            <th style="cursor: default;">ID<em class=" NormalCss SortDescCss"></em></th>
-                            <th style="cursor: default;">姓名<em class=" NormalCss SortDescCss"></em></th>
-                            <th style="cursor: default;">年龄<em class=" NormalCss SortDescCss"></em></th>
-                            <th style="cursor: default;">性别<em class=" NormalCss SortDescCss"></em></th>
-                            <th style="cursor: default;">班级<em class=" NormalCss SortDescCss"></em></th>
-                            <th>操作</th>
-                        </tr>
-                        </thead>
-                        <tbody id="UserList">
-                        {% for i in all_student %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ i.sid }}</td>
-                                <td>{{ i.name }}</td>
-                                <td>{{ i.age }}</td>
-                                <td>{{ i.gender }}</td>
-                                <td>{{ i.grade.title }}</td>
-                                <td>
-                                    <a href="/edit_student/?id={{ i.pk }}" style="color: white">
-                                        <button type="button" class="btn btn-info">修改</button>
-                                    </a>
-                                    <a href="/del_student/?id={{ i.pk }}" style="color: white">
-                                        <button type="button" class="btn btn-danger">删除</button>
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-</body>
-</html>
+{% endblock %}

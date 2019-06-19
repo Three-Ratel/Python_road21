@@ -1,83 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Grade_info</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <link rel="stylesheet" href="/static/plugins/bootstrap-3.3.7-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/css/dashboard.css">
-</head>
-<body>
-
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
-                    aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="">校园管理系统</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-            <form class="navbar-form navbar-right">
-                <a href="/logout/"><button class="btn btn-primary">登出</button></a>
-            </form>
-        </div>
+{% extends 'base.html' %}
+{% block grade %}
+active
+{% endblock %}
+{% block teacher %}
+{% endblock %}
+{% block student %}
+{% endblock %}
+{% block content %}
+    <div class="panel-heading" style="text-align: center;"><h2>GRADE-INFO-LIST</h2></div>
+    <div class="panel-body">
+        <a href="/add_grade/" style="color: white">
+            <button type="button" class="btn btn-primary">添加班级</button>
+        </a>
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th style="cursor: default;">GID<em class=" NormalCss SortDescCss"></em></th>
+                <th style="cursor: default;">班级<em class=" NormalCss SortDescCss"></em></th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="UserList">
+            {% for i in all_grade %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ i.id }}</td>
+                    <td>{{ i.title }}</td>
+                    <td>
+                        <a href="/edit_grade/?id={{ i.pk }}" style="color: white">
+                            <button type="button" class="btn btn-info">修改</button>
+                        </a>
+                        <a href="/del_grade/?id={{ i.pk }}" style="color: white">
+                            <button type="button" class="btn btn-danger">删除</button>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
-</nav>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-            <ul class="nav nav-sidebar">
-                <li><a href="/list_student/">STUDENT-INFO  <span class="sr-only">(current)</span></a></li>
-                <li><a href="/list_teacher/">TEACHER-INFO</a></li>
-                <li class="active"><a href="">GRADE-INFO</a></li>
-            </ul>
-        </div>
-
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <div class="panel panel-primary">
-                <div class="panel-heading" style="text-align: center;"><h2>GRADE-INFO-LIST</h2></div>
-                <div class="panel-body">
-                    <a href="/add_grade/" style="color: white">
-                        <button type="button" class="btn btn-primary">添加班级</button>
-                    </a>
-                    <table class="table table-striped table-hover">
-                        <thead>
-                        <tr>
-                            <th>序号</th>
-                            <th style="cursor: default;">GID<em class=" NormalCss SortDescCss"></em></th>
-                            <th style="cursor: default;">班级<em class=" NormalCss SortDescCss"></em></th>
-                            <th>操作</th>
-                        </tr>
-                        </thead>
-                        <tbody id="UserList">
-                        {% for i in all_grade %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ i.id }}</td>
-                                <td>{{ i.title }}</td>
-                                <td>
-                                    <a href="/edit_grade/?id={{ i.pk }}" style="color: white">
-                                        <button type="button" class="btn btn-info">修改</button>
-                                    </a>
-                                    <a href="/del_grade/?id={{ i.pk }}" style="color: white">
-                                        <button type="button" class="btn btn-danger">删除</button>
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-</body>
-</html>
+{% endblock %}
