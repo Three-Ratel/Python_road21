@@ -374,7 +374,7 @@ def index(request):
 
 ![redirection](/Users/henry/Documents/截图/Py截图/redirection.png)
 
-# 2.Django简介
+# 2. Django简介
 
 **django处理请求流程**
 
@@ -1134,22 +1134,22 @@ CREATE TABLE myapp_person (
 
 ## 1. 变量
 
-- 通过key取值
-- 传值时，是**本质是字符串的替换**
-- .索引、.key、.属性、.方法
-- 变量的 . 方法的优先级是：**dict —> 属性、方法—>索引**
-- {{ 变量名 }}变量名由**字母数字**和**下划线**组成。
-- **点（.）**在模板语言中有特殊的含义，用来获取对象的相应属性值。
+1. 通过key取值
+2. 传值时，**本质是字符串的替换**
+3. .索引、.key、.属性、.方法
+4. 变量的 . 方法的优先级是：**dict —> 属性、方法—>索引**
+5. {{ 变量名 }}变量名由**字母数字**和**下划线**组成。
+6. **点（.）**在模板语言中有特殊的含义，用来获取对象的相应属性值。
 
 ### 1. 1 取值
 
 #### **1. 列表**
 
--  hobby.**索引**，只支持正向索引
+-  hobby.**索引**，**只支持正向索引**
 
 ```django
 hobby = ['movies', 'musics', 'reading', 'play badminton']
-{{hobby.0}}
+{{hobby.5}}
 ```
 
 #### **2. 字典**
@@ -1201,14 +1201,14 @@ def my_test(request):
 {{ person_obj.talk }}
 ```
 
-#### 2. filter(过滤器)
+### 1.2 filter(过滤器)
 
 - 作用：**修改变量的显示结果**
 - 语法：**{{value|filter_name:参数}}**
 - **default用法**，变量为**False**显示默认值
 - **default和指定值之间不能有空格**
 
-**1. default**
+#### 1. default
 
 - 变量值为False时，采用默认值
 
@@ -1224,7 +1224,7 @@ def my_test(request):
 'string_if_invalid' = '变量不存在'
 ```
 
-**2. filesizeformat**
+#### 2. filesizeformat
 
 - 文件默认**byte**为单位
 - 文件大小格式化
@@ -1234,7 +1234,7 @@ def my_test(request):
 {变量|filesizeformate}
 ```
 
-**3. add**
+#### 3. add
 
 - 数值加法
 - 字符串/list拼接
@@ -1250,16 +1250,16 @@ hobby = ['movies', 'musics', 'reading', 'play badminton']
 # add:hobby之间不能有任何空格，否则会报错
 ```
 
-**4. lower / upper / title(所有单词首字母大写)**：
+#### 4. lower / upper / title(所有单词首字母大写)
 
-**5. ljust / rjust / center**
+#### 5. ljust / rjust / center
 
 ```django
 "{{'Django'|center:"15" }}"
 Ifvalueis"Django",theoutputwillbe" Django ".
 ```
 
-**6. length**
+#### 6. length
 
 - 计算长度
 
@@ -1270,7 +1270,7 @@ li = [1,2]
 {{li|length}}
 ```
 
-**7. slice**
+#### 7. slice
 
 - **string** 和**list**
 
@@ -1283,7 +1283,7 @@ li = [1,2,3,4]
 {{ li |slice:'::-1' }} # [4, 3, 2, 1]
 ```
 
-**8. first /last**
+#### 8. first /last
 
 - 取当前第一个
 
@@ -1291,13 +1291,13 @@ li = [1,2,3,4]
 {{li|last}}
 ```
 
-**9. join**
+#### 9. join
 
 ```django
 {{li|join':'}}
 ```
 
-**10. truncatechars**
+#### 10. truncatechars
 
 - 其后必须有参数，少于3时均为**...**
 
@@ -1310,7 +1310,7 @@ welcome...
 # 对中文无效，10个单词，10个单词+3个点
 ```
 
-**11. date**
+#### 11. date
 
 - {{ value|date:"Y-m-d H:i:s"}}
 - django模版中的日期格式化，**和python中不同**
@@ -1329,7 +1329,7 @@ TIME_FORMAT = 'H:i:s'
 USE_L10N = False
 ```
 
-**12. safe/urlize**
+#### 12. safe/urlize
 
 - Django的模板中会对HTML标签和JS等语法标签进行自动转义
 - 安全，告诉Django不用做转义
@@ -1341,12 +1341,20 @@ USE_L10N = False
 {{ value|safe }}
 ```
 
-#### 3. 自定义filter
+#### 13. divisibleby
+
+```django
+{# 被2整除 #}
+{{forloop.counter|divisibleby:2}}
+```
+
+
+
+### 1.3 自定义filter
 
 1. 在app下创建一个名为**templatetags**的python包(包名是固定的)
 2. 创建xxx.py 文件，文件名自定义(**my_tags**)
-3. 导入模块、添加装饰器
-4. 文件夹名和register
+3. 导入模块、注册**register**、添加装饰器
 
 ```python
 # app/templatetags/xxx.py
@@ -1578,9 +1586,6 @@ name = csrfmiddlewaretoken
 
 ```django
 {# 某一块功能的拆解，只是某一段代码 #}
-```
-
-```django
 {% include 'component.html' %}
 ```
 
