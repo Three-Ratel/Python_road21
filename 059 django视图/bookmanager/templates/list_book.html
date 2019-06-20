@@ -1,4 +1,13 @@
 {% extends 'layout.html' %}
+{% block book %}
+active
+{% endblock %}
+{% block author %}
+{% endblock %}
+{% block publisher %}
+{% endblock %}
+
+
 {% block atable %}
     <div class="panel panel-primary">
         <div class="panel-heading" style="text-align: center;"><h2>书籍信息表</h2></div>
@@ -40,7 +49,7 @@
     </div>
 
 
-{% load my_tags %}
+    {% load my_tags %}
     {% page 10 %}
 
 
