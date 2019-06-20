@@ -272,4 +272,18 @@ sudo -s launchctl unload -w /System/Library/LaunchDaemons/ftp.plist
 # 然后输入你在Mac上的用户名和密码就可以了
 ```
 
-## 
+## 8. 彻底卸载pycharm
+
+```python
+1、打开访达，找到PyCharm应用，右键移到废纸篓；
+2、清理缓存，参数，日志相关配置文件：(注：ls PyCharm关键字进行搜索，PyCharm2018.3是我的文件名称)
+a、cd ~/Library/Preferences/           
+		rm -rf PyCharm2018.3/         
+b、cd ~/Library/Logs
+		rm -rf PyCharm2018.3/
+c、cd ~/Library/Application\ Support/
+		rm -rf PyCharm2018.3/
+d、cd ~/Library/Caches/
+		rm -rf PyCharm2018.3/
+```
+

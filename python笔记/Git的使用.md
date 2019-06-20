@@ -292,7 +292,7 @@ $ git reset HEAD <file>
 
 - 删除文件
 
-- git checkout其实是用版本库里的版本替换工作区的版本，无论工作区是修改还是删除，都可以“一键还原”。
+- git checkout其实是用版本库里的版本替换工作区的版本，无论工作区是修改还是删除，都可以“**一键还原**”。
 
 ```python
 $ git rm test.txt

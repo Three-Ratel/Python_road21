@@ -2080,9 +2080,9 @@ $.ajax({
 </html>
 ```
 
+## 5. bootstrap
 
-
-
+- 在使用bootstrap的组件时，必须先引入jquery在引入bootstrap
 
 
 
