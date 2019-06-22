@@ -13,6 +13,12 @@ def delete(request, table, pk):
     return redirect(reverse(table))
 
 
+def display(request, table):
+    obj = getattr(models, table.capitalize())
+    all_item = obj.objects.all()
+    return render(request, 'list_{}.html'.format(table,), {'all_item': all_item})
+
+
 """作者相关"""
 
 
@@ -55,15 +61,13 @@ class DelAuthor(View):
 
 class EditAuthor(View):
 
-    def get(self, request):
-        pk = request.GET.get('pk')
+    def get(self, request, pk):
         author = models.Author.objects.get(pk=pk)
         all_book = models.Book.objects.all()
         return render(request, 'edit_author.html', {'author': author, 'all_book': all_book})
 
-    def post(self, request):
+    def post(self, request, pk):
         error = ''
-        pk = request.GET.get('pk')
         author = models.Author.objects.get(pk=pk)
         author_name = request.POST.get('author_name')
         books = request.POST.getlist('books')
@@ -73,7 +77,7 @@ class EditAuthor(View):
             author.name = author_name
             author.save()
             author.books.set(books)
-            return redirect('/list_author/')
+            return redirect(reverse('author'))
         all_book = models.Book.objects.all()
         return render(request, 'edit_author.html', {'author': author, 'all_book': all_book, 'error': error})
 
@@ -119,8 +123,7 @@ class DelBook(View):
 
 class EditBook(View):
 
-    def get(self, request):
-        pk = request.GET.get('id')
+    def get(self, request, pk):
         book = models.Book.objects.get(pk=pk)
         all_publisher = models.Publisher.objects.all().order_by('pid')
         return render(request, 'edit_book.html', {'book': book, 'all_publisher': all_publisher})
@@ -184,8 +187,7 @@ class DelPublisher(View):
 
 class EditPublisher(View):
 
-    def get(self, request):
-        pk = request.GET.get('id')
+    def get(self, request, pk):
         obj_li = models.Publisher.objects.filter(pk=pk)
         if not obj_li:
             return HttpResponse('编辑的信息不存在')
