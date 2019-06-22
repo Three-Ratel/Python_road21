@@ -60,7 +60,7 @@
 19. 向SC表中插入一些记录，这些记录要求符合以下条件：①没有上过编号“002”课程的同学学号；②插入“002”号课程的平均成绩； 
 
     - 
-20. 按平均成绩从低到高显示所有学生的“语文”、“数学”、“英语”三门的课程成绩，按如下形式显示： 学生ID,语文,数学,英语,有效课程数,有效平均分；
+20. 按平均成绩从低到高显示所有学生的“物理”、“美术”、“体育”三门的课程成绩，按如下形式显示： 学生ID,物理,美术,体育,有效课程数,有效平均分；
 ```mysql
 # 查找物理课程，对应的学生和成绩
 select student_id,num from score where course_id = (select cid from course where cname = '物理');
@@ -68,29 +68,62 @@ select student_id,num from score where course_id = (select cid from course where
 select student_id,num from score where course_id = (select cid from course where cname = '美术');
 # 查找体育课程，对应的学生和成绩
 select student_id,num from score where course_id = (select cid from course where cname = '体育');
+# 平均分
+select student_id,avg(num),count(num) from score group by student_id;
+# 最终结果
+select sid 学生ID,t1.num 美术, t2.num 物理, t3.num 体育,t4.count_course 有效课程数,t4.avg_num 有效平均分 from student
+left join (select student_id,num from score where course_id = (select cid from course where cname = '美术')) t1 on student.sid = t1.student_id
 
-select t4.student_id, t4.num 美术, t4.num 物理 t3.num 体育 (select t1.student_id, t1.num, t2.num from (select student_id,num from score where course_id = (select cid from course where cname = '美术')) t1 inner join (select student_id,num from score where course_id = (select cid from course where cname = '物理')) t2 on t1.student_id=t2.student_id) t4 inner join (select student_id,num from score where course_id = (select cid from course where cname = '体育')) t3 on t3.student_id = t4.student_id;
+left join (select student_id,num from score where course_id = (select cid from course where cname = '物理')) t2 on student.sid = t2.student_id
+
+left join (select student_id,num from score where course_id = (select cid from course where cname = '体育')) t3 on student.sid = t3.student_id
+
+left join (select student_id,avg(num) avg_num,count(num) count_course from score group by student_id)  t4 on student.sid = t4.student_id
+```
+
+21. 查询各科成绩最高和最低的分：以如下形式显示：课程ID，最高分，最低分；
+
+```mysql
+select course_id 课程ID, max(num) 最高分, min(num) 最低分 from score group by course_id;
+```
+
+#### 22. 按各科平均成绩从低到高和及格率的百分数从高到低顺序；
+
+```mysql
+# 平均成绩
+select course_id,avg(num) from score group by course_id;
+# 及格人数
+select course_id, count(*) from score where num > 60 group by course_id;
+# 及格率
+select t1.course_id, t1.count1/t2.count2 及格率 from
+(select course_id, count(*) count1 from score where num > 60  group by  course_id) t1 left join (select course_id, count(*) count2 from score group by course_id) t2 on t1.course_id=t2.course_id;
+# 最终结果
+select t1.course_id, t1.avgnum 平均分, t2.rate 及格率 from (select course_id,avg(num) avgnum from score group by course_id) t1 
+left join (select t1.course_id, t1.count1/t2.count2 rate from (select course_id, count(*) count1 from score where num > 60  group by  course_id) t1 left join (select course_id, count(*) count2 from score group by course_id) t2 on t1.course_id=t2.course_id) t2 on t1.course_id=t2.course_id order by t1.avgnum desc, t2.rate;
+```
+
+#### 23. 查询各科成绩前三名的记录:(不考虑成绩并列情况) 
+
+```mysql
+
 ```
 
 
 
-21. 查询各科成绩最高和最低的分：以如下形式显示：课程ID，最高分，最低分；
-22. 按各科平均成绩从低到高和及格率的百分数从高到低顺序；
-23. 查询各科成绩前三名的记录:(不考虑成绩并列情况) 
-24. 查询每门课程被选修的学生数；
-25. 查询同名同姓学生名单，并统计同名人数；
-26. 查询每门课程的平均成绩，结果按平均成绩升序排列，平均成绩相同时，按课程号降序排列；
-27. 查询平均成绩大于85的所有学生的学号、姓名和平均成绩；
-28. 查询课程名称为“数学”，且分数低于60的学生姓名和分数；
-29. 查询课程编号为003且课程成绩在80分以上的学生的学号和姓名； 
-30. 求选了课程的学生人数
-31. 查询选修“杨艳”老师所授课程的学生中，成绩最高的学生姓名及其成绩；
-32. 查询各个课程及相应的选修人数；
-33. 查询不同课程但成绩相同的学生的学号、课程号、学生成绩；
-34. 查询每门课程成绩最好的前两名；
-35. 检索至少选修两门课程的学生学号；
-36. 查询全部学生都选修的课程的课程号和课程名；
-37. 查询没学过“叶平”老师讲授的任一门课程的学生姓名；
-38. 查询两门以上不及格课程的同学的学号及其平均成绩；
-39. 检索“004”课程分数小于60，按分数降序排列的同学学号；
-40. 删除“002”同学的“001”课程的成绩；
+1. 查询每门课程被选修的学生数；
+2. 查询同名同姓学生名单，并统计同名人数；
+3. 查询每门课程的平均成绩，结果按平均成绩升序排列，平均成绩相同时，按课程号降序排列；
+4. 查询平均成绩大于85的所有学生的学号、姓名和平均成绩；
+5. 查询课程名称为“数学”，且分数低于60的学生姓名和分数；
+6. 查询课程编号为003且课程成绩在80分以上的学生的学号和姓名； 
+7. 求选了课程的学生人数
+8. 查询选修“杨艳”老师所授课程的学生中，成绩最高的学生姓名及其成绩；
+9. 查询各个课程及相应的选修人数；
+10. 查询不同课程但成绩相同的学生的学号、课程号、学生成绩；
+11. 查询每门课程成绩最好的前两名；
+12. 检索至少选修两门课程的学生学号；
+13. 查询全部学生都选修的课程的课程号和课程名；
+14. 查询没学过“叶平”老师讲授的任一门课程的学生姓名；
+15. 查询两门以上不及格课程的同学的学号及其平均成绩；
+16. 检索“004”课程分数小于60，按分数降序排列的同学学号；
+17. 删除“002”同学的“001”课程的成绩；

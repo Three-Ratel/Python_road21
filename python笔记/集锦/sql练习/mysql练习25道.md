@@ -230,7 +230,7 @@ from score group by course_id
 
 8、查询各科成绩前三名的记录:(不考虑成绩并列情况) 
 
-```
+```mysql
 select
 t1.sid,t1.student_id,t1.course_id,t1.num from score t1
 left join

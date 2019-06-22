@@ -1388,12 +1388,12 @@ ALTER TABLE table_name DELAY_KEY_WRITE= 1;
    ```
    
 - 可以通过添加主键的方式完成索引的建立
-   
+  
 ```mysql
    alter table t1 add primary key(id);
    alter table t1 modify id not null unique;
-   ```
-   
+```
+
 - **聚集索引的好处之一：**它对主键的排序查找和范围查找速度非常快，叶子节点的数据就是用户所要查询的数据。
    - **聚集索引的好处之二：范围查询（range query）**，即如果要查找主键某一范围内的数据，通过叶子节点的上层中间节点就可以得到页的范围，之后直接读取数据页即可。
    
@@ -1734,3 +1734,7 @@ db.close()
 - sql优化：索引、尽力那个把条件范围都写在where里，尽量用连表查
 - 如何创建表：把固定长度的字段放在前面、分库分表
 - innodb中的外键是特有的
+
+## 1.8 
+
+- 符合条件的数据，每次都会执行一次select语句

@@ -1126,7 +1126,7 @@ CREATE TABLE myapp_person (
 3. 本示例中的CREATE TABLE SQL使用PostgreSQL语法进行格式化，但值得注意的是，Django会根据配置文件中指定的数据库类型来生成相应的SQL语句。
 4. Django支持MySQL5.5及更高版本。
 
-# 5. Django的Templates
+# 5. Django的模版
 
 1. MVC：model view(html) controller(控制器，路由传递指令，业务逻辑)
 2. MTV：model(ORM操作) template(html) view(业务逻辑)
@@ -1738,9 +1738,14 @@ def page(num):
 {% page 4 %}
 ```
 
-# 6.Django的Views
+# 6.Django的视图
 
 ## 1. View
+
+- Django使用请求和响应对象来通过系统传递状态。
+- 当浏览器向服务端请求一个页面时，Django创建一个HttpRequest对象，该对象包含关于请求的元数据。
+- 然后，Django加载相应的视图，将这个HttpRequest对象作为第一个参数传递给视图函数。
+- **每个视图负责返回一个HttpResponse对象。**
 
 ### 1.1 views.py
 
@@ -1751,7 +1756,7 @@ def page(num):
 ### 1.2 FBV和CBV
 
 - FBV：function based view
-- CBV：class based view
+- CBV：class based view。**api开发**
 
 #### 1. CBV语法
 
@@ -1761,16 +1766,18 @@ def page(num):
 # cbv示例
 from django.views import View
 class AddPublisher(View):
-  def get(self, request):
+  def get(self, request, *args, **kwargs):
     """处理get请求"""
     return response
-  def post(self, request):
+  def post(self, request, *args, **kwargs):
     """处理post请求"""
     return response 
-  def delete(self, request):
+  def delete(self, request, *args, **kwargs):
     """处理post请求"""
     return response 
 ```
+
+- 使用
 
 ```python 
 # urls.py
@@ -1781,16 +1788,20 @@ url('^add_publisher/', views.AddPublisher.as_view())
 
 1. 项目加载**urls.py**时，执行类 **as_view()** —> **view函数**
 2. 请求到来时，执行view函数
-   - **实例化对象**—> self
-   - self.request=request
+   1. **实例化类**—> self 
+   2. self.request=request
+   3. 执行self.dispatch(request, *args, **kwargs)
 3. 执行**self.dispatch(request, *args, **kwargs)**方法
-   - 判断请求方式是否被允许(**不允许**: **405**)
-   - 允许：通过**反射获取对应请求方式的方法**—> 赋值给handler
-     - **return** handlder(request, *args, **kwargs)
-   - 不允许：self.http_method_not_allowed —> handler
-     - **return** handlder(request, *args, **kwargs)
+   1. 判断请求方式是否被允许(**不允许**: **405**)
+      - 允许：通过**反射获取对应请求方式的方法**—> 赋值给handler
+        - **return** handlder(request, *args, **kwargs)
+      - 不允许：**self.http_method_not_allowed** —> handler
+        - **return** handlder(request, *args, **kwargs)
+   2. 执行handler(request, *args, **kwargs)
 
 ## 2. 视图加装饰器
+
+- 使用CBV时要注意，请求过来后会先执行dispatch()这个方法，如果需要批量对具体的请求处理方法，如get，post等做一些操作的时候，这里我们可以手动改写dispatch方法，这个dispatch方法就和在FBV上加装饰器的效果一样。
 
 ### 2.1 视图函数加装饰器
 
@@ -1805,7 +1816,6 @@ def timer(func):
         print(time() - start)
         return ret
     return inner
-
 # 给视图函数加装饰器
 @timer
 def fun():
@@ -1822,7 +1832,7 @@ def fun():
 
 ```python
 # CBV加装饰器
-from django.views import method_decorator
+from django.utils.decorators import method_decorator
 from django.views import View
 class AddPublisher(View):
   	def get(self, request):
@@ -1909,20 +1919,20 @@ class AddPublisher(View):
 - 封装请求中的所有内容
 - 常用的是前5种
 
-|      | 属性                           | 含义                                                         |
-| ---- | ------------------------------ | ------------------------------------------------------------ |
-| 1    | **HttpRequest.path_info/path** | 返回用户访问url，**不包括域名**                              |
-| 2    | **HttpRequest.method**         | 请求中使用的HTTP方法的字符串表示，**全大写**表示。           |
-| 3    | **HttpRequest.GET**            | 包含所有HTTP  GET参数的类字典对象,**QuerySet**               |
-| 4    | **HttpRequest.POST**           | 包含所有HTTP POST参数的类字典对象**QuerySet**                |
-| 5    | **HttpRequest.body**           | **请求体**，**byte类型** request.POST的数据就是从body里面提取到的 |
-| 6    | HttpRequest.scheme             | 请求方案，通常为http 或 https                                |
-| 7    | HttpRequest.encoding           | 编码方式，为None则则表示使用 DEFAULT_CHARSET 的设置，默认为 '**utf-8**'）。 |
-| 8    | HttpRequest.FILES              | 上传的文件                                                   |
-| 9    | HttpRequest.META               | 获取请求头                                                   |
-| 10   | HttpRequest.user               | Django提供的auth模块，获得当前登陆的用户                     |
-| 11   | HttpRequest.session            |                                                              |
-| 12   | HttpRequest.COOKIES            |                                                              |
+|      | 属性                       | 含义                                                         |
+| ---- | -------------------------- | ------------------------------------------------------------ |
+| 1    | **request.path_info/path** | 返回用户访问url，**不包括域名**                              |
+| 2    | **request.method**         | 请求中使用的HTTP方法的字符串表示，**全大写**表示。           |
+| 3    | **request.GET**            | 包含所有HTTP  GET参数的类字典对象,**QuerySet**               |
+| 4    | **request.POST**           | 包含所有HTTP POST参数的类字典对象**QuerySet**                |
+| 5    | **request.body**           | **http请求体**，**byte类型** request.POST的数据就是从body里面提取到的 |
+| 6    | request.scheme             | 请求方案，通常为http 或 https                                |
+| 7    | request.encoding           | 编码方式，为None则则表示使用 DEFAULT_CHARSET 的设置，默认为 '**utf-8**'）。 |
+| 8    | **request.FILES**          | 上传的文件                                                   |
+| 9    | request.META               | 获取请求头，全大写，加HTTP， - 变称_s                        |
+| 10   | request.user               | Django提供的auth模块，获得当前登陆的用户                     |
+| 11   | request.session            |                                                              |
+| 12   | request.COOKIES            |                                                              |
 
 - FILES属性示例
 
@@ -1952,14 +1962,14 @@ with open(f1.name, 'wb') as f:
 
 ### 3.2 方法
 
-|      | 方法                       | 含义                            |
-| ---- | -------------------------- | ------------------------------- |
-| 1    | request.get_full_path()    | url路径，不包含ip端口，包含参数 |
-| 2    | request.get_host()         | ip和端口                        |
-| 3    | request.is_ajax()          | 是否使用ajax                    |
-| 4    | request.is_secure()        | http是否时加密的，https         |
-| 5    | request.get_signed_cookies |                                 |
-| 6    | request.get_raw_uri()      | 获取全部url                     |
+|      | 方法                        | 含义                                |
+| ---- | --------------------------- | ----------------------------------- |
+| 1    | **request.get_full_path()** | url路径，不包含ip端口，**包含参数** |
+| 2    | **request.get_host()**      | ip和端口                            |
+| 3    | request.is_ajax()           | 是否使用ajax                        |
+| 4    | request.is_secure()         | http是否时加密的，https             |
+| 5    | request.get_signed_cookies  |                                     |
+| 6    | request.get_raw_uri()       | 获取全部url                         |
 
 ## 4. response对像
 
@@ -1967,16 +1977,18 @@ with open(f1.name, 'wb') as f:
 
 - 与由Django自动创建的**HttpRequest对象**相比，HttpResponse对象是我们的职责范围了。我们写的每个视图都需要实例化，填充和返回一个**HttpResponse**。
 
-1. **HttpResponse**('字符串')。类
+1. **HttpResponse**('字符串')。类 content-type='text/html'
 2. render(request, '模版.html', {'key': value})。函数
    - content进行字符串替换
    - 返回的是HttpResponse对象
+   - **render_to_string()**：进行字符串替换
 3. redirect('/重定向的地址/')  
    - 返回的是HttpResponse对象
 4. JsonResponse
    - 前后端分离通过json传送数据
    - HttpResponse(dic)：前端只能看到key值
    - dic序列化后，可以在前端显示
+   - **content-type='text/html'**
 
 ### 4.2 HttpResponse使用
 
@@ -2086,6 +2098,295 @@ def my_view(request):
 1. 临时重定向（响应状态码：302）和永久重定向（响应状态码：301）对普通用户来说是没什么区别的，它主要面向的是搜索引擎的机器人。
 2. A页面临时重定向到B页面，那搜索引擎收录的就是A页面。
 3. A页面永久重定向到B页面，那搜索引擎收录的就是B页面。
+
+
+
+# 7. Django的路由
+
+## 1. URLConf
+
+- URL配置(**URLconf**)就像Django所支撑网站的目录。
+- 它的本质是URL与要为该URL调用的视图函数之间的映射表。
+- 我们就是以这种方式告诉Django，遇到哪个URL的时候，要对应执行哪个函数。
+
+### 1.2 Django处理请求
+
+1. Django determines the root URLconf module to use. Ordinarily, this is the value of the ROOT_URLCONF setting, but if the incoming HttpRequest object has a urlconf attribute (set by middleware), its value will be used in place of the ROOT_URLCONF setting。
+2. Django loads that Python module and looks for the variable `urlpatterns`. This should be a Python list of **django.conf.urls.url()** instances. # **返回一个对象**
+3. Django runs through each URL pattern, in order, and stops at the first one that matches the requested URL.
+4. Once one of the regexes matches, Django imports and calls the given view, which is a simple Python function (or a class-based view). The view gets passed the following arguments:
+   - An instance of [`HttpRequest`](https://docs.djangoproject.com/en/1.11/ref/request-response/#django.http.HttpRequest).
+   - If the matched regular expression returned no named groups, then the matches from the regular expression are provided as positional arguments.
+   - The keyword arguments are made up of any named groups matched by the regular expression, overridden by any arguments specified in the optional `kwargs` argument to [`django.conf.urls.url()`](https://docs.djangoproject.com/en/1.11/ref/urls/#django.conf.urls.url).
+5. If no regex matches, or if an exception is raised during any point in this process, Django invokes an appropriate error-handling view. See [Error handling](https://docs.djangoproject.com/en/1.11/topics/http/urls/#error-handling) below.
+
+## 2. 基本格式
+
+```python
+from django.conf.urls import url
+urlpatterns = [
+     url(正则表达式, views视图，参数，别名),
+]
+```
+
+- 示例
+
+```python
+from django.conf.urls import url
+from . import views
+urlpatterns = [
+  	# 静态路由
+    url(r'^articles/2003/$', views.special_case_2003),
+  	# 动态路由
+    url(r'^articles/([0-9]{4})/$', views.year_archive),
+    url(r'^articles/([0-9]{4})/([0-9]{2})/$', views.month_archive),
+    url(r'^articles/([0-9]{4})/([0-9]{2})/([0-9]+)/$', views.article_detail),
+]
+```
+
+### 2.1 Django 1.11参数
+
+1. 正则表达式：一个正则表达式字符串
+2. views视图：一个可调用对象，通常为一个视图函数
+3. 参数：可选的要传递给视图函数的默认参数（字典形式）
+4. 别名：一个可选的name参数
+
+### 2.2 Django 2.0 
+
+```python
+from django.urls import path，re_path
+
+urlpatterns = [
+    path('articles/2003/', views.special_case_2003),
+    path('articles/<int:year>/', views.year_archive),
+    path('articles/<int:year>/<int:month>/', views.month_archive),
+    path('articles/<int:year>/<int:month>/<slug:slug>/', views.article_detail),
+]
+```
+
+- 2.0版本中re_path和1.11版本的url是一样的用法。
+
+## 3. 正则表达式
+
+### 3.1 注意事项(4)
+
+1. urlpatterns中的元素按照书写顺序**从上往下逐一匹配**正则表达式，一旦**匹配成功则不再继续**。
+2. 若要从URL中捕获一个值，只需要在它周围放置**一对圆括号**（**分组匹配**）。
+3. **不需要添加一个前导的反斜杠**，因为每个URL 都有。例如，应该是^articles 而不是 ^/articles。
+4. 每个正则表达式前面的'r' 是可选的但是建议加上。
+
+- **APPEND_SLASH = True**(默认为True)，如果没有 / Django会发送重定向，location:/xxx/ 会加上 /。当设置为False时，如果访问路径不包含 / ，则会找不到页面
+
+### 3.2 分组
+
+- 位置传参
+- urls.py中的正则表达式分组匹配（通过圆括号）来捕获URL中的值并**以位置参数形式传递给视图**。
+
+```python
+from django.conf.urls import url
+from . import views
+
+urlpatterns = [
+    url(r'^bolg/([0-9]{4})/(\d{2})', views.blog),
+]
+```
+
+```python
+# URL： /bolg/2008/08
+def blog(request, year, month):
+  	return HttpResponse('ok')
+# 调用方式
+blog(request, '2008', '08')
+```
+
+### 3.3 分组命名匹配
+
+- 关键字传参
+- 捕获的的参数都是string类型
+
+```python
+from django.conf.urls import url
+from . import views
+
+urlpatterns = [
+    url(r'^bolg/(?P<year>[0-9]{4})/(?P<month>\d{2})', views.blog),
+]
+```
+
+```python
+# URL： /bolg/2008/08
+def blog(request, year, month):
+  	return HttpResponse('ok')
+# 调用方式
+blog(request, year='2008', month='08')
+```
+
+#### Note(4)
+
+1. URLconf 不检查请求的方法。
+2. 换句话讲，所有的请求方法，同一个URL的POST、GET、HEAD等等，都将路由到相同的函数。
+3. 每个在URLconf中捕获的参数都作为一个**普通的Python字符串**传递给视图，无论正则表达式使用的是什么匹配方式。
+4. 可以为关键字传参的view函数，指定默认值，应用于分页
+
+## 4. include()方法
+
+### 4.1 基本使用
+
+- 主要作用是进行路由的二级分发
+- 导入inclue，from django.conf.urls import include
+
+```python
+# At any point, your urlpatterns can “include” other URLconf modules. This essentially “roots” a set of URLs below other ones.
+
+# For example, here’s an excerpt of the URLconf for the Django website itself. It includes a number of other URLconfs
+from django.conf.urls import include, url
+urlpatterns = [
+   	url(r'^admin/', admin.site.urls),
+  	# 可以包含其他的URLconfs文件,路由分发
+  	url(r'^blog/', include('blog.urls')),   
+]
+```
+
+### 4.2 传递额外参数
+
+- 如果命名分组名和传参名相同则优先选择，关键字传参的值
+- 源码采用传参的dict数据更新命名分组的dict数据。
+
+```python
+# app(bolg)内的urls.py
+from django.conf.urls import url
+from . import views
+urlpatterns = [
+    # 传递关键字参数给视图，类型为字典中的type。优先级比命名分组优先级要高
+  	url(r'^blog/', views.blog, {'year': 2008}),   
+]
+
+```
+
+- settings.py中的**ROOT_URLCONFG='xxx.urls'**，表示核心路由起始位置，可根据需求进行更改
+
+### 4.3 命名url和url反向解析
+
+- 在使用Django 项目时，一个常见的需求是获得URL的最终形式，以用于嵌入到生成的内容中（视图中和显示给用户的URL等）或者用于处理服务器端的导航（重定向等）。
+- 命名url和url反向解析，就是一个**DRY(Don't repeat yourself)** 机制。
+
+#### 1. 命名url
+
+- 给url地址命名
+
+```python
+url(r'^blog/', views.blog, {'year': 2008}, name='blog'),   
+
+```
+
+- 反向解析又称为反向解析URL、反向URL 匹配、反向URL 查询或者简单的URL 反查。
+  1. 通过命名生成**url路径的完整路径**
+  2. 应用在：模版和py文件中
+
+#### 2. 静态路由
+
+```django
+{# 获取的是完成的url路径，string类型 #}
+{% url 'blog' %}
+
+```
+
+- 获取完整到 url 路径,通过name进行反向解析，即通过urls.py获取
+
+```python
+# views.py
+# 也可以通过django.shortcuts 导入
+from django.urls import reverse
+url = reverse('blog')
+
+```
+
+#### 3. 分组
+
+- urls.py文件中配置
+
+```python
+url(r'^bolg/([0-9]{4})/(\d{2})', views.blog),
+
+```
+
+- py文件中使用
+
+```python
+# py文件, args为tuple 推荐最后一个参数加 ， 
+url = reverse('blog', args=('2008', '08',))
+
+```
+
+- 模版中使用
+
+```django
+{# 使用 #}
+{% url 'blog' 2011 12 %}
+
+```
+
+#### 4. 命名分组
+
+- urls.py文件中配置
+
+```python
+url(r'^bolg/(?P<year>[0-9]{4})/(?P<month>\d{2})', views.blog),
+
+```
+
+- py文件中使用
+
+```python
+# 在py文件中使用, args为tuple 推荐最后一个参数加 ， 
+url = reverse('blog', args=('2008', '08',))
+url = reverse('blog', kwargs={'year': '2008', 'month': '08'})
+
+```
+
+- 模版中使用
+
+```django
+{# 在模版中使用 #}
+{% url 'blog' 2011 12 %}
+{% url 'blog' year=2011 month=12 %}
+
+```
+
+#### 5. namespace
+
+-  命名空间，**解决多个app中的name相同的情况，后面的name会覆盖之前的name，造成url解析错误的问题**
+
+```python
+url(r'^app01/', include('app01.urls'), namespace='app01')
+url(r'^app02/', include('app02.urls'), namespace='app02')
+
+```
+
+- **反向解析时，需要在name前添加 namespace的值**
+- name通常加在 app下的urls.py文件中的url
+- **namespace**可以进行多级嵌套 使用**冒号 :** 进行使用
+
+```django
+{% url namespace值:'blog' %}
+{% url app01:'blog' %}
+{% url app02:'blog' %}
+
+```
+
+### 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
