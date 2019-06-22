@@ -38,8 +38,8 @@
                                     {% endfor %}
                                 </td>
                                 <td>
-                                    <a href="/edit_author/?pk={{ i.pk }}" style="color: white"><button type="button" class="btn btn-primary">编辑</button></a>
-                                    <a href="/del_author/?pk={{ i.pk }}" style="color: white"><button type="button" class="btn btn-danger">删除</button></a>
+                                    <a href="{% url 'edit_author' %}{{ i.pk }}" style="color: white"><button type="button" class="btn btn-primary">编辑</button></a>
+                                    <a href="/del_author/{{ i.pk }}" style="color: white"><button type="button" class="btn btn-danger">删除</button></a>
                                 </td>
 
 

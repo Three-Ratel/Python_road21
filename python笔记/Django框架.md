@@ -2307,7 +2307,6 @@ url = reverse('blog')
 
 ```python
 url(r'^bolg/([0-9]{4})/(\d{2})', views.blog),
-
 ```
 
 - py文件中使用
@@ -2315,7 +2314,6 @@ url(r'^bolg/([0-9]{4})/(\d{2})', views.blog),
 ```python
 # py文件, args为tuple 推荐最后一个参数加 ， 
 url = reverse('blog', args=('2008', '08',))
-
 ```
 
 - 模版中使用
@@ -2323,7 +2321,6 @@ url = reverse('blog', args=('2008', '08',))
 ```django
 {# 使用 #}
 {% url 'blog' 2011 12 %}
-
 ```
 
 #### 4. 命名分组

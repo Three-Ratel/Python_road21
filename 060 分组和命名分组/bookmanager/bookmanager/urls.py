@@ -20,38 +20,45 @@ from app01 import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    # url(r'^list_publisher/', views.list_publisher),
-    # url(r'^add_publisher/', views.add_publisher),
-    # url(r'^del_publisher/', views.del_publisher),
-    # url(r'^edit_publisher/', views.edit_publisher),
-    url(r'^list_publisher/', views.ListPublisher.as_view()),
-    url(r'^add_publisher/', views.AddPublisher.as_view()),
-    url(r'^del_publisher/', views.DelPublisher.as_view()),
-    url(r'^edit_publisher/', views.EditPublisher.as_view()),
 
-    # url(r'^list_book/', views.list_book),
-    # url(r'^add_book/', views.add_book),
-    # url(r'^del_book/', views.del_book),
-    # url(r'^edit_book/', views.edit_book),
-    url(r'^list_book/', views.ListBook.as_view()),
-    url(r'^add_book/', views.AddBook.as_view()),
-    url(r'^del_book/', views.DelBook.as_view()),
-    url(r'^edit_book/', views.EditBook.as_view()),
+    # 功能合并
+    url(r'^del_(publisher|author|book)/(\d+)', views.delete, name='del_item'),
 
+    # """作者路由"""
+    url(r'^list_author/', views.ListAuthor.as_view(), name='author'),
+    url(r'^add_author/', views.AddAuthor.as_view(), name='add_author'),
+    # url(r'^del_author/', views.DelAuthor.as_view()),
+    url(r'^edit_author/', views.EditAuthor.as_view(), name='edit_author'),
+    # """书籍路由"""
+    url(r'^list_book/', views.ListBook.as_view(), name='book'),
+    url(r'^add_book/', views.AddBook.as_view(), name='add_book'),
+    # url(r'^del_book/', views.DelBook.as_view()),
+    url(r'^edit_book/', views.EditBook.as_view(), name='edit_book'),
+    # """出版社路由"""
+    url(r'^list_publisher/', views.ListPublisher.as_view(), name='publisher'),
+    url(r'^add_publisher/', views.AddPublisher.as_view(), name='add_publisher'),
+    # url(r'^del_publisher/', views.DelPublisher.as_view()),
+    url(r'^edit_publisher/', views.EditPublisher.as_view(), name='edit_publisher'),
+
+    # """作者路由"""
     # url(r'^list_author/', views.list_author),
     # url(r'^del_author/', views.del_author),
     # url(r'^edit_author/', views.edit_author),
     # url(r'^add_author/', views.add_author),
-    # 作者管理
-    url(r'^list_author/', views.ListAuthor.as_view()),
-    url(r'^del_author/', views.DelAuthor.as_view()),
-    url(r'^edit_author/', views.EditAuthor.as_view()),
-    url(r'^add_author/', views.AddAuthor.as_view()),
 
+    # """书籍路由"""
+    # url(r'^list_book/', views.list_book),
+    # url(r'^add_book/', views.add_book),
+    # url(r'^del_book/', views.del_book),
+    # url(r'^edit_book/', views.edit_book),
+    # """出版社路由"""
+    # url(r'^list_publisher/', views.list_publisher),
+    # url(r'^add_publisher/', views.add_publisher),
+    # url(r'^del_publisher/', views.del_publisher),
+    # url(r'^edit_publisher/', views.edit_publisher),
 
     # url(r'^add_info/', views.add_info),
     # url(r'^tags_test/', views.tags_test),
     url(r'^upload/', views.upload),
-
 
 ]
