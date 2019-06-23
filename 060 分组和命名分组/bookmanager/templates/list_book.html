@@ -26,18 +26,18 @@
                 </tr>
                 </thead>
                 <tbody id="UserList">
-                {% for book in all_item %}
+                {% for i in all_item %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
-                        <td>{{ book.pk }}</td>
-                        <td style="text-align: left">{{ book.title }}</td>
-                        <td style="text-align: left">{{ book.pub.name }}</td>
+                        <td>{{ i.pk }}</td>
+                        <td style="text-align: left">{{ i.title }}</td>
+                        <td style="text-align: left">{{ i.pub.name }}</td>
 
                         <td>
-                            <a href="{% url 'edit_book' %}{{ book.pk }}" style="color: white">
+                            <a href="{% url 'edit_book' i.pk%}" style="color: white">
                                 <button type="button" class="btn btn-primary">编辑</button>
                             </a>
-                            <a href="/del_book/{{ book.pk }}" style="color: white">
+                            <a href="{% url 'del_item' table i.pk %}" style="color: white">
                                 <button type="button" class="btn btn-danger">删除</button>
                             </a>
                         </td>

@@ -9,4 +9,6 @@ def filter_test(request):
                    'b': 2,
                    'string': 'Django',
                    'dic': [1, 2, 3],
+                   'info': {'a': 1, 'b': 2, 'c': 3},
+                   '_set': {1, 2, 3, 4},
                    })

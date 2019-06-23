@@ -20,7 +20,7 @@
                                 <p><input type="text" name="author_name" class="form-control" id="author"
                                           placeholder="请输入作者姓名" value="{{ book.title }}"></p>
                                 <select name="books" id="" multiple>
-                                    {% for i in all_book %}
+                                    {% for i in all_item %}
                                         <option value="{{ i.pk }}">{{ i.title }}</option>
                                     {% endfor %}
                                 </select>
@@ -38,3 +38,4 @@
 
 </body>
 </html>
+

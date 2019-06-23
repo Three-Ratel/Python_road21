@@ -1206,12 +1206,11 @@ def my_test(request):
 
 - 作用：**修改变量的显示结果**
 - 语法：**{{value|filter_name:参数}}**
-- **default用法**，变量为**False**显示默认值
-- **default和指定值之间不能有空格**
 
 #### 1. default
 
-- 变量值为False时，采用默认值
+- **default用法**，变量为**False**显示默认值
+- **default和指定值之间不能有空格**
 
 ```html
 <p>{{xxx}}</p>
@@ -1232,7 +1231,7 @@ def my_test(request):
 
 ```python
 # 文件单位换算，最大有效单位为 PB
-{变量|filesizeformate}
+{变量|filesizeformat}
 ```
 
 #### 3. add
@@ -1425,8 +1424,7 @@ def add_(value, arg):
 ### 2.1 for 循环
 
 - **没有则为空字典**
-
-for循环可用的一些参数：**
+- for循环可用的一些参数：
 
 | Variable            | Description                          |
 | ------------------- | ------------------------------------ |
@@ -1626,7 +1624,7 @@ name = csrfmiddlewaretoken
 ```python
 # 与自定义filter在同一文件中
 from django import template
-@register.simple_tag
+@register.simple_tag(name='xxx')
 def join_str(*args, **kwargs):
 	return '{}--{}'.format('*'.join(args), '+'.join(kwargs.values()))
 ```
@@ -1635,14 +1633,14 @@ def join_str(*args, **kwargs):
 
 ```django
 {# 与自定义filter在同一文件下，这里使用 my_tags.py #}
-{% load my_tags.py %}
+{% load my_tags %}
 {# 注意关键字传参的变量 #}
-{% join_str '1' '2' k1='v1' k2='v2' %}
+{% xxx '1' '2' k1='v1' k2='v2' %}
 ```
 
 - 和filter的区别
   1. simpletag是标签，参数不受限制，使用{%%}
-  2. filter是过滤器，参数最多有两个。使用{}
+  2. filter是过滤器，参数最多有两个。使用{{ }}
   3. 装饰器不同
   4. 返回值不同
 
@@ -1688,13 +1686,13 @@ def page(num):
 {% page 10 %}
 ```
 
-### 自定义方法的使用：
+### 3. 自定义方法的使用流程
 
 filter、simple_tag、inclusion_tag
 
-#### 1.在已注册的App下建立templatetags的pyhton 包
+#### 1. 在已注册的App下建立templatetags的pyhton 包
 
-#### 2.在包中，创建py文件
+#### 2. 在包中，创建py文件
 
 #### 3. 在py文件中导入模块，并注册
 
@@ -1703,7 +1701,7 @@ from django import template
 register = template.Library()
 ```
 
-#### 4.写函数
+#### 4. 写函数
 
 ```python
 @register.inclusion_tag('page.html')
@@ -1711,9 +1709,9 @@ def page(num):
   return {'num': range(1, num+1)}
 ```
 
-#### 5.写模版
+#### 5. 写模版
 
-- 组件是固定的不灵活，
+- 组件是固定、不灵活，
 
 ```django
 {# page.html #}
@@ -1722,19 +1720,19 @@ def page(num):
 {% endfor %}
 ```
 
-#### 6.使用
+#### 6. 使用
 
 - 在返回页面使用
 
 ```django
 {# filter #}
-{% load my_tag.py %}
+{% load my_tag %}
 {{'xxx'|add_:'a'}}
 {# simple_tag #}
-{% load my_tag.py %}
+{% load my_tag %}
 {% join_str 1 2 k1='v1' k2='v2' %}
 {# inclusion_tag #}
-{% load my_tag.py %}
+{% load my_tag %}
 {% page 4 %}
 ```
 
@@ -1856,7 +1854,7 @@ class AddPublisher(View):
 from django.views import method_decorator
 @method_decorator(timer)
 def dispatch(self, request, *args, **kwargs):
-  	ret = super().dispatch()
+  	ret = super().dispatch(request, *args, **kwargs)
     return ret
 ```
 
@@ -1962,14 +1960,14 @@ with open(f1.name, 'wb') as f:
 
 ### 3.2 方法
 
-|      | 方法                        | 含义                                |
-| ---- | --------------------------- | ----------------------------------- |
-| 1    | **request.get_full_path()** | url路径，不包含ip端口，**包含参数** |
-| 2    | **request.get_host()**      | ip和端口                            |
-| 3    | request.is_ajax()           | 是否使用ajax                        |
-| 4    | request.is_secure()         | http是否时加密的，https             |
-| 5    | request.get_signed_cookies  |                                     |
-| 6    | request.get_raw_uri()       | 获取全部url                         |
+|      | 方法                         | 含义                                |
+| ---- | ---------------------------- | ----------------------------------- |
+| 1    | **request.get_full_path()**  | url路径，不包含ip端口，**包含参数** |
+| 2    | **request.get_host()**       | ip和端口                            |
+| 3    | request.is_ajax()            | 是否使用ajax                        |
+| 4    | request.is_secure()          | http是否时加密的，https             |
+| 5    | request.get_signed_cookies() |                                     |
+| 6    | request.get_raw_url()        | 获取全部url                         |
 
 ## 4. response对像
 
@@ -1977,7 +1975,7 @@ with open(f1.name, 'wb') as f:
 
 - 与由Django自动创建的**HttpRequest对象**相比，HttpResponse对象是我们的职责范围了。我们写的每个视图都需要实例化，填充和返回一个**HttpResponse**。
 
-1. **HttpResponse**('字符串')。类 content-type='text/html'
+1. **HttpResponse**('字符串')。类 **content-type='text/html'**
 2. render(request, '模版.html', {'key': value})。函数
    - content进行字符串替换
    - 返回的是HttpResponse对象
@@ -2000,7 +1998,7 @@ with open(f1.name, 'wb') as f:
 # 导入 HttpResponse 类
 from django.http import HttpResponse
 response = HttpResponse('welcom to our site')
-response = HttpResponse('Text onlu, please', content_type='text/plain')
+response = HttpResponse('Text only, please', content_type='text/plain')
 ```
 
 #### 2. 设置或删除响应头信息
@@ -2036,7 +2034,7 @@ def json_data(request):
 
 ```python
 # 默认只能传递字典类型，如果要传递非字典类型需要设置一下safe关键字参数。
-return HttpResponse([1,2,3]，safe=False)
+return JsonResponse([1,2,3]，safe=False)
 ```
 
 ## 6. shortcut functions
@@ -2068,12 +2066,12 @@ def index(request):
 
 #### 2. 参数详解
 
-- request： 用于生成响应的请求对象。
-- template_name：要使用的模板的完整名称，可选的参数
-- context：添加到模板上下文的一个字典。默认是一个空字典。如果字典中的某个值是可调用的，视图将在渲染模板之前调用它。
-- content_type：生成的文档要使用的MIME类型。默认为 DEFAULT_CONTENT_TYPE 设置的值。默认为'text/html'
-- status：响应的状态码。默认为200。
-- useing: 用于加载模板的模板引擎的名称。
+- **request**： 用于生成响应的请求对象。
+- **template_name**：要使用的模板的完整名称，可选的参数
+- context=None：添加到模板上下文的一个字典。默认是一个空字典。如果字典中的某个值是可调用的，视图将在渲染模板之前调用它。
+- content_type=None：生成的文档要使用的MIME类型。默认为 DEFAULT_CONTENT_TYPE 设置的值。默认为'text/html'
+- status=None：响应的状态码。默认为200。
+- using=None: 用于加载模板的模板引擎的名称。
 
 ### 6.2 redirect()
 
@@ -2105,7 +2103,7 @@ def my_view(request):
 
 ## 1. URLConf
 
-- URL配置(**URLconf**)就像Django所支撑网站的目录。
+- URL配置(**URLconf**)就像是Django所支撑网站的目录。
 - 它的本质是URL与要为该URL调用的视图函数之间的映射表。
 - 我们就是以这种方式告诉Django，遇到哪个URL的时候，要对应执行哪个函数。
 
@@ -2115,10 +2113,10 @@ def my_view(request):
 2. Django loads that Python module and looks for the variable `urlpatterns`. This should be a Python list of **django.conf.urls.url()** instances. # **返回一个对象**
 3. Django runs through each URL pattern, in order, and stops at the first one that matches the requested URL.
 4. Once one of the regexes matches, Django imports and calls the given view, which is a simple Python function (or a class-based view). The view gets passed the following arguments:
-   - An instance of [`HttpRequest`](https://docs.djangoproject.com/en/1.11/ref/request-response/#django.http.HttpRequest).
+   - An instance of **HttpRequest**.
    - If the matched regular expression returned no named groups, then the matches from the regular expression are provided as positional arguments.
-   - The keyword arguments are made up of any named groups matched by the regular expression, overridden by any arguments specified in the optional `kwargs` argument to [`django.conf.urls.url()`](https://docs.djangoproject.com/en/1.11/ref/urls/#django.conf.urls.url).
-5. If no regex matches, or if an exception is raised during any point in this process, Django invokes an appropriate error-handling view. See [Error handling](https://docs.djangoproject.com/en/1.11/topics/http/urls/#error-handling) below.
+   - The keyword arguments are made up of any named groups matched by the regular expression, overridden by any arguments specified in the optional `kwargs` argument to **django.conf.urls.url().**
+5. If no regex matches, or if an exception is raised during any point in this process, Django invokes an appropriate error-handling view. See **Error handling** below.
 
 ## 2. 基本格式
 
@@ -2226,14 +2224,14 @@ blog(request, year='2008', month='08')
 1. URLconf 不检查请求的方法。
 2. 换句话讲，所有的请求方法，同一个URL的POST、GET、HEAD等等，都将路由到相同的函数。
 3. 每个在URLconf中捕获的参数都作为一个**普通的Python字符串**传递给视图，无论正则表达式使用的是什么匹配方式。
-4. 可以为关键字传参的view函数，指定默认值，应用于分页
+4. 可以为关键字传参的view函数，**指定默认值**，应用于分页
 
 ## 4. include()方法
 
 ### 4.1 基本使用
 
 - 主要作用是进行路由的二级分发
-- 导入inclue，from django.conf.urls import include
+- 导入include，from django.conf.urls import include
 
 ```python
 # At any point, your urlpatterns can “include” other URLconf modules. This essentially “roots” a set of URLs below other ones.
@@ -2260,7 +2258,6 @@ urlpatterns = [
     # 传递关键字参数给视图，类型为字典中的type。优先级比命名分组优先级要高
   	url(r'^blog/', views.blog, {'year': 2008}),   
 ]
-
 ```
 
 - settings.py中的**ROOT_URLCONFG='xxx.urls'**，表示核心路由起始位置，可根据需求进行更改
@@ -2286,9 +2283,8 @@ url(r'^blog/', views.blog, {'year': 2008}, name='blog'),
 #### 2. 静态路由
 
 ```django
-{# 获取的是完成的url路径，string类型 #}
+{# 获取的是完整的url路径，string类型 #}
 {% url 'blog' %}
-
 ```
 
 - 获取完整到 url 路径,通过name进行反向解析，即通过urls.py获取
@@ -2298,7 +2294,6 @@ url(r'^blog/', views.blog, {'year': 2008}, name='blog'),
 # 也可以通过django.shortcuts 导入
 from django.urls import reverse
 url = reverse('blog')
-
 ```
 
 #### 3. 分组
@@ -2306,7 +2301,7 @@ url = reverse('blog')
 - urls.py文件中配置
 
 ```python
-url(r'^bolg/([0-9]{4})/(\d{2})', views.blog),
+url(r'^bolg/([0-9]{4})/(\d{2})', views.blog, name='blog'),
 ```
 
 - py文件中使用
@@ -2328,17 +2323,14 @@ url = reverse('blog', args=('2008', '08',))
 - urls.py文件中配置
 
 ```python
-url(r'^bolg/(?P<year>[0-9]{4})/(?P<month>\d{2})', views.blog),
-
+url(r'^bolg/(?P<year>[0-9]{4})/(?P<month>\d{2})', views.blog, name='blog')
 ```
 
 - py文件中使用
 
 ```python
 # 在py文件中使用, args为tuple 推荐最后一个参数加 ， 
-url = reverse('blog', args=('2008', '08',))
 url = reverse('blog', kwargs={'year': '2008', 'month': '08'})
-
 ```
 
 - 模版中使用
@@ -2347,7 +2339,6 @@ url = reverse('blog', kwargs={'year': '2008', 'month': '08'})
 {# 在模版中使用 #}
 {% url 'blog' 2011 12 %}
 {% url 'blog' year=2011 month=12 %}
-
 ```
 
 #### 5. namespace
@@ -2357,7 +2348,6 @@ url = reverse('blog', kwargs={'year': '2008', 'month': '08'})
 ```python
 url(r'^app01/', include('app01.urls'), namespace='app01')
 url(r'^app02/', include('app02.urls'), namespace='app02')
-
 ```
 
 - **反向解析时，需要在name前添加 namespace的值**
@@ -2365,10 +2355,9 @@ url(r'^app02/', include('app02.urls'), namespace='app02')
 - **namespace**可以进行多级嵌套 使用**冒号 :** 进行使用
 
 ```django
-{% url namespace值:'blog' %}
-{% url app01:'blog' %}
-{% url app02:'blog' %}
-
+{% url 'namespace值:blog' %}
+{% url 'app01:blog' %}
+{% url 'app02:blog' %}
 ```
 
 ### 

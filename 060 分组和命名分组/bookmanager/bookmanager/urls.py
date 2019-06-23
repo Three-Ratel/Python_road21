@@ -24,22 +24,23 @@ urlpatterns = [
     # 功能合并
     url(r'^del_(publisher|author|book)/(\d+)', views.delete, name='del_item'),
     url(r'^list_(publisher|author|book)/', views.display, name='display'),
+    # url(r'^add_(publisher|author|book)/', views.add_item, name='add_item'),
 
     # """作者路由"""
     url(r'^list_author/', views.ListAuthor.as_view(), name='author'),
-    url(r'^add_author/', views.AddAuthor.as_view(), name='add_author'),
-    # url(r'^del_author/', views.DelAuthor.as_view()),
-    url(r'^edit_author/(\d+)?', views.EditAuthor.as_view(), name='edit_author'),
+    url(r'^add_(author)/', views.AddAuthor.as_view(), name='add_author'),
+    url(r'^del_author/', views.DelAuthor.as_view()),
+    url(r'^edit_author/(\d+)', views.EditAuthor.as_view(), name='edit_author'),
     # """书籍路由"""
-    url(r'^list_book/', views.display, name='book'),
+    # url(r'^list_book/', views.display, name='book'),
     url(r'^add_book/', views.AddBook.as_view(), name='add_book'),
     # url(r'^del_book/', views.DelBook.as_view()),
-    url(r'^edit_book/(\d+)?', views.EditBook.as_view(), name='edit_book'),
+    url(r'^edit_book/(\d+)', views.EditBook.as_view(), name='edit_book'),
     # """出版社路由"""
-    url(r'^list_publisher/', views.ListPublisher.as_view(), name='publisher'),
+    # url(r'^list_publisher/', views.ListPublisher.as_view(), name='publisher'),
     url(r'^add_publisher/', views.AddPublisher.as_view(), name='add_publisher'),
     # url(r'^del_publisher/', views.DelPublisher.as_view()),
-    url(r'^edit_publisher/(\d+)?', views.EditPublisher.as_view(), name='edit_publisher'),
+    url(r'^edit_publisher/(\d+)', views.EditPublisher.as_view(), name='edit_publisher'),
 
     # """作者路由"""
     # url(r'^list_author/', views.list_author),

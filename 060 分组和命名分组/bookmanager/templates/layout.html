@@ -19,9 +19,9 @@
     <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
             <ul class="nav nav-sidebar" id="mysiderbar">
-                <li class="{% block book %}{% endblock %}"><a href="{% url 'book' %}">书籍信息 <span class="sr-only">(current)</span></a></li>
-                <li class="{% block author %}{% endblock %}"><a href="{% url 'author' %}">作者信息</a></li>
-                <li class="{% block publisher %}{% endblock %}"><a href="{% url 'publisher' %}">出版社信息</a></li>
+                <li class="{% block book %}{% endblock %}"><a href="{% url 'display' 'book' %}">书籍信息 <span class="sr-only">(current)</span></a></li>
+                <li class="{% block author %}{% endblock %}"><a href="{% url 'display' 'author' %}">作者信息</a></li>
+                <li class="{% block publisher %}{% endblock %}"><a href="{% url 'display' 'publisher' %}">出版社信息</a></li>
             </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">

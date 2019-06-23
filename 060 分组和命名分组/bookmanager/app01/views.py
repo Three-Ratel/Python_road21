@@ -10,32 +10,17 @@ from app01 import models
 def delete(request, table, pk):
     obj = getattr(models, table.capitalize())
     obj.objects.filter(pk=pk).delete()
-    return redirect(reverse(table))
+    return redirect(reverse('display', args=[table, ]))
 
 
 def display(request, table):
     obj = getattr(models, table.capitalize())
     all_item = obj.objects.all()
-    return render(request, 'list_{}.html'.format(table,), {'all_item': all_item})
+    return render(request, 'list_{}.html'.format(table, ), {'all_item': all_item, 'table': table})
 
 
-"""作者相关"""
-
-
-class ListAuthor(View):
-
-    def get(self, request):
-        all_author = models.Author.objects.all()
-        return render(request, 'list_author.html', {'all_author': all_author})
-
-
-class AddAuthor(View):
-
-    def get(self, request):
-        all_book = models.Book.objects.all()
-        return render(request, 'add_author.html', {'all_book': all_book})
-
-    def post(self, request):
+def add_item(request, table):
+    if request.method == 'POST':
         error = ''
         author_name = request.POST.get('author_name')
         if models.Author.objects.filter(name=author_name):
@@ -49,6 +34,38 @@ class AddAuthor(View):
             return redirect('/list_author/')
         all_book = models.Book.objects.all()
         return render(request, 'add_author.html', {'all_book': all_book, 'error': error})
+    return display(request, table)
+
+"""作者相关"""
+
+
+class ListAuthor(View):
+
+    def get(self, request):
+        all_author = models.Author.objects.all()
+        return render(request, 'list_author.html', {'all_author': all_author})
+
+
+class AddAuthor(View):
+
+    def get(self, request, table):
+        all_book = models.Book.objects.all()
+        return render(request, 'add_{}.html'.format(table,), {'all_book': all_book})
+
+    def post(self, request, table):
+        error = ''
+        author_name = request.POST.get('author_name')
+        if models.Author.objects.filter(name=author_name):
+            error = '作者已存在'
+        books = request.POST.getlist('books')
+        if not (author_name and books):
+            error = '作者和作品信息不完整'
+        if not error:
+            author = models.Author.objects.create(name=author_name)
+            author.books.set(books)
+            return redirect('/list_author/')
+        all_book = models.Book.objects.all()
+        return render(request, 'add_author.html', {'all_book': all_book, 'error': error, 'table': table})
 
 
 class DelAuthor(View):
