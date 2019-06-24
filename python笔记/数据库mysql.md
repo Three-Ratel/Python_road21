@@ -508,7 +508,7 @@ create table t4(id int not null unique,
 
 #### 1.4 auto_increment
 
-1. 自增(只能用于数值)，**自带非空 唯一属性*s
+1. 自增(只能用于数值)，**自带非空 唯一属性**
 2. 约束字段为自动增长，被约束的字段必须同时被key约束
 3. 如果事务**rollback**了这个**auto_increment**值就会浪费掉，从而造成间隙
 4. AUTO_INCREMENT数据列序号的最大值受该列的数据类型约束，一旦达到上限，**AUTO_INCREMENT**就会**失效**。
@@ -569,7 +569,6 @@ create table t6(id int not null unique,
 ```mysql
 create table t7(id int primary key,
                name char(10) not null unique);
-
 ```
 
 - 联合主键
@@ -580,7 +579,6 @@ create table t8(id int,
                server char(10),
                port int,
                primary(ip, port))  # 联合主键
-
 ```
 
 #### Note(4)

@@ -10,7 +10,7 @@ from app01 import models
 def delete(request, table, pk):
     obj = getattr(models, table.capitalize())
     obj.objects.filter(pk=pk).delete()
-    return redirect(reverse('display', args=[table, ]))
+    return redirect(reverse('display', args=(table,)))
 
 
 def display(request, table):
@@ -36,6 +36,7 @@ def add_item(request, table):
         return render(request, 'add_author.html', {'all_book': all_book, 'error': error})
     return display(request, table)
 
+
 """作者相关"""
 
 
@@ -50,7 +51,7 @@ class AddAuthor(View):
 
     def get(self, request, table):
         all_book = models.Book.objects.all()
-        return render(request, 'add_{}.html'.format(table,), {'all_book': all_book})
+        return render(request, 'add_{}.html'.format(table, ), {'all_item': all_book})
 
     def post(self, request, table):
         error = ''
@@ -63,9 +64,9 @@ class AddAuthor(View):
         if not error:
             author = models.Author.objects.create(name=author_name)
             author.books.set(books)
-            return redirect('/list_author/')
+            return redirect(reverse('display', args=('author',)))
         all_book = models.Book.objects.all()
-        return render(request, 'add_author.html', {'all_book': all_book, 'error': error, 'table': table})
+        return render(request, 'add_author.html', {'all_item': all_book, 'error': error, 'table': table})
 
 
 class DelAuthor(View):
@@ -125,7 +126,7 @@ class AddBook(View):
         if not title: error = '请输入书名'
         if not error:
             models.Book.objects.create(title=title, pub_id=pk)
-            return redirect('/list_book/')
+            return redirect(reverse('display', args=('book',)))
         all_publisher = models.Publisher.objects.all()
         return render(request, 'add_book.html', {'all_publisher': all_publisher, 'error': error})
 
@@ -145,9 +146,9 @@ class EditBook(View):
         all_publisher = models.Publisher.objects.all().order_by('pid')
         return render(request, 'edit_book.html', {'book': book, 'all_publisher': all_publisher})
 
-    def post(self, request):
+    def post(self, request, pk):
         error = ''
-        pk = request.GET.get('id')
+        # pk = request.GET.get('id')
         book = models.Book.objects.get(pk=pk)
         title = request.POST.get('book_name')
         pub_id = request.POST.get('id')
@@ -160,7 +161,7 @@ class EditBook(View):
             book.title = title
             book.pub_id = pub_id
             book.save()
-            return redirect('/list_book/')
+            return redirect(reverse('display', args=('book',)))
         all_publisher = models.Publisher.objects.all().order_by('pid')
         return render(request, 'edit_book.html', {'book': book, 'all_publisher': all_publisher, 'error': error})
 
@@ -189,7 +190,7 @@ class AddPublisher(View):
             error = '内容不能为空'
         if not error:
             models.Publisher.objects.create(name=publisher_name)
-            return redirect('/list_publisher/')
+            return redirect(reverse('display', args=('publisher',)))
         return render(request, 'add_publisher.html', {'error': error})
 
 
@@ -228,7 +229,7 @@ class EditPublisher(View):
         if not error:
             obj.name = name
             obj.save()
-            return redirect('/list_publisher/')
+            return redirect(reverse('display', args=('publisher',)))
         return render(request, 'edit_publisher.html', {'name': obj.name, 'error': error})
 
 
@@ -431,3 +432,7 @@ def upload(request):
                 f.write(i)
         return HttpResponse('文件传输完成')
     return render(request, 'upload.html')
+
+
+def test(request):
+    return render(request, 'test.html')

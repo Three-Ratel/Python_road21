@@ -1,0 +1,90 @@
+-- Records
+of
+app01_author
+-- ----------------------------
+INSERT
+INTO
+`app01_author`
+VALUES('1', '金老板', '18', '15512351234');
+INSERT
+INTO
+`app01_author`
+VALUES('2', '小哪吒', '20', '15312341234');
+INSERT
+INTO
+`app01_author`
+VALUES('3', 'Alex', '73', '15512341234');
+
+-- ----------------------------
+-- Records
+of
+app01_publisher
+-- ----------------------------
+INSERT
+INTO
+`app01_publisher`
+VALUES('1', '沙河出版社', '北京');
+INSERT
+INTO
+`app01_publisher`
+VALUES('2', '西二旗出版社', '北京');
+INSERT
+INTO
+`app01_publisher`
+VALUES('3', '张江出版社', '上海');
+INSERT
+INTO
+`app01_publisher`
+VALUES('4', '沙河出版社', '上海');
+
+-- ----------------------------
+-- Records
+of
+app01_book
+-- ----------------------------
+INSERT
+INTO
+`app01_book`
+VALUES('1', '跟金老板学开车', '2018-08-03', '12.90', null, '1');
+INSERT
+INTO
+`app01_book`
+VALUES('2', '跟金老板学开潜艇', '2017-08-10', '9.99', null, '1');
+INSERT
+INTO
+`app01_book`
+VALUES('3', '跟老男孩学思想', '2018-09-03', '39.99', null, '2');
+INSERT
+INTO
+`app01_book`
+VALUES('4', '跟egon学喊麦', '2018-06-12', '0.99', null, '4');
+
+-- ----------------------------
+-- Records
+of
+app01_book_author
+-- ----------------------------
+INSERT
+INTO
+`app01_book_author`
+VALUES('3', '1', '1');
+INSERT
+INTO
+`app01_book_author`
+VALUES('4', '1', '2');
+INSERT
+INTO
+`app01_book_author`
+VALUES('5', '2', '1');
+INSERT
+INTO
+`app01_book_author`
+VALUES('2', '2', '2');
+INSERT
+INTO
+`app01_book_author`
+VALUES('6', '3', '3');
+INSERT
+INTO
+`app01_book_author`
+VALUES('7', '4', '3');

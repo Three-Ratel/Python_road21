@@ -62,5 +62,6 @@ urlpatterns = [
     # url(r'^add_info/', views.add_info),
     # url(r'^tags_test/', views.tags_test),
     url(r'^upload/', views.upload),
+    url(r'^test/', views.test),
 
 ]
