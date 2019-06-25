@@ -2403,7 +2403,7 @@ url = reverse('app01:blog')
   - auto_now_add：创建时，自动添加当前时间(使用orm操作时有效)
   - 与default两两互斥，不能同时使用
 
-#### 5. DatetimeField
+#### 5. DateTimeField
 
 - 日期时间字段，格式为YYYY-MM-DD HH:MM[:ss [.uuuuuu]] [TZ]，相当于Python中的datetime.datetime的实例
   - python console —> Django console(测试使用)
@@ -2440,10 +2440,14 @@ obj = models.Person.objects.create(name='henry', age=19)
    - null=True
 3. EmailField(CharField)
    - 存储到数据库之前，会校验格式
-4. BinaryField(Fiedld)
+4. BinaryField(Field)
    - 二进制类型
 
 #### 8. 自定义字段
+
+1. 重写__init__方法，一般都是通过*args和**kwargs传参
+2. 在框架中一般使用super(类，self),在加上自己的操作
+3. 定义db_type(self, connection)
 
 ```python
 # models.py
@@ -2454,7 +2458,7 @@ class MyCharField(models.Field):
         super(MyCharField, self).__init__(max_length=max_length, *args, **kwargs)
  		# 指定生成数据库字段的类型
     def db_type(self, connection):
-        ""se"限定生成数据库表的字段类型为char，长度为max_length指定的值"""
+        """限定生成数据库表的字段类型为char，长度为max_length指定的值"""
         return 'char(%s)' % self.max_length
 ```
 
@@ -2469,7 +2473,7 @@ class Test(models.Model):
     cname = MyCharField(max_length=20)
 ```
 
-### 1.2 字段参数(12)
+### 1.2 字段参数(11)
 
 #### 1. null=True
 
@@ -3019,6 +3023,7 @@ for i in ret:
 #### 2. 分组方式1
 
 ```python
+# 以出版社的ID进行分组
 ret = models.Publisher.objects.annotate(Min('book__price').values()
 for i in ret:
 	print(i)
@@ -3090,8 +3095,7 @@ print(ret)
 ```python
 # F,动态获取字段值
 from django.db.models import F
-ret = models.Book.objects.filter(sale__gt=F('left'))
-
+ret = models.Book.objects.filter(sale__gt=F('inventory'))
 ```
 
 #### 2. 更新操作
@@ -3144,7 +3148,7 @@ except Exception as e:
 ## 5. Django终端打印SQL语句
 
 - Django项目的settings.py文件中，在最后复制粘贴如下代码
-- 即为你的Django项目配置上一个名为**django.db.backends**的logger实例即可查看翻译后的SQL语句。 
+- 即为Django项目配置上一个名为**django.db.backends**的logger实例即可查看翻译后的SQL语句。 
 
 ```python
 LOGGING = {

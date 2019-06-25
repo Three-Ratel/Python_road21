@@ -62,6 +62,3 @@ author = models.Author.objects.get(pk=1)
 
 
 
-
-
-

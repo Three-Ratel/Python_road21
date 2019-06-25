@@ -7,7 +7,7 @@ class Person(models.Model):
     age = models.IntegerField(unique=True)
     birth = models.DateTimeField(auto_now_add=True, db_index=True)
     time = models.DateTimeField(auto_now=True)
-    gender = models.BooleanField('性别', choices=((0, 'female'), (1, 'male'),))
+    gender = models.BooleanField('性别', choices=((0, 'female'), (1, 'male'), (2, 'xxx'),))
     addr = models.CharField(max_length=50, null=True, blank=True,
                             verbose_name='地址', editable=True)
 

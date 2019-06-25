@@ -26,3 +26,30 @@ class Author(models.Model):
 
     def __str__(self):
         return '{}'.format(self.name)
+
+
+class MyCharField(models.Field):
+
+    def __init__(self, max_length, *args, **kwargs):
+        super(MyCharField, self).__init__(*args, **kwargs)
+        self.max_length = max_length
+
+    def __str__(self):
+        return 'This is MyCharField.'
+
+    def db_type(self, connection):
+        return 'char({})'.format(self.max_length)
+
+
+class Test(models.Model):
+    name = MyCharField(max_length=20)
+
+
+
+
+
+
+
+
+
+
