@@ -2667,7 +2667,7 @@ from app01 import models
 - 在单表中，提供范围查找的方法
 - **字段__双下方法**
 
-### 4.1 __gt/lt
+### 4.1 __gt/lt=
 
 ```python
 # gt greater than, 大于2
@@ -2969,7 +2969,7 @@ publisher.books.remove(*models.Book.bojects.fitler(pk__in[4,5]))
 publisher.books.clear()
 ```
 
-#### 6. create(字段)
+#### 6. create(字段=值)
 
 ```python
 models.Publisher.objects.get(pk=1).books.create(title='xxx', price=10)

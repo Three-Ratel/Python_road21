@@ -176,8 +176,9 @@ obj = models.Book.objects.get(title='跟金老板学开车').publisher.name
 21.查找书名是“跟金老板学开车”的书的出版社出版的其他书籍的名字和价格
 """
 
-books = models.Book.objects.filter(Q(publisher_id=models.Book.objects.get(title='跟金老板学开车').publisher_id),
-                                   ~Q(title='跟金老板学开车')).values('title', 'price')
+# books = models.Book.objects.filter(Q(publisher_id=models.Book.objects.get(title='跟金老板学开车').publisher_id),
+#                                    ~Q(title='跟金老板学开车')).values('title', 'price')
+# books = models.Book.objects.filter(publisher_id=models.Book.objects.get(title='跟金老板学开车').publisher_id).values('title', 'price').exclude(title='跟金老板学开车')
 # print(books)
 
 # select * from app01_book where publisher_id not in  (select publisher_id from app01_book where title='跟金老板学开车');
@@ -210,7 +211,7 @@ authors = models.Author.objects.filter(book__title='跟金老板学开车').valu
 25.查找书名是“跟金老板学开车”的书的作者们的姓名以及出版的所有书籍名称和价钱
 """
 obj = models.Author.objects.filter(id__in=models.Author.objects.filter(book__title='跟金老板学开车').values('id')).values('name', 'book__title', 'book__price')
-for i in obj:
-    print(i)
+# for i in obj:
+#     print(i)
 
 # select name,price from (select name,book_id  from (select name, id nid from (select author_id from (select id bid from app01_book where title='跟金老板学开车') t1 inner join app01_book_author t2 on t1.bid=t2.book_id) t3 inner join app01_author on t3.author_id=app01_author.id) t4  inner join app01_book_author t5 on t4.nid=t5.author_id) t6 inner join app01_book on t6.book_id=app01_book.id;
