@@ -350,7 +350,6 @@ create table 表名(
 ```mysql
 # 创建无符号int型表
 create table t3(id1 int, id2 int unsigned);
-
 ```
 
 - 小数(float/double)
@@ -365,7 +364,6 @@ create tables t4(f1 float, double);
 # decimal精度,默认存储（10，0）整数
 create table t5(d1 decimal, d2 decimal(25, 20));
 # decimal内部存储是按照字符串存的
-
 ```
 
 #### Note2(4)

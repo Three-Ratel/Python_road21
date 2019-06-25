@@ -179,6 +179,7 @@ from django.db.models import Max
 """
 21.查找书名是“跟金老板学开车”的书的出版社出版的其他书籍的名字和价格
 """
+
 # books = models.Book.objects.filter(publisher_id=models.Book.objects.get(title='跟金老板学开车').publisher_id)
 # for i in books:
 #     if i.title != '跟金老板学开车':

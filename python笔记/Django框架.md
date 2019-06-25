@@ -970,6 +970,9 @@ class Author(models.Model):
   name.CharField(max_length=32)
   # books为关系管理对象,django会自动生成第三张表
 	books = models.ManyToMangField('Book')
+
+class Book(models.Model):
+  title = models.CharField(max_legth=32) 
 ```
 
 ### 3.2 数据库迁移
@@ -977,10 +980,10 @@ class Author(models.Model):
 ### 3.3 关系管理对象
 
 ```python
-# 关系管理对象，books为外键
-auther.books  # books.None
+# 关系管理对象，books为外键,author是一个对像
+author.books  # books.None 
 # queryset类型的书籍对象
-auther.books.all()
+author.books.all()
 ```
 
 ### 3.4 模版
@@ -2105,7 +2108,7 @@ def my_view(request):
 ## 1. URLConf
 
 - URL配置(**URLconf**)就像是Django所支撑网站的目录。
-- 它的本质是URL与要为该URL调用的视图函数之间的映射表。
+- 它的**本质**是URL与要为该URL调用的视图函数之间的**映射表。**
 - 我们就是以这种方式告诉Django，遇到哪个URL的时候，要对应执行哪个函数。
 
 ### 1.2 Django处理请求
@@ -2425,11 +2428,16 @@ obj = models.Person.objects.create(name='henry', age=19)
   - max_digits，小数总长度
   - decimal_places，小数位长度
 
-#### 7. 其他
+#### 7. FloatField()
+
+- 浮点型
+
+#### 8. 其他
 
 1. BoolenField(Field)
    - 存储bool值，可以使用在性别等(**只有两种情况**)
 2. TextField(Field)
+   - null=True
 3. EmailField(CharField)
    - 存储到数据库之前，会校验格式
 4. BinaryField(Fiedld)
@@ -2461,7 +2469,7 @@ class Test(models.Model):
     cname = MyCharField(max_length=20)
 ```
 
-### 1.2 字段参数(11)
+### 1.2 字段参数(12)
 
 #### 1. null=True
 
@@ -2536,7 +2544,7 @@ age = models.IntegerField(db_index=True)
 name = models.CharField(max_length=32, unique=True)
 ```
 
-#### 8. 与admin相关(4)
+#### 8. 与admin相关(5)
 
 - **verbose_name**
 - '提示'(改变amdin中前端显示)
@@ -2569,9 +2577,9 @@ name = models.CharField(max_length=32,
 gender = models.BooleanField('性别'，choices=((0,'female'),(1, 'male')))
 ```
 
-## 2. Model Meta
+## 2. Model Meta(6)
 
-- 表的参数
+- **表的参数**
 
 ```python
 class Person(models.Model):
@@ -2593,16 +2601,33 @@ class Person(models.Model):
         unique_together = (("name", "age"),)   # 应为两个存在的字段
 ```
 
-## 3. ORM操作
+## 3. ORM操作(13)
 
-- **orm_test**
+### 3.1 orm_test
+
+- 测试文件准备
 
 ```python
 import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE','orm_practice.settings')
 import django
 django.setup()
+# models导入必须在setup之后
 from app01 import models
+```
+
+### 3.2 orm操作
+
+1. **返回对像列表**(8)
+   - all/filter/exclude/**values**/**values_list**/order_by/**reverse**/**disctinct**
+2. **返回对象**(3)
+   - get/first/last
+3. 返回**bool**值(1)
+   - exists
+4. **返回数字**(1)
+   - count
+
+```python
 # orm操作
 # 获取所有对象
 1.obj = models.Person.objects.all()
@@ -2622,22 +2647,23 @@ from app01 import models
 7.obj = models.Person.objects.all().order_by('age', '-pk')
 # 反转， 前提是排好序的
 8.obj = models.Person.objects.all().order_by('pk').reverse()
-# 去重，内容完全相同可以去重，受默认排序影响
+# 去重，内容完全相同可以去重，受默认排序影响，不支持字段去重
 9.obj = models.Person.objects.values('age').distinct()
 # 计数
 10.obj = models.Person.objects.all().count()
-# first/last, 没有则则 None, 取第一/最后一个元素
+# first/last, 没有则则 None, 取第一/最后一个元素，没有则为None
 11.obj = models.Person.objects.all/filter().first()
 12.obj = models.Person.objects.values().first()
 # exists，判断查询的数据是否存在，必须是单个对象，QuerySet不支持
-13.obj = models.Person.objects.filter(pk=1).exists()
+13.obj = models.Person.objects.get(pk=1).exists()
 ```
 
-## 4. 双下方法
+## 4. 双下方法(8)
 
-- 提供范围查找的方法
+- 在单表中，提供范围查找的方法
+- **字段__双下方法**
 
-### 4.1 __gt/lt=
+### 4.1 __gt/lt
 
 ```python
 # gt greater than, 大于2
@@ -2670,12 +2696,16 @@ obj = models.Person.objects.filter(pk__in=[1, 3])
 
 ### 4.5 __contains='h'
 
+- **__icontains**
+
 ```python
 # contains='xxx'，区分大小写， __icontains='h',忽略大小写
 obj = models.Person.objects.filter(name__contains='h')
 ```
 
 ### 4.6 __startswith/endswith
+
+- **__istartswith/iendswith**
 
 ```python
 # startswith='h', 和 __istartswith='' / endswith
@@ -2696,8 +2726,6 @@ obj = models.Person.objects.filter(birth__contains='2019-06')
 obj = models.Person.objects.filter(birth__isnull=True)
 ```
 
-
-
 ## 5. Foreign Key
 
 ```python
@@ -2717,9 +2745,14 @@ class Book(models.Model):
 ```python
 # Book --> Publisher:正向查询
 book_obj = models.Book.objects.get(pk=1).pub
+```
+
+- 反向查询
+
+```python
 # 反向查询
 pub_obj = models.Publisher.objects.get(pk=1)
-# 关联的 类名小写_set，set集合，pub—_obj必须唯一
+# 关联的 类名小写_set，set集合，pub_obj必须唯一
 pub_obj.book_set        # 关系管理对象
 pub_obj.book_set.all()  # 关联的所有书籍
 # 指定 realated_name进行反向查询名称
@@ -2735,7 +2768,11 @@ pub_obj.books.all()     # 关联的所有书籍
 ```python
 # 表示跨表查找出版社name
 book_obj = models.Book.objects.filter(pub__name='人民出版社')
+```
 
+- 反向查询()
+
+```python
 # 指定related_name=books，查询指定书的出版社
 pub_obj = models.Publisher.objects.filter(books__title='python之旅')
 # 不指定related_name，查询指定书的出版社，使用类名小写
@@ -2744,6 +2781,428 @@ pub_obj = models.Publisher.objects.filter(book__title='python之旅')
 # 指定related_name=books，related_query_name='xxx',查询指定书的出版社
 pub_obj = models.Publisher.objects.filter(xxx__title='python之旅')
 ```
+
+# 9. ORM操作(2)
+
+## 1. 多对多操作
+
+### 1.1 环境准备
+
+```python
+# test.py
+import os, django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', '项目名.settings')
+django.setup()
+from app01 import models
+```
+
+```python
+# models.py
+from django.db import models
+# 出版社和书的一对多关系
+class Publisher(models.Model):
+    name = models.CharField(max_length=32)
+    def __str__(self):
+        return '{}'.format(self.name)
+# 书籍信息 
+class Book(models.Model):
+    title = models.CharField(max_length=32)
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+    pub = models.ForeignKey('Publisher', on_delete=models.CASCADE)
+    def __str__(self):
+        return '{}'.format(self.title)
+# 作者信息
+class Author(models.Model):
+    name = models.CharField(max_length=32)
+    books = models.ManyToManyField('Book', related_name='authors', related_query_name='xxx')
+    def __str__(self):
+        return '{}'.format(self.name)
+```
+
+### 1.2 基于对象的查询
+
+```python
+author = models.Author.objects.get(pk=1)
+# 关系管理对象，从1向多的方向拿都是关系管理对象
+author.books
+# 所有书籍
+models.Author.objects.get(pk=1).books.all()
+```
+
+- 反向查询(**book表中没有外键字段**)
+
+```python
+# book对象
+book = models.Book.objects.filter(title='python之旅').first()
+# 关系管理对象，不指定related_name参数
+book.author_set
+# 获取所有作者
+book.author_set.all()
+# 指定related_name='authors'
+book.authors.all()
+```
+
+### 1.3 基于字段
+
+```python
+# 不指定related_name/ related_query_name
+author = models.Author.objects.filter(books__title='python之旅')
+print(author)
+# 不指定related_name/ related_query_name
+book = models.Book.objects.filter(author__name='echo')
+print(book)
+# 指定related_name和related_query_name优先使用related_query_name='xxx'
+book = models.Book.objects.filter(xxx__name='echo')
+print(book)
+```
+
+### 1.4 关系管理对象方法(6)
+
+- 通过关系管理对象获取多个关联值
+
+```python
+# 关系管理对象
+author = models.Author.objects.get(pk=1)
+book = models.Book.objects.get(pk=1)
+publisher = models.Publisher.objects.get(pk=1)
+```
+
+#### 1. all()
+
+```python
+books = author.books.all()
+```
+
+#### 2. set([])
+
+- 重新设置数据
+- **值或对象**
+
+```python
+# 会覆盖历史数据
+ret = author.books.set(['书籍的id1','书籍的id2'...])
+# 返回值ret为None
+# 可以写对象
+author.books.set(modles.Book.objects.filter(pk__in[1,2,3]))
+```
+
+#### 3. add()
+
+- 值或对象
+
+```python
+# 添加数据，已有数据不会新增
+author.books.add('书籍的id1','书籍的id2'...)
+# 添加对象，* 表示打散
+author.books.add(*models.Book.objects.filter(pk__in=['书籍的id1','书籍的id2'...]))
+```
+
+#### 4. remove()
+
+- 值或对象
+
+```python
+# 删除数据
+author.books.remove('书籍的id1','书籍的id2'...)
+# 删除对象
+author.books.remove(*models.Book.objects.filter(pk__in=['书籍的id1','书籍的id2'...]))
+```
+
+#### 5. clear()
+
+```python
+# 清除author对象的所有的多对多关系
+author.books.clear()
+```
+
+#### 6. create(字段=值)
+
+```python
+# 创建书的信息,并添加关联信息
+obj = author.books.create(title='科学上网', pub_id=1)
+# 通过书创建作者
+book = models.objects.get(pk=1)
+obj = book.authors.create(name='diane')
+```
+
+### 1.5 外键的方法
+
+- **在外键中只能使用对象**
+- pub和book关系
+
+#### 1. all()
+
+```python
+# 不指定related_name和related_query_name时，使用 类名_set获取关系管理对象
+pub = models.Publisher.objects.get(pk=1)
+pub.book_set.all()
+```
+
+#### 2. set(QuerySet对象)
+
+```python
+publisher = models.Publisher.objects.get(pk=1)
+# 不能使用id ，只能使用对象
+publisher.books.set(models.Book.bojects.fitler(pk__in[4,5]))
+```
+
+#### 3. add(*QuerySet)
+
+```python
+publisher.books.add(*models.Book.bojects.fitler(pk__in[4,5]))
+```
+
+#### 4. remove(*QuerySet)
+
+```python
+# remove/clear, 外键必须设置成 null=True参数
+publisher.books.remove(*models.Book.bojects.fitler(pk__in[4,5]))
+```
+
+#### 5. clear()
+
+```python
+publisher.books.clear()
+```
+
+#### 6. create(字段)
+
+```python
+models.Publisher.objects.get(pk=1).books.create(title='xxx', price=10)
+```
+
+#### Note
+
+1. 对于所有类型的关联字段，add()、create()、remove()和clear(),set()都会**马上更新数据库**。换句话说，在关联的任何一端，都**不需要再调用save()**方法。
+
+## 2. 聚合和分组
+
+1. **aggregate()是QuerySet的一个终止子句**，意思是说，它返回一个包含一些键值对的字典。
+2. **键的名称是聚合值的标识符**，值是计算出来的聚合值。**键的名称**是按照字段和聚合函数的名称**自动生成**出来的。
+3. 用到的内置的聚合函数
+
+```python
+from django.db.models import Avg, Sum, Max, Min, Count
+```
+
+### 2.1 聚合
+
+- **aggregate(聚合函数)**
+
+```python
+ret = models.Book.objects.all().aggregate(Max('price'))
+# 省略all()也会生效
+ret = models.Book.objects.aggregate(Max('price'))
+# dict 类型，可以
+print(ret)
+# 如果给聚合结果重命名，注意位置和关键字传参的原则
+ret = models.Book.objects.all().aggregate(Avg('price'),max=Max('price'))
+```
+
+```python
+# 返回值为字典，给终止子句
+ret = models.Book.objects.filter(pk_gt=3).aggregate(Avg('price'),max=Max('price'))
+```
+
+### 2.2 分组
+
+#### 1. 基于字段
+
+- **annotate注释,**基于当前对象，添加一个注释字段
+
+```python
+ret = models.Book.objects.annotate(count=Count('author'))
+for i in ret:
+	print(i.count)
+```
+
+#### 2. 分组方式1
+
+```python
+ret = models.Publisher.objects.annotate(Min('book__price').values()
+for i in ret:
+	print(i)
+```
+
+#### 3. 分组方式2
+
+- values表示分组的字段
+
+```python
+ret = models.Book.objects.values('pub/pub_id/pub__name').annotate(Min('price'))
+for i in ret:
+  print(i)
+# 错误示范,如果values添加额外字段，则分组条件也会添加这个字段
+ret = models.Book.objects.values('pub/pub_id/pub__name').annotate(Min('price')).values()
+# 正确
+ret = models.Book.objects.values('pub/pub_id/pub__name').annotate(min=Min('price')).values('pub_id', min)
+```
+
+- 示例
+
+```python
+# 统计每本书的作者个数
+obj = models.Book.objects.values('title').annotate(Count('xxx__name'))
+for i in obj:
+    print(i)
+```
+
+```python
+# 统计出每个出版社买的最便宜的书的价格
+obj = models.Publisher.objects.values('name').annotate(Min('xxx__price'))
+for i in obj:
+  print(i)
+```
+
+```python
+# 统计不止一个作者的图书，比较两种分组方式的区别
+ret=models.Book.objects.annotate(count=Count('author__id')).filter(count__gt=1)
+print(ret)
+obj=models.Book.objects.values('title').annotate(count=Count('xxx__id')).filter(count__gt=1)
+print(obj)
+```
+
+```python
+# 根据一本图书作者数量的多少对查询集 QuerySet进行排序
+obj = models.Author.objects.annotate(count=Count('books__id')).order_by('count')
+print(obj)
+```
+
+```python
+# 查询各个作者书的总价格
+ret = models.Author.ojects.annotate(Sum('books__price')).values()
+print(ret)
+```
+
+## 3. F和Q查询
+
+### 3.1 F查询
+
+- F('字段名')，取出字段值进行相应操作
+
+```python
+ret = models.Book.objects.filter(price__gt=100)
+print(ret)
+```
+
+#### 1. 比较两个字段值
+
+```python
+# F,动态获取字段值
+from django.db.models import F
+ret = models.Book.objects.filter(sale__gt=F('left'))
+
+```
+
+#### 2. 更新操作
+
+```python
+# 更改一个对象，会更新所有的对象
+obj = models.Book.objects.get(pk=1)
+obj.sale = 100
+obj.save()
+```
+
+- **update效率较高**
+
+```python
+# 批量更新，queryset对象支持update， 只更新sale字段
+obj = models.Book.objects.filter(pk=1).update(sale=100)
+# 直接更新到数据库
+models.Book.objects.filter(pk=1).update(sale=F('sale')*2+10)
+```
+
+### 3.2 Q查询
+
+- 表示条件进行使用。
+- **使用逻辑关系**（| 或， & 与，~ 非）
+
+```python
+from django.db.models import Q
+ret = models.Book.objects.filter(Q(pk__gt=3)|Q(pk__lt=2))
+print(ret)
+# q条件的组合，逻辑判断
+models.Book.objects.filter(~Q(Q(pk__gt=3)|Q(pk__lt=2))&Q(price__gt=50))
+```
+
+## 4. 事务
+
+- 原子性、完整性
+
+```python
+from django.db import transaction
+try:
+  with transaction.atomic():
+    # orm操作为事务操作
+      models.Publiser.objects.create(name='xxx')
+      int('sss')
+      models.Publiser.objects.create(name='xxx2')
+except Exception as e:
+   print(e)
+```
+
+## 5. Django终端打印SQL语句
+
+- Django项目的settings.py文件中，在最后复制粘贴如下代码
+- 即为你的Django项目配置上一个名为**django.db.backends**的logger实例即可查看翻译后的SQL语句。 
+
+```python
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console'],
+            'propagate': True,
+            'level':'DEBUG',
+        },
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2859,6 +3318,8 @@ You should always use `include()` when you include other URL patterns. `admin.si
       1. Load settings from `global_settings.py`.
       2. Load settings from the specified settings file, overriding the global settings as necessary.
    3. **Note** that a settings file should *not* import from `global_settings`, because that’s redundant
+
+
 
 
 
