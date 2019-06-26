@@ -3389,6 +3389,7 @@ def logout(request):
 #### 3. session存储
 
 1. Django默认把session保存到数据表中
+2. session还可以存储到：cache、cache-db、file
 
 ### 2.2 使用
 
@@ -3414,15 +3415,15 @@ value = request.session.get('key')
 
 #### 2. 其他操作
 
-1. expired-date默认是2周
+1. **expired-date默认是2周**
 2. 文件型数据库(sqlite3)不可以改时间，使用mysql可以解决
 3. 获取操作
    - request.session[] / .get('key')
-4. 设置
+4. 设置(3)
    - request.session['key']=value：添加session元素
    - request.session.setdefault('key', 'value')：有则不变，无则添加
    - request.session.set_expiry()：设置session到期时间
-5. 删除
+5. 删除(4)
    - del request.session['key']：删除当前sessoin，不删除cookies
    - request.session.delete()：删除当前sessoin，不删除cookies
    - request.session.flush()：删除当前session 和cookies
@@ -3443,12 +3444,13 @@ request.session.keys()
 request.session.values()
 request.session.items()
 
-# 数据表中会话session_key，cookies的sessionid
-1. request.session.session_key
 # 将所有Session失效日期小于当前日期的数据删除
-2. request.session.clear_expired()
+1. request.session.clear_expired()
+# 数据表中会话session_key，cookies的sessionid值，加密
+2. request.session.session_key
 # 检查会话session的key在数据库中是否存在
 3. request.session.exists("session_key") 
+# 如 request.session.exists(request.session.session_key) 
 
 # 删除当前会话的所有Session数据，不删除cookie
 4. request.session.delete()
@@ -3537,7 +3539,11 @@ def logout(request):
     return ret
 ```
 
+## 3. Cookie的生命周期
 
+1. 如果不设置过期时间，则表示这个cookie生命周期为浏览器会话期间，只要关闭浏览器窗口，cookie就消失了。
+2. 这种生命期为浏览会话期的cookie被称为会话cookie。会话cookie一般不保存在硬盘上而是保存在内存里。
+3. 如果设置了过期时间，浏览器就会把cookie保存到硬盘上，关闭后再次打开浏览器，这些cookie依然有效直到超过设定的过期时间。存储在硬盘上的cookie可以在不同的浏览器进程间共享，比如两个IE窗口。而对于保存在内存的cookie，不同的浏览器有不同的处理方式。
 
 
 
@@ -3704,4 +3710,4 @@ You should always use `include()` when you include other URL patterns. `admin.si
 
 
 
-
+r

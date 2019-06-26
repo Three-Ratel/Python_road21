@@ -20,11 +20,18 @@ from app01 import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^login/', views.Login.as_view()),
-    url(r'^index/', views.index),
-    url(r'^logout/', views.logout),
+    url(r'^login/', views.Login.as_view(), name='login'),
+    url(r'^logout/', views.logout, name='logout'),
 
+    url(r'^add_publisher/', views.add_publisher, name='add_publisher'),
+    url(r'^edit_publisher/(\d+)', views.edit_publisher, name='edit_publisher'),
 
-    # url(r'^(author|book|publisher)/', views.List_item.as_view(), name='list'),
+    url(r'^add_book/', views.add_book, name='add_book'),
+    url(r'^edit_book/(\d+)', views.edit_book, name='edit_book'),
+
+    url(r'^edit_author/(\d+)', views.edit_author, name='edit_author'),
+    url(r'^add_author/', views.add_author, name='add_author'),
+    url(r'^(author|book|publisher)/', views.List_item.as_view(), name='list'),
+    url(r'^del_(author|book|publisher)/(\d+)', views.del_item, name='del'),
 
 ]

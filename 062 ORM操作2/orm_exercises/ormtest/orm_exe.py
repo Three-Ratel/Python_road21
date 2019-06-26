@@ -88,6 +88,11 @@ obj = models.Book.objects.filter(publisher__name='沙河出版社').values('titl
 10.查找每个出版社出版价格最高的书籍价格  
 """
 obj = models.Book.objects.values('publisher__name').annotate(max=Max('price')).values('publisher__name', 'max')
+
+
+
+
+
 # for i in obj:
 #     print(i)
 # select title, max(price),name from (select title,price,name from app01_book t1 inner join app01_publisher t2 on t1.publisher_id = t2.id) t3 group by name;
@@ -183,6 +188,8 @@ obj = models.Book.objects.get(title='跟金老板学开车').publisher.name
 # print(books)
 publisher = models.Publisher.objects.get(book__title='跟金老板学开车').book_set.exclude(title='跟金老板学开车')
 # print(publisher)
+obj = models.Book.objects.filter(publisher=models.Publisher.objects.filter(book__title='跟金老板学开车'))
+print(obj)
 
 # select * from app01_book where publisher_id not in  (select publisher_id from app01_book where title='跟金老板学开车');
 """
@@ -219,6 +226,6 @@ authors = models.Author.objects.filter(book__title='跟金老板学开车').valu
 
 # select name,price from (select name,book_id  from (select name, id nid from (select author_id from (select id bid from app01_book where title='跟金老板学开车') t1 inner join app01_book_author t2 on t1.bid=t2.book_id) t3 inner join app01_author on t3.author_id=app01_author.id) t4  inner join app01_book_author t5 on t4.nid=t5.author_id) t6 inner join app01_book on t6.book_id=app01_book.id;
 
-obj = models.Author.objects.values('name', 'book__title', 'book__price').filter(book__title='跟金老板学开车')
-for i in obj:
-    print(i)
+# obj = models.Author.objects.values('name', 'book__title', 'book__price').filter(book__title='跟金老板学开车')
+# for i in obj:
+#     print(i)
