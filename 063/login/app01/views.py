@@ -4,10 +4,10 @@ from django.views import View
 
 
 def login_status(func):
-    def inner(request, *args, **kwargs):
+    def inner(request, table, *args, **kwargs):
         if not request.COOKIES.get('login', None):
-            return redirect('/login/?return_url={}'.format(request.path_info))
-        return func(request, *args, **kwargs)
+            return redirect('/login/?return_url={}'.format(table))
+        return func(request, table, *args, **kwargs)
 
     return inner
 
@@ -21,15 +21,15 @@ class Login(View):
         username = request.POST.get('username')
         pwd = request.POST.get('pwd')
         if username == 'henry' and pwd == '123':
-            url = request.GET.get('return_url')
-            response = redirect('{}'.format(url))
-            response.set_cookie('login', 1)
+            url = request.GET.get('return_url', 'index')
+            response = redirect('/{}/'.format(url))
+            response.set_cookie('login', 1, expires=10)
             return response
         return render(request, 'login.html', {'error': '用户名或密码错误'})
 
 
 @login_status
-def index(request):
+def index(request, table=None):
     return render(request, 'index.html')
 
 
@@ -37,5 +37,9 @@ def index(request):
 class List_item(View):
 
     def get(self, request, table):
-        print(table)
         return render(request, 'list_{}.html'.format(table))
+
+# @method_decorator(login_status, 'dispatch')
+# class Del_item(View):
+#     def get(self, table):
+
