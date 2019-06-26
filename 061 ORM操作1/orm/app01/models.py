@@ -7,7 +7,7 @@ class Person(models.Model):
     age = models.IntegerField(unique=True)
     birth = models.DateTimeField(auto_now_add=True, db_index=True)
     time = models.DateTimeField(auto_now=True)
-    gender = models.BooleanField('性别', choices=((0, 'female'), (1, 'male'), (2, 'xxx'),))
+    gender = models.BooleanField('性别', choices=((0, 'female'), (1, 'male'),))
     addr = models.CharField(max_length=50, null=True, blank=True,
                             verbose_name='地址', editable=True)
 
@@ -49,4 +49,8 @@ class MyCharField(models.Field):
 
 
 class Test(models.Model):
-    name = MyCharField(max_length=20)
+    # name = MyCharField(max_length=20)
+    gender_list = (('0', 'female'), (1, 'male'),)
+    gender = models.CharField(max_length=1, choices=gender_list)
+    models.ManyToManyField
+

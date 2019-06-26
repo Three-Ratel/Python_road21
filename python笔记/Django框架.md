@@ -2532,6 +2532,13 @@ gender = models.BooleanFiled(default=0)
 pid = models.AutoField(primary_key=True)
 ```
 
+```python
+The primary key field is read-only. If you change the value of the primary key on an existing object and then save it, a new object will be created alongside the old one.
+# 主键字段只能读取，不能修改，一旦修改，django会默认创建一个新的对象
+```
+
+
+
 #### 6. db_index=True
 
 - 给当前字段添加索引
@@ -2574,12 +2581,27 @@ name = models.CharField(max_length=32,
 ```
 
 - **choices((0, 'female'), (1, 'male'))**
+- 参数使用list或tuple类型数据
 
 ```python
 # select框，(数据库存储的数据,'前端显示')
 # choices参数需要使用 tuple 嵌套tuple 进行设定
-gender = models.BooleanField('性别'，choices=((0,'female'),(1, 'male')))
+class Peroson(models.Model):
+	gender = models.BooleanField('性别'，choices=((0,'female'),(1, 'male')))
 ```
+
+```python
+class Test(models.Model):
+    gender_list = (('0', 'female'), (1, 'male'),)
+    gender = models.CharField(max_length=1, choices=gender_list)
+>>> from app01 import models
+>>> p = models.Test()
+>>> p.gender='0'
+>>> p.get_gender_display()
+'female'
+```
+
+
 
 ## 2. Model Meta(6)
 
@@ -3015,7 +3037,8 @@ ret = models.Book.objects.filter(pk_gt=3).aggregate(Avg('price'),max=Max('price'
 - **annotate注释,**基于当前对象，添加一个注释字段
 
 ```python
-ret = models.Book.objects.annotate(count=Count('author'))
+# .all()可以省略不写
+ret = models.Book.objects[.all()].annotate(count=Count('author'))
 for i in ret:
 	print(i.count)
 ```
@@ -3322,9 +3345,6 @@ You should always use `include()` when you include other URL patterns. `admin.si
       1. Load settings from `global_settings.py`.
       2. Load settings from the specified settings file, overriding the global settings as necessary.
    3. **Note** that a settings file should *not* import from `global_settings`, because that’s redundant
-
-
-
 
 
 
