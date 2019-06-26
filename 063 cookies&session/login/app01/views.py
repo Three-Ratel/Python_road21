@@ -2,12 +2,16 @@ from django.shortcuts import render, redirect, HttpResponse
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
+
 from . import models
-from django.conf import global_settings
-from django.contrib.sessions.backends import db
+
+
 def login_status(func):
     def inner(request, table, *args, **kwargs):
-        if not request.COOKIES.get('login', None):
+        status = request.session.get('login')
+        print(status, type(status))
+        # if not request.COOKIES.get('login', None):
+        if status != '1':
             return redirect('/login/?return_url=/{}/'.format(table))
         return func(request, table, *args, **kwargs)
 
@@ -16,8 +20,10 @@ def login_status(func):
 
 def login_status_fun(func):
     def inner(request, *args, **kwargs):
-        status = request.COOKIES.get('login')
-        if status != '1':
+        # status = request.COOKIES.get('login')
+        status = request.session.get('login')
+        print(status, type(status))
+        if status != 1:
             return redirect('/login/?return_url={}'.format(request.path_info))
         return func(request, *args, **kwargs)
 
@@ -35,7 +41,8 @@ class Login(View):
         if username == 'henry' and pwd == '123':
             url = request.GET.get('return_url', '/book/')
             response = redirect('{}'.format(url))
-            response.set_cookie('login', 1)
+            # response.set_cookie('login', 1)
+            request.session['login'] = '1'
             return response
         return render(request, 'login.html', {'error': '用户名或密码错误'})
 
