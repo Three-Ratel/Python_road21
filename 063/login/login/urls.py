@@ -22,8 +22,9 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^login/', views.Login.as_view()),
     url(r'^index/', views.index),
+    url(r'^logout/', views.logout),
 
 
-    url(r'^(author|book|publisher)/', views.List_item.as_view(), name='list'),
+    # url(r'^(author|book|publisher)/', views.List_item.as_view(), name='list'),
 
 ]

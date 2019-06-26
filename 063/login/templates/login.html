@@ -7,8 +7,8 @@
 <body>
 <form action="" method="post">
     {% csrf_token %}
-    <p><input type="text" name="username"></p>
-    <p><input type="password" name="pwd">{{ error }}</p>
+    <p><input type="text" name="username" placeholder="henry" value="henry"></p>
+    <p><input type="password" name="pwd" placeholder="123" value="123">{{ error }}</p>
     <button>submit</button>
 </form>
 </body>

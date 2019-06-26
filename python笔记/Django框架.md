@@ -3199,20 +3199,36 @@ LOGGING = {
 
 ### 1.1 简介
 
-#### 1. 定义
+#### 1. 什么是Cookies
+
+- Cookie具体指的是**一段小信息**，它是服务器发送出来存储在浏览器上的**一组组键值对**，下次访问服务器时浏览器会自动携带这些键值对，以便服务器提取有用信息。
+
+#### 2. Cookies的由来
+
+- 大家都知道HTTP协议是无状态的。
+- 无状态的意思是每次请求都是独立的，它的执行情况和结果与前面的请求和之后的请求都无直接关系，它不会受前面的请求响应情况直接影响，也不会直接影响后面的请求响应情况。
+- 一句有意思的话来描述就是人生只如初见，对服务器来说，**每次的请求都是全新的**。
+- 状态可以理解为客户端和服务器在某次会话中产生的数据，那无状态的就以为这些数据不会被保留。会话中产生的数据又是我们需要保存的，也就是说要“**保持状态**”。因此Cookie就是在这样一个场景下诞生。
+
+#### 3. Cookies原理
+
+- **cookie的工作原理是**：由服务器产生内容，浏览器收到请求后保存在本地；
+- 当浏览器再次访问时，浏览器会自动带上Cookie，这样服务器就能通过Cookie的内容来判断这个是“谁”了。
+
+#### 4. 定义
 
 1. **保存在浏览器本地上一组组健值对**
 2. cookies是用来保存信息的
 3. cookies为了解决http无状态的问题
 4. cookies**在请求头中**
 
-#### 2. 特点
+#### 5. 特点
 
 1. 由服务器让浏览器进行设置
 2. 浏览器保存在浏览器本地
 3. 下次访问时，自动携带
 
-#### 3. 应用
+#### 6. 应用
 
 1. 登录
 2. 保存用户个性化配置
@@ -3242,24 +3258,9 @@ print(request.COOKIES.get('is_login'))
 
 #### 1. 设置cookie
 
-```python
-# 5s后失效
-HttpResponse对象.set_signed_cookie('is_login', salt='xxx', default='', max_age=5)
-```
-
-```python
-# 设置加密的cookie
-HttpResponse对象.set_signed_cookie('is_login', salt='xxx', default='')
-# 获取
-request.get_singed_cookie('is_login', salt='xxx')
-```
-
+- **response对象.set_cookie方法**
+- **request.COOKIES**的类型是**dict**
 - **默认浏览器关闭，cookies就会失效**
-
-```python
-# 5s后失效
-HttpResponse对象.set_signed_cookie('is_login', salt='xxx', default='', max_age=5)
-```
 
 ```python
 rep = HttpResponse的对象
@@ -3269,7 +3270,33 @@ def set_cookie(self, key, value='', max_age=None, expires=None, path='/',
   pass
 # 一般来说，key和value为必选参数
 rep.set_cookie(key,value,...)
+# 服务端获取cookies
+request.COOKIES.get('key')
+```
+
+- **response对象.set_signed_cookie方法**
+
+```python
+# set_signed_cookie方法
+def set_signed_cookie(self, key, value, salt='', **kwargs):
+    value = signing.get_cookie_signer(salt=key + salt).sign(value)
+    return self.set_cookie(key, value, **kwargs)
+# 给cookie进行加密
 rep.set_signed_cookie(key,value,salt='加密盐',...)
+```
+
+```python
+# 设置加密的cookie
+HttpResponse对象.set_signed_cookie('login_status', salt='xxx', default='')
+# 5s后失效
+HttpResponse对象.set_signed_cookie('login_status', salt='xxx', default='', max_age=5)
+# 获取
+request.get_singed_cookie('login_status', salt='xxx')
+```
+
+```python
+print(request.get_singed_cookie('login_status', salt='xxx'))
+# <bound method HttpRequest.get_signed_cookie of <WSGIRequest: GET '/index/'>>
 ```
 
 #### 2. cookie的参数：
@@ -3283,58 +3310,85 @@ rep.set_signed_cookie(key,value,salt='加密盐',...)
 7. secure=False(默认值)，改成True表示只能使用https协议传输
 8. httponly=False(默认值)， **True表示只能http协议传输，**无法被JavaScript获取（不是绝对，底层抓包可以获取到也可以被覆盖）
 
-#### 3. 删除cookies
+#### 3. 删除cookies(2)
 
 - 设置cookie，value=0， expires=0，即立即失效
 
 ```python
 def logout(request):
     rep = redirect("/login/")
+    # 方式一
     rep.delete_cookie("user")  # 删除用户浏览器上之前设置的user的cookie值
+    # 方式二
+    rep.set_cookie('login', '')
     return rep
 ```
 
+### 1.3 登录示例
+
 ```python
-def check_login(func):
-  @wraps(func)
-  def inner(request, *args, **kwargs):
-    next_url = request.get_full_path()
-    if request.get_signed_cookie("login", salt="SSS", default=None) == "yes":
-      # 已经登录的用户...
-      return func(request, *args, **kwargs)
-    else:
-      # 没有登录的用户，跳转刚到登录页面
-      return redirect("/login/?next={}".format(next_url))
+# views.py
+from django.views import View
+# 装饰器函数
+def login_status(func):
+    def inner(request, *args, **kwargs):
+        # # 没有加盐
+        status = request.COOKIES.get('login')
+        # print(request.COOKIES)
+        # 加盐
+        # status = request.get_signed_cookie('login', default='', salt='xxx')
+        # print(request.get_signed_cookie)
+        if status != '1':
+            return redirect('/login/?return_url={}'.format(request.path_info))
+        return func(request, *args, **kwargs)
     return inner
-
-
-  def login(request):
-    if request.method == "POST":
-      username = request.POST.get("username")
-      passwd = request.POST.get("password")
-      if username == "henry" and passwd == "123":
-        next_url = request.GET.get("next")
-        if next_url and next_url != "/logout/":
-          response = redirect(next_url)
-          else:
-            response = redirect("/class_list/")
-            response.set_signed_cookie("login", "yes", salt="SSS")
+# 登陆处理
+class Login(View):
+    def get(self, request):
+        return render(request, 'login.html')
+    def post(self, request):
+        username = request.POST.get('username')
+        pwd = request.POST.get('pwd')
+        if username == 'henry' and pwd == '123':
+            url = request.GET.get('return_url', 'index')
+            response = redirect('{}'.format(url))
+            # 不加盐
+            response.set_cookie('login', 1)
+            # # 给cookie加盐
+            # response.set_signed_cookie('login', 1, salt='xxx')
             return response
-          return render(request, "login.html")
+        return render(request, 'login.html', {'error': '用户名或密码错误'})
+      
+# 登出处理
+def logout(request):
+    ret = render(request, 'login.html')
+    ret.set_cookie('login', '')
+    return ret
 ```
-
-![cookies和session](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/cookies%E5%92%8Csession.png)
 
 ## 2. Session
 
+- Cookie虽然在一定程度上解决了“保持状态”的需求，但是由于**Cookie本身最大支持4096字节**，以及Cookie本身保存在客户端，可能被拦截或窃取，因此就需要有一种新的东西，它能支持更多的字节，并且他保存在服务器，有较高的安全性。这就是Session。
+- 问题来了，基于HTTP协议的无状态特征，服务器根本就不知道访问者是“谁”。那么上述的Cookie就起到桥接的作用。
+- 我们可以给每个客户端的Cookie分配一个唯一的id，这样用户在访问时，通过Cookie，服务器就知道来的人是“谁”。然后我们再根据不同的Cookie的id，在服务器上保存一段时间的私密资料，如“账号密码”等等。
+- 总而言之：**Cookie弥补了HTTP无状态的不足**，让服务器知道来的人是“谁”；但是**Cookie以文本的形式保存在本地，自身安全性较差**；所以我们就**通过Cookie识别**不同的用户，对应的在**Session里保存私密的信息**以及超过4096字节的文本。
+- 另外，上述所说的Cookie和Session其实是共通性的东西，不限于语言和框架。
+
 ### 2.1 定义
 
-1. Session保存在服务器上的一组组健值对(必须**依赖cookies使用**)
-2. 为什么要有session？
-   - cookie保存在浏览器本地
-   - cookie的字节长度会有限制(网络传输)
-   - **本质**：把浏览器需要保存的cookies迁移到服务端
-3. Django默认把session保存到数据表中
+#### 1. 定义
+
+- Session保存在服务器上的一组组健值对(必须**依赖cookies使用**)
+
+#### 2. 为什么要有session？
+
+1. cookie保存在浏览器本地
+2. cookie的字节长度会有限制(网络传输)
+3. **本质**：把浏览器需要保存的cookies迁移到服务端
+
+#### 3. session存储
+
+1. Django默认把session保存到数据表中
 
 ### 2.2 使用
 
@@ -3354,36 +3408,56 @@ request.session['key'] = 1
 value = request.session.get('key')
 ```
 
+- session流程
+
+![cookies和session](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/cookies%E5%92%8Csession.png)
+
 #### 2. 其他操作
 
-- expired-date默认是2周
-- 文件型数据库不可以改时间，使用mysql可以解决
+1. expired-date默认是2周
+2. 文件型数据库(sqlite3)不可以改时间，使用mysql可以解决
+3. 获取操作
+   - request.session[] / .get('key')
+4. 设置
+   - request.session['key']=value：添加session元素
+   - request.session.setdefault('key', 'value')：有则不变，无则添加
+   - request.session.set_expiry()：设置session到期时间
+5. 删除
+   - del request.session['key']：删除当前sessoin，不删除cookies
+   - request.session.delete()：删除当前sessoin，不删除cookies
+   - request.session.flush()：删除当前session 和cookies
+   - request.session.clear_expired()：从数据库删除过期session
 
 ```python
 # 获取、设置、删除Session中数据
 request.session['k1']
 request.session.get('k1',None)
+# 设置
 request.session['k1'] = 123
 request.session.setdefault('k1',123) # 存在则不设置
+# 删除
 del request.session['k1']
+
 # 所有 键、值、键值对
 request.session.keys()
 request.session.values()
 request.session.items()
+
 # 数据表中会话session_key，cookies的sessionid
-request.session.session_key
+1. request.session.session_key
 # 将所有Session失效日期小于当前日期的数据删除
-request.session.clear_expired()
+2. request.session.clear_expired()
 # 检查会话session的key在数据库中是否存在
-request.session.exists("session_key")
+3. request.session.exists("session_key") 
+
 # 删除当前会话的所有Session数据，不删除cookie
-request.session.delete()
+4. request.session.delete()
 # 删除当前的会话数据并删除会话的Cookie。
-request.session.flush() 
+5. request.session.flush() 
     # 这用于确保前面的会话数据不可以再次被用户的浏览器访问
     # 例如，django.contrib.auth.logout() 函数中就会调用它。
 # 设置会话Session和Cookie的超时时间
-request.session.set_expiry(value)
+6. request.session.set_expiry(value)
     # 如果value是个整数，session会在些秒数后失效。
     # 如果value是个datatime或timedelta，session就会在这个时间后失效。
     # 如果value是0,用户关闭浏览器session就会失效。
@@ -3426,7 +3500,41 @@ SESSION_SAVE_EVERY_REQUEST = False                       # 是否每次请求都
 ```python
 from django.conf import global.settings
 from … import db
+```
 
+### 2.4 session登陆示例
+
+```python
+# views.py
+from django.views import View
+# 装饰器函数
+def login_status(func):
+    def inner(request, *args, **kwargs):
+				status = request.session.get('login')
+        if status != 1:
+            return redirect('/login/?return_url={}'.format(request.path_info))
+        return func(request, *args, **kwargs)
+    return inner
+# 登陆处理
+class Login(View):
+    def get(self, request):
+        return render(request, 'login.html')
+    def post(self, request):
+        username = request.POST.get('username')
+        pwd = request.POST.get('pwd')
+        if username == 'henry' and pwd == '123':
+          	# 设置session
+          	request.session['login']=1
+            url = request.GET.get('return_url', 'index')
+            response = redirect('{}'.format(url))
+            return response
+        return render(request, 'login.html', {'error': '用户名或密码错误'})
+      
+# 登出处理
+def logout(request):
+    ret = render(request, 'login.html')
+    requst.session['login']=''
+    return ret
 ```
 
 
