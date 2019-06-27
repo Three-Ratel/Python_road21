@@ -3,6 +3,8 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
+from django.conf import global_settings
+from django.middleware.csrf import CsrfViewMiddleware
 
 from . import models
 
@@ -24,19 +26,20 @@ def login_status_fun(func):
     def inner(request, *args, **kwargs):
         # status = request.COOKIES.get('login')
         status = request.session.get('login')
-        if status != 1:
+        if status != '1':
             return redirect('/login/?return_url={}'.format(request.path_info))
         return func(request, *args, **kwargs)
 
     return inner
 
 
+@method_decorator(csrf_exempt, 'dispatch')
 class Login(View):
     # @method_decorator(ensure_csrf_cookie)
     def get(self, request):
         return render(request, 'login.html')
 
-    @method_decorator(csrf_protect)
+    # @method_decorator(csrf_protect)
     def post(self, request):
         username = request.POST.get('username')
         pwd = request.POST.get('pwd')

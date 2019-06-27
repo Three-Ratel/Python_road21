@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% csrf_token %}
+<input type="text" name="num1">+
+<input type="text" name="num2">=
+<input type="text" name="num3">
+<button type="button" id="b1">计算</button>
+<p>
+    <button type="button" id="b2">提交</button>
+</p>
+
+
+<script src="/static/js/jquery.js"></script>
+<script src="/static/js/setup.js"></script>
+<script>
+    $('#b1').click(function () {
+        $.ajax({
+
+            url: '/sum/',
+            type: 'post',
+            data: {
+                'csrfmiddlewaretoken': $('[name="csrfmiddlewaretoken"]').val(),
+                a: $('[name="num1"]').val(),
+                b: $('[name="num2"]').val(),
+            },
+            success: function (res) {
+                $('[name="num3"]').val(res);
+            }, error: function (error) {
+                console.log(error);
+            }
+
+        })
+    });
+
+    {#$('#b2').click(function () {#}
+    {##}
+    {#    $.ajax({#}
+    {#        url: '/test/',#}
+    {#        type: 'post',#}
+    {#        headers: {#}
+    {#            'x-csrftoken': $('[name="csrfmiddlewaretoken"]').val()#}
+    {#        },#}
+    {#        data: {#}
+    {#            name: 'henry',#}
+    {#            age: 19,#}
+    {#            hobby: JSON.stringify(["movies", "reading"]),#}
+    {#        },#}
+    {#        success: function (res) {#}
+    {#            console.log(res);#}
+    {#        }, error: function (error) {#}
+    {#            console.log(error);#}
+    {#        }#}
+    {##}
+    {#    })#}
+    $('#b2').click(function () {
+
+        $.ajax({
+            url: '/test/',
+            type: 'post',
+            data: {
+                name: 'henry',
+                age: 19,
+                hobby: JSON.stringify(["movies", "reading"]),
+            },
+            success: function (res) {
+                console.log(res);
+            }, error: function (error) {
+                console.log(error);
+            }
+
+        })
+    })
+
+
+</script>
+</body>
+</html>

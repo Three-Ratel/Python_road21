@@ -1,7 +1,3 @@
-1. csrf 装饰器
-2. csrf功能
-3. ajax
-
 ## 1. csrf装饰器
 
 ### 1.1 装饰器
@@ -42,7 +38,7 @@ class Login(View):
    1. 从cookie中获取到scrftoken值
    2. csrftoken的值放入request.META中
 2. 执行process_view，执行流程
-   1. 查询视图函数是否使用csr_exempt装饰器，使用了不使用csrf校验
+   1. 查询视图函数是否使用**csrf_exempt**装饰器，使用了,不使用csrf校验
    2. 判断请求方式：
       - 如果是（GET，HEAD、OPTIONS，TRACE）**不进行校验**
    3. 其他请求方式(POST,PUT)，进行csrf校验
@@ -92,36 +88,63 @@ class Login(View):
 
 ### 3.1 input数值加
 
-```javascript
-$.ajax(){
-  url:'/index/',
-  type: 'post',
-  data:{
-    a:$("[name='i1']").val(),
-    b:$("[name='i2']").val(), 
-  },
-    success:function(res){
-      $("[name='i3']").val(), 
-    }
-}
+```html
+<input type="text" name="num1">+
+<input type="text" name="num2">=
+<input type="text" name="num3">
+<button type="button" id="b1">计算</button>
+<script src="/static/js/jquery.js"></script>
+<script>
+    $('#b1').click(function () {
+        $.ajax({
+            url: '/sum/',
+            type: 'post',
+            data: {
+                a: $('[name="num1"]').val(),
+                b: $('[name="num2"]').val(),
+            },
+            success: function (res) {
+                $('[name="num3"]').val(res);
+            }, error: function (error) {
+                console.log(error);
+            }
+        })
+    })
+</script>
 ```
 
 ```python
-button type='button'
+# views.py
+def sum(request):
+    if request.method == 'POST':
+        a = request.POST.get('a')
+        b = request.POST.get('b')
+        c = int(a) + int(b)
+        print(request.POST)
+        return HttpResponse(c)
+    return render(request, 'sum.html')
+```
 
+### 3.2 
+
+```python
 hobby:JSON.stringify(['movies', 'reading'])
-```
-
-```python
 import json
-
 data = JSON.loads(request.POST.get('hobby'))
 print(data)
 ```
 
-### 3.2 上传文件
+### 3.3 上传文件
+
+#### 1. contentType:
+
+- 为Fasle时，Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+- 为True时，multipart/form-data; boundary=----WebKitFormBoundarydH6Ju8KqrsQJrAmz
+
+#### 2. 上传文件
 
 ```js
+// upload.html
 <input type='file' id='f1'>
 <button id='b1'>上传</button>
 $('#b1').click(function(){
@@ -146,47 +169,84 @@ $('#b1').click(function(){
 })
 ```
 
-### 3.3 ajax请求通过csrf校验
+```python
+# views.py
+def upload(request):
+    if request.method == 'POST':
+        data = request.FILES.get('file')
+        print(data, type(data),'*'*8, data.name, type(data.name))
+        with open(data.name, mode='wb') as f:
+            for i in data.chunks():
+                f.write(i)
+        return HttpResponse('ok')
 
-```javascript
-$.ajax({
-  url:'/xxx/',
-  type:'post',
-  data:form_data,
-  processData:false,
-  contentType:false,
-  success:function(res){
-    console.log(res)
-  }
-});
+    return render(request, 'upload.html')
 ```
+
+### 3.3 ajax请求通过csrf校验
 
 #### 1. 通过csrf条件
 
 1. 确保有csrftoken的cookie
    - 在页面中使用{% csrf_token %}
    - 加装饰器ensure_csrf_token
-2. 给data中添加csrfmiddlewaretoken
+2. **给data中添加csrfmiddlewaretoken**
 
 ```js
-data:{
-  'csrfmiddlewaretoken': $('[name="csrfmiddlewaretoken"]')[0].val()
-   a:$("[name='i1']").val(),
-   b:$("[name='i2']").val(), 
-}
+$('#b1').click(function () {
+        $.ajax({
+            url: '/sum/',
+            type: 'post',
+            data: {
+                'csrfmiddlewaretoken': $('[name="csrfmiddlewaretoken"]').val(),
+                a: $('[name="num1"]').val(),
+                b: $('[name="num2"]').val(),
+            },
+            success: function (res) {
+                $('[name="num3"]').val(res);
+            }, error: function (error) {
+                console.log(error);
+            }
+
+        })
+    });
 ```
 
-- 或者设置请求头
+- **或者设置请求头**
+-  headers: { 'x-csrftoken': $('[name="csrfmiddlewaretoken"]').val()},
 
 ```js
-hearders:{
-	'x-csrftoken': $('[name="csrfmiddlewaretoken"]').val()
-}
+// ajax中的参数；
+{% csrf_token %}
+$('#b2').click(function () {
+
+        $.ajax({
+            url: '/test/',
+            type: 'post',
+            headers: {
+                'x-csrftoken': $('[name="csrfmiddlewaretoken"]').val()
+            },
+            data: {
+                name: 'henry',
+                age: 19,
+                hobby: JSON.stringify(["movies", "reading"]),
+            },
+            success: function (res) {
+                console.log(res);
+            }, error: function (error) {
+                console.log(error);
+            }
+
+        })
+    })
 ```
 
 #### 3. 使用文件 
 
-- getCookie方法
+1. 新建js文件
+2. script引入即可
+
+- **getCookie方法**
 
 ```js
 function getCookie(name) {
@@ -207,7 +267,7 @@ function getCookie(name) {
 var csrftoken = getCookie('csrftoken');
 ```
 
-- 使用$.ajaxSetup()方法为ajax请求统一设置
+- 使用**$.ajaxSetup()**方法为ajax请求统一设置
 
 ```js
 function csrfSafeMethod(method) {
