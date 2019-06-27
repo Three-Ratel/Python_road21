@@ -2030,7 +2030,7 @@ $.ajax({
 	</head>
 	<body>
 		<div id="box">
-			<ul  type='none'></ul>
+			<ul type='none'></ul>
 		</div>
 		<div id="content">
 			<ul></ul>

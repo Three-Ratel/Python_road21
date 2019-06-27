@@ -2537,8 +2537,6 @@ The primary key field is read-only. If you change the value of the primary key o
 # 主键字段只能读取，不能修改，一旦修改，django会默认创建一个新的对象
 ```
 
-
-
 #### 6. db_index=True
 
 - 给当前字段添加索引
@@ -2966,6 +2964,8 @@ pub.book_set.all()
 
 #### 2. set(QuerySet对象)
 
+- 对象列表
+
 ```python
 publisher = models.Publisher.objects.get(pk=1)
 # 不能使用id ，只能使用对象
@@ -2974,11 +2974,15 @@ publisher.books.set(models.Book.bojects.fitler(pk__in[4,5]))
 
 #### 3. add(*QuerySet)
 
+- 一个个对象
+
 ```python
 publisher.books.add(*models.Book.bojects.fitler(pk__in[4,5]))
 ```
 
 #### 4. remove(*QuerySet)
+
+- 一个个对象
 
 ```python
 # remove/clear, 外键必须设置成 null=True参数
@@ -3008,7 +3012,7 @@ models.Publisher.objects.get(pk=1).books.create(title='xxx', price=10)
 3. 用到的内置的聚合函数
 
 ```python
-from django.db.models import Avg, Sum, Max, Min, Count
+from django.db.models import Avg, Sum, Max, Min, Count, F, Q
 ```
 
 ### 2.1 聚合
@@ -3130,7 +3134,7 @@ obj.sale = 100
 obj.save()
 ```
 
-- **update效率较高**
+- 批量更新某一字段，**update效率较高**
 
 ```python
 # 批量更新，queryset对象支持update， 只更新sale字段
@@ -3287,15 +3291,13 @@ rep.set_signed_cookie(key,value,salt='加密盐',...)
 
 ```python
 # 设置加密的cookie
-HttpResponse对象.set_signed_cookie('login_status', salt='xxx', default='')
+HttpResponse对象.set_signed_cookie('login_status', salt='xxx')
 # 5s后失效
-HttpResponse对象.set_signed_cookie('login_status', salt='xxx', default='', max_age=5)
-# 获取
-request.get_singed_cookie('login_status', salt='xxx')
+HttpResponse对象.set_signed_cookie('login_status', salt='xxx', max_age=5)
 ```
 
 ```python
-print(request.get_singed_cookie('login_status', salt='xxx'))
+print(request.get_singed_cookie('login_status', salt='xxx', default=''))
 # <bound method HttpRequest.get_signed_cookie of <WSGIRequest: GET '/index/'>>
 ```
 
@@ -3383,13 +3385,13 @@ def logout(request):
 #### 2. 为什么要有session？
 
 1. cookie保存在浏览器本地
-2. cookie的字节长度会有限制(网络传输)
+2. cookie的字节长度会有限制(不同浏览器会对cookies有限制)
 3. **本质**：把浏览器需要保存的cookies迁移到服务端
 
 #### 3. session存储
 
 1. Django默认把session保存到数据表中
-2. session还可以存储到：cache、cache-db、file
+2. session还可以存储到：cache、cache-db、file、signed_cookies
 
 ### 2.2 使用
 
@@ -3409,7 +3411,12 @@ request.session['key'] = 1
 value = request.session.get('key')
 ```
 
-- session流程
+- **session流程**
+
+1. 浏览器发送请求到服务器
+2. 根据浏览器，生成一个随机字符串，保存到session表的session key, 用户状态保存到session data中
+3. 服务器把session key 返回给浏览器（cookies，sessionid）
+4. 浏览器下次请求时，需要携带
 
 ![cookies和session](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/cookies%E5%92%8Csession.png)
 
@@ -3423,9 +3430,10 @@ value = request.session.get('key')
    - request.session['key']=value：添加session元素
    - request.session.setdefault('key', 'value')：有则不变，无则添加
    - request.session.set_expiry()：设置session到期时间
-5. 删除(4)
+5. 删除(5)
    - del request.session['key']：删除当前sessoin，不删除cookies
-   - request.session.delete()：删除当前sessoin，不删除cookies
+   - request.session.pop('key')
+   - request.session.delete()：删除当前sessoin的数据，不删除cookies，即**sessionid**
    - request.session.flush()：删除当前session 和cookies
    - request.session.clear_expired()：从数据库删除过期session
 
@@ -3464,9 +3472,12 @@ request.session.items()
     # 如果value是个datatime或timedelta，session就会在这个时间后失效。
     # 如果value是0,用户关闭浏览器session就会失效。
     # 如果value是None,session会依赖全局session失效策略。
+    # value如果是 -1 表示关闭浏览器失效
 ```
 
 ### 2.3 Django中session的配置
+
+- 
 
 ```python
 1. 数据库Session
@@ -3494,7 +3505,7 @@ SESSION_COOKIE_SECURE = False                            # 是否Https传输cook
 SESSION_COOKIE_HTTPONLY = True                           # 是否Session的cookie只支持http传输（默认）
 SESSION_COOKIE_AGE = 1209600                             # Session的cookie失效日期（2周）（默认）
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False                  # 是否关闭浏览器使得Session过期（默认）
-SESSION_SAVE_EVERY_REQUEST = False                       # 是否每次请求都保存Session，默认修改之后才保存（默认）
+SESSION_SAVE_EVERY_REQUEST = False                       # 是否每次请求都保存Session，默认修改之后才保存（默认）,如果为True则每次请求进行刷新 expired_date
 ```
 
 - 查看django中的session默认的settings

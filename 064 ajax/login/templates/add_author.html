@@ -1,0 +1,18 @@
+{% extends 'layout_sub.html' %}
+{% block title %}
+    增加作者
+{% endblock %}
+{% block content %}
+    <p><input type="text" name="author_name" class="form-control" id="author"
+              placeholder="请输入作者姓名" value="{{ book.title }}"></p>
+    <select name="books" id="" multiple>
+        {% for i in all_book %}
+            <option value="{{ i.pk }}">{{ i.title }}</option>
+        {% endfor %}
+    </select>
+    <p>{{ error }}</p>
+    <button type="submit" class="btn btn-primary">提交</button>
+    <a href="{% url 'list' 'author' %}">
+        <button type="submit" class="btn btn-primary">取消</button>
+    </a>
+{% endblock %}}

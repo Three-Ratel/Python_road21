@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
 
 from . import models
 
@@ -11,6 +12,7 @@ def login_status(func):
         status = request.session.get('login')
         print(status, type(status))
         # if not request.COOKIES.get('login', None):
+
         if status != '1':
             return redirect('/login/?return_url=/{}/'.format(table))
         return func(request, table, *args, **kwargs)
@@ -22,7 +24,6 @@ def login_status_fun(func):
     def inner(request, *args, **kwargs):
         # status = request.COOKIES.get('login')
         status = request.session.get('login')
-        print(status, type(status))
         if status != 1:
             return redirect('/login/?return_url={}'.format(request.path_info))
         return func(request, *args, **kwargs)
@@ -31,10 +32,11 @@ def login_status_fun(func):
 
 
 class Login(View):
-
+    # @method_decorator(ensure_csrf_cookie)
     def get(self, request):
         return render(request, 'login.html')
 
+    @method_decorator(csrf_protect)
     def post(self, request):
         username = request.POST.get('username')
         pwd = request.POST.get('pwd')
@@ -195,3 +197,4 @@ def edit_publisher(request, pk):
             obj.save()
             return redirect(reverse('list', args=('publisher',)))
     return render(request, 'edit_publisher.html', {'name': obj.name, 'error': error})
+
