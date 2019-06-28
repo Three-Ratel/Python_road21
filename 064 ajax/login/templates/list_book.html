@@ -27,9 +27,7 @@
                         <a href="{% url 'edit_book' book.pk %}" style="color: white">
                             <button type="button" class="btn btn-primary">编辑</button>
                         </a>
-                        <a href="{% url 'del' table book.pk %}" style="color: white">
-                            <button type="button" class="btn btn-danger">删除</button>
-                        </a>
+                        <button type="button" class="btn btn-danger del" value="{% url 'del' table book.pk %}">删除</button>
                     </td>
                 </tr>
             {% endfor %}

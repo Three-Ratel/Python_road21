@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+</head>
+<body>
+
+{#<form action='/register/' method='post'>#}
+{#    {% csrf_token %}#}
+{#    <p>#}
+{#        <input type='text' name='username' placeholder="用户名" autofocus>{{ msg }}#}
+{#    </p>#}
+{#    <p>#}
+{#        <input type='password' name='pwd' placeholder="密码">#}
+{#    </p>#}
+{#    <p>#}
+{#        <button>提交</button>#}
+{#    </p>#}
+{#</form>#}
+
+
+{#form 组件生成input#}
+{#<form action="/register/" method="post" novalidate>#}
+{#    {% csrf_token %}#}
+{#    {{ obj.as_p }}  {# 使用默认方式生成input和label标签 #}
+{##}
+  	{# 指定label的值 #}
+{#    <p>#}
+{#        <label for="{{ obj.username.id_for_label }}">用户名:</label>#}
+{#        {{ obj.username }} {{ obj.username.errors.0 }}#}
+{#    </p>#}
+{#    <p>#}
+{#        <label for="{{ obj.pwd.id_for_label }}">密码:</label>#}
+{#        {{ obj.pwd }} {{ obj.pwd.errors.0 }}#}
+{#    </p>#}
+{#  	{{ obj.errors }}#}
+{#    <button>提交</button>#}
+{#    </p>#}
+{#</form>#}
+
+
+{# radioSelect字段 #}
+<form action="" method="post" novalidate>
+    {% csrf_token %}
+    {{ obj.as_p }}
+    <button>提交</button>
+{{ obj.errors }}
+</form>
+
+
+</body>
+</html>

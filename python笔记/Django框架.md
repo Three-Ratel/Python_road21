@@ -2678,7 +2678,7 @@ from app01 import models
 # first/last, 没有则则 None, 取第一/最后一个元素，没有则为None
 11.obj = models.Person.objects.all/filter().first()
 12.obj = models.Person.objects.values().first()
-# exists，判断查询的数据是否存在，必须是单个对象，QuerySet不支持
+# exists，判断查询的数据是否存在，必须是QuerySet
 13.obj = models.Person.objects.get(pk=1).exists()
 ```
 
@@ -3558,12 +3558,15 @@ def logout(request):
 
 # 11. ajax
 
+- ajax触发事件，成功返回时，可以使用**success:(res) = > {$(this)}**固定this指向当前对象
+
 ## 1. csrf装饰器
 
 ### 1.1 装饰器
 
 - **csrf_exempt,**只能加到dispatch方法上(类中或者重写dispatch方法)
-- **ensure_csrf_cookie**，一般加在get请求上，确保生成cookies
+- **ensure_csrf_cookie**，一般加在get请求上，确保生成csrf需要的cookies
+- **csrf_protect**，局部使用csrf校验，需要配合ensure_csrf_cookie一起使用
 
 ```python
 from django.views.decorators.scrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
@@ -3598,7 +3601,7 @@ class Login(View):
    1. 从cookie中获取到scrftoken值
    2. csrftoken的值放入request.META中
 2. 执行process_view，执行流程
-   1. 查询视图函数是否使用**csrf_exempt**装饰器，使用了,不使用csrf校验
+   1. 查询视图函数是否使用**csrf_exempt**装饰器，若使用则不用csrf校验
    2. 判断请求方式：
       - 如果是（GET，HEAD、OPTIONS，TRACE）**不进行校验**
    3. 其他请求方式(POST,PUT)，进行csrf校验
@@ -3627,7 +3630,8 @@ class Login(View):
 
 ### 2.3 ajax
 
-发送请求的方式：地址栏输入url、form表单、a标签、**ajax**
+- 发送请求的方式：地址栏输入url、form表单、a标签、**ajax**
+- ajax触发事件，成功返回时，可以使用**success:(res) = > {$(this)}**固定this指向当前对象
 
 #### 1. 定义
 
@@ -3685,7 +3689,7 @@ def sum(request):
     return render(request, 'sum.html')
 ```
 
-### 3.2 
+- 使用json格式发送数据，可以通过JsonResponse方式发送。浏览器会自动序列化和反序列化
 
 ```python
 hobby:JSON.stringify(['movies', 'reading'])
@@ -3698,8 +3702,10 @@ print(data)
 
 #### 1. contentType:
 
-- 为Fasle时，Content-Type: application/x-www-form-urlencoded; charset=UTF-8
-- 为True时，multipart/form-data; boundary=----WebKitFormBoundarydH6Ju8KqrsQJrAmz
+- 为True时，Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+  - 处理请求头，为urlencode
+- 为False时，multipart/form-data; boundary=----WebKitFormBoundarydH6Ju8KqrsQJrAmz
+  - 不处理请求头
 
 #### 2. 上传文件
 
@@ -3849,6 +3855,468 @@ $.ajaxSetup({
 1. 如果使用从cookie中取csrftoken的方式，需要确保cookie存在csrftoken值。
 2. 如果你的视图渲染的HTML文件中没有包含 {% csrf_token %}，Django可能不会设置CSRFtoken的cookie。
 3. 这个时候需要使用ensure_csrf_cookie()装饰器强制设置Cookie。
+
+
+
+# 12.form组件
+
+## 1. form简单应用
+
+### 1.1 普通手写功能
+
+```python
+# views.py
+def register(request):
+    msg = ''
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        print(username, len(username))
+        if len(username) < 6:
+            msg = '用户名长度至少6位'
+        else:
+            # 把用户名和密码写入数据库
+            return HttpResponse('注册成功')
+    return render(request, 'register.html', {'msg': msg})
+```
+
+```django
+{# register.html #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+</head>
+<body>
+<form action='/register/' method='post'>
+    {% csrf_token %}
+    <p>
+        <input type='text' name='username' placeholder="用户名" autofocus>{{ msg }}
+    </p>
+    <p>
+        <input type='password' name='pwd' placeholder="密码">
+    </p>
+    <p>
+        <button>提交</button>
+    </p>
+</form>
+</body>
+</html>
+```
+
+### 1.2 使用form组件实现
+
+```python
+# views.py
+from django import forms
+
+class RegForm(forms.Form):
+    username = forms.CharField()
+    pwd = forms.CharField()
+
+def register(request):
+    obj = RegForm()
+    if request.method == 'POST':
+        obj = RegForm(request.POST)
+        if obj.is_valid():
+            return HttpResponse('注册成功')
+    return render(request, 'register.html', {'obj': obj})
+```
+
+```django
+{# register.html #}
+{# form表单中的novalidate属性表示浏览器不进行校验 #}
+<form action="/register/" method="post" novalidate>
+    {% csrf_token %}
+    {{ obj.as_p }}  {# 使用默认方式生成input和label标签 #}
+		
+  	{# 指定label的值 #}
+    <p>
+        <label for="{{ obj.username.id_for_label }}">用户名:</label>
+        {{ obj.username }} {{ obj.username.errors.0 }}
+    </p>
+    <p>
+        <label for="{{ obj.pwd.id_for_label }}">密码:</label>
+        {{ obj.pwd }} {{ obj.pwd.errors.0 }}
+    </p>
+  	{{ obj.errors }}
+    <button>提交</button>
+    </p>
+</form>
+```
+
+form 表单的功能
+
+- 前端页面是form类的对象生成的                                      -->生成HTML标签功能
+- 当用户名和密码输入为空或输错之后 页面都会提示        -->用户提交校验功能
+- 当用户输错之后 再次输入 上次的内容还保留在input框   -->保留上次输入内容
+
+```django
+{# django模版 #}
+{{ form_obj.as_p }}						{# 产生一个个p标签和label、input标签 #}
+{{ obj.username }}            {# 用户名字段内容 #}            
+{{ obj.字段名.id_for_label }}  {# 生成label中的，字段内容(字段id) #}
+{{ obj.errors }}							{# 错误的所有内容 #}
+{{ obj.errors.0 }}						{# 错误的所有内容中的第一个值，dict #}
+{{ obj.username.errors }}			{# 该字段的错误信息 #}
+{{ obj.username.errors.0 }}		{# 该字段的错误信息的第一个值 #}
+```
+
+```python
+# 字段参数
+required=True,                # 是否允许为空
+widget=None,                  # HTML插件
+label=None,                   # 用于生成Label标签或显示内容
+initial=None,                 #初始值
+error_messages=None，         # 错误信息 {'required': '不能为空', 'invalid': '格式错误'}
+validators=[],                # 自定义验证规则
+disabled=False,               # 是否可以编辑
+
+min_length=6,								  # 最小长度
+max_length=8,									# 最大长度，前端页面输入到8位之后，不能继续输入
+```
+
+
+
+## 2. form组件字段与插件
+
+- 创建Form类时，主要涉及到 【字段】 和 【插件】，**字段用于对用户请求数据的验证**，**插件用于自动生成**HTML;
+- **常用字段**
+  - CharField
+  - ChoiceField
+  - MultipleChoiceField
+
+### 2.1 initial
+
+- 初始值，input框中的默认值
+
+```python
+from django import forms
+class RegForm(forms.Form):
+   username = forms.CharField(
+     min_length=6,
+     # 给username字段设置默认值
+     label = '用户名',
+     initial = 'henry',
+   )
+    pwd = forms.CharField(min_length=6, label='密码')
+```
+
+### 2.2 error_messages
+
+- 重写错误信息
+
+```python
+from django import forms
+class RegForm(forms.Form):
+   username = forms.CharField(
+     min_length=6,
+     # 给username字段设置默认值
+     label = '用户名',
+     initial = 'henry',
+     error_messages = {
+       'required': '不能为空',
+       'invalid': '格式有误',
+       'min_length': '用户名最短6位'
+     }
+   )
+    pwd = forms.CharField(min_length=6, label='密码')
+```
+
+### 2.3 password
+
+```python
+from django import forms
+class RegForm(forms.Form):
+    pwd = forms.CharField(
+      min_length=6, 
+      label='密码',
+      # 表示输入密码时，为密文显示
+      widget = forms.widgets.PasswordInput,
+    )
+```
+
+### 2.4 radioSelect
+
+- 单radio值为字符串，单选点击框
+- **生成ul标签**
+
+```python
+from django import forms
+class RegForm(forms.Form):
+   username = forms.CharField(
+     min_length=6,
+     # 给username字段设置默认值
+     label = '用户名',
+     initial = 'henry',
+     error_messages = {
+       'required': '不能为空',
+       'invalid': '格式有误',
+       'min_length': '用户名最短6位'
+     }
+   )
+  pwd = forms.CharField(min_length=6, label='密码',)
+	gender = forms.fields.ChoiceField(
+  	choices=((0, 'female'), (1, 'male'), (3, 'secret')),
+    label = '性别',
+    initial = 3,
+    widget = forms.widgets.RadioSelect()
+  )
+```
+
+### 2.5 单选select
+
+- 单选下拉框
+
+```python
+from django import forms
+class RegForm(forms.Form):
+  ...
+  hobby = forms.ChoiceField(
+  	choices = ((1, 'travelling'), (2, 'reading'), (3, 'listening'),),
+    label = '爱好',
+    initial = 3,
+    widget=forms.widgets.Select(),
+  )
+```
+
+### 2.6 多选select
+
+```python
+from django import forms
+class RegForm(forms.Form):
+  ...
+  hobby = forms.MultipleChoiceField(
+          choices=(('1', 'travelling'), ('2', 'reading'), ('3', 'listening'),),
+          label='爱好',
+          initial=['3'],
+          widget=forms.widgets.SelectMultiple(),
+      )
+```
+
+### 2.7 单选checkbox
+
+```python
+from django import forms
+class RegForm(forms.Form):
+  ...
+  keep = forms.ChoiceField(
+  	label = '是否记住密码',
+    initial = 'checked',
+    widget=forms.widgets.CheckboxInput(),
+      )
+```
+
+### 2.8 多选checkbox
+
+```python
+from django import forms
+class RegForm(forms.Form):
+  ...
+   hobby = forms.fields.MultipleChoiceField(
+       choices=((1, 'travelling'), (2, 'reading'), (3, 'listening'),),
+        label="爱好",
+        initial=[1, 3],
+        widget=forms.widgets.CheckboxSelectMultiple()
+    )
+```
+
+**关于choice的注意事项**
+
+1. 在使用选择标签时，需要注意choices的选项可以从数据库中获取，但是由于是静态字段 **获取的值无法实时更新**，那么需要自定义构造方法从而达到此目的。
+
+### 2.9  自定义数据
+
+- 使用MutipleChoiceField
+
+```python
+from django import forms
+hobby = forms.MutipleChoiceField(
+  # 从数据库中读取
+	choices=models.Hobby.objects.all().values_list('pk', 'name')
+)
+```
+
+```python
+# views.py
+def register(request):
+    obj = RegForm()
+    if request.method == 'POST':
+        obj = RegForm(data=request.POST)
+        if obj.is_valid():
+            return HttpResponse('注册成功')
+    return render(request, 'register.html', {'obj': obj})
+```
+
+- 使用ModelChoiceField
+
+```python
+from django import forms
+hobby = forms.ModelChoiceField(
+  # 从数据库中读取
+	queryset=models.Hobby.objects.all()
+)
+```
+
+- 刷新页面更新数据
+
+```python
+class RegForm(forms.Form):
+  def __init__(self, *args, **kwargs):
+    super(RegForm, self).__init__( *args, **kwargs)
+    self.fields['hobby'].choices = models.Hobby.objects.values_list()
+	hobby = forms.ModelChoiceField(
+     # 从数据库中读取
+     queryset=models.Hobby.objects.all()
+   )
+```
+
+## 3. 校验
+
+#### 3.1 内置校验
+
+```python
+from django.forms improt Form
+from django.core.validators import RegexValidator
+
+class MyForm(From):
+  phone = forms.CharField(
+    # 正则校验器中，第二个参数是提示信息
+    validators=[RegexValidator(r'1[3-9]\d{9}$', '手机号不合法')]
+    )
+```
+
+#### 3.2 自定义校验
+
+```python
+from django.core.exceptions import ValidationError
+def checkname(value):
+  if 'o' in value:
+    rasie ValidationError('用户名不合法')
+    
+class RegForm(forms.Form):
+   username = forms.CharField(
+     min_length=6,
+     # 给username字段设置默认值
+     label = '用户名',
+     initial = 'henry',
+     validators = [checkname,...]
+    )
+    pwd = forms.CharField(
+    	widget = forms.widgets.PasswordInput(),
+    )
+```
+
+#### 3.3 钩子
+
+- 局部钩子
+  - 通过校验规则 **必须返回当前字段的值**
+  - 不通过校验规则   抛出异常
+
+```python
+class RegForm(forms.Form):  
+  username = forms.CharField(label='用户名')
+  def clean_username(self):
+    v = self.cleaned_data.get('username')
+    if 'o' in v:
+      raise ValidationError('用户名不合法。。。。。')
+    return v
+```
+
+- 全局钩子
+  - 通过校验规则  **必须返回当前所有字段的值**
+  - 不通过校验规则   抛出异常   '_\_all__'
+
+```python
+class RegForm(forms.Form):  
+    pwd = forms.CharField(
+          label='密码',
+          widget=forms.widgets.PasswordInput,)
+    re_pwd = forms.CharField(
+          label='密码',
+          widget=forms.widgets.PasswordInput,)
+    def clean(self):
+        if not self.cleaned_data.get('pwd') == self.cleaned_data.get('re_pwd'):
+            self.add_error('re_pwd','两次密码不一致')
+            raise ValidationError('两次密码不一致')
+      	return self.cleaned_data
+```
+
+#### 3.4 批量添加样式
+
+```python
+class LoginForm(forms.Form):
+    username = forms.CharField(
+        min_length=5,
+        label="用户名",
+        initial="henry",
+        error_messages={
+            "required": "不能为空",
+            "invalid": "格式错误",
+            "min_length": "用户名最短5位"
+        }
+    ...
+
+    def __init__(self, *args, **kwargs):
+        super(LoginForm, self).__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+
+```
+
+#### 3.5 ModelForm
+
+```python
+class BookForm(forms.ModelForm):
+
+    class Meta:
+        model = models.Book
+        fields = "__all__"
+        labels = {
+            "title": "书名",
+            "price": "价格"
+        }
+        widgets = {
+            "password": forms.widgets.PasswordInput(attrs={"class": "c1"}),
+        }
+```
+
+```python
+model = models.Student  # 对应的Model中的类
+fields = "__all__"      # 字段，如果是__all__,就是表示列出所有的字段
+exclude = None          # 排除的字段
+labels = None           # 提示信息
+help_texts = None       # 帮助提示信息
+widgets = None          # 自定义插件
+error_messages = None   # 自定义错误信息
+```
+
+#### 3.6 is_valid执行流程
+
+1. 执行full_clean方法
+   1. 定义错误字典
+   2. 存放清洗过数据的字典
+2. 执行clean_field方法，
+   1. 循环所有字段，获取当前字段值，
+   2. 对值校验(内置和自定义校验)
+      - 通过校验self.clean_data[name] = value
+        1. 如果有局部钩子，就要执行校验
+        2. 通过则，self.clean_data[name] = value
+        3. 不通过，self._errors添加当前字段错误，并且删除：del self.clean_data[name]
+      - 没有通过self._errors添加当前字段错误
+   3. 执行全局钩子clean方法
+
+
+
+
+
+
+
+
+
+
 
 
 

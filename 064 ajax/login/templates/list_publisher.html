@@ -24,23 +24,14 @@
                         <a href="{% url 'edit_publisher' publisher.pk %}" style="color: white">
                             <button type="button" class="btn btn-primary">编辑</button>
                         </a>
-                        <a href="{% url 'del' table publisher.pk %}" style="color: white">
-                            <button type="button" class="btn btn-danger">删除</button>
-                        </a>
+                        <button type="button" class="btn btn-danger del" value="{% url 'del' table publisher.pk %}">删除</button>
                     </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
+
+
 {% endblock %}
 
-
-<script type="text/javascript">
-    $('#mysiderbar li').click(function () {
-        // 处理点击的选项卡
-        $(this).addClass('active').siblings('li').removeClass('active');
-        // 获取当前对象的索引
-        $('p').eq($(this).index()).addClass('active').siblings('p').removeClass('active');
-    });
-</script>

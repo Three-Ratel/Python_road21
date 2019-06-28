@@ -52,5 +52,4 @@ class Test(models.Model):
     # name = MyCharField(max_length=20)
     gender_list = (('0', 'female'), (1, 'male'),)
     gender = models.CharField(max_length=1, choices=gender_list)
-    models.ManyToManyField
 

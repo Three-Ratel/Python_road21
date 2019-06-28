@@ -16,7 +16,8 @@
     <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
             <ul class="nav nav-sidebar">
-                <li class="active"><a href="{% url 'list' 'book' %}">书籍信息 <span class="sr-only">(current)</span></a></li>
+                <li class="active"><a href="{% url 'list' 'book' %}">书籍信息 <span class="sr-only">(current)</span></a>
+                </li>
                 <li><a href="{% url 'list' 'author' %}">作者信息</a></li>
                 <li><a href="{% url 'list' 'publisher' %}">出版社信息</a></li>
 
@@ -30,6 +31,23 @@
         </div>
     </div>
 </div>
+
+
+<script src="/static/js/jquery.js"></script>
+<script>
+
+    $('.del').click(function () {
+        var a = $(this).parent().parent();
+        $.ajax({
+            url: $(this).val(),
+            success: function (res) {
+                console.log(res);
+                a.remove();
+            },
+        });
+    });
+
+</script>
 
 
 </body>

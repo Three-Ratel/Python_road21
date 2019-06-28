@@ -225,3 +225,6 @@ from django.db.models import Max
 
 
 # select name,price from (select name,book_id  from (select name, id nid from (select author_id from (select id bid from app01_book where title='跟金老板学开车') t1 inner join app01_book_author t2 on t1.bid=t2.book_id) t3 inner join app01_author on t3.author_id=app01_author.id) t4  inner join app01_book_author t5 on t4.nid=t5.author_id) t6 inner join app01_book on t6.book_id=app01_book.id;
+
+f = models.Author.objects.filter(pk=1).exists()
+print(f)

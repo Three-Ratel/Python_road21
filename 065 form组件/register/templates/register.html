@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>register</title>
+    <script src="/static/js/jquery.js"></script>
+</head>
+<body>
+<form action="" method="post" novalidate>
+    {% csrf_token %}
+    <p id="username">
+        {{ obj.username.label }}
+        {{ obj.username }} {{ obj.username.errors.0 }}
+    </p>
+    <p>
+        {{ obj.pwd.label }}
+        {{ obj.pwd }} {{ obj.pwd.errors.0 }}
+    </p>
+    <p>
+        {{ obj.re_pwd.label }}
+        {{ obj.re_pwd }} {{ obj.re_pwd.errors.0 }}
+    </p>
+    <p>
+        {{ obj.phone.label }}
+        {{ obj.phone }} {{ obj.phone.errors.0 }}
+    </p>
+    <p>
+        <button>submit</button>
+    </p>
+
+    <script>
+        $('#username>input').blur(function () {
+            $.ajax({
+                url: '/test/',
+                type: 'get',
+                data: $(this).val(),
+                success:(res)=> {
+                    
+                }
+            })
+        })
+
+    </script>
+
+
+
+</form>
+</body>
+</html>

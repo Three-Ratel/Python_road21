@@ -1,5 +1,3 @@
-from django.db import models
-
 # Create your models here.
 from django.db import models
 
@@ -18,3 +16,9 @@ class Book(models.Model):
 class Author(models.Model):
     name = models.CharField(max_length=32)
     books = models.ManyToManyField('Book')
+
+
+class Info(models.Model):
+    username = models.CharField(max_length=20)
+    pwd = models.CharField(max_length=20)
+    status = models.CharField(max_length=32)

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>register</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+</head>
+<body>
+<form action="/register/" method="post">
+    <p>
+        <input type="text" name="username" placeholder="Username..." id="username" autofocus="">
+        <span id="error"></span>
+    </p>
+    <input type="password" name="pwd" placeholder="Password...">
+    <button type="button" class="btn btn-primary" disabled="disabled">Submit</button>
+</form>
+<script src="/static/js/jquery.js"></script>
+<script>
+    $('#username').blur(function () {
+        var username = $(this).val();
+        console.log(username);
+        $.ajax({
+            url: '/pre_register/',
+            type: 'post',
+            data: {
+                'username': JSON.stringify($(this).val()),
+
+            },
+            success: function (res) {
+                if (res === '1') {
+                    $('#error').text("username've already exists!");
+                }
+                $('.btn').setAttribute(disabled = '');
+
+            },
+        });
+
+    });
+</script>
+
+
+</body>
+</html>
+
+
+
+
+

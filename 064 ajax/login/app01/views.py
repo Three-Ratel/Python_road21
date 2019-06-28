@@ -1,10 +1,9 @@
 from django.shortcuts import render, redirect, HttpResponse
+from django.http import JsonResponse
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.decorators.csrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
-from django.conf import global_settings
-from django.middleware.csrf import CsrfViewMiddleware
+from django.views.decorators.csrf import csrf_exempt
 
 from . import models
 
@@ -12,9 +11,6 @@ from . import models
 def login_status(func):
     def inner(request, table, *args, **kwargs):
         status = request.session.get('login')
-        print(status, type(status))
-        # if not request.COOKIES.get('login', None):
-
         if status != '1':
             return redirect('/login/?return_url=/{}/'.format(table))
         return func(request, table, *args, **kwargs)
@@ -24,13 +20,35 @@ def login_status(func):
 
 def login_status_fun(func):
     def inner(request, *args, **kwargs):
-        # status = request.COOKIES.get('login')
         status = request.session.get('login')
         if status != '1':
             return redirect('/login/?return_url={}'.format(request.path_info))
         return func(request, *args, **kwargs)
 
     return inner
+
+
+import json
+
+@csrf_exempt
+def pre_register(request):
+    username = request.POST.get('username')
+    error = '0'
+    if username and models.Info.objects.filter(username=json.loads(username)):
+        error = '1'
+    return JsonResponse({'status': error})
+
+
+@csrf_exempt
+def register(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        pwd = request.POST.get('pwd')
+        if not pwd:
+            pwd = ' '
+        models.Info.objects.create(username=username, pwd=pwd)
+        return redirect('/login/')
+    return render(request, 'register.html')
 
 
 @method_decorator(csrf_exempt, 'dispatch')
@@ -46,7 +64,6 @@ class Login(View):
         if username == 'henry' and pwd == '123':
             url = request.GET.get('return_url', '/book/')
             response = redirect('{}'.format(url))
-            # response.set_cookie('login', 1)
             request.session['login'] = '1'
             return response
         return render(request, 'login.html', {'error': '用户名或密码错误'})
@@ -70,11 +87,11 @@ class List_item(View):
 
 
 # 删除元素
-@login_status_fun
+@login_status
 def del_item(request, table, pk):
     obj = getattr(models, table.capitalize())
     obj.objects.filter(pk=pk).delete()
-    return redirect(reverse('list', args=(table,)))
+    return HttpResponse('ok')
 
 
 # 编辑作者
@@ -200,4 +217,3 @@ def edit_publisher(request, pk):
             obj.save()
             return redirect(reverse('list', args=('publisher',)))
     return render(request, 'edit_publisher.html', {'name': obj.name, 'error': error})
-

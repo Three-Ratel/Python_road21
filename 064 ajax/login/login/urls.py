@@ -23,6 +23,9 @@ urlpatterns = [
     url(r'^login/', views.Login.as_view(), name='login'),
     url(r'^logout/', views.logout, name='logout'),
 
+    url(r'^register/', views.register, name='register'),
+    url(r'^pre_register/', views.pre_register),
+
     url(r'^add_publisher/', views.add_publisher, name='add_publisher'),
     url(r'^edit_publisher/(\d+)', views.edit_publisher, name='edit_publisher'),
 
@@ -33,5 +36,6 @@ urlpatterns = [
     url(r'^add_author/', views.add_author, name='add_author'),
     url(r'^(author|book|publisher)/', views.List_item.as_view(), name='list'),
     url(r'^del_(author|book|publisher)/(\d+)', views.del_item, name='del'),
+
 
 ]
