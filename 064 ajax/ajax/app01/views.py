@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 
 
 # Create your views here.
@@ -27,9 +27,16 @@ def sum(request):
 
 
 import json
+
+
 def test(request):
     ret = request.POST.get('hobby')
     ret = json.loads(ret)
     print(request.POST)
     print(ret)
-    return HttpResponse('ok')
+    # return HttpResponse('ok')
+    return redirect('/test_ajax_href/')
+
+
+def test_ajax_href(request):
+    return render(request, 'test_ajax_href.html')

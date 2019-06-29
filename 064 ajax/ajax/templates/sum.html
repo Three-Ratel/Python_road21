@@ -67,10 +67,12 @@
                 age: 19,
                 hobby: JSON.stringify(["movies", "reading"]),
             },
-            success: function (res) {
-                console.log(res);
+            success:(res)=> {
+                location.href = res;
+                {#console.log(res);#}
             }, error: function (error) {
                 console.log(error);
+
             }
 
         })

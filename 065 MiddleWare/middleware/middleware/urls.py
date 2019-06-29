@@ -1,4 +1,4 @@
-"""ajax URL Configuration
+"""middleware URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.11/topics/http/urls/
@@ -18,8 +18,5 @@ from django.contrib import admin
 from app01 import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^upload/', views.upload),
-    url(r'^sum/', views.sum),
-    url(r'^test/', views.test),
-    url(r'^test_ajax_href/', views.test_ajax_href),
+    url(r'^index/', views.index),
 ]

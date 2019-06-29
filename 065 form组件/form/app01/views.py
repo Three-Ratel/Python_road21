@@ -123,6 +123,7 @@ class RegForm(forms.Form):
             raise ValidationError('用户名不合法。。。。。')
 
     def clean(self):
+        print(self.fields, '--------------------')
         if not self.cleaned_data.get('pwd') == self.cleaned_data.get('re_pwd'):
             self.add_error('re_pwd','两次密码不一致')
             raise ValidationError('两次密码不一致')

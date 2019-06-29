@@ -3297,7 +3297,7 @@ HttpResponse对象.set_signed_cookie('login_status', salt='xxx', max_age=5)
 ```
 
 ```python
-print(request.get_singed_cookie('login_status', salt='xxx', default=''))
+print(request.get_signed_cookie('login_status', salt='xxx', default=''))
 # <bound method HttpRequest.get_signed_cookie of <WSGIRequest: GET '/index/'>>
 ```
 
@@ -3476,8 +3476,6 @@ request.session.items()
 ```
 
 ### 2.3 Django中session的配置
-
-- 
 
 ```python
 1. 数据库Session
@@ -3858,7 +3856,7 @@ $.ajaxSetup({
 
 
 
-# 12.form组件
+# 12.form组件和中间件
 
 ## 1. form简单应用
 
@@ -4125,17 +4123,9 @@ class RegForm(forms.Form):
 
 1. 在使用选择标签时，需要注意choices的选项可以从数据库中获取，但是由于是静态字段 **获取的值无法实时更新**，那么需要自定义构造方法从而达到此目的。
 
-### 2.9  自定义数据
+### 2.9  动态数据
 
-- 使用MutipleChoiceField
-
-```python
-from django import forms
-hobby = forms.MutipleChoiceField(
-  # 从数据库中读取
-	choices=models.Hobby.objects.all().values_list('pk', 'name')
-)
-```
+- views函数
 
 ```python
 # views.py
@@ -4148,27 +4138,26 @@ def register(request):
     return render(request, 'register.html', {'obj': obj})
 ```
 
-- 使用ModelChoiceField
+- **方式一**：使用MutipleChoiceField
+
+```python
+from django import forms
+class RegForm(forms.Form):
+  	def __init__(self, *args, **kwargs):
+    		super(RegForm, self).__init__( *args, **kwargs)
+    		self.fields['hobby'].choices = models.Hobby.objects.values_list()
+  	hobby = forms.MutipleChoiceField(
+    		# 从数据库中读取
+    		choices=models.Hobby.objects.all().values_list('pk', 'name'))
+```
+
+- **方式二**：使用ModelChoiceField
 
 ```python
 from django import forms
 hobby = forms.ModelChoiceField(
-  # 从数据库中读取
-	queryset=models.Hobby.objects.all()
-)
-```
-
-- 刷新页面更新数据
-
-```python
-class RegForm(forms.Form):
-  def __init__(self, *args, **kwargs):
-    super(RegForm, self).__init__( *args, **kwargs)
-    self.fields['hobby'].choices = models.Hobby.objects.values_list()
-	hobby = forms.ModelChoiceField(
-     # 从数据库中读取
-     queryset=models.Hobby.objects.all()
-   )
+  # 从数据库中直接读取
+  queryset=models.Hobby.objects.all())
 ```
 
 ## 3. 校验
@@ -4295,6 +4284,10 @@ error_messages = None   # 自定义错误信息
 
 #### 3.6 is_valid执行流程
 
+- **self.fields**：**OrderedDict**([('hobby', <django.forms.models.ModelChoiceField object at 0x107c0b080>), …])
+- self.clean_data: {key:value, key: value...}
+- diisabled：默认是False
+
 1. 执行full_clean方法
    1. 定义错误字典
    2. 存放清洗过数据的字典
@@ -4307,6 +4300,261 @@ error_messages = None   # 自定义错误信息
         3. 不通过，self._errors添加当前字段错误，并且删除：del self.clean_data[name]
       - 没有通过self._errors添加当前字段错误
    3. 执行全局钩子clean方法
+   
+
+
+
+
+
+## 4. 中间件
+
+- 是一个用来处理django请求和响应的框架级别的钩子，它是一个轻量、低级别的插件系统，用于在全局范围内改变Django的输入和输出。
+- 每个中间件组件都负责做一些特定的功能。
+- **本质上是一个类。**
+- request对象是wsgi封装进行传递给django
+
+**五个方法**
+
+- 五个方法，四个特征(执行**时间**和**顺序**，**参数**，**返回值**)
+- 中间件的方法可以选择性使用，中间件的类需要继承**MiddlewareMixin**
+- 中间件可以放于任意位置，需要进行在settings中进行注册，**具体到中间件类名**
+
+```python
+# 注册中间件, settings.py
+MIDDLEWARE=[
+  'app01.mymiddleware.middleware.Md1',
+  'app01.mymiddleware.middleware.Md2',
+]
+```
+
+- MIDDLEWARE配置项是一个列表，列表中是一个个字符串，这些字符串其实是一个个类，也就是一个个中间件。
+
+```python
+# app01.mymiddleware中的middleware.py
+# 导入类
+from django.shortscut import HttpResponse
+from django.utils.deprecation import MiddlewareMixin
+```
+
+### 4.1 process_request()
+
+- **参数：self, request**
+
+#### 1. 示例
+
+```python
+# md1中间件
+class Md1(MiddlewareMixin):
+    def process_request(self, request):
+        print('This is Md1 process_request')
+        # print(id(request))
+        # return HttpResponse("here's process_request method of Md1")
+
+# md2中间件
+class Md2(MiddlewareMixin):
+    def process_request(self, request):
+        print('This is Md2 process_request, Md2')
+        # print(id(request))
+        # return HttpResponse("here's process_request method of Md2")
+```
+
+#### 2. 特征
+
+1. 执行时间：视图函数之前
+2. 参数：request 和视图函数是同一个request对象
+3. 执行顺序：按照注册的**顺序执行**
+4. 返回值：
+   - 为None的情况是正常流程
+   - **返回HttpResponse**，执行当前process_request方法，倒序执行其他中间件的process_response方法，响应给浏览器
+
+### 4.2 process_view()
+
+- 参数：self, request，view_func, view_args, view_kwargs**
+
+#### 1. 示例
+
+```python
+# md1中间件
+class Md1(MiddlewareMixin):
+  	def process_view(self, *args, **kwargs):
+        print('This is Md1 process_view')
+
+# md2中间件
+class Md2(MiddlewareMixin):
+    def process_view(self, *args, **kwargs):
+        print('This is Md2 process_view, Md2')
+```
+
+#### 2. 特征
+
+1. 执行时间：**视图函数之前**， **process_request之后**
+2. 参数：
+   - **request**和视图函数是同一个request对象
+   - **view_func**视图函数(路由匹配得到的视图函数)
+   - **view_args**：视图的位置参数(**路由匹配时的分组**)
+   - **view_kwargs**：视图的关键字参数
+3. 执行顺序：按照注册的**顺序执行**
+4. 返回值：
+   - 为**None**的情况是正常流程
+   - HttpResponse，执行当前process_view方法，倒序执行最后中间件process_view方法，响应给浏览器
+
+### 4.3 process_response()
+
+- **参数：self, request, response**
+- 必须有返回值，**response**
+
+#### 1. 示例
+
+```python
+# Md1中间件
+class Md1(MiddlewareMixin):
+
+    def process_request(self, request):
+        print('This is Md1 process_request')
+        # print(id(request))
+        # return HttpResponse("here's process_request method of Md1")
+
+    def process_view(self, *args, **kwargs):
+        print('This is Md1 process_view')
+        
+    def process_response(self, request, response):
+        print('This is Md1 process_response')
+        return response
+
+# Md2中间件
+class Md2(MiddlewareMixin):
+
+    def process_request(self, request):
+        print('This is Md2 process_request, Md2')
+        # print(id(request))
+        # return HttpResponse("here's process_request method of Md2")
+
+    def process_view(self, *args, **kwargs):
+        print('This is Md2 process_view, Md2')
+
+    def process_response(self, request, response):
+        print('This is Md2 process_response, Md2')
+        return response
+```
+
+#### 2. 特征
+
+1. 执行时间：视图函数之后
+2. 参数：
+   - **request**和视图函数是同一个request对象
+   - **response**返回给浏览器的的响应对象
+3. 执行顺序：按照注册的**倒序执行**
+4. 返回值：
+   - response处理完成后必须返回response对象
+
+### 4.4 prcess_exeception()
+
+- **参数：self, request, exception**
+
+#### 1. 示例
+
+```python
+from django.http import HttpResponse
+from django.utils.deprecation import MiddlewareMixin
+
+class Md1(MiddlewareMixin):
+
+    def process_request(self, request):
+        print('This is Md1 process_request')
+        # print(id(request))
+        # return HttpResponse("here's process_request method of Md1")
+
+    def process_view(self, *args, **kwargs):
+        print('This is Md1 process_view')
+
+    def process_response(self, request, response):
+        print('This is Md1 process_response')
+        return response
+
+    def process_exception(self, request, exception):
+        print('This is Md1 process_response')
+        print(exception)
+        return HttpResponse('错误')
+
+
+class Md2(MiddlewareMixin):
+
+    def process_request(self, request):
+        print('This is Md2 process_request, Md2')
+        # print(id(request))
+        # return HttpResponse("here's process_request method of Md2")
+
+    def process_view(self, *args, **kwargs):
+        print('This is Md2 process_view, Md2')
+
+    def process_response(self, request, response):
+        print('This is Md2 process_response, Md2')
+        return response
+
+    def process_exception(self, request, exception):
+        print('This is Md2 process_response, Md2')
+        print(exception)
+        return HttpResponse('错误,Md2')
+```
+
+#### 2. 特征
+
+1. 触发条件：**视图层面有错误**，视图函数之后
+2. 参数：
+   - **request**和视图函数是同一个request对象
+   - **exception**：捕获的异常对象
+3. 执行顺序：按照注册的**倒序执行**
+4. 返回值：
+   - 为**None**时，交给下一个中间件继续处理，如果都有，则交由django处理
+   - 如果有返回值，**则继续倒序执行process_response方法**
+
+### 4.5 process_template_response()
+
+- **参数 ：self, request, response**
+
+#### 1. 示例
+
+```python
+from django.http import HttpResponse
+from django.utils.deprecation import MiddlewareMixin
+
+
+class Md1(MiddlewareMixin):
+    def process_template_response(self, request, response):
+        print("here's process_template_response of Md1")
+        # 渲染的字典数据
+        response.context_data['name'] = 'henry'
+        return response
+
+class Md2(MiddlewareMixin):
+    def process_template_response(self, request, response):
+        print("here's process_template_response of Md2")
+        # 需要渲染的模版名
+        response.template_name='test.html'
+        return response
+```
+
+#### 2. 特征
+
+1. 触发条件：**视图返回一个templateResponse对象**，视图函数之后
+2. 参数：
+   - **request**和视图函数是同一个request对象
+   - **response**：templateResponse对象
+3. 执行顺序：按照注册的**倒序执行**
+4. **返回值**：
+   - 必须返回HttpResponse对象，即**return reponse**
+
+![中间件执行流程](/Users/henry/Documents/截图/Py截图/中间件执行流程.png)
+
+![dragon处理请求流程](/Users/henry/Documents/截图/Py截图/dragon处理请求流程.png)
+
+
+
+
+
+
+
+
 
 
 
@@ -4478,3 +4726,5 @@ You should always use `include()` when you include other URL patterns. `admin.si
       1. Load settings from `global_settings.py`.
       2. Load settings from the specified settings file, overriding the global settings as necessary.
    3. **Note** that a settings file should *not* import from `global_settings`, because that’s redundan
+   
+   
