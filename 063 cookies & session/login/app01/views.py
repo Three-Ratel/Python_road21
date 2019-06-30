@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect, HttpResponse
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.decorators.csrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
 
 from . import models
 
@@ -10,8 +9,9 @@ from . import models
 def login_status(func):
     def inner(request, table, *args, **kwargs):
         status = request.session.get('login')
-        print(status, type(status))
-        # if not request.COOKIES.get('login', None):
+        # print(status, type(status))
+        # status = request.COOKIES.get('login', None)
+        # status = request.get_signed_cookie('login', salt='', default='')
 
         if status != '1':
             return redirect('/login/?return_url=/{}/'.format(table))
@@ -23,8 +23,9 @@ def login_status(func):
 def login_status_fun(func):
     def inner(request, *args, **kwargs):
         # status = request.COOKIES.get('login')
+        # status = request.get_signed_cookie('login', salt='', default='')
         status = request.session.get('login')
-        if status != 1:
+        if status != '1':
             return redirect('/login/?return_url={}'.format(request.path_info))
         return func(request, *args, **kwargs)
 
@@ -36,7 +37,7 @@ class Login(View):
     def get(self, request):
         return render(request, 'login.html')
 
-    @method_decorator(csrf_protect)
+    # @method_decorator(csrf_protect)
     def post(self, request):
         username = request.POST.get('username')
         pwd = request.POST.get('pwd')
@@ -44,6 +45,7 @@ class Login(View):
             url = request.GET.get('return_url', '/book/')
             response = redirect('{}'.format(url))
             # response.set_cookie('login', 1)
+            # response.set_signed_cookie('login', '1', salt='')
             request.session['login'] = '1'
             return response
         return render(request, 'login.html', {'error': '用户名或密码错误'})
@@ -197,4 +199,3 @@ def edit_publisher(request, pk):
             obj.save()
             return redirect(reverse('list', args=('publisher',)))
     return render(request, 'edit_publisher.html', {'name': obj.name, 'error': error})
-
