@@ -146,7 +146,7 @@ sk.close()
 1. 所有HTTP响应的**第一行都是状态行**，依次是**当前HTTP版本号**，**3位数字组成的状态代码**，以及描述**状态的短语**，彼此由**空格分隔**。
 2. 状态代码的第一个数字代表当前响应的类型
    1. **1xx消息**——请求已被服务器接收，继续处理
-   2. **2xx成功**——请求已成功被服务器接收、理解、并接受
+   2. **2xx成功**——请求已成功被服务器接收、理解、并接收
    3. **3xx重定向**——需要后续操作才能完成这一请求，当前服务器无法处理，响应另一个服务地址
    4. **4xx请求错误**——请求含有词法错误或者无法被执行，没有该资源，**402表示认证错误、403表示权限不够**
    5. **5xx服务器错误**——服务器在处理某个正确请求时发生错误，500服务端，代码问题。
@@ -168,13 +168,13 @@ sk.close()
    
    
    
-2. **浏览器发送请求和接受响应的过程？**
+2. **浏览器发送请求和接收响应的过程？**
 
    - HTTP/1.1默认是短暂的长链接，保持一个阈值时间
 
    1. 在浏览器中地址栏输入url，发送get请求
-   2. 服务器接收到请求，获取url的路径，根据路径做不同操作，把返回的数据封装到响应体中，返回给浏览器
-   3. 浏览器接收响应，双发断开链接
+   2. 服务器接收到请求，获取url的路径，根据路径做不同操作，把返回的**数据封装到响应体**中，返回给浏览器
+   3. 浏览器接收响应，双方断开链接
    4. 浏览器从响应体中获取数据，进行解析渲染
 
 #### 7. http请求和响应格式
@@ -192,7 +192,8 @@ sk.close()
 1. socket收发消息(wsgiref(测试)、**uwsgi(线上)**)
 2. 根据不同的路径返回不同内容
 3. 返回动态页面
-4. **Django**:支持2和3；**Flask**:支持2（轻量级，其他功能需要其他模块）；**Tornado**:支持1、2和3(**异步非阻塞**)（同flask）
+
+- Django**:支持2和3；**Flask**:支持2（轻量级，其他功能需要其他模块）；**Tornado**:支持1、2和3(**异步非阻塞**)（同flask）
 
 
 
@@ -244,7 +245,7 @@ if __name__ == '__main__':
 
 ### 2.3 模版渲染模块jinja2
 
-- 模板的原理就是字符串替换，我们只要在HTML页面中遵循jinja2的语法规则写上，其内部就会按照指定的语法进行相应的替换，从而达到动态的返回内容。
+- **模板的原理就是字符串替换**，我们只要在HTML页面中遵循jinja2的语法规则写上，其内部就会按照指定的语法进行相应的替换，从而达到动态的返回内容。
 
 ```python
 #!/usr/bin/env python
@@ -1601,7 +1602,7 @@ name = csrfmiddlewaretoken
 
 ```django
 {% load static %} {# 或 #} {% load staticfiles %} 
-<link rel="stylesheet" href="{% static "css/dashboard.css" %}">
+<link rel="stylesheet" href='{% static "css/dashboard.css" %}'>
 ```
 
 - 通过获取静态文件名
@@ -1642,7 +1643,7 @@ def join_str(*args, **kwargs):
 {% xxx '1' '2' k1='v1' k2='v2' %}
 ```
 
-- 和filter的区别
+- **和filter的区别**
   1. simpletag是标签，参数不受限制，使用{%%}
   2. filter是过滤器，参数最多有两个。使用{{ }}
   3. 装饰器不同
@@ -1970,7 +1971,7 @@ with open(f1.name, 'wb') as f:
 | 2    | **request.get_host()**       | ip和端口                            |
 | 3    | request.is_ajax()            | 是否使用ajax                        |
 | 4    | request.is_secure()          | http是否时加密的，https             |
-| 5    | request.get_signed_cookies() |                                     |
+| 5    | request.get_signed_cookies() | 获取加密的cookie                    |
 | 6    | request.get_raw_url()        | 获取全部url                         |
 
 ## 4. response对像
@@ -2953,6 +2954,7 @@ obj = book.authors.create(name='diane')
 
 - **在外键中只能使用对象**
 - pub和book关系
+- **fitlter、get**
 
 #### 1. all()
 
@@ -3414,7 +3416,7 @@ value = request.session.get('key')
 - **session流程**
 
 1. 浏览器发送请求到服务器
-2. 根据浏览器，生成一个随机字符串，保存到session表的session key, 用户状态保存到session data中
+2. 根据浏览器，生成一个随机字符串，保存到django.session表的session key, 用户状态保存到session data中
 3. 服务器把session key 返回给浏览器（cookies，sessionid）
 4. 浏览器下次请求时，需要携带
 
@@ -3632,9 +3634,9 @@ class Login(View):
 
 #### 1. 定义
 
-- ajax：使用js的技术发送和接受请求响应
+- ajax：使用js的技术发送请求和接收响应
 - 特点：**异步(不用等待响应)**、局部刷新、传输的数据量小
-- 基于js的
+- 基于jquery实现
 
 #### 2. 简介
 
@@ -3667,8 +3669,7 @@ class Login(View):
             success: function (res) {
                 $('[name="num3"]').val(res);
             }, error: function (error) {
-                console.log(error);
-            }
+                console.log(error);}
         })
     })
 </script>
@@ -3713,7 +3714,7 @@ print(data)
 $('#b1').click(function(){
   var form_data = new FormData();
   // 只有dom对象有file属性
-  form.append('file', document.getElementById('f1').files[0]);
+  form_data.append('file', document.getElementById('f1').files[0]);
   // 先把jquery对象转为，js对象
   //  form.append('file', $('#f1')[0].files[0]
   
@@ -3752,7 +3753,7 @@ def upload(request):
 
 1. 确保有csrftoken的cookie
    - 在页面中使用{% csrf_token %}
-   - 加装饰器ensure_csrf_token
+   - 加装饰器
 2. **给data中添加csrfmiddlewaretoken**
 
 ```js
@@ -3951,7 +3952,7 @@ form 表单的功能
 ```django
 {# django模版 #}
 {{ form_obj.as_p }}						{# 产生一个个p标签和label、input标签 #}
-{{ obj.username }}            {# 用户名字段内容 #}            
+{{ obj.username }}            {# 用户名字段内容 #}
 {{ obj.字段名.id_for_label }}  {# 生成label中的，字段内容(字段id) #}
 {{ obj.errors }}							{# 错误的所有内容 #}
 {{ obj.errors.0 }}						{# 错误的所有内容中的第一个值，dict #}
@@ -3960,11 +3961,13 @@ form 表单的功能
 ```
 
 ```python
+# views.py
+
 # 字段参数
 required=True,                # 是否允许为空
 widget=None,                  # HTML插件
 label=None,                   # 用于生成Label标签或显示内容
-initial=None,                 #初始值
+initial=None,                 # 初始值
 error_messages=None，         # 错误信息 {'required': '不能为空', 'invalid': '格式错误'}
 validators=[],                # 自定义验证规则
 disabled=False,               # 是否可以编辑
@@ -3982,6 +3985,7 @@ max_length=8,									# 最大长度，前端页面输入到8位之后，不能�
   - CharField
   - ChoiceField
   - MultipleChoiceField
+  - ModelChoiceField
 
 ### 2.1 initial
 
@@ -4300,10 +4304,6 @@ error_messages = None   # 自定义错误信息
       - 没有通过self._errors添加当前字段错误
    3. 执行全局钩子clean方法
    
-
-
-
-
 
 ## 4. 中间件
 

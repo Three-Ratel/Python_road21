@@ -34,17 +34,38 @@
 
 
 <script src="/static/js/jquery.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 <script>
 
     $('.del').click(function () {
-        var a = $(this).parent().parent();
-        $.ajax({
-            url: $(this).val(),
-            success: function (res) {
-                console.log(res);
-                a.remove();
-            },
-        });
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this imaginary file!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    {#var a = $(this).parent().parent();#}
+                    $.ajax({
+                        url: $(this).val(),
+                        success: (res)=> {
+                            console.log(res);
+                            {#a.remove();#}
+                            $(this).parent().parent().remove();
+                        },
+
+                    });
+                    swal("Poof! Your imaginary file has been deleted!", {
+                        icon: "success",
+                    });
+                } else {
+                    swal("Your imaginary file is safe!");
+                }
+            });
+
     });
 
 </script>

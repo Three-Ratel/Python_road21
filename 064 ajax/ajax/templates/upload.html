@@ -5,17 +5,20 @@
     <title>Title</title>
 </head>
 <body>
-
+{% csrf_token %}
 <input type="file" id="data">
 <button type="button" id="upload">上传</button>
 
 <script src="/static/js/jquery.js"></script>
+<script src="/static/js/setup.js"></script>
 <script>
     $('#upload').click(function () {
         var formObj = new FormData();
         formObj.append('file', $('#data')[0].files[0]);
+        {#formObj.append('csrfmiddlewaretoken', $('[name="csrfmiddlewaretoken"]').val());#}
         $.ajax({
-            url: '/test/',
+            {#headers: {'x-csrftoken':$('[name="csrfmiddlewaretoken"]').val() },#}
+            url: '/upload/',
             type: 'post',
             processData: false,
             contentType: false,

@@ -21,10 +21,10 @@
 
 
 {#form 组件生成input#}
-{#<form action="/register/" method="post" novalidate>#}
-{#    {% csrf_token %}#}
-{#    {{ obj.as_p }}  {# 使用默认方式生成input和label标签 #}
-{##}
+<form action="/register/" method="post" novalidate>
+    {% csrf_token %}
+    {{ obj.as_p }}  {# 使用默认方式生成input和label标签#}
+
   	{# 指定label的值 #}
 {#    <p>#}
 {#        <label for="{{ obj.username.id_for_label }}">用户名:</label>#}
@@ -41,12 +41,12 @@
 
 
 {# radioSelect字段 #}
-<form action="" method="post" novalidate>
-    {% csrf_token %}
-    {{ obj.as_p }}
-    <button>提交</button>
-{{ obj.errors }}
-</form>
+{#<form action="" method="post" novalidate>#}
+{#    {% csrf_token %}#}
+{#    {{ obj.as_p }}#}
+{#    <button>提交</button>#}
+{#{{ obj.errors }}#}
+{#</form>#}
 
 
 </body>

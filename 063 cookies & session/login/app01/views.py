@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponse
+from django.http.response import JsonResponse
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -31,11 +32,13 @@ def login_status_fun(func):
 
     return inner
 
-
+import json
 class Login(View):
     # @method_decorator(ensure_csrf_cookie)
     def get(self, request):
-        return render(request, 'login.html')
+        # return render(request, 'login.html')
+        info = {'name':'henry'}
+        return JsonResponse(info)
 
     # @method_decorator(csrf_protect)
     def post(self, request):

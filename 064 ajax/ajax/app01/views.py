@@ -34,8 +34,7 @@ def test(request):
     ret = json.loads(ret)
     print(request.POST)
     print(ret)
-    # return HttpResponse('ok')
-    return redirect('/test_ajax_href/')
+    return HttpResponse('/test_ajax_href/')
 
 
 def test_ajax_href(request):

@@ -34,4 +34,6 @@ urlpatterns = [
     url(r'^(author|book|publisher)/', views.List_item.as_view(), name='list'),
     url(r'^del_(author|book|publisher)/(\d+)', views.del_item, name='del'),
 
+
+
 ]
