@@ -4,8 +4,6 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import HttpResponse, render
 
 
-from app01 import models
-
 def check(value):
     if not value:
         raise ValidationError('用户名不合法')
@@ -55,30 +53,39 @@ class RegForm(forms.Form):
     #     label='密码',
     #     initial='123456',
     #     widget=forms.PasswordInput,
+    #
     # )
+
     # gender = forms.ChoiceField(
     #     choices=((0, 'female'), (1, 'male'), (3, 'secret')),
     #     label='性别',
     #     initial=3,
-    #     widget=forms.widgets.RadioSelect()
+    #     # widget=forms.widgets.RadioSelect,
+    #     # widget=forms.widgets.Select
+    #     # widget=forms.widgets.CheckboxInput
+    #     # widget=forms.widgets.SelectMultiple,
+    #     widget=forms.widgets.CheckboxSelectMultiple,
+    #
     # )
+
     # hobby = forms.ChoiceField(
     #     choices=((1, 'travelling'), (2, 'reading'), (3, 'listening'),),
     #     label='爱好',
     #     initial=3,
     #     widget=forms.widgets.Select(),
     # )
-    # hobby = forms.MultipleChoiceField(
-    #     choices=(('1', 'travelling'), ('2', 'reading'), ('3', 'listening'),),
-    #     label='爱好',
-    #     initial=['3'],
-    #     widget=forms.widgets.SelectMultiple(),
-    # )
+    hobby = forms.MultipleChoiceField(
+        choices=(('1', 'travelling'), ('2', 'reading'), ('3', 'listening'),),
+        label='爱好',
+        initial=['3'],
+        widget=forms.widgets.SelectMultiple,
+        # widget=forms.widgets.CheckboxSelectMultiple,
+    )
     #
     # keep = forms.fields.ChoiceField(
     #     label='是否记住密码',
     #     initial='checked',
-    #     widget=forms.widgets.CheckboxInput(),
+    #     widget=forms.widgets.CheckboxInput,
     # )
 
     #     多选checkbox
@@ -90,9 +97,9 @@ class RegForm(forms.Form):
     #     widget=forms.widgets.CheckboxSelectMultiple
     # )
     # 动态多选
-    hobby = forms.ModelChoiceField(
-        queryset=models.Hobby.objects.all()
-    )
+    # hobby = forms.ModelChoiceField(
+    #     queryset=models.Hobby.objects.all()
+    # )
 
     # 动态多选二
     # hobby = forms.MultipleChoiceField(
@@ -105,18 +112,18 @@ class RegForm(forms.Form):
 
     # 校验手机号
     # phone = forms.CharField(
-    #     validators=[RegexValidator(r'1[3-9]\d{9}$', '手机号不合法')]
+    #      =[RegexValidator(r'1[3-9]\d{9}$', '手机号不合法')]
     # )
-    username = forms.CharField(label='用户名')
-
-    pwd = forms.CharField(
-        label='密码',
-        widget=forms.widgets.PasswordInput,
-    )
-    re_pwd = forms.CharField(
-        label='密码',
-        widget=forms.widgets.PasswordInput,
-    )
+    # username = forms.CharField(label='用户名')
+    #
+    # pwd = forms.CharField(
+    #     label='密码',
+    #     widget=forms.widgets.PasswordInput,
+    # )
+    # re_pwd = forms.CharField(
+    #     label='密码',
+    #     widget=forms.widgets.PasswordInput,
+    # )
 
     def clean_username(self):
         if 'o' in self.cleaned_data.get('username'):
@@ -125,7 +132,7 @@ class RegForm(forms.Form):
     def clean(self):
         print(self.fields, '--------------------')
         if not self.cleaned_data.get('pwd') == self.cleaned_data.get('re_pwd'):
-            self.add_error('re_pwd','两次密码不一致')
+            self.add_error('re_pwd', '两次密码不一致')
             raise ValidationError('两次密码不一致')
 
 

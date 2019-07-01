@@ -23,30 +23,30 @@
 {#form 组件生成input#}
 <form action="/register/" method="post" novalidate>
     {% csrf_token %}
-    {{ obj.as_p }}  {# 使用默认方式生成input和label标签#}
+    {{ obj.as_p }} {# 使用默认方式生成input和label标签#}
 
-  	{# 指定label的值 #}
-{#    <p>#}
-{#        <label for="{{ obj.username.id_for_label }}">用户名:</label>#}
-{#        {{ obj.username }} {{ obj.username.errors.0 }}#}
-{#    </p>#}
-{#    <p>#}
-{#        <label for="{{ obj.pwd.id_for_label }}">密码:</label>#}
-{#        {{ obj.pwd }} {{ obj.pwd.errors.0 }}#}
-{#    </p>#}
-{#  	{{ obj.errors }}#}
-{#    <button>提交</button>#}
-{#    </p>#}
-{#</form>#}
+    {# 指定label的值 #}
+    {#    <p>#}
+    {#        <label for="{{ obj.username.id_for_label }}">用户名:</label>#}
+    {#        {{ obj.username }} {{ obj.username.errors.0 }}#}
+    {#    </p>#}
+    {#    <p>#}
+    {#        <label for="{{ obj.pwd.id_for_label }}">密码:</label>#}
+    {#        {{ obj.pwd }} {{ obj.pwd.errors.0 }}#}
+    {#    </p>#}
+    {#  	{{ obj.errors }}#}
+    {#    <button>提交</button>#}
+    {#    </p>#}
+    {#</form>#}
 
 
-{# radioSelect字段 #}
-{#<form action="" method="post" novalidate>#}
-{#    {% csrf_token %}#}
-{#    {{ obj.as_p }}#}
-{#    <button>提交</button>#}
-{#{{ obj.errors }}#}
-{#</form>#}
+    {# radioSelect字段 #}
+    {#<form action="" method="post" novalidate>#}
+    {#    {% csrf_token %}#}
+    {#    {{ obj.as_p }}#}
+    {#    <button>提交</button>#}
+    {#{{ obj.errors }}#}
+</form>
 
 
 </body>

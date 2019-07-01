@@ -1,27 +1,29 @@
-# from django import forms
+from django import forms
 from django.shortcuts import render, redirect
 
 from app01 import models
 
 
-# class StuFrom(forms.Form):
-#     s_name = forms.CharField(
-#         label='学生姓名',
-#         required=True,
-#         error_messages={
-#             'required': '不能为空',
-#         }
-#     )
-#
-#     score = forms.IntegerField(
-#         min_value=0,
-#         max_value=100,
-#         initial=0,
-#         required=True,
-#         error_messages={
-#             'required': '不能为空',
-#         }
-#     )
+class StuFrom(forms.Form):
+    s_name = forms.CharField(
+        label='学生姓名',
+        required=True,
+        error_messages={
+            'required': '不能为空',
+        }
+    )
+
+    score = forms.IntegerField(
+        min_value=0,
+        max_value=100,
+        initial=0,
+        required=True,
+        error_messages={
+            'required': '不能为空',
+            'max_value': '成绩必须在0-100之间',
+            'min_value': '成绩必须在0-100之间',
+        }
+    )
 
 
 def list_student(request):
@@ -80,3 +82,6 @@ def del_student(request):
     obj = models.Student.objects.filter(id=pk)
     if obj: obj.delete()
     return redirect('/list_student/')
+
+
+from django.db import connection

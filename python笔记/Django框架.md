@@ -4316,10 +4316,10 @@ error_messages = None   # 自定义错误信息
 - self.clean_data: {key:value, key: value...}
 - diisabled：默认是False
 
-1. 执行full_clean方法
+1. 执行**full_clean**方法
    1. 定义错误字典
    2. 存放清洗过数据的字典
-2. 执行clean_field方法，
+2. 执行self.clean_fields方法
    1. 循环所有字段，获取当前字段值，
    2. 对值校验(内置和自定义校验)
       - 通过校验self.clean_data[name] = value
