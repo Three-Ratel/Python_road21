@@ -89,7 +89,7 @@ sk.close()
 
 #### 1. http简介
 
-1. 超文本传输协议（英文：Hyper Text Transfer Protocol，HTTP）是一种用于**分布式**、**协作式**和超媒体信息系统的**应用层协议**。**HTTP是万维网的数据通信的基础**。HTTP有很多应用，但最著名的是用于web浏览器和web服务器之间的双工通信。
+1. **超文本传输协议（英文：Hyper Text Transfer Protocol，HTTP）是一种用于分布式、协作式和超媒体信息系统的应用层协议**。**HTTP是万维网的数据通信的基础**。HTTP有很多应用，但最著名的是用于web浏览器和web服务器之间的双工通信。
 2. HTTP的发展是由**蒂姆·伯纳斯-李**于1989年在欧洲核子研究组织（CERN）所发起。HTTP的标准制定由**万维网协会（World Wide Web Consortium，W3C）**和**互联网工程任务组（Internet Engineering Task Force，IETF）**进行协调，最终发布了一系列的**RFC**，其中最著名的是1999年6月公布的 RFC 2616，定义了HTTP协议中**现今广泛使用**的一个版本——**HTTP 1.1。**
 3. 2014年12月，互联网工程任务组（IETF）的Hypertext Transfer Protocol Bis（httpbis）工作小组将HTTP/2标准提议递交至IESG进行讨论，于2015年2月17日被批准。 HTTP/2标准于2015年5月以RFC 7540正式发表，取代HTTP 1.1成为HTTP的实现标准。
 
@@ -104,15 +104,21 @@ sk.close()
 1. HTTP协议定义Web客户端如何从Web服务器请求Web页面，以及服务器如何把Web页面传送给客户端。HTTP协议采用了**请求/响应模型**。客户端向服务器发送一个请求报文，请求报文包含请求的**方法、URL、协议版本、请求头部和请求数据**。服务器以一个状态行作为响应，响应的内容包括**协议的版本、成功或者错误代码、服务器信息、响应头部和响应数据**。
 2. 以下是 HTTP **请求/响应的步骤(5)**
    1. **客户端连接到Web服务器**
-      一个HTTP客户端，通常是浏览器，与Web服务器的HTTP端口（默认为80）建立一个TCP套接字连接。
+      一个HTTP客户端，通常是浏览器，与Web服务器的HTTP端口（默认为80）**建立一个TCP套接字连接**。
+      
    2. **发送HTTP请求**
-      通过TCP套接字，客户端向Web服务器发送一个文本的请求报文，一个**请求报文由请求行、请求头部、空行和请求数据4部分组成**。
+      通过TCP套接字，客户端向Web服务器**发送一个文本的请求报文**，一个**请求报文由请求行、请求头部、空行和请求数据4部分组成**。
+      
    3. **服务器接受请求并返回HTTP响应**
       Web服务器**解析**请求，**定位**请求资源。服务器将资源复本写到TCP套接字，由客户端读取。一个**响应由状态行、响应头部、空行和响应数据4部分组成。**
+      
    4. **释放连接TCP连接**
-      若**connection** 模式为**close**，则服务器主动关闭TCP连接，客户端被动关闭连接，释放TCP连接;若connection 模式为**keepalive**，则该连接会保持一段时间，在该时间内可以继续接收请求;
+      若**connection** 模式为**close**，则服务器主动关闭TCP连接，客户端被动关闭连接，释放TCP连接;
+      
+      若connection 模式为**keepalive**，则该连接会保持一段时间，在该时间内可以继续接收请求;
+      
    5. **客户端浏览器解析HTML内容**
-      客户端浏览器首先解析状态行，查看表明请求是否成功的状态代码。然后解析每一个响应头，响应头告知以下为若干字节的HTML文档和文档的字符集。客户端浏览器读取响应数据HTML，根据HTML的语法对其进行格式化，并在浏览器窗口中显示。
+      客户端浏览器首先解析状态行，查看表明**请求是否成功的状态代码**。然后解析每一个响应头，响应头告知以下为**若干字节的HTML文档和文档的字符集**。客户端浏览器读取响应数据HTML，根据HTML的语法对其进行格式化，并在浏览器窗口中显示。
 
 #### 4. 请求方法
 
@@ -3199,6 +3205,25 @@ LOGGING = {
 }
 ```
 
+## 6. 执行原生sql
+
+```python
+from django.db import connection
+cursor=connection.cursor()
+# 插入操作
+cursor.execute("insert into hello_author(name) values('钱钟书')")
+# 更新操作
+cursor.execute("update hello_author set name='abc' where name='bcd'")
+# 删除操作
+cursor.execute("delete from hello_author where name='abc'")
+# 查询操作
+cursor.execute("select * from hello_author")
+raw=cursor.fetchone()  # 返回结果
+cursor.fetchall()      # 读取所有
+```
+
+
+
 # 10. Cookies和Session
 
 ## 1. cookies
@@ -3982,10 +4007,10 @@ max_length=8,									# 最大长度，前端页面输入到8位之后，不能�
 
 - 创建Form类时，主要涉及到 【字段】 和 【插件】，**字段用于对用户请求数据的验证**，**插件用于自动生成**HTML;
 - **常用字段**
-  - CharField
-  - ChoiceField
-  - MultipleChoiceField
-  - ModelChoiceField
+  1. CharField
+  2. ChoiceField
+  3. MultipleChoiceField
+  4. ModelChoiceField
 
 ### 2.1 initial
 

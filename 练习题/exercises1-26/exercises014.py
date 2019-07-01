@@ -140,7 +140,8 @@ import os
 # 1.
 def func(a, b, c=1):
     # way1
-    return func(b, a + b, c+1) if a + b < 4000000 else (b, c)
+    # return func(b, a + b, c+1) if a + b < 4000000 else (b, c)
+    # return func(b, a + b, c+1) if c<33 else (b, c)
 
 #     # way2
 #     while a + b < 4000000:
@@ -150,8 +151,8 @@ def func(a, b, c=1):
 #         return b, c
 
 
-# v = func(0, 1)
-# print(v)
+v = func(0, 1)
+print(v)
 
 
 # def func(a, b):
