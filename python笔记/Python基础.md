@@ -660,7 +660,7 @@ for i int t:
 
 ```python
 dict 目前一共有 14(9 + 5) 种操作, 1.keys 2.values 3.items 4.get 5.pop 6.update 7.setdefault 8.popitem 9.clear
-# {key1: value1, k2: value2}
+# {key1: value1, k2:value2}
 # key不能重复
 ```
 

@@ -1,54 +1,21 @@
-from django.http.response import JsonResponse
-from django.shortcuts import render, redirect, HttpResponse
+from django.http.response import HttpResponse
+from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.utils.decorators import method_decorator
 from django.views import View
 
 from . import models
 
 
-def login_status(func):
-    def inner(request, table, *args, **kwargs):
-        status = request.session.get('login')
-        # print(status, type(status))
-        # status = request.COOKIES.get('login', None)
-        # status = request.get_signed_cookie('login', salt='', default='')
-
-        if status != '1':
-            return redirect('/login/?return_url=/{}/'.format(table))
-        return func(request, table, *args, **kwargs)
-
-    return inner
-
-
-def login_status_fun(func):
-    def inner(request, *args, **kwargs):
-        # status = request.COOKIES.get('login')
-        # status = request.get_signed_cookie('login', salt='', default='')
-        status = request.session.get('login')
-        if status != '1':
-            return redirect('/login/?return_url={}'.format(request.path_info))
-        return func(request, *args, **kwargs)
-
-    return inner
-
-
 class Login(View):
-    # @method_decorator(ensure_csrf_cookie)
     def get(self, request):
-        # return render(request, 'login.html')
-        info = {'name': 'henry'}
-        return JsonResponse(info)
+        return render(request, 'login.html')
 
-    # @method_decorator(csrf_protect)
     def post(self, request):
         username = request.POST.get('username')
         pwd = request.POST.get('pwd')
         if username == 'henry' and pwd == '123':
             url = request.GET.get('return_url', '/book/')
             response = redirect('{}'.format(url))
-            # response.set_cookie('login', 1)
-            # response.set_signed_cookie('login', '1', salt='')
             request.session['login'] = '1'
             return response
         return render(request, 'login.html', {'error': '用户名或密码错误'})
@@ -56,11 +23,10 @@ class Login(View):
 
 def logout(request):
     ret = redirect(reverse('login'))
-    ret.set_cookie('login', '')
+    request.session['login'] = ''
     return ret
 
 
-@method_decorator(login_status, 'dispatch')
 class List_item(View):
 
     def get(self, request, table):
@@ -72,7 +38,6 @@ class List_item(View):
 
 
 # 删除元素
-@login_status_fun
 def del_item(request, table, pk):
     obj = getattr(models, table.capitalize())
     obj.objects.filter(pk=pk).delete()
@@ -80,7 +45,6 @@ def del_item(request, table, pk):
 
 
 # 编辑作者
-@login_status_fun
 def edit_author(request, pk):
     error = ''
     author = models.Author.objects.get(pk=pk)
@@ -100,7 +64,6 @@ def edit_author(request, pk):
 
 
 # 增加作者
-@login_status_fun
 def add_author(request):
     error = ''
     if request.method == 'POST':
@@ -119,7 +82,6 @@ def add_author(request):
 
 
 # 添加书籍
-@login_status_fun
 def add_book(request):
     error = ''
     if request.method == 'POST':
@@ -142,7 +104,6 @@ def add_book(request):
 
 
 # 编辑书籍
-@login_status_fun
 def edit_book(request, pk):
     error = ''
     book = models.Book.objects.get(pk=pk)
@@ -165,7 +126,6 @@ def edit_book(request, pk):
 
 
 # 增加出版社
-@login_status_fun
 def add_publisher(request):
     error = ''
     if request.method == 'POST':
@@ -181,7 +141,6 @@ def add_publisher(request):
 
 
 # 修改出版社
-@login_status_fun
 def edit_publisher(request, pk):
     obj_li = models.Publisher.objects.filter(pk=pk)
     if not obj_li:
@@ -202,6 +161,4 @@ def edit_publisher(request, pk):
             obj.save()
             return redirect(reverse('list', args=('publisher',)))
     return render(request, 'edit_publisher.html', {'name': obj.name, 'error': error})
-
-
 

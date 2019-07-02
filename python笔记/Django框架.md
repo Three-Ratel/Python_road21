@@ -89,7 +89,7 @@ sk.close()
 
 #### 1. http简介
 
-1. **超文本传输协议（英文：Hyper Text Transfer Protocol，HTTP）是一种用于分布式、协作式和超媒体信息系统的应用层协议**。**HTTP是万维网的数据通信的基础**。HTTP有很多应用，但最著名的是用于web浏览器和web服务器之间的双工通信。
+1. **超文本传输协议（英文：HyperText Transfer Protocol，HTTP）是一种用于分布式、协作式和超媒体信息系统的应用层协议**。**HTTP是万维网的数据通信的基础**。HTTP有很多应用，但最著名的是用于web浏览器和web服务器之间的双工通信。
 2. HTTP的发展是由**蒂姆·伯纳斯-李**于1989年在欧洲核子研究组织（CERN）所发起。HTTP的标准制定由**万维网协会（World Wide Web Consortium，W3C）**和**互联网工程任务组（Internet Engineering Task Force，IETF）**进行协调，最终发布了一系列的**RFC**，其中最著名的是1999年6月公布的 RFC 2616，定义了HTTP协议中**现今广泛使用**的一个版本——**HTTP 1.1。**
 3. 2014年12月，互联网工程任务组（IETF）的Hypertext Transfer Protocol Bis（httpbis）工作小组将HTTP/2标准提议递交至IESG进行讨论，于2015年2月17日被批准。 HTTP/2标准于2015年5月以RFC 7540正式发表，取代HTTP 1.1成为HTTP的实现标准。
 
@@ -3875,9 +3875,9 @@ $.ajaxSetup({
 
 #### Note(3)
 
-1. 如果使用从cookie中取csrftoken的方式，需要确保cookie存在csrftoken值。
-2. 如果你的视图渲染的HTML文件中没有包含 {% csrf_token %}，Django可能不会设置CSRFtoken的cookie。
-3. 这个时候需要使用ensure_csrf_cookie()装饰器强制设置Cookie。
+1. 如果使用从cookie中取csrftoken的方式，需要确保存在csrftoken值。
+2. 如果你的视图渲染的HTML文件中**没有包含** {% csrf_token %}，Django可能不会设置CSRFtoken的cookie。
+3. 这个时候需要使用**ensure_csrf_cookie()**装饰器强制设置Cookie。
 
 
 
@@ -4332,16 +4332,16 @@ error_messages = None   # 自定义错误信息
 
 ## 4. 中间件
 
-- 是一个用来处理django请求和响应的框架级别的钩子，它是一个轻量、低级别的插件系统，用于在全局范围内改变Django的输入和输出。
+- **是一个用来处理django请求和响应的框架级别的钩子**，它是一个轻量、低级别的插件系统，用于在全局范围内改变Django的输入和输出。
 - 每个中间件组件都负责做一些特定的功能。
 - **本质上是一个类。**
-- request对象是wsgi封装进行传递给django
+- request对象是**wsgi**封装进行传递给django
 
 **五个方法**
 
 - 五个方法，四个特征(执行**时间**和**顺序**，**参数**，**返回值**)
 - 中间件的方法可以选择性使用，中间件的类需要继承**MiddlewareMixin**
-- 中间件可以放于任意位置，需要进行在settings中进行注册，**具体到中间件类名**
+- 中间件可以放于任意位置，需要在settings中进行注册，**具体到中间件类名**
 
 ```python
 # 注册中间件, settings.py
@@ -4539,6 +4539,7 @@ class Md2(MiddlewareMixin):
 #### 1. 示例
 
 ```python
+# mymiddleware.py
 from django.http import HttpResponse
 from django.utils.deprecation import MiddlewareMixin
 
@@ -4556,6 +4557,16 @@ class Md2(MiddlewareMixin):
         # 需要渲染的模版名
         response.template_name='test.html'
         return response
+```
+
+```python
+# viwes.py
+from django.shortcuts import render
+from django.template.response import TemplateResponse
+
+def index(request):
+    print('here is index')
+    return TemplateResponse(request, 'index.html', {'name': 'herny', 'age': 19})
 ```
 
 #### 2. 特征

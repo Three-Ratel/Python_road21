@@ -95,7 +95,7 @@ def del_item(request, table, pk):
 
 
 # 编辑作者
-@login_status_fun
+# @login_status_fun
 def edit_author(request, pk):
     error = ''
     author = models.Author.objects.get(pk=pk)

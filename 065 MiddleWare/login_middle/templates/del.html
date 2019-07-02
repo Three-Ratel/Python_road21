@@ -1,0 +1,30 @@
+<script src="/static/js/jquery.js"></script>
+<script src="/static/plugins/sweetalter.js"></script>
+
+<script>
+    $('.btn-danger').click(function () {
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this item!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        url: $(this).val(),
+                        {#type: 'get',#}
+                        success: (res) => {
+                            $(this).parent().parent().remove();
+                        }
+                    })
+                    swal("This item has been deleted!", {
+                        icon: "success",
+                    });
+                } else {
+                    swal("This item is safe!");
+                }
+            });
+    })
+</script>
