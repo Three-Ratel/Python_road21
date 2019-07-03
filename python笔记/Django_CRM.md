@@ -12,6 +12,7 @@ from django.core.exceptions import ValidationError
 from crm import models
 
 class RegForm(forms.ModelForm):
+  	# 由于类中没有re_password,需要进行手写（优先级高于自动生成）
     password = forms.CharField(
         min_length=6,
         widget=forms.PasswordInput(attrs={'placeholder': "您的密码", 'autocomplete': "off", }))
@@ -24,10 +25,12 @@ class RegForm(forms.ModelForm):
         fields = '__all__'
         # 表示排除某些字段
         exclude = ['is_active',]
+        # 多个字段写在一起的插件
         widgets = {
             'username': forms.EmailInput(attrs={'placeholder': "您的用户名", 'autocomplete': "off", }),
             'name': forms.TextInput(attrs={'placeholder': "您的名字", 'autocomplete': "off", }),
             'mobile': forms.TextInput(attrs={'placeholder': "您的手机号", 'autocomplete': "off", }),}
+        # 自定义错误信息
         error_messages = {
             'username': {
                 'required': '信息不能为空',
@@ -190,6 +193,8 @@ def index(request):
 ```
 
 # 2. models.py
+
+- 数据表的创建
 
 ```python
 from django.db import models

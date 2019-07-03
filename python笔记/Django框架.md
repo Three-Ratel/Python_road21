@@ -4292,12 +4292,16 @@ class LoginForm(forms.Form):
 class BookForm(forms.ModelForm):
 
     class Meta:
+      	# 指定前端生成的标签
         model = models.Book
+        # __all__ 表示可以生成所有字段，也可以使用list如['title', 'price'...]
         fields = "__all__"
+        # exclude = ['publisher',...],也可以进行排除
         labels = {
             "title": "书名",
             "price": "价格"
         }
+        # 插件，用于某个字段的属性修改
         widgets = {
             "password": forms.widgets.PasswordInput(attrs={"class": "c1"}),
         }
