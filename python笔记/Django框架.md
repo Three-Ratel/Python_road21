@@ -2404,7 +2404,7 @@ url = reverse('app01:blog')
 
 #### 4. DateField
 
-- 日期类型，格式为YYYY-MM-DD，相当于python中的datetime.date的实例
+- 日期类型，格式为**YYYY-MM-DD**，相当于python中的datetime.date的实例
 - 参数：
   - auto_now：修改时，时间自动改变
   - auto_now_add：创建时，自动添加当前时间(使用orm操作时有效)
@@ -2445,8 +2445,8 @@ obj = models.Person.objects.create(name='henry', age=19)
    - 存储bool值，可以使用在性别等(**只有两种情况**)
 2. TextField(Field)
    - null=True
-3. EmailField(CharField)
-   - 存储到数据库之前，会校验格式
+3. **EmailField**(CharField)
+   - 存储到数据库之前，**会校验格式**
 4. BinaryField(Field)
    - 二进制类型
 
