@@ -3881,7 +3881,7 @@ $.ajaxSetup({
 
 
 
-# 12.form组件和中间件
+# 12.form组件
 
 ## 1. form简单应用
 
@@ -4285,6 +4285,9 @@ class LoginForm(forms.Form):
 
 #### 3.5 ModelForm
 
+-  **forms.widgets.PasswordInput(attrs={"class": "c1"})**
+- 可以为指定字段使用，**attrs设置属性**，**值为dict类型**
+
 ```python
 class BookForm(forms.ModelForm):
 
@@ -4301,7 +4304,7 @@ class BookForm(forms.ModelForm):
 ```
 
 ```python
-model = models.Student  # 对应的Model中的类
+model = models.Book  # 对应的Model中的类
 fields = "__all__"      # 字段，如果是__all__,就是表示列出所有的字段
 exclude = None          # 排除的字段
 labels = None           # 提示信息
@@ -4330,7 +4333,7 @@ error_messages = None   # 自定义错误信息
    3. 执行全局钩子clean方法
    
 
-## 4. 中间件
+# 13. 中间件
 
 - **是一个用来处理django请求和响应的框架级别的钩子**，它是一个轻量、低级别的插件系统，用于在全局范围内改变Django的输入和输出。
 - 每个中间件组件都负责做一些特定的功能。
@@ -4360,7 +4363,7 @@ from django.shortscut import HttpResponse
 from django.utils.deprecation import MiddlewareMixin
 ```
 
-### 4.1 process_request()
+## 1. process_request()
 
 - **参数：self, request**
 
@@ -4391,7 +4394,7 @@ class Md2(MiddlewareMixin):
    - 为None的情况是正常流程
    - **返回HttpResponse**，执行当前process_request方法，倒序执行其他中间件的process_response方法，响应给浏览器
 
-### 4.2 process_view()
+## 2. process_view()
 
 - 参数：self, request，view_func, view_args, view_kwargs**
 
@@ -4422,7 +4425,7 @@ class Md2(MiddlewareMixin):
    - 为**None**的情况是正常流程
    - HttpResponse，执行当前process_view方法，倒序执行最后中间件process_view方法，响应给浏览器
 
-### 4.3 process_response()
+## 3. process_response()
 
 - **参数：self, request, response**
 - 必须有返回值，**response**
@@ -4471,7 +4474,7 @@ class Md2(MiddlewareMixin):
 4. 返回值：
    - response处理完成后必须返回response对象
 
-### 4.4 prcess_exeception()
+## 4. prcess_exeception()
 
 - **参数：self, request, exception**
 
@@ -4532,7 +4535,7 @@ class Md2(MiddlewareMixin):
    - 为**None**时，交给下一个中间件继续处理，如果都有，则交由django处理
    - 如果有返回值，**则继续倒序执行process_response方法**
 
-### 4.5 process_template_response()
+## 5. process_template_response()
 
 - **参数 ：self, request, response**
 

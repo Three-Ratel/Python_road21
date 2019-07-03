@@ -35,7 +35,7 @@ class RegForm(forms.ModelForm):
     def clean(self):
         password = self.cleaned_data.get('password')
         re_password = self.cleaned_data.get('re_password')
-        print(self.cleaned_data.get('department'))
+        # print(self.cleaned_data.get('department'))
         if password == re_password:
             md = hashlib.md5(b'sajdfkh')
             md.update(password.encode('utf-8'))
