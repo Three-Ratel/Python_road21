@@ -10,8 +10,8 @@
                 <thead>
                 <tr>
                     <th>序号</th>
-{#                    <th style="cursor: default;">ID<em class=" NormalCss SortDescCss"></em></th>#}
-{#                    <th style="cursor: default;">QQ<em class=" NormalCss SortDescCss"></em></th>#}
+                    {#                    <th style="cursor: default;">ID<em class=" NormalCss SortDescCss"></em></th>#}
+                    {#                    <th style="cursor: default;">QQ<em class=" NormalCss SortDescCss"></em></th>#}
                     <th style="cursor: default;">QQ昵称<em class=" NormalCss SortDescCss"></em></th>
                     <th style="cursor: default;">姓名<em class=" NormalCss SortDescCss"></em></th>
                     <th style="cursor: default;">性别<em class=" NormalCss SortDescCss"></em></th>
@@ -21,9 +21,9 @@
                     <th style="cursor: default;">介绍学员<em class=" NormalCss SortDescCss"></em></th>
                     <th style="cursor: default;">咨询课程<em class=" NormalCss SortDescCss"></em></th>
                     <th style="cursor: default;">班级类型<em class=" NormalCss SortDescCss"></em></th>
-{#                    <th style="cursor: default;">客户备注<em class=" NormalCss SortDescCss"></em></th>#}
+                    {#                    <th style="cursor: default;">客户备注<em class=" NormalCss SortDescCss"></em></th>#}
                     <th style="cursor: default;">状态<em class=" NormalCss SortDescCss"></em></th>
-{#                    <th style="cursor: default;">最后跟进日期<em class=" NormalCss SortDescCss"></em></th>#}
+                    {#                    <th style="cursor: default;">最后跟进日期<em class=" NormalCss SortDescCss"></em></th>#}
                     <th style="cursor: default;">再次跟进时间<em class=" NormalCss SortDescCss"></em></th>
                     <th style="cursor: default;">销售<em class=" NormalCss SortDescCss"></em></th>
                     <th style="cursor: default;">已报班级<em class=" NormalCss SortDescCss"></em></th>
@@ -34,8 +34,8 @@
                 {% for i in all_item %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
-{#                        <td>{{ i.pk }}</td>#}
-{#                        <td>{{ i.qq }}</td>#}
+                        {#                        <td>{{ i.pk }}</td>#}
+                        {#                        <td>{{ i.qq }}</td>#}
                         <td>{{ i.qq_name }}</td>
                         <td>{{ i.name }}</td>
                         <td>{{ i.get_sex_display }}</td>
@@ -45,19 +45,19 @@
                         <td>{{ i.introduce_from }}</td>
                         <td>{{ i.course }}</td>
                         <td>{{ i.get_class_type_display }}</td>
-{#                        <td>{{ i.customer_note| default:'暂无' }}</td>#}
+                        {#                        <td>{{ i.customer_note| default:'暂无' }}</td>#}
                         <td>
-{#                            {{ i.get_status_display }}#}
+                            {#                            {{ i.get_status_display }}#}
                             {{ i.show_status }}
                         </td>
-{#                        <td>{{ i.last_consult_date }}</td>#}
+                        {#                        <td>{{ i.last_consult_date }}</td>#}
                         <td>{{ i.next_date }}</td>
                         <td>{{ i.consultant.name| default:'暂无' }}</td>
                         <td>
-{#                            {% for j in i.class_list.all %}#}
-{#                                {{ j.get_course_display }}#}
-{#                                -{{ j.semester }}#}
-{#                            {% endfor %}#}
+                            {#                            {% for j in i.class_list.all %}#}
+                            {#                                {{ j.get_course_display }}#}
+                            {#                                -{{ j.semester }}#}
+                            {#                            {% endfor %}#}
                             {{ i.show_class }}
                         </td>
 
