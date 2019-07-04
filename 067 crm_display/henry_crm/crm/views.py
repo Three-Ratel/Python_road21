@@ -7,15 +7,14 @@ from crm import models
 from crm.forms import RegForm
 from utils.pagenation import Pagenation
 
+
 def reg(request):
     form_obj = RegForm()
     if request.method == 'POST':
         form_obj = RegForm(request.POST)
         if form_obj.is_valid():
             obj = form_obj.save()
-            obj = models.Department.objects.filter(pk=obj.department.pk).update(count=F('count') + 1)
-            # obj.count = int(obj.count) + 1
-            # obj.save()
+            models.Department.objects.filter(pk=obj.department.pk).update(count=F('count') + 1)
             return redirect(reverse('login'))
     return render(request, 'reg.html', {'form_obj': form_obj})
 
@@ -40,13 +39,5 @@ def index(request):
 
 def customer_list(request):
     all_item = models.Customer.objects.all()
-    return render(request, 'customer_list.html', {'all_item': all_item})
-
-
-users = [{'name': 'henry{}'.format(i), 'pwd': '123'} for i in range(1, 453)]
-
-
-def user_list(request):
-
-    obj = Pagenation(request, len(users))
-    return render(request, 'user_list.html', {'users': users[obj.start:obj.end], 'all_page':obj.show})
+    obj = Pagenation(request, len(all_item))
+    return render(request, 'customer_list.html', {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show,})
