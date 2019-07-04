@@ -66,14 +66,17 @@ class UserProfile(models.Model):
     """
     用户表
     """
-    username = models.EmailField(max_length=255, unique=True, )
-    password = models.CharField(max_length=128)
-    name = models.CharField('名字', max_length=32)
-    department = models.ForeignKey('Department', default=None, blank=True, null=True)
+    username = models.EmailField(max_length=255, unique=True, verbose_name='用户名')
+    password = models.CharField(max_length=128, verbose_name='密码')
+    name = models.CharField('姓名', max_length=32)
+    department = models.ForeignKey('Department', default=None, blank=True, null=True, verbose_name='部门')
     mobile = models.CharField('手机', max_length=32, default=None, blank=True, null=True)
     memo = models.TextField('备注', blank=True, null=True, default=None)
     date_joined = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True, verbose_name='是否在职')
+
+    def __str__(self):
+        return self.username
 
 
 class Customer(models.Model):
@@ -99,6 +102,9 @@ class Customer(models.Model):
     consultant = models.ForeignKey('UserProfile', verbose_name="销售", related_name='customers', blank=True, null=True, )
     class_list = models.ManyToManyField('ClassList', verbose_name="已报班级", )
 
+    def __str__(self):
+        return self.name
+
 
 class Campus(models.Model):
     """
@@ -106,6 +112,9 @@ class Campus(models.Model):
     """
     name = models.CharField(verbose_name='校区', max_length=64)
     address = models.CharField(verbose_name='详细地址', max_length=512, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
 
 
 class ClassList(models.Model):
@@ -122,6 +131,9 @@ class ClassList(models.Model):
     teachers = models.ManyToManyField('UserProfile', verbose_name="老师")
     class_type = models.CharField(choices=class_type_choices, max_length=64, verbose_name='班额及类型', blank=True,
                                   null=True)
+
+    def __str__(self):
+        return self.course
 
     class Meta:
         unique_together = ("course", "semester", 'campuses')

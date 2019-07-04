@@ -74,13 +74,13 @@ class RegForm(forms.Form):
     #     initial=3,
     #     widget=forms.widgets.Select(),
     # )
-    hobby = forms.MultipleChoiceField(
-        choices=(('1', 'travelling'), ('2', 'reading'), ('3', 'listening'),),
-        label='爱好',
-        initial=['3'],
-        widget=forms.widgets.SelectMultiple,
-        # widget=forms.widgets.CheckboxSelectMultiple,
-    )
+    # hobby = forms.MultipleChoiceField(
+    #     choices=(('1', 'travelling'), ('2', 'reading'), ('3', 'listening'),),
+    #     label='爱好',
+    #     initial=['3'],
+    #     widget=forms.widgets.SelectMultiple,
+    #     # widget=forms.widgets.CheckboxSelectMultiple,
+    # )
     #
     # keep = forms.fields.ChoiceField(
     #     label='是否记住密码',
@@ -116,10 +116,10 @@ class RegForm(forms.Form):
     # )
     # username = forms.CharField(label='用户名')
     #
-    # pwd = forms.CharField(
-    #     label='密码',
-    #     widget=forms.widgets.PasswordInput,
-    # )
+    pwd = forms.CharField(
+        label='密码',
+        widget=forms.widgets.PasswordInput,
+    )
     # re_pwd = forms.CharField(
     #     label='密码',
     #     widget=forms.widgets.PasswordInput,
