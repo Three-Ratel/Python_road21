@@ -109,7 +109,7 @@ class RegForm(forms.ModelForm):
 </html>
 ```
 
-## 2. 登陆页面
+### 2. 登陆页面
 
 ```html
 <!DOCTYPE html>
@@ -159,37 +159,47 @@ class RegForm(forms.ModelForm):
 
 ```python
 import hashlib
-from django.shortcuts import render, redirect, reverse
+from django import forms
+from django.core.exceptions import ValidationError
 from crm import models
-from crm.forms import RegForm
 
-def reg(request):
-    form_obj = RegForm()
-    if request.method == 'POST':
-        form_obj = RegForm(request.POST)
-        if form_obj.is_valid():
-            form_obj.save()
-            return redirect(reverse('login'))
-    return render(request, 'reg.html', {'form_obj': form_obj})
+class RegForm(forms.ModelForm):
+    password = forms.CharField(
+        min_length=6,
+        widget=forms.PasswordInput(attrs={'placeholder': "您的密码", 'autocomplete': "off", }))
+    re_password = forms.CharField(
+        min_length=6,
+        widget=forms.PasswordInput(attrs={'placeholder': "确认您的密码", 'autocomplete': "off", }))
 
-def login(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        md = hashlib.md5(b'sajdfkh')
-        md.update(password.encode('utf-8'))
-        md.hexdigest()
-        obj = models.UserProfile.objects.filter(username=username, password=md.hexdigest(), is_active=True).first()
-        if obj:
-            return redirect('/index/')
-        return render(request, 'login.html', {'error': '用户名或密码错误'})
-    return render(request, 'login.html')
+    class Meta:
+        model = models.UserProfile
+        fields = '__all__'
+        exclude = ['is_active']
+        widgets = {
+            'username': forms.EmailInput(attrs={'placeholder': "您的用户名", 'autocomplete': "off", }),
+            'name': forms.TextInput(attrs={'placeholder': "您的名字", 'autocomplete': "off", }),
+            'mobile': forms.TextInput(attrs={'placeholder': "您的手机号", 'autocomplete': "off", }),}
+        error_messages = {
+            'username': {
+                'required': '信息不能为空',
+                'invalid': '邮箱格式不正确',}}
 
-def index(request):
-    return render(request, 'index.html')
+    def clean(self):
+        # self._validate_unique = True
+        super().clean()    # 校验邮箱名是否已经在数据库中
+        password = self.cleaned_data.get('password', '')
+        re_password = self.cleaned_data.get('re_password')
+        if password == re_password:
+            md = hashlib.md5(b'sajdfkh')
+            md.update(password.encode('utf-8'))
+            self.cleaned_data['password'] = md.hexdigest()
+            return self.cleaned_data
+        self.add_error('re_password', '两次密码不一致')
+        raise ValidationError('两次密码不一致')
+
 ```
 
-# 2. models.py
+### 1.4 models.py
 
 ```python
 from django.db import models
@@ -231,18 +241,8 @@ attendance_choices = (('checked', "已签到"),
                       ('absence', "缺勤"),
                       ('leave_early', "早退"),)
 
-score_choices = ((100, 'A+'),
-                 (90, 'A'),
-                 (85, 'B+'),
-                 (80, 'B'),
-                 (70, 'B-'),
-                 (60, 'C+'),
-                 (50, 'C'),
-                 (40, 'C-'),
-                 (0, ' D'),
-                 (-1, 'N/A'),
-                 (-100, 'COPY'),
-                 (-1000, 'FAIL'),)
+score_choices = ((100, 'A+'), (90, 'A'), (85, 'B+'), (80, 'B'), (70, 'B-'), (60, 'C+'), (50, 'C'),(40, 'C-'), (0, ' D'), (-1, 'N/A'), (-100, 'COPY'), (-1000, 'FAIL'),)
+
 
 class Department(models.Model):
     """
@@ -250,8 +250,10 @@ class Department(models.Model):
     """
     name = models.CharField(max_length=32, verbose_name="部门名称")
     count = models.IntegerField(verbose_name="人数", default=0)
+
     def __str__(self):
         return self.name
+
 
 class UserProfile(models.Model):
     """
@@ -265,6 +267,10 @@ class UserProfile(models.Model):
     memo = models.TextField('备注', blank=True, null=True, default=None)
     date_joined = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
+
 
 class Customer(models.Model):
     """
@@ -282,11 +288,18 @@ class Customer(models.Model):
     course = MultiSelectField("咨询课程", choices=course_choices)
     class_type = models.CharField("班级类型", max_length=64, choices=class_type_choices, default='fulltime')
     customer_note = models.TextField("客户备注", blank=True, null=True, )
-    status = models.CharField("状态", choices=enroll_status_choices, max_length=64, default="unregistered",help_text="选择客户此时的状态")
+    status = models.CharField("状态", choices=enroll_status_choices, max_length=64, default="unregistered",
+                              help_text="选择客户此时的状态")
     last_consult_date = models.DateField("最后跟进日期", auto_now_add=True)
     next_date = models.DateField("预计再次跟进时间", blank=True, null=True)
     consultant = models.ForeignKey('UserProfile', verbose_name="销售", related_name='customers', blank=True, null=True, )
     class_list = models.ManyToManyField('ClassList', verbose_name="已报班级", )
+
+    def __str__(self):
+        if self.name:
+            return self.name
+        return 'None'
+
 
 class Campus(models.Model):
     """
@@ -294,6 +307,10 @@ class Campus(models.Model):
     """
     name = models.CharField(verbose_name='校区', max_length=64)
     address = models.CharField(verbose_name='详细地址', max_length=512, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
 
 class ClassList(models.Model):
     """
@@ -307,10 +324,15 @@ class ClassList(models.Model):
     start_date = models.DateField("开班日期")
     graduate_date = models.DateField("结业日期", blank=True, null=True)
     teachers = models.ManyToManyField('UserProfile', verbose_name="老师")
-    class_type = models.CharField(choices=class_type_choices, max_length=64, verbose_name='班额及类型', blank=True,null=True)
+    class_type = models.CharField(choices=class_type_choices, max_length=64, verbose_name='班额及类型', blank=True,
+                                  null=True)
 
     class Meta:
         unique_together = ("course", "semester", 'campuses')
+
+    def __str__(self):
+        return '{}-{}'.format(self.get_course_display(), self.semester)
+
 
 class ConsultRecord(models.Model):
     """
@@ -328,6 +350,7 @@ class Enrollment(models.Model):
     """
     报名表
     """
+
     why_us = models.TextField("为什么报名", max_length=1024, default=None, blank=True, null=True)
     your_expectation = models.TextField("学完想达到的具体期望", max_length=1024, blank=True, null=True)
     contract_agreed = models.BooleanField("我已认真阅读完培训协议并同意全部协议内容", default=False)
@@ -352,19 +375,23 @@ class PaymentRecord(models.Model):
     note = models.TextField("备注", blank=True, null=True)
     date = models.DateTimeField("交款日期", auto_now_add=True)
     course = models.CharField("课程名", choices=course_choices, max_length=64, blank=True, null=True, default='N/A')
-    class_type = models.CharField("班级类型", choices=class_type_choices, max_length=64, blank=True, null=True,default='N/A')
+    class_type = models.CharField("班级类型", choices=class_type_choices, max_length=64, blank=True, null=True,
+                                  default='N/A')
     enrolment_class = models.ForeignKey('ClassList', verbose_name='所报班级', blank=True, null=True)
     customer = models.ForeignKey('Customer', verbose_name="客户")
     consultant = models.ForeignKey('UserProfile', verbose_name="销售")
     delete_status = models.BooleanField(verbose_name='删除状态', default=False)
-    
+
     status_choices = (
         (1, '未审核'),
-        (2, '已审核'),)
+        (2, '已审核'),
+    )
     status = models.IntegerField(verbose_name='审核', default=1, choices=status_choices)
 
     confirm_date = models.DateTimeField(verbose_name="确认日期", null=True, blank=True)
-    confirm_user = models.ForeignKey(verbose_name="确认人", to='UserProfile', related_name='confirms', null=True,blank=True)
+    confirm_user = models.ForeignKey(verbose_name="确认人", to='UserProfile', related_name='confirms', null=True,
+                                     blank=True)
+
 
 class CourseRecord(models.Model):
     """课程记录表"""
@@ -379,13 +406,16 @@ class CourseRecord(models.Model):
     re_class = models.ForeignKey('ClassList', verbose_name="班级")
     teacher = models.ForeignKey('UserProfile', verbose_name="讲师", related_name='t_course_record')
     recorder = models.ForeignKey('UserProfile', verbose_name="记录者", related_name='r_course_record')
+
     class Meta:
         unique_together = ('re_class', 'day_num')
-        
+
+
 class StudyRecord(models.Model):
     """
     学习记录
     """
+
     attendance = models.CharField("考勤", choices=attendance_choices, default="checked", max_length=64)
     score = models.IntegerField("本节成绩", choices=score_choices, default=-1)
     homework_note = models.CharField(max_length=255, verbose_name='作业批语', blank=True, null=True)
@@ -396,5 +426,6 @@ class StudyRecord(models.Model):
 
     class Meta:
         unique_together = ('course_record', 'student')
+
 ```
 

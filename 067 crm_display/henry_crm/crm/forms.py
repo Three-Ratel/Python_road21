@@ -33,7 +33,8 @@ class RegForm(forms.ModelForm):
         }
 
     def clean(self):
-        self._validate_unique = True
+        # self._validate_unique = True
+        super().clean()
         password = self.cleaned_data.get('password', '')
         re_password = self.cleaned_data.get('re_password')
         if password == re_password:

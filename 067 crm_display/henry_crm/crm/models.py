@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.safestring import mark_safe
 from multiselectfield import MultiSelectField
 
 course_choices = (('Linux', 'Linux中高级'),
@@ -75,6 +76,9 @@ class UserProfile(models.Model):
     date_joined = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Customer(models.Model):
     """
@@ -103,6 +107,13 @@ class Customer(models.Model):
         if self.name:
             return self.name
         return 'None'
+
+    def show_class(self):
+        return ','.join([str(i) for i in self.class_list.all()])
+
+    def show_status(self):
+        info = {'signed': 'green', 'unregistered': 'red', 'studying': 'skyblue', 'paid_in_full': 'gold'}
+        return mark_safe('<span style="color:white; background-color: {};padding:5px">{}</span>'.format(info.get(self.status), self.get_status_display()))
 
 
 class Campus(models.Model):

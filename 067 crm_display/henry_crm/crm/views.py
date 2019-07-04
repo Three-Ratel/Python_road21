@@ -1,5 +1,5 @@
 import hashlib
-
+from django.db.models import F
 from django.shortcuts import render, redirect, reverse
 
 from crm import models
@@ -11,8 +11,10 @@ def reg(request):
     if request.method == 'POST':
         form_obj = RegForm(request.POST)
         if form_obj.is_valid():
-            form_obj.save()
-            form_obj.department.count += 1
+            obj = form_obj.save()
+            obj = models.Department.objects.filter(pk=obj.department.pk).update(count=F('count')+1)
+            # obj.count = int(obj.count) + 1
+            # obj.save()
             return redirect(reverse('login'))
     return render(request, 'reg.html', {'form_obj': form_obj})
 
