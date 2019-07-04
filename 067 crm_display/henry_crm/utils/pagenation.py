@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
+
+
 class Pagenation:
 
     def __init__(self, request, all_num, per_page=10, max_item=11):
@@ -32,7 +34,7 @@ class Pagenation:
         li_li = []
         if self.page == 1:
             li_li.append(
-                ' <li class="disabled"><a href="" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>')
+                ' <li class="disabled"><span aria-hidden="true">&laquo;</span></li>')
         else:
             li_li.append(
                 ' <li><a href="?page={}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>'.format(
@@ -44,7 +46,7 @@ class Pagenation:
                 li_li.append('<li><a href="?page={}">{}</a></li>'.format(i, i))
         if self.page == self.total_page:
             li_li.append(
-                '<li class="disabled"><a href="" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>')
+                '<li class="disabled"><span aria-hidden="true">&raquo;</span></li>')
         else:
             li_li.append(
                 '<li><a href="?page={}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>'.format(
