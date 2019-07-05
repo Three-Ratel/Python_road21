@@ -46,7 +46,7 @@ class Pagenation:
             ' <li><a href="?page=1" aria-label="Previous"><span aria-hidden="true">首页</span></a></li>')
         if self.page == 1:
             li_li.append(
-                ' <li class="disabled"><span aria-hidden="true">&laquo;</span></li>')
+                ' <li class="disabled" style="display:none"><span aria-hidden="true">&laquo;</span></li>')
         else:
             li_li.append(
                 ' <li><a href="?page={}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>'.format(
@@ -61,7 +61,7 @@ class Pagenation:
                 li_li.append('<li><a href="?page={}">{}</a></li>'.format(i, i))
         if self.page == self.total_page:
             li_li.append(
-                '<li class="disabled"><span aria-hidden="true">&raquo;</span></li>')
+                '<li class="disabled"  style="display:none"><span aria-hidden="true">&raquo;</span></li>')
         else:
             li_li.append(
                 '<li><a href="?page={}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>'.format(

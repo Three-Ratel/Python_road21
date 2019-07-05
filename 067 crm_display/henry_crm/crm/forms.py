@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
+import datetime
 import hashlib
 
 from django import forms
@@ -44,3 +45,33 @@ class RegForm(forms.ModelForm):
             return self.cleaned_data
         self.add_error('re_password', '两次密码不一致')
         raise ValidationError('两次密码不一致')
+
+
+class AddCustomer(forms.ModelForm):
+    class Meta:
+        model = models.Customer
+        fields = '__all__'
+        widgets = {
+            'qq': forms.TextInput(attrs={'placeholder': "QQ号", 'autocomplete': "off", 'label': 'QQ号码', }),
+            'qq_name': forms.TextInput(attrs={'placeholder': "QQ昵称", 'autocomplete': "off", }),
+            'name': forms.TextInput(attrs={'placeholder': "客户姓名", 'autocomplete': "off", }),
+            'phone': forms.TextInput(attrs={'placeholder': '手机号', 'autocomplete': "off", }),
+            'source': forms.Select(attrs={'placeholder': '来源渠道', 'autocomplete': "off", }),
+            'customer_note': forms.TextInput(attrs={'placeholder': '备注', 'autocomplete': "off", }),
+            'consultant': forms.Select(attrs={'placeholder': '销售', 'autocomplete': "off", }),
+            'class_list': forms.SelectMultiple(attrs={'placeholder': '已报班级', 'autocomplete': "off", }),
+        }
+
+    birthday = forms.DateField(
+        label='出生日期',
+        widget=forms.widgets.SelectDateWidget,
+    )
+    next_date = forms.DateField(
+        label='预计下次跟进时间',
+        initial=datetime.datetime.now(),
+        widget=forms.widgets.SelectDateWidget,
+    )
+    course = forms.ChoiceField(
+        label='咨询课程',
+        widget=forms.widgets.CheckboxSelectMultiple,
+    )

@@ -1,10 +1,12 @@
 import hashlib
 
 from django.db.models import F
+from django.db.models import Q
 from django.shortcuts import render, redirect, reverse
 
 from crm import models
-from crm.forms import RegForm
+from crm.forms import RegForm, AddCustomer
+from utils.pagenation import Pagenation
 
 
 def reg(request):
@@ -27,7 +29,11 @@ def login(request):
         md.hexdigest()
         obj = models.UserProfile.objects.filter(username=username, password=md.hexdigest(), is_active=True).first()
         if obj:
-            return redirect('customer_list')
+            url = request.GET.get('return_url')
+            ret = redirect(url)
+            ret.set_cookie('user', request.POST.get('username'))
+            return ret
+
         return render(request, 'login.html', {'error': '用户名或密码错误'})
     return render(request, 'login.html')
 
@@ -36,27 +42,43 @@ def index(request):
     return render(request, 'index.html')
 
 
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+# from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 items = models.Customer.objects.all()
 
 
 def customer_list(request):
-    # all_item = models.Customer.objects.all()
-    # obj = Pagenation(request, len(all_item))
-    # return render(request, 'customer_list.html', {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show})
+    all_item = models.Customer.objects.all()
+    obj = Pagenation(request, len(all_item))
+    return render(request, 'list_customer.html', {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show})
 
-    """使用django的分页器"""
+    # """使用django的分页器"""
 
-    paginator = Paginator(items, 10)
-    page = request.GET.get('page')
-    try:
-        all_item = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        all_item = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        all_item = paginator.page(paginator.num_pages)
-    return render(request, 'customer_list.html', {'all_item': all_item})
-    # return render(request, 'customer_list.html', {'all_item': p.page(page).object_list, 'all_page': })
+    # paginator = Paginator(items, 10, orphans=3)
+    # page = request.GET.get('page')
+    # try:
+    #     all_item = paginator.page(page)
+    # except PageNotAnInteger:
+    #     # If page is not an integer, deliver first page.
+    #     all_item = paginator.page(1)
+    # except EmptyPage:
+    #     # If page is out of range (e.g. 9999), deliver last page of results.
+    #     all_item = paginator.page(paginator.num_pages)
+    # return render(request, 'list_customer.html', {'all_item': all_item})
+
+
+def add_customer(request):
+    obj = AddCustomer()
+    if request.method == 'POST':
+        obj = AddCustomer(request.POST)
+        if obj.is_valid():
+            obj.save()
+            return redirect('customer')
+    return render(request, 'add_customer.html', {'obj': obj})
+
+
+def show_customer(request):
+    user = request.COOKIES.get('user')
+    items = models.Customer.objects.filter(Q(consultant__username=user) | Q(consultant_id=None))
+    obj = Pagenation(request, len(items))
+    return render(request, 'show_customer.html', {'all_item': items[obj.start:obj.end], 'all_page': obj.show})
