@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-import datetime
 import hashlib
 
 from django import forms
 from django.core.exceptions import ValidationError
+from django.forms.fields import DateField
+from multiselectfield.forms.fields import MultiSelectFormField
 
 from crm import models
 
@@ -47,7 +48,7 @@ class RegForm(forms.ModelForm):
         raise ValidationError('两次密码不一致')
 
 
-class AddCustomer(forms.ModelForm):
+class CustomerForm(forms.ModelForm):
     class Meta:
         model = models.Customer
         fields = '__all__'
@@ -55,23 +56,22 @@ class AddCustomer(forms.ModelForm):
             'qq': forms.TextInput(attrs={'placeholder': "QQ号", 'autocomplete': "off", 'label': 'QQ号码', }),
             'qq_name': forms.TextInput(attrs={'placeholder': "QQ昵称", 'autocomplete': "off", }),
             'name': forms.TextInput(attrs={'placeholder': "客户姓名", 'autocomplete': "off", }),
+            'birthday': forms.TextInput(attrs={'placeholder': "YYYY-MM-DD", 'autocomplete': "off", 'type':'date'}),
             'phone': forms.TextInput(attrs={'placeholder': '手机号', 'autocomplete': "off", }),
             'source': forms.Select(attrs={'placeholder': '来源渠道', 'autocomplete': "off", }),
-            'customer_note': forms.TextInput(attrs={'placeholder': '备注', 'autocomplete': "off", }),
-            'consultant': forms.Select(attrs={'placeholder': '销售', 'autocomplete': "off", }),
+            'customer_note': forms.Textarea(attrs={'placeholder': '备注', 'autocomplete': "off", }),
             'class_list': forms.SelectMultiple(attrs={'placeholder': '已报班级', 'autocomplete': "off", }),
         }
 
-    birthday = forms.DateField(
-        label='出生日期',
-        widget=forms.widgets.SelectDateWidget,
-    )
-    next_date = forms.DateField(
-        label='预计下次跟进时间',
-        initial=datetime.datetime.now(),
-        widget=forms.widgets.SelectDateWidget,
-    )
-    course = forms.ChoiceField(
-        label='咨询课程',
-        widget=forms.widgets.CheckboxSelectMultiple,
-    )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for i in self.fields.values():
+            if not isinstance(i, (MultiSelectFormField, DateField)):
+                i.widget.attrs['class'] = 'form-control'
+
+            if isinstance(i, DateField):
+                print(i, type(i))
+                i.widget.attrs['type'] = 'date'
+                i.widget.attrs.setdefault('name', 'date')
+                i.widget.attrs.setdefault('id', 'date')
+                i.widget.attrs.setdefault('class', 'date')

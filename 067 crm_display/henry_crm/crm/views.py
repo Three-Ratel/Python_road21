@@ -1,11 +1,10 @@
 import hashlib
 
 from django.db.models import F
-from django.db.models import Q
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse,HttpResponse
 
 from crm import models
-from crm.forms import RegForm, AddCustomer
+from crm.forms import RegForm, CustomerForm
 from utils.pagenation import Pagenation
 
 
@@ -30,30 +29,34 @@ def login(request):
         obj = models.UserProfile.objects.filter(username=username, password=md.hexdigest(), is_active=True).first()
         if obj:
             url = request.GET.get('return_url')
-            ret = redirect(url)
-            ret.set_cookie('user', request.POST.get('username'))
+            if url: ret = redirect(url)
+            ret = redirect('customer')
+            request.session['user_id'] = obj.pk
+            request.session['is_login'] = True
             return ret
 
         return render(request, 'login.html', {'error': '用户名或密码错误'})
     return render(request, 'login.html')
 
 
-def index(request):
-    return render(request, 'index.html')
-
-
-# from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
-items = models.Customer.objects.all()
+def logout(request):
+    request.session['is_login'] = ''
+    ret = redirect('login')
+    return ret
 
 
 def customer_list(request):
-    all_item = models.Customer.objects.all()
+    url = request.path
+    if url == reverse('customer'):
+        all_item = models.Customer.objects.filter(consultant__isnull=True)
+    else:
+        all_item = models.Customer.objects.filter(consultant_id=request.user_obj.pk)
     obj = Pagenation(request, len(all_item))
     return render(request, 'list_customer.html', {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show})
 
     # """使用django的分页器"""
-
+    # from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+    # items = models.Customer.objects.all()
     # paginator = Paginator(items, 10, orphans=3)
     # page = request.GET.get('page')
     # try:
@@ -67,18 +70,19 @@ def customer_list(request):
     # return render(request, 'list_customer.html', {'all_item': all_item})
 
 
-def add_customer(request):
-    obj = AddCustomer()
+def modify_customer(request, pk=None):
+    user_obj = models.Customer.objects.filter(pk=pk).first()
+    obj = CustomerForm(instance=user_obj)
     if request.method == 'POST':
-        obj = AddCustomer(request.POST)
+        obj = CustomerForm(data=request.POST, instance=user_obj)
         if obj.is_valid():
             obj.save()
-            return redirect('customer')
-    return render(request, 'add_customer.html', {'obj': obj})
+            return redirect('show_customer')
+    title = '修改客户' if pk else '新增客户'
+    return render(request, 'modify_customer.html', {'obj': obj, 'title': title})
 
 
-def show_customer(request):
-    user = request.COOKIES.get('user')
-    items = models.Customer.objects.filter(Q(consultant__username=user) | Q(consultant_id=None))
-    obj = Pagenation(request, len(items))
-    return render(request, 'show_customer.html', {'all_item': items[obj.start:obj.end], 'all_page': obj.show})
+def del_item(request):
+    pk = request.GET.get('pk')
+    models.Customer.objects.filter(pk=pk).delete()
+    return HttpResponse('ok')

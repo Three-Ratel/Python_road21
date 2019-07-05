@@ -1,4 +1,5 @@
 {% extends 'layout.html' %}
+
 {% block content %}
     <div class="panel panel-primary">
         <div class="panel-body">
@@ -48,11 +49,9 @@
                         </td>
 
                         <td>
-                            <a href="" style="color: white">
-                                <button type="button" class="btn btn-danger" style="height: 30px;">删除</button>
-                            </a>
-                            <a href="" style="color: white; line-height: 30px">
-                                <button type="button" class="btn btn-info" style="height: 30px;">修改</button>
+                            <button type="button" class="btn btn-danger del" value="{{ i.pk }}">删除</button>
+                            <a href="{% url 'edit_customer' i.id %}" style="color: white; line-height: 30px">
+                                <button type="button" class="btn btn-info">修改</button>
                             </a>
                         </td>
                     </tr>
@@ -103,4 +102,19 @@
     {#            </li>#}
     {#        </ul>#}
     {#    </nav>#}
+    {% load static %}
+    <script src="{% static 'js/jquery.min.js' %} "></script>
+    <script>
+    {#$('#date')#}
+    $('.del').click(function () {
+        console.log($(this).val());
+        $.ajax({
+            url : '/crm/del/',
+            data: {'pk': $(this).val()},
+            success:(res)=>{
+                $(this).parent().parent().remove()
+            }
+        })
+    })
+    </script>
 {% endblock %}
