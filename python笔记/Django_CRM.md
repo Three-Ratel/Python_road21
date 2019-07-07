@@ -434,3 +434,227 @@ class StudyRecord(models.Model):
 
 ```
 
+# 2. 展示页面
+
+## 2.1 `__str__`方法
+
+1. str方法**必须有返回值**，否则会报错
+
+```python
+# 用户信息的 model
+class Customer(models.ModelForm):   
+  	def __str__(self):
+        if self.name:
+            return self.name
+        return 'None'
+```
+
+## 2.2 `__init__`方法
+
+1. 在forms类中使用**初始化方法**
+2. 一般重写初始化方法时，需要使用父类的**init**方法
+
+```python
+# forms.py
+class CustomerForm(forms.ModelForm):
+    class Meta:
+        model = models.Customer
+        fields = '__all__'
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for i in self.fields.values():
+            if not isinstance(i, (MultiSelectFormField, DateField)):
+                i.widget.attrs['class'] = 'form-control'
+                print(i, type(i))
+            if isinstance(i, DateField):
+                i.widget = forms.TextInput(attrs={'placeholder': "YYYY-MM-DD", 'autocomplete': "off", 'type': 'date'})
+
+```
+
+## 2.3 模版文件
+
+1. 此时的字段对象是BoundField对象，其中self.field = field。
+2. for 循环中的对象不是原来的**field**
+3. 有for循环的一般都有`__iter__`方法
+4. self['name'] 会触发`__getitem__`方法
+5. 通过判断字段的错误字典，定义显示样式
+
+```django
+{# ModelForm通过for循环生成各个字段 #}
+{% for i in obj %}
+		<div class="form-group col-sm-3"  style="text-align: right">
+				<label for="{{ i.id_for_label }}" {% if not i.field.required %}style="color:#8f8f8f"{% endif %}>{{ i.label }}:</label>
+		</div>
+		<div class="form-group col-sm-7 {% if i.errors %}has-error{% endif %}"{% if not i.field.required %} style="color:#8f8f8f"{% endif %}>
+      {{ i }}
+			<span class="help-block">{{ i.errors.0 }}</span>
+		</div>
+{% endfor %}
+```
+
+## 2.3 自定义方法
+
+1. 后端处理好html标签样式之后作为字符串传递到前端，需要使用**mark_safe()**标记
+2. 如果ModelForm中使用choices=((1, '男'),(2, '女'))，后端处理需要使用`对象.get_字段名_display()`方法，前端使用`对象.get_字段名_display`
+
+```python
+    def show_status(self):
+        info = {'signed': 'green', 'unregistered': 'red', 'studying': 'skyblue', 'paid_in_full': 'gold'}
+        return mark_safe('<span style="color:white; background-color: {};padding:5px">{}</span>'.format(info.get(self.status), self.get_status_display()))
+```
+
+## 2.4 中间件处理请求
+
+1. 需要对**admin**账户，**以及登陆**放行
+2. 如果后续需要使用一些数据，可以在通过验证之后，把数据封装到**request**对像中，即**reques.变量名 = 值**
+
+```python
+# crm.middlewares下的middleware.py
+# 登陆校验
+class CheckLogin(MiddlewareMixin):
+    def process_request(self, request):
+        url = request.path_info
+        if url in [reverse('login'), reverse('reg')]:
+            return
+        if url.startswith('/admin'):
+            return
+        user = request.session.get('is_login')
+        if not user:
+            return redirect(reverse('login') + '?return_url={}'.format(url))
+        obj = models.UserProfile.objects.filter(pk=request.session.get('user_id')).first()
+        if obj:
+            request.user_obj = obj
+```
+
+## 2.5 共用一个html文件
+
+- 路由设计
+
+```python
+# urls.py
+# 网址不同，经由一个view函数处理
+url(r'^add_customer/', views.modify_customer, name='add_customer'),
+url(r'^edit_customer/(\d+)', views.modify_customer, name='edit_customer'),
+```
+
+- 共用views函数
+
+```python
+# views.py
+def modify_customer(request, pk=None):
+    user_obj = models.Customer.objects.filter(pk=pk).first()
+    obj = CustomerForm(instance=user_obj)
+    if request.method == 'POST':
+        obj = CustomerForm(data=request.POST, instance=user_obj)
+        if obj.is_valid():
+            obj.save()
+            return redirect('show_customer')
+    title = '修改客户' if pk else '新增客户'
+    return render(request, 'modify_customer.html', {'obj': obj, 'title': title})
+```
+
+1. form_obj = CustomerForm(**data**=request.POST, **instance**=user_obj)
+   - data表示实例化需要的数据，instance表示html页面渲染用的数据，默认为None
+
+# 附录：
+
+## 1. Django中模块的导入
+
+### 1.1 form组件相关(3)
+
+```python
+# form 组件的导入
+from django import forms
+# form校验的异常导入
+from django.core.exceptions import ValidationError
+# MultiSelectFormField, 第三方模块，pip3 install django-multiselectfield
+from multiselectfield.forms.fields import MultiSelectFormField
+```
+
+### 1.2 URL相关(1)
+
+```python
+# url配置，路由分发
+from django.conf.urls import url, include
+```
+
+### 1.3 Model相关(4)
+
+```python
+# 对象关系映射模型
+from django.db import models
+# 聚合分组相关，以及 F，Q查询
+from django.db.models import F, Q, Max, Min, Avg, Count, Sum
+# 事务
+from django.db import transcation
+# 自定义方法中的 html 标签，在进行不转义显示
+from django.utils.safestring import mark_safe
+```
+
+### 1.4 Template相关(2)
+
+```python
+# 导入模版
+from django import template
+register = template.Library()
+# html标签取消转义
+from django.utils.safestring import mark_safe
+```
+
+### 1.5 View相关(5)
+
+```python
+# 导入视图
+from django.views import View
+# 响应以及路由的反解析
+from django.shortcuts import render, redirect, HttpResponse, reverse
+# HttpResponse的导入
+from django.http import HttpResponse
+# JsonResponse的导入, 通常用于dict类型，如果是list，需要指定safe=False， 默认为True
+from django.http.response import JsonResponse
+		return HttpResponse(data，content-type = 'applicatoin/json')
+
+# 模版的响应
+from django.template.response import TemplateResponse
+```
+
+### 1.6 装饰器相关(2)
+
+```python
+# 给CBV加装饰器
+from django.utils.decorators import method_decorator
+# csrf中的装饰器
+from django.views.decorators.csrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
+```
+
+### 1.7 中间件相关(1)
+
+```python
+from django.utils.deprecation import MiddleMixin
+```
+
+### 1.8 admin相关(2)
+
+```python
+from django.contrib import admin
+from app import models
+admin.site.register(models.UserProfile)
+```
+
+### 1.9 app相关(1)
+
+```python
+from django.app import AppConfig
+class App01Config(AppConfig):
+		name='app01'
+```
+
+
+
+
+
+
+
+
+

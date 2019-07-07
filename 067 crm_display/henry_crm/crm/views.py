@@ -1,7 +1,7 @@
 import hashlib
 
 from django.db.models import F
-from django.shortcuts import render, redirect, reverse,HttpResponse
+from django.shortcuts import render, redirect, reverse, HttpResponse
 
 from crm import models
 from crm.forms import RegForm, CustomerForm
@@ -34,7 +34,6 @@ def login(request):
             request.session['user_id'] = obj.pk
             request.session['is_login'] = True
             return ret
-
         return render(request, 'login.html', {'error': '用户名或密码错误'})
     return render(request, 'login.html')
 
@@ -86,3 +85,5 @@ def del_item(request):
     pk = request.GET.get('pk')
     models.Customer.objects.filter(pk=pk).delete()
     return HttpResponse('ok')
+
+

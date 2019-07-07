@@ -39,15 +39,10 @@
                         <td>{{ i.introduce_from }}</td>
                         <td>{{ i.course }}</td>
                         <td>{{ i.get_class_type_display }}</td>
-                        <td>
-                            {{ i.show_status }}
-                        </td>
+                        <td>{{ i.show_status }}</td>
                         <td>{{ i.next_date }}</td>
                         <td>{{ i.consultant.name| default:'暂无' }}</td>
-                        <td>
-                            {{ i.show_class }}
-                        </td>
-
+                        <td>{{ i.show_class }}</td>
                         <td>
                             <button type="button" class="btn btn-danger del" value="{{ i.pk }}">删除</button>
                             <a href="{% url 'edit_customer' i.id %}" style="color: white; line-height: 30px">
@@ -103,9 +98,9 @@
     {#        </ul>#}
     {#    </nav>#}
     {% load static %}
+    {# 使用ajax实现删除功能 #}
     <script src="{% static 'js/jquery.min.js' %} "></script>
     <script>
-    {#$('#date')#}
     $('.del').click(function () {
         console.log($(this).val());
         $.ajax({

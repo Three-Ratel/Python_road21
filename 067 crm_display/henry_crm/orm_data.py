@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-# -*- coding:utf-8 -*-
+# #!/usr/bin/env python
+# # -*- coding:utf-8 -*-
 import os, django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "henry_crm.settings")
 django.setup()
@@ -16,6 +16,5 @@ for i in range(1, 1000):
                             next_date='2019-08-07',
                             consultant_id= 5 if i%3 else 6,
                             )
-
 
 

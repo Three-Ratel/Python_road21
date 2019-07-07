@@ -53,14 +53,14 @@ class CustomerForm(forms.ModelForm):
         model = models.Customer
         fields = '__all__'
         widgets = {
-            'qq': forms.TextInput(attrs={'placeholder': "QQ号", 'autocomplete': "off", 'label': 'QQ号码', }),
-            'qq_name': forms.TextInput(attrs={'placeholder': "QQ昵称", 'autocomplete': "off", }),
-            'name': forms.TextInput(attrs={'placeholder': "客户姓名", 'autocomplete': "off", }),
-            'birthday': forms.TextInput(attrs={'placeholder': "YYYY-MM-DD", 'autocomplete': "off", 'type':'date'}),
-            'phone': forms.TextInput(attrs={'placeholder': '手机号', 'autocomplete': "off", }),
-            'source': forms.Select(attrs={'placeholder': '来源渠道', 'autocomplete': "off", }),
-            'customer_note': forms.Textarea(attrs={'placeholder': '备注', 'autocomplete': "off", }),
-            'class_list': forms.SelectMultiple(attrs={'placeholder': '已报班级', 'autocomplete': "off", }),
+            #     'qq': forms.TextInput(attrs={'placeholder': "QQ号", 'autocomplete': "off", 'label': 'QQ号码', }),
+            #     'qq_name': forms.TextInput(attrs={'placeholder': "QQ昵称", 'autocomplete': "off", }),
+            #     'name': forms.TextInput(attrs={'placeholder': "客户姓名", 'autocomplete': "off", }),
+            #     'phone': forms.TextInput(attrs={'placeholder': '手机号', 'autocomplete': "off", }),
+            #     'source': forms.Select(attrs={'placeholder': '来源渠道', 'autocomplete': "off", }),
+            #     'customer_note': forms.Textarea(attrs={'placeholder': '备注', 'autocomplete': "off", }),
+            #     'class_list': forms.SelectMultiple(attrs={'placeholder': '已报班级', 'autocomplete': "off", }),
+
         }
 
     def __init__(self, *args, **kwargs):
@@ -68,10 +68,6 @@ class CustomerForm(forms.ModelForm):
         for i in self.fields.values():
             if not isinstance(i, (MultiSelectFormField, DateField)):
                 i.widget.attrs['class'] = 'form-control'
-
-            if isinstance(i, DateField):
                 print(i, type(i))
-                i.widget.attrs['type'] = 'date'
-                i.widget.attrs.setdefault('name', 'date')
-                i.widget.attrs.setdefault('id', 'date')
-                i.widget.attrs.setdefault('class', 'date')
+            if isinstance(i, DateField):
+                i.widget = forms.TextInput(attrs={'placeholder': "YYYY-MM-DD", 'autocomplete': "off", 'type': 'date'})

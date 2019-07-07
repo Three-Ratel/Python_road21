@@ -152,9 +152,11 @@ sk.close()
 1. 所有HTTP响应的**第一行都是状态行**，依次是**当前HTTP版本号**，**3位数字组成的状态代码**，以及描述**状态的短语**，彼此由**空格分隔**。
 2. 状态代码的第一个数字代表当前响应的类型
    1. **1xx消息**——请求已被服务器接收，继续处理
+      1. 101 switching procotols
+      2. 102 processing 扩展的状态
    2. **2xx成功**——请求已成功被服务器接收、理解、并接收
    3. **3xx重定向**——需要后续操作才能完成这一请求，当前服务器无法处理，响应另一个服务地址
-   4. **4xx请求错误**——请求含有词法错误或者无法被执行，没有该资源，**402表示认证错误、403表示权限不够**
+   4. **4xx请求错误**——请求含有词法错误或者无法被执行，没有该资源，**401表示认证错误、402 预留、403（forbidden）表示权限不够、405 method not allow**
    5. **5xx服务器错误**——服务器在处理某个正确请求时发生错误，500服务端，代码问题。
 3. 虽然 RFC 2616 中已经推荐了描述状态的短语，例如"200 OK"，"404 Not Found"，但是WEB开发者仍然能够自行决定采用何种短语，用以显示本地化的状态描述或者自定义信息。
 
@@ -662,7 +664,7 @@ class Product(models.Model):
 ```python
 product_list_to_insert = list()
 for i in range(10):
-  		product_list_to_insert.append(Product(name='producet name ' + str(i), price))
+		product_list_to_insert.append(Product(name='producet name ' + str(i), price))
 Product.objects.bulk_create(product_list_to_insert)
 ```
 
@@ -2039,7 +2041,7 @@ def json_data(request):
   ret['Content-Type'] = 'applicatoin/json'
   return ret
 	# 或
-  return HttpResponse(data，Content-Type='applicatoin/json')
+  return HttpResponse(data，content-type = 'applicatoin/json')
 # 前端获取数据会自动反序列化
 ```
 
@@ -3594,7 +3596,7 @@ def logout(request):
 - **csrf_protect**，局部使用csrf校验，需要配合ensure_csrf_cookie一起使用
 
 ```python
-from django.views.decorators.scrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
 from django.utils.decorators import method_decorator
 # csrf_exempt,只能加到dispatch方法上
 @method_decorator(scrf_exempt, name='dispatch')
