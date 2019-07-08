@@ -130,7 +130,11 @@ def modify_customer(request, pk=None):
         obj = CustomerForm(data=request.POST, instance=user_obj)
         if obj.is_valid():
             obj.save()
-            return redirect('show_customer')
+            url = request.GET.get('next', '')
+            if url:
+                return redirect(url)
+            else:
+                return redirect('show_customer')
     title = '修改客户' if pk else '新增客户'
     return render(request, 'modify_customer.html', {'obj': obj, 'title': title})
 

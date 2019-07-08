@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+    {% load my_tags %}
     <div class="panel panel-primary">
         <div class="panel-body">
             {# 编辑用户 #}
@@ -66,7 +67,7 @@
                             <td>
                                 <button type="button" class="btn btn-danger del" value="{{ i.pk }}">删除</button>
 
-                                <a href="{% url 'edit_customer' i.id %}" style="color: white; line-height: 30px">
+                                <a href="{% reverse_url request 'edit_customer' i.pk %}" style="color: white; line-height: 30px">
                                     <button type="button" class="btn btn-info">修改</button>
                                 </a>
                             </td>
