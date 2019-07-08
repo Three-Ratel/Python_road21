@@ -60,7 +60,6 @@ class CustomerForm(forms.ModelForm):
             #     'source': forms.Select(attrs={'placeholder': '来源渠道', 'autocomplete': "off", }),
             #     'customer_note': forms.Textarea(attrs={'placeholder': '备注', 'autocomplete': "off", }),
             #     'class_list': forms.SelectMultiple(attrs={'placeholder': '已报班级', 'autocomplete': "off", }),
-
         }
 
     def __init__(self, *args, **kwargs):
@@ -68,6 +67,6 @@ class CustomerForm(forms.ModelForm):
         for i in self.fields.values():
             if not isinstance(i, (MultiSelectFormField, DateField)):
                 i.widget.attrs['class'] = 'form-control'
-                print(i, type(i))
+                # print(i, type(i))
             if isinstance(i, DateField):
                 i.widget = forms.TextInput(attrs={'placeholder': "YYYY-MM-DD", 'autocomplete': "off", 'type': 'date'})

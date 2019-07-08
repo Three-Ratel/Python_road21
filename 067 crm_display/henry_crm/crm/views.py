@@ -1,6 +1,6 @@
 import hashlib
 
-from django.db.models import F
+from django.db.models import F,Q
 from django.shortcuts import render, redirect, reverse, HttpResponse
 
 from crm import models
@@ -48,8 +48,12 @@ def customer_list(request):
     url = request.path
     if url == reverse('customer'):
         all_item = models.Customer.objects.filter(consultant__isnull=True)
-    else:
+    elif url == reverse('show_customer'):
         all_item = models.Customer.objects.filter(consultant_id=request.user_obj.pk)
+    else:
+        key = request.POST.get('key_words')
+        all_item = models.Customer.objects.filter(
+            Q(qq__contains=key) | Q(name__contains=key) | Q(phone__contains=key), Q(consultant=request.user_obj))
     obj = Pagenation(request, len(all_item))
     return render(request, 'list_customer.html', {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show})
 
@@ -87,3 +91,10 @@ def del_item(request):
     return HttpResponse('ok')
 
 
+def transfer(request):
+    li = request.POST.getlist('edit_name')
+    if request.POST.get('method') == 'ctp':
+        models.Customer.objects.filter(pk__in=li).update(consultant=request.user_obj)
+    elif request.POST.get('method') == 'ptc':
+        models.Customer.objects.filter(pk__in=li).update(consultant='')
+    return redirect('customer')

@@ -38,6 +38,9 @@ class Pagenation:
         if self.end_page > self.total_page:
             self.start_page = self.total_page - self.max_item + 1
         self.end_page = self.start_page + self.max_item
+        if self.start < 0:
+            self.start = 1
+            self.end = 1
 
     @property
     def show(self):
@@ -67,5 +70,6 @@ class Pagenation:
                 '<li><a href="?page={}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>'.format(
                     self.page + 1))
         li_li.append(
-            ' <li><a href="?page={}" aria-label="Previous"><span aria-hidden="true">尾页</span></a></li>'.format(self.total_page))
+            ' <li><a href="?page={}" aria-label="Previous"><span aria-hidden="true">尾页</span></a></li>'.format(
+                self.total_page))
         return ''.join(li_li)
