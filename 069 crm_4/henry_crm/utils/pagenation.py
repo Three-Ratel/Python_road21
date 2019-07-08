@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
+from django.http.request import QueryDict
+from django.utils.safestring import mark_safe
 
 
 class Pagenation:
 
-    def __init__(self, request, all_num, per_page=10, max_item=11):
+    def __init__(self, request, all_num, params=None, per_page=10, max_item=11):
         """
         :param request: request请求对象
         :param all_num: 需要分页的数据量
@@ -17,6 +19,10 @@ class Pagenation:
             page = 1 if page <= 0 else page
         except Exception:
             page = 1
+        # 查询条件
+        self.params = params
+        if not self.params:
+            self.params = QueryDict(mutable=True)
         # total_page: 分的总页数
         total_page, b = divmod(all_num, per_page)
         total_page = total_page + 1 if b else total_page
@@ -45,38 +51,44 @@ class Pagenation:
 
     @property
     def show(self):
+
         li_li = []
+        self.params['page'] = 1
         li_li.append(
-            ' <li><a href="?page=1" aria-label="Previous"><span aria-hidden="true">首页</span></a></li>')
+            ' <li><a href="?{}" aria-label=""><span aria-hidden="true">首页</span></a></li>'.format(
+                self.params.urlencode()))
         if self.start == self.end == 1:
-            li_li.append('<li class="active"><a href="?page=1">1</a></li>')
-            li_li.append(
-                ' <li><a href="?page={}" aria-label="Previous"><span aria-hidden="true">尾页</span></a></li>'.format(
-                    self.total_page))
+            li_li.append('<li class="active"><a href="?{}">1</a></li>'.format(self.params.urlencode()))
         else:
             if self.page == 1:
                 li_li.append(
-                    ' <li class="disabled" style="display:none"><span aria-hidden="true">&laquo;</span></li>')
+                    ' <li style="display:none"><span aria-hidden="true">&laquo;</span></li>')
             else:
+                self.params['page'] = self.page - 1
                 li_li.append(
-                    ' <li><a href="?page={}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>'.format(
-                        self.page - 1))
+                    ' <li><a href="?{}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>'.format(
+                        self.params.urlencode()))
             if self.total_page < self.max_item:
                 self.start_page = 1
                 self.end_page = self.total_page + 1
+
             for i in range(self.start_page, self.end_page):
+                self.params['page'] = i
                 if self.page == i:
-                    li_li.append('<li class="active"><a href="?page={}">{}</a></li>'.format(i, i))
+                    li_li.append('<li class="active"><a href="?{}">{}</a></li>'.format(self.params.urlencode(), i))
                 else:
-                    li_li.append('<li><a href="?page={}">{}</a></li>'.format(i, i))
+                    li_li.append('<li><a href="?{}">{}</a></li>'.format(self.params.urlencode(), i))
             if self.page == self.total_page:
                 li_li.append(
-                    '<li class="disabled"  style="display:none"><span aria-hidden="true">&raquo;</span></li>')
+                    '<li style="display:none"><span aria-hidden="true">&raquo;</span></li>')
             else:
+                self.params['page'] = self.page + 1
                 li_li.append(
-                    '<li><a href="?page={}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>'.format(
-                        self.page + 1))
+                    '<li><a href="?{}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>'.format(
+                        self.params.urlencode(), self.page + 1))
+
+            self.params['page'] = self.total_page
             li_li.append(
-                ' <li><a href="?page={}" aria-label="Previous"><span aria-hidden="true">尾页</span></a></li>'.format(
-                    self.total_page))
-        return ''.join(li_li)
+                ' <li><a href="?{}" aria-label="Previous"><span aria-hidden="true">尾页</span></a></li>'.format(
+                    self.params.urlencode()))
+        return mark_safe(''.join(li_li))

@@ -1,7 +1,8 @@
 import hashlib
 
-from django.db.models import F,Q
+from django.db.models import F, Q
 from django.shortcuts import render, redirect, reverse, HttpResponse
+from django.views import View
 
 from crm import models
 from crm.forms import RegForm, CustomerForm
@@ -57,11 +58,13 @@ def customer_list(request):
         if key:
             if search_url == reverse('show_customer'):
                 all_item = models.Customer.objects.filter(
-                    Q(qq__contains=key) | Q(name__contains=key) | Q(phone__contains=key), Q(consultant=request.user_obj))
+                    Q(qq__contains=key) | Q(name__contains=key) | Q(phone__contains=key),
+                    Q(consultant=request.user_obj))
             else:
                 all_item = models.Customer.objects.filter(
                     Q(qq__contains=key) | Q(name__contains=key) | Q(phone__contains=key), Q(consultant__isnull=True))
-        else:all_item=[]
+        else:
+            all_item = []
     obj = Pagenation(request, len(all_item))
     return render(request, 'list_customer.html', {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show})
 
@@ -81,6 +84,45 @@ def customer_list(request):
     # return render(request, 'list_customer.html', {'all_item': all_item})
 
 
+class CustomerList(View):
+
+    def get(self, request):
+        q = self.search(['qq', 'name', 'phone'])
+        if request.path == reverse('customer'):
+            all_item = models.Customer.objects.filter(q, consultant__isnull=True)
+        else:
+            all_item = models.Customer.objects.filter(q, consultant=request.user_obj)
+        obj = Pagenation(request, all_item.count(), request.GET.copy(), 3)
+        return render(request, 'list_customer.html', {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show})
+
+    def post(self, request):
+        action = request.POST.get('action', '')
+        if not hasattr(self, action):
+            return HttpResponse('非法操作')
+        getattr(self, action)()
+        return self.get(request)
+
+    def ctp(self):
+        """common to public: 公户转私户"""
+        li = self.request.POST.getlist('edit_name')
+        models.Customer.objects.filter(pk__in=li).update(consultant=self.request.user_obj)
+
+    def ptc(self):
+        """public to common: 私户转公户"""
+        li = self.request.POST.getlist('edit_name')
+        models.Customer.objects.filter(pk__in=li).update(consultant='')
+
+    def search(self, field_list):
+        """根据关键词，进行模糊查询"""
+        query = self.request.GET.get('query', '')
+        q = Q()
+        q.connector = 'OR'
+        for i in field_list:
+            q.children.append(Q(('{}__contains'.format(i), query)))
+        # (OR: (AND: ('qq__contains', '')), (AND: ('name__contains', '')), (AND: ('phone__contains', '')))
+        return q
+
+
 def modify_customer(request, pk=None):
     user_obj = models.Customer.objects.filter(pk=pk).first()
     obj = CustomerForm(instance=user_obj)
@@ -97,13 +139,3 @@ def del_item(request):
     pk = request.GET.get('pk')
     models.Customer.objects.filter(pk=pk).delete()
     return HttpResponse('ok')
-
-
-def transfer(request):
-    li = request.POST.getlist('edit_name')
-    if request.POST.get('method') == 'ctp':
-        models.Customer.objects.filter(pk__in=li).update(consultant=request.user_obj)
-    elif request.POST.get('method') == 'ptc':
-        models.Customer.objects.filter(pk__in=li).update(consultant='')
-    return redirect('customer')
-
