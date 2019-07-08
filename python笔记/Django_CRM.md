@@ -557,6 +557,16 @@ def modify_customer(request, pk=None):
 1. form_obj = CustomerForm(**data**=request.POST, **instance**=user_obj)
    - data表示实例化需要的数据，instance表示html页面渲染用的数据，默认为None
 
+# 3. 公私户转换
+
+
+
+
+
+
+
+
+
 # 附录：
 
 ## 1. Django中模块的导入
