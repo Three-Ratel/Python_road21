@@ -38,6 +38,7 @@ class Pagenation:
         if self.end_page > self.total_page:
             self.start_page = self.total_page - self.max_item + 1
         self.end_page = self.start_page + self.max_item
+
         if self.start < 0:
             self.start = 1
             self.end = 1
@@ -47,29 +48,35 @@ class Pagenation:
         li_li = []
         li_li.append(
             ' <li><a href="?page=1" aria-label="Previous"><span aria-hidden="true">首页</span></a></li>')
-        if self.page == 1:
+        if self.start == self.end == 1:
+            li_li.append('<li class="active"><a href="?page=1">1</a></li>')
             li_li.append(
-                ' <li class="disabled" style="display:none"><span aria-hidden="true">&laquo;</span></li>')
+                ' <li><a href="?page={}" aria-label="Previous"><span aria-hidden="true">尾页</span></a></li>'.format(
+                    self.total_page))
         else:
-            li_li.append(
-                ' <li><a href="?page={}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>'.format(
-                    self.page - 1))
-        if self.total_page < self.max_item:
-            self.start_page = 1
-            self.end_page = self.total_page + 1
-        for i in range(self.start_page, self.end_page):
-            if self.page == i:
-                li_li.append('<li class="active"><a href="?page={}">{}</a></li>'.format(i, i))
+            if self.page == 1:
+                li_li.append(
+                    ' <li class="disabled" style="display:none"><span aria-hidden="true">&laquo;</span></li>')
             else:
-                li_li.append('<li><a href="?page={}">{}</a></li>'.format(i, i))
-        if self.page == self.total_page:
+                li_li.append(
+                    ' <li><a href="?page={}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>'.format(
+                        self.page - 1))
+            if self.total_page < self.max_item:
+                self.start_page = 1
+                self.end_page = self.total_page + 1
+            for i in range(self.start_page, self.end_page):
+                if self.page == i:
+                    li_li.append('<li class="active"><a href="?page={}">{}</a></li>'.format(i, i))
+                else:
+                    li_li.append('<li><a href="?page={}">{}</a></li>'.format(i, i))
+            if self.page == self.total_page:
+                li_li.append(
+                    '<li class="disabled"  style="display:none"><span aria-hidden="true">&raquo;</span></li>')
+            else:
+                li_li.append(
+                    '<li><a href="?page={}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>'.format(
+                        self.page + 1))
             li_li.append(
-                '<li class="disabled"  style="display:none"><span aria-hidden="true">&raquo;</span></li>')
-        else:
-            li_li.append(
-                '<li><a href="?page={}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>'.format(
-                    self.page + 1))
-        li_li.append(
-            ' <li><a href="?page={}" aria-label="Previous"><span aria-hidden="true">尾页</span></a></li>'.format(
-                self.total_page))
+                ' <li><a href="?page={}" aria-label="Previous"><span aria-hidden="true">尾页</span></a></li>'.format(
+                    self.total_page))
         return ''.join(li_li)

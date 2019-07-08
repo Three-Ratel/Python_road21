@@ -46,14 +46,22 @@ def logout(request):
 
 def customer_list(request):
     url = request.path
-    if url == reverse('customer'):
-        all_item = models.Customer.objects.filter(consultant__isnull=True)
-    elif url == reverse('show_customer'):
-        all_item = models.Customer.objects.filter(consultant_id=request.user_obj.pk)
+    if request.method == 'GET':
+        if url == reverse('customer'):
+            all_item = models.Customer.objects.filter(consultant__isnull=True)
+        else:
+            all_item = models.Customer.objects.filter(consultant_id=request.user_obj.pk)
     else:
         key = request.POST.get('key_words')
-        all_item = models.Customer.objects.filter(
-            Q(qq__contains=key) | Q(name__contains=key) | Q(phone__contains=key), Q(consultant=request.user_obj))
+        search_url = request.POST.get('search_url')
+        if key:
+            if search_url == reverse('show_customer'):
+                all_item = models.Customer.objects.filter(
+                    Q(qq__contains=key) | Q(name__contains=key) | Q(phone__contains=key), Q(consultant=request.user_obj))
+            else:
+                all_item = models.Customer.objects.filter(
+                    Q(qq__contains=key) | Q(name__contains=key) | Q(phone__contains=key), Q(consultant__isnull=True))
+        else:all_item=[]
     obj = Pagenation(request, len(all_item))
     return render(request, 'list_customer.html', {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show})
 
@@ -98,3 +106,6 @@ def transfer(request):
     elif request.POST.get('method') == 'ptc':
         models.Customer.objects.filter(pk__in=li).update(consultant='')
     return redirect('customer')
+
+
+    request.GET
