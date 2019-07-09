@@ -559,7 +559,96 @@ def modify_customer(request, pk=None):
 
 # 3. 公私户转换
 
+1. 使用反射处理多个功能
+2. django模版中的，一个标签内部不能再嵌套标签
+3. form不能进行嵌套，pull-right/ float
 
+```python
+form 表单类型 class='form-inline'
+select class='form-control'
+```
+
+# 4.模糊查询
+
+## 1. Q查询
+
+```python
+q = Q()                                       # 默认不可更改
+q.connector = 'OR'												    # 连接条件为 'OR'
+q.children.append(Q(qq__contains='查询关键词')) # children方法，类似列表
+Q(qq__contains=query)                         # Q查询条件格式
+Q(('qq__contains',query))   									# 通过字符串方式，生成Q条件
+# 示例，可以运用到类中
+def search(field_list):
+  	query = request.GET.get('query', '')
+  	q = Q()
+    q.connector = 'OR'
+    # 方法一
+    q.children.append(Q(qq__contains=query))
+    ...
+    # 方法二
+    for i in field_list:
+        q.children.append(Q(('{}__contains'.format(i), query)))
+        return q
+q = search(['qq', 'name', 'phone'])
+```
+
+# 5. 分页保留搜索条件
+
+## 1. request.GET的类型
+
+- querydict类型，默认为不可变类型(**修改mutable**)
+- urlencode()方法
+
+```python
+request.GET   <class 'django.http.request.QueryDict'>   'query': ['13']  
+request.GET.urlencode()                 # 对URL进行编码如：query=13&page=1
+request.GET._mutable = True             # 可编辑，默认为False，即不可编辑
+request.GET.copy()                      # 深拷贝，可编辑
+QueryDict(mutable=True)                 # 可编辑
+```
+
+## 2. request.GET记录条件
+
+```django
+{# 展示页面, 向展示页面发送表单 #}
+<form action="" class="form-group" style="float:right">
+		<input type="text" name="query" class="btn" style="border-color: silver">
+		<button class="btn btn-info">搜索</button>
+</form>
+```
+
+# 6. 编辑后返回源界面
+
+## 1. 自定义simple_tag
+
+```python
+# 自定义simple_tag
+from django.http.request import QueryDict
+from django.template import Library
+from django.urls import reverse
+register = Library()
+
+@register.simple_tag
+def reverse_url(request, name, *args, **kwargs):
+    next = request.get_full_path()
+    url = reverse(name, args=args, kwargs=kwargs)
+    qd = QueryDict(mutable=True)
+    qd['next'] = next
+    return '{}?{}'.format(url, qd.urlencode())
+```
+
+## 2. 编辑按钮
+
+- 通过自定义的simple_tag，**获取编辑前的url**
+
+```django
+{# 展示页面 #}
+{% load my_tags %}
+<a href="{% reverse_url request 'edit_customer' i.pk %}">
+		<button type="button" class="btn btn-info">修改</button>
+</a>
+```
 
 
 
@@ -585,7 +674,7 @@ from multiselectfield.forms.fields import MultiSelectFormField
 ### 1.2 URL相关(1)
 
 ```python
-# url配置，路由分发
+# url配置，路由分发，路由的反解析
 from django.conf.urls import url, include
 ```
 
@@ -624,7 +713,8 @@ from django.http import HttpResponse
 # JsonResponse的导入, 通常用于dict类型，如果是list，需要指定safe=False， 默认为True
 from django.http.response import JsonResponse
 		return HttpResponse(data，content-type = 'applicatoin/json')
-
+# querydict 类
+from django.http.request import QueryDict
 # 模版的响应
 from django.template.response import TemplateResponse
 ```

@@ -10,9 +10,9 @@ register = Library()
 @register.simple_tag
 def reverse_url(request, name, *args, **kwargs):
     next = request.get_full_path()
-    # print(next)
-    # print(args)
     url = reverse(name, args=args, kwargs=kwargs)
     qd = QueryDict(mutable=True)
     qd['next'] = next
+    # print(next)
+    # print(qd, qd.urlencode())
     return '{}?{}'.format(url, qd.urlencode())

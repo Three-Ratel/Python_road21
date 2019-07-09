@@ -57,6 +57,7 @@ class Pagenation:
         li_li.append(
             ' <li><a href="?{}" aria-label=""><span aria-hidden="true">首页</span></a></li>'.format(
                 self.params.urlencode()))
+        # 如果只有一页，表示起始页码均为1
         if self.start == self.end == 1:
             li_li.append('<li class="active"><a href="?{}">1</a></li>'.format(self.params.urlencode()))
         else:
@@ -68,16 +69,20 @@ class Pagenation:
                 li_li.append(
                     ' <li><a href="?{}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>'.format(
                         self.params.urlencode()))
+
             if self.total_page < self.max_item:
                 self.start_page = 1
                 self.end_page = self.total_page + 1
 
             for i in range(self.start_page, self.end_page):
                 self.params['page'] = i
+                # 通过if判断，当前页把其类设置为 active 表示活跃状态
                 if self.page == i:
                     li_li.append('<li class="active"><a href="?{}">{}</a></li>'.format(self.params.urlencode(), i))
                 else:
                     li_li.append('<li><a href="?{}">{}</a></li>'.format(self.params.urlencode(), i))
+
+            # 如果当前页是最后一页，则隐藏下一页按钮，否则page加1
             if self.page == self.total_page:
                 li_li.append(
                     '<li style="display:none"><span aria-hidden="true">&raquo;</span></li>')
@@ -87,6 +92,7 @@ class Pagenation:
                     '<li><a href="?{}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>'.format(
                         self.params.urlencode(), self.page + 1))
 
+            # 尾页
             self.params['page'] = self.total_page
             li_li.append(
                 ' <li><a href="?{}" aria-label="Previous"><span aria-hidden="true">尾页</span></a></li>'.format(

@@ -113,7 +113,9 @@ class Customer(models.Model):
 
     def show_status(self):
         info = {'signed': 'green', 'unregistered': 'red', 'studying': 'skyblue', 'paid_in_full': 'gold'}
-        return mark_safe('<span style="color:white; background-color: {};padding:5px">{}</span>'.format(info.get(self.status), self.get_status_display()))
+        return mark_safe(
+            '<span style="color:white; background-color: {};padding:5px">{}</span>'.format(info.get(self.status),
+                                                                                           self.get_status_display()))
 
 
 class Campus(models.Model):

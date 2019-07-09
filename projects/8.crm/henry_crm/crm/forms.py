@@ -4,10 +4,21 @@ import hashlib
 
 from django import forms
 from django.core.exceptions import ValidationError
-from django.forms.fields import DateField
+from django.forms.fields import DateField, BooleanField
 from multiselectfield.forms.fields import MultiSelectFormField
 
 from crm import models
+
+
+class BSForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for i in self.fields.values():
+            if not isinstance(i, (MultiSelectFormField, DateField, BooleanField)):
+                i.widget.attrs['class'] = 'form-control'
+            if isinstance(i, DateField):
+                i.widget = forms.TextInput(attrs={'placeholder': "YYYY-MM-DD", 'autocomplete': "off", 'type': 'date'})
 
 
 class RegForm(forms.ModelForm):
@@ -48,7 +59,7 @@ class RegForm(forms.ModelForm):
         raise ValidationError('两次密码不一致')
 
 
-class CustomerForm(forms.ModelForm):
+class CustomerForm(BSForm):
     class Meta:
         model = models.Customer
         fields = '__all__'
@@ -62,11 +73,40 @@ class CustomerForm(forms.ModelForm):
             #     'class_list': forms.SelectMultiple(attrs={'placeholder': '已报班级', 'autocomplete': "off", }),
         }
 
+
+class ConsultRecord(BSForm):
+    class Meta:
+        model = models.ConsultRecord
+        fields = '__all__'
+
+    # def __init__(self, request, customer_id, *args, **kwargs):
+    #     super(ConsultRecord, self).__init__(*args, **kwargs)
+    #     if customer_id and customer_id != '0':
+    #         self.fields['customer'].choices = [(i, str(i)) for i in models.Customer.objects.filter(pk=customer_id)]
+    #     else:
+    #         self.fields['customer'].choices = [('', '-------------')] + [(i.pk, str(i)) for i in request.user_obj.customers.all()]
+    #     self.fields['consultant'].choices = [(request.user_obj.pk, request.user_obj)]
+
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for i in self.fields.values():
-            if not isinstance(i, (MultiSelectFormField, DateField)):
-                i.widget.attrs['class'] = 'form-control'
-                # print(i, type(i))
-            if isinstance(i, DateField):
-                i.widget = forms.TextInput(attrs={'placeholder': "YYYY-MM-DD", 'autocomplete': "off", 'type': 'date'})
+        super(ConsultRecord, self).__init__(*args, **kwargs)
+        if self.instance.customer_id != '0':
+            self.fields['customer'].choices = [(self.instance.customer.name, self.instance.customer.name)]
+        else:
+            self.fields['customer'].choices = [('', '-------------')] + [(i.pk, str(i)) for i in
+                                                                         self.instance.consultant.customers.all()]
+        # 限制为当前销售
+        self.fields['consultant'].choices = [(self.instance.consultant.pk, self.instance.consultant)]
+
+
+class EnrollmentForm(BSForm):
+    class Meta:
+        model = models.Enrollment
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(EnrollmentForm, self).__init__(*args, **kwargs)
+        # self.instance  models.Enrollment(customer_id=customer_id)
+        self.fields['customer'].choices = [(self.instance.customer_id, self.instance.customer)]
+        print(self.fields['customer'].choices)
+        self.fields['enrolment_class'].choices = [(i.pk, str(i)) for i in self.instance.customer.class_list.all()]
+        print(self.fields['enrolment_class'].choices)

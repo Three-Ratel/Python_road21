@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.views import View
 
 from crm import models
-from crm.forms import RegForm, CustomerForm
+from crm.forms import RegForm, CustomerForm, ConsultRecord, EnrollmentForm
 from utils.pagenation import Pagenation
 
 
@@ -56,7 +56,7 @@ def customer_list(request):
         key = request.POST.get('key_words')
         search_url = request.POST.get('search_url')
         if key:
-            if search_url == reverse('show_customer'):
+            if search_url == reverse('list_customer'):
                 all_item = models.Customer.objects.filter(
                     Q(qq__contains=key) | Q(name__contains=key) | Q(phone__contains=key),
                     Q(consultant=request.user_obj))
@@ -134,12 +134,70 @@ def modify_customer(request, pk=None):
             if url:
                 return redirect(url)
             else:
-                return redirect('show_customer')
+                return redirect('list_customer')
     title = '修改客户' if pk else '新增客户'
-    return render(request, 'modify_customer.html', {'obj': obj, 'title': title})
+    return render(request, 'form.html', {'obj': obj, 'title': title})
 
 
-def del_item(request):
-    pk = request.GET.get('pk')
-    models.Customer.objects.filter(pk=pk).delete()
-    return HttpResponse('ok')
+# 跟进记录
+class ConsultRecordList(View):
+
+    def get(self, request, pk=0):
+        all_item = models.ConsultRecord.objects.filter(consultant=request.user_obj)
+        if pk:
+            # if request.path == reverse('consult_record', args=(pk,)):
+            all_item = models.ConsultRecord.objects.filter(consultant=request.user_obj, customer_id=pk)
+        obj = Pagenation(request, all_item.count(), per_page=3)
+        return render(request, 'list_consult.html',
+                      {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show, 'customer_id': pk})
+
+
+# def modify_consult(request, pk=None, customer_id=None):
+#     user_obj = models.ConsultRecord.objects.filter(pk=pk).first()
+#     obj = ConsultRecord(request, customer_id, instance=user_obj)
+#     if request.method == 'POST':
+#         obj = ConsultRecord(request, customer_id, data=request.POST, instance=user_obj)
+#         if obj.is_valid():
+#             obj.save()
+#             url = request.GET.get('next', '')
+#             return redirect(url if url else 'consult_record')
+#     return render(request, 'form.html', {'obj': obj})
+
+
+def modify_consult(request, pk=None, customer_id=None):
+    user_obj = models.ConsultRecord(consultant=request.user_obj,
+                                    customer_id=customer_id) if customer_id else models.ConsultRecord.objects.filter(
+        pk=pk).first()
+    obj = ConsultRecord(instance=user_obj)
+    if request.method == 'POST':
+        obj = ConsultRecord(data=request.POST, instance=user_obj)
+        if obj.is_valid():
+            obj.save()
+            url = request.GET.get('next', '')
+            return redirect(url if url else 'consult_record')
+    return render(request, 'form.html', {'obj': obj})
+
+
+class EnrollmentList(View):
+
+    def get(self, request, customer_id=None):
+        if not customer_id:
+            all_item = models.Enrollment.objects.filter(customer__in=request.user_obj.customers.all())
+        else:
+            all_item = models.Enrollment.objects.filter(customer_id=customer_id)
+        obj = Pagenation(request, all_item.count(), per_page=2)
+        return render(request, 'list_enrollment.html',
+                      {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show, 'customer_id': customer_id})
+
+
+def modify_enrollment(request, pk=None, customer_id=None):
+    user_obj = models.Enrollment(customer_id=customer_id) if customer_id else models.Enrollment.objects.filter(
+        customer_id=pk).first()
+    obj = EnrollmentForm(instance=user_obj)
+    if request.method == 'POST':
+        obj = EnrollmentForm(data=request.POST, instance=user_obj)
+        if obj.is_valid():
+            obj.save()
+            url = request.GET.get('next', '')
+            return redirect(url if url else 'list_enrollment')
+    return render(request, 'form.html', {'obj': obj})
