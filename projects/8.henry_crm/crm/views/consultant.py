@@ -1,14 +1,14 @@
 from django.conf import settings
 from django.db import transaction
-from django.db.models import Q
 from django.shortcuts import render, redirect, reverse, HttpResponse
-from django.views import View
+
 from crm import models
 from crm.forms import CustomerForm, ConsultRecordForm, EnrollmentForm
 from utils.pagenation import Pagenation
+from .base import BaseView
 
 
-class CustomerList(View):
+class CustomerList(BaseView):
 
     def get(self, request):
         q = self.search(['qq', 'name', 'phone'])
@@ -19,14 +19,6 @@ class CustomerList(View):
         obj = Pagenation(request, all_item.count(), request.GET.copy(), 3)
         return render(request, 'consultant/list_customer.html',
                       {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show})
-
-    def post(self, request):
-        action = request.POST.get('action', '')
-        if not hasattr(self, action):
-            return HttpResponse('非法操作')
-        ret = getattr(self, action)()
-        if ret: return ret
-        return self.get(request)
 
     def ctp(self):
         """common to public: 公户转私户"""
@@ -50,16 +42,6 @@ class CustomerList(View):
         li = self.request.POST.getlist('edit_name')
         models.Customer.objects.filter(pk__in=li).update(consultant='')
 
-    def search(self, field_list):
-        """根据关键词，进行模糊查询"""
-        query = self.request.GET.get('query', '')
-        q = Q()
-        q.connector = 'OR'
-        for i in field_list:
-            q.children.append(Q(('{}__contains'.format(i), query)))
-        # (OR: (AND: ('qq__contains', '')), (AND: ('name__contains', '')), (AND: ('phone__contains', '')))
-        return q
-
 
 def modify_customer(request, pk=None):
     user_obj = models.Customer.objects.filter(pk=pk).first()
@@ -76,7 +58,7 @@ def modify_customer(request, pk=None):
 
 
 # 跟进记录
-class ConsultRecordList(View):
+class ConsultRecordList(BaseView):
 
     def get(self, request, pk=0):
         all_item = models.ConsultRecord.objects.filter(consultant=request.user_obj)
@@ -85,19 +67,6 @@ class ConsultRecordList(View):
         obj = Pagenation(request, all_item.count(), per_page=3)
         return render(request, 'consultant/list_consult.html',
                       {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show, 'customer_id': pk})
-
-
-# # 通过传输参数
-# def modify_consult(request, pk=None, customer_id=None):
-#     user_obj = models.ConsultRecord.objects.filter(pk=pk).first()
-#     obj = ConsultRecord(request, customer_id, instance=user_obj)
-#     if request.method == 'POST':
-#         obj = ConsultRecord(request, customer_id, data=request.POST, instance=user_obj)
-#         if obj.is_valid():
-#             obj.save()
-#             url = request.GET.get('next', '')
-#             return redirect(url if url else 'consult_record')
-#     return render(request, 'form.html', {'obj': obj})
 
 
 # 通过实例化，进行参数的间接传递
@@ -115,7 +84,7 @@ def modify_consult(request, pk=None, customer_id=None):
     return render(request, 'form.html', {'obj': obj, 'title': title, })
 
 
-class EnrollmentList(View):
+class EnrollmentList(BaseView):
 
     def get(self, request, customer_id=None):
         if not customer_id:

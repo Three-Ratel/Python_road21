@@ -96,7 +96,7 @@ class ConsultRecordForm(BSForm):
             self.fields['customer'].choices = [(self.instance.customer.pk, self.instance.customer.name)]
         else:
             self.fields['customer'].choices = [('', '-------------')] + \
-                [(i.pk, str(i)) for i in self.instance.consultant.customers.all()]
+                                              [(i.pk, str(i)) for i in self.instance.consultant.customers.all()]
         # 限制为当前销售
         self.fields['consultant'].choices = [(self.instance.consultant.pk, self.instance.consultant)]
 
@@ -125,4 +125,18 @@ class ClasslistForm(BSForm):
         self.fields['teachers'].choices = [(i.pk, i) for i in models.UserProfile.objects.filter(department__name='销售部')]
 
 
+class CourseRecordForm(BSForm):
+    class Meta:
+        model = models.CourseRecord
+        fields = '__all__'
 
+    def __init__(self, *args, **kwargs):
+        super(CourseRecordForm, self).__init__(*args, **kwargs)
+        self.fields['re_class'].choices = [(self.instance.re_class_id, self.instance.re_class)]
+        self.fields['recorder'].choices = [(self.instance.recorder.pk, self.instance.recorder)]
+        self.fields['teacher'].choices = [(i.pk, str(i)) for i in self.instance.re_class.teachers.all()]
+
+
+class StudyRecordForm(BSForm):
+    class Meta:
+        fields = '__all__'

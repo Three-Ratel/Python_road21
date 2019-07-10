@@ -227,6 +227,9 @@ class CourseRecord(models.Model):
     class Meta:
         unique_together = ('re_class', 'day_num')
 
+    def __str__(self):
+        return '{}-{}'.format(self.course_title, self.day_num)
+
 
 class StudyRecord(models.Model):
     """
