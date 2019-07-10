@@ -141,7 +141,7 @@ class ClassList(models.Model):
     start_date = models.DateField("开班日期")
     graduate_date = models.DateField("结业日期", blank=True, null=True)
     teachers = models.ManyToManyField('UserProfile', verbose_name="老师")
-    class_type = models.CharField(choices=class_type_choices, max_length=64, verbose_name='班额及类型', blank=True,
+    class_type = models.CharField(choices=class_type_choices, max_length=64, verbose_name='班级及类型', blank=True,
                                   null=True)
 
     class Meta:

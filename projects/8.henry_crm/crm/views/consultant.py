@@ -1,87 +1,11 @@
-import hashlib
-
-from django.db.models import F, Q
+from django.conf import settings
+from django.db import transaction
+from django.db.models import Q
 from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.views import View
-
 from crm import models
-from crm.forms import RegForm, CustomerForm, ConsultRecordForm, EnrollmentForm
+from crm.forms import CustomerForm, ConsultRecordForm, EnrollmentForm
 from utils.pagenation import Pagenation
-
-
-def reg(request):
-    form_obj = RegForm()
-    if request.method == 'POST':
-        form_obj = RegForm(request.POST)
-        if form_obj.is_valid():
-            obj = form_obj.save()
-            models.Department.objects.filter(pk=obj.department.pk).update(count=F('count') + 1)
-            return redirect(reverse('login'))
-    return render(request, 'reg.html', {'form_obj': form_obj})
-
-
-def login(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        md = hashlib.md5(b'sajdfkh')
-        md.update(password.encode('utf-8'))
-        md.hexdigest()
-        obj = models.UserProfile.objects.filter(username=username, password=md.hexdigest(), is_active=True).first()
-        if obj:
-            url = request.GET.get('return_url')
-            if url: ret = redirect(url)
-            ret = redirect('customer')
-            request.session['user_id'] = obj.pk
-            request.session['is_login'] = True
-            return ret
-        return render(request, 'login.html', {'error': '用户名或密码错误'})
-    return render(request, 'login.html')
-
-
-def logout(request):
-    request.session['is_login'] = ''
-    ret = redirect('login')
-    return ret
-
-
-def customer_list(request):
-    url = request.path
-    if request.method == 'GET':
-        if url == reverse('customer'):
-            all_item = models.Customer.objects.filter(consultant__isnull=True)
-        else:
-            all_item = models.Customer.objects.filter(consultant_id=request.user_obj.pk)
-    else:
-        key = request.POST.get('key_words')
-        search_url = request.POST.get('search_url')
-        if key:
-            if search_url == reverse('list_customer'):
-                all_item = models.Customer.objects.filter(
-                    Q(qq__contains=key) | Q(name__contains=key) | Q(phone__contains=key),
-                    Q(consultant=request.user_obj))
-            else:
-                all_item = models.Customer.objects.filter(
-                    Q(qq__contains=key) | Q(name__contains=key) | Q(phone__contains=key), Q(consultant__isnull=True))
-        else:
-            all_item = []
-    obj = Pagenation(request, len(all_item))
-    return render(request, 'list_customer.html', {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show})
-
-    # """使用django的分页器"""
-    # from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-    # items = models.Customer.objects.all()
-    # paginator = Paginator(items, 10, orphans=3)
-    # page = request.GET.get('page')
-    # try:
-    #     all_item = paginator.page(page)
-    # except PageNotAnInteger:
-    #     # If page is not an integer, deliver first page.
-    #     all_item = paginator.page(1)
-    # except EmptyPage:
-    #     # If page is out of range (e.g. 9999), deliver last page of results.
-    #     all_item = paginator.page(paginator.num_pages)
-    # return render(request, 'list_customer.html', {'all_item': all_item})
 
 
 class CustomerList(View):
@@ -93,19 +17,33 @@ class CustomerList(View):
         else:
             all_item = models.Customer.objects.filter(q, consultant=request.user_obj)
         obj = Pagenation(request, all_item.count(), request.GET.copy(), 3)
-        return render(request, 'list_customer.html', {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show})
+        return render(request, 'consultant/list_customer.html',
+                      {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show})
 
     def post(self, request):
         action = request.POST.get('action', '')
         if not hasattr(self, action):
             return HttpResponse('非法操作')
-        getattr(self, action)()
+        ret = getattr(self, action)()
+        if ret: return ret
         return self.get(request)
 
     def ctp(self):
         """common to public: 公户转私户"""
         li = self.request.POST.getlist('edit_name')
-        models.Customer.objects.filter(pk__in=li).update(consultant=self.request.user_obj)
+        num = models.Customer.objects.filter(consultant=self.request.user_obj).count()
+
+        if num + len(li) > settings.MAX_CUSTOMER_NUM:
+            return HttpResponse('做人不要太贪哦。。。')
+        try:
+            with transaction.atomic():
+                queryset = models.Customer.objects.filter(pk__in=li, consultant=None).select_for_update()
+                if len(li) == queryset.count():
+                    queryset.update(consultant=self.request.user_obj)
+                else:
+                    return HttpResponse('客户以被占用。。。')
+        except Exception as e:
+            print(e)
 
     def ptc(self):
         """public to common: 私户转公户"""
@@ -131,10 +69,8 @@ def modify_customer(request, pk=None):
         if obj.is_valid():
             obj.save()
             url = request.GET.get('next', '')
-            if url:
-                return redirect(url)
-            else:
-                return redirect('list_customer')
+            url = url if url else 'list_customer'
+            return redirect(url)
     title = '修改客户' if pk else '新增客户'
     return render(request, 'form.html', {'obj': obj, 'title': title})
 
@@ -147,7 +83,7 @@ class ConsultRecordList(View):
         if pk:
             all_item = models.ConsultRecord.objects.filter(consultant=request.user_obj, customer_id=pk)
         obj = Pagenation(request, all_item.count(), per_page=3)
-        return render(request, 'list_consult.html',
+        return render(request, 'consultant/list_consult.html',
                       {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show, 'customer_id': pk})
 
 
@@ -187,13 +123,13 @@ class EnrollmentList(View):
         else:
             all_item = models.Enrollment.objects.filter(customer_id=customer_id)
         obj = Pagenation(request, all_item.count(), per_page=2)
-        return render(request, 'list_enrollment.html',
+        return render(request, 'consultant/list_enrollment.html',
                       {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show, 'customer_id': customer_id})
 
 
 def modify_enrollment(request, pk=None, customer_id=None):
-    user_obj = models.Enrollment(customer_id=customer_id) if customer_id else models.Enrollment.objects.filter(
-        customer_id=pk).first()
+    user_obj = models.Enrollment(customer_id=customer_id) if customer_id \
+        else models.Enrollment.objects.filter(customer_id=pk).first()
     obj = EnrollmentForm(instance=user_obj)
     if request.method == 'POST':
         obj = EnrollmentForm(data=request.POST, instance=user_obj)

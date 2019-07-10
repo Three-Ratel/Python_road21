@@ -32,4 +32,9 @@ urlpatterns = [
     # 编辑报名表
     url(r'^edit_enrollment/(\d+)/', views.modify_enrollment, name='edit_enrollment'),
 
+    # 班级表管理
+    url(r'^list_class/$', views.ClassList.as_view(), name='list_class'),
+    url(r'^add_class/', views.modify_class, name='add_class'),
+    url(r'^edit_class/(\d+)/', views.modify_class, name='edit_class'),
+
 ]

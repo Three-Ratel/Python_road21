@@ -114,3 +114,15 @@ class EnrollmentForm(BSForm):
         self.fields['enrolment_class'].choices = [(i.pk, str(i)) for i in self.instance.customer.class_list.all()]
         # print(self.fields['customer'].choices, type(self.fields['customer'].choices))
 
+
+class ClasslistForm(BSForm):
+    class Meta:
+        model = models.ClassList
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(ClasslistForm, self).__init__(*args, **kwargs)
+        self.fields['teachers'].choices = [(i.pk, i) for i in models.UserProfile.objects.filter(department__name='销售部')]
+
+
+
