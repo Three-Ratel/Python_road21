@@ -747,6 +747,88 @@ def __init__(self, request, customer_id, *args, **kwargs):
 
 1. **本质**：通过参数的传递，经由orm操作帅选，并把字段对象的choices参数进行替换
 
+# 8. django开启事务
+
+## 8.1 djano使用行级锁
+
+```python
+from django.db import transaction
+ 
+try:
+  	with transaction.atomic():
+      	# orm操作
+        queryset = models.类.objects.filter(pk__range=[1,3]).select_for_update()
+        queryset.update(字段=值)
+except Exception as e:
+  	print(e)
+```
+
+## 8.2 mysql使用行级锁
+
+```mysql
+begin;				# 开启事务
+# 添加行级锁
+select * from t1 where id=1 for update;
+# 增删改操作
+commit;				# 结束事务
+```
+
+## 8.3 全局变量
+
+```python
+# settings.py
+MAX_CUSTOMER_NUM = 150  # 配置写大写
+```
+
+- 使用Django.conf导入时，**变量名必须大写**
+- django把默认配置和settings里的数据封装在了一起
+
+```python
+# views.py
+from app.settings import MAX_CUSTOMER_NUM
+# 或者
+from django.conf import settings
+settings.MAX_CUSTOMER_NUM
+```
+
+# 9. modelformset
+
+```python
+# 导入
+from django.forms import modelformset_facotry
+# 实例化一个formset对象
+ModelFormSet = modelformset_factory(models.类, ModelForm类, extra=0)
+# 绑定数据，并使用对象进行填充
+form_set_obj = ModelFormSet(queryset=orm查询)
+# 绑定数据，提交更新后数据
+form_set_obj = ModelFormSet(queryset=orm查询, date=request.POST)
+if form_set_obj.is_valid():
+  	form_set_obj.save()
+```
+
+- 模版中使用
+
+```django
+{# form为循环出来的一个form表单对象 #}
+{{ form.instance }}
+{# 循环出来的input/select框 #}
+{{ form.username }}
+
+{# 编辑相关 #}
+{{ form_set_obj.management_form  }}
+{# 循环内部需要生成form表单的id #}
+{{ form.id }}
+
+
+
+
+
+```
+
+
+
+
+
 
 
 

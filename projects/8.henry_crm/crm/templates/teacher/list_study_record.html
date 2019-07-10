@@ -4,12 +4,6 @@
     {% load my_tags %}
     <div class="panel panel-primary">
         <div class="panel-body">
-            <div>
-                {#                <a href="" class="btn btn-primary btn-sm"#}
-                {#                   style="width: 80px; margin:2px 0">#}
-                {#                    新增#}
-                {#                </a>#}
-            </div>
             <form action="" method="post">
                 {% csrf_token %}
                 {{ all_item.management_form }}
@@ -38,7 +32,6 @@
                         </tr>
                     {% endfor %}
 
-                    {{ all_item.errors }}
                     </tbody>
                 </table>
                 <button class="btn btn-primary">保存</button>

@@ -1,5 +1,5 @@
 from django.forms import modelformset_factory
-from django.shortcuts import render, redirect, reverse,HttpResponse
+from django.shortcuts import render, redirect, reverse
 
 from crm import models
 from crm.forms import ClasslistForm, CourseRecordForm, StudyRecordForm
@@ -74,13 +74,19 @@ class StudyRecord(BaseView):
 
     def get(self, request, pk=None):
         ModelFormSet = modelformset_factory(models.StudyRecord, StudyRecordForm, extra=0)
-        all_item = ModelFormSet(queryset=models.StudyRecord.objects.filter(course_record_id=pk))
-        return render(request, 'teacher/list_study_record.html', {'all_item': all_item})
+        queryset = models.StudyRecord.objects.filter(course_record_id=pk)
+        all_item = ModelFormSet(queryset=queryset)
+        page = Pagenation(request, len(queryset), request.GET.copy(), per_page=50)
+        return render(request, 'teacher/list_study_record.html',
+                      {'all_item': all_item[page.start:page.end], 'all_page': page.show})
 
     def post(self, request, pk=None, *args, **kwargs):
         ModelFormSet = modelformset_factory(models.StudyRecord, StudyRecordForm, extra=0)
-        all_item = ModelFormSet(queryset=models.StudyRecord.objects.filter(course_record_id=pk), data=request.POST)
+        queryset = models.StudyRecord.objects.filter(course_record_id=pk)
+        all_item = ModelFormSet(queryset=queryset, data=request.POST)
         if all_item.is_valid():
             all_item.save()
-            return HttpResponse('保存成功')
-        return render(request, 'teacher/list_study_record.html', {'all_item': all_item})
+            # return HttpResponse('保存成功')
+        page = Pagenation(request, len(queryset), request.GET.copy(), per_page=50)
+        return render(request, 'teacher/list_study_record.html',
+                      {'all_item': all_item[page.start:page.end], 'all_page': page.show})
