@@ -18,32 +18,31 @@
                     <th style="cursor: default;">跟进人<em class=" NormalCss SortDescCss"></em></th>
                     <th style="cursor: default;">跟进日期<em class=" NormalCss SortDescCss"></em></th>
                     <th style="cursor: default;">删除状态<em class=" NormalCss SortDescCss"></em></th>
-                    <th>操作</th>
+                    <th style="width: 180px">操作</th>
                 </tr>
                 </thead>
                 <tbody id="UserList">
-                    {% for i in all_item %}
+                {% for i in all_item %}
 
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ i.customer }}</td>
-                            <td>{{ i.note }}</td>
-                            <td>{{ i.get_status_display }}</td>
-                            <td>{{ i.consultant }}</td>
-                            <td>{{ i.date| date:'Y-m-d H:i:s' }}</td>
-                            <td>{{ i.delete_status }}</td>
-                            <td>
-                                <a href="{% url 'consult_record' i.customer_id %}">
-                                    <button class="btn btn-primary btn-sm">跟进记录</button>
-                                </a>
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ i.customer }}</td>
+                        <td>{{ i.note }}</td>
+                        <td>{{ i.get_status_display }}</td>
+                        <td>{{ i.consultant }}</td>
+                        <td>{{ i.date }}</td>
+                        <td>{{ i.delete_status }}</td>
+                        <td>
+                            <a href="{% url 'consult_record' i.customer_id %}" class="btn btn-primary btn-sm">
+                                跟进记录
+                            </a>
 
-                                <a href="{% reverse_url request 'edit_consult' i.pk %}"
-                                   style="color: white;">
-                                    <button type="button" class="btn btn-info btn-sm">修改</button>
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
+                            <a href="{% reverse_url request 'edit_consult' i.pk %}" class="btn btn-primary btn-sm">
+                                修改
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
 
                 </tbody>
             </table>

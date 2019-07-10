@@ -47,7 +47,7 @@
                         <th style="cursor: default;">再次跟进时间<em class=" NormalCss SortDescCss"></em></th>
                         <th style="cursor: default;">销售<em class=" NormalCss SortDescCss"></em></th>
                         <th style="cursor: default;">已报班级<em class=" NormalCss SortDescCss"></em></th>
-                        <th>操作</th>
+                        <th style="width: 180px">操作</th>
                     </tr>
                     </thead>
                     <tbody id="UserList">
@@ -69,14 +69,21 @@
                             <td>{{ i.consultant.name| default:'暂无' }}</td>
                             <td>{{ i.show_class }}</td>
                             <td>
-                                <a href="{% reverse_url request 'edit_customer' i.pk %}">
-                                    <button type="button" class="btn btn-info btn-sm" style="width: 80px;color: white;margin-bottom: 3px">修改</button>
+                                <a href="{% reverse_url request 'edit_customer' i.pk %}" class="btn btn-info btn-sm"
+                                   style="width: 80px; margin:2px 0">
+                                    修改
                                 </a>
-                                <a href="{% url 'consult_record' i.pk %}">
-                                    <button type="button" class="btn btn-primary btn-sm" style="width: 80px;color: white;">个人记录</button>
+                                <a href="{% url 'add_enrollment' i.pk %}" class="btn btn-info btn-sm"
+                                   style="width: 80px; margin:2px 0">
+                                    添加报名表
                                 </a>
-                                <a href="{% url 'add_consult' i.pk %}">
-                                    <button type="button" class="btn btn-primary btn-sm" style="width: 80px;color: white;">新增记录</button>
+                                <a href="{% url 'consult_record' i.pk %}" class="btn btn-primary btn-sm"
+                                   style="width: 80px; margin:2px 0">
+                                    个人记录
+                                </a>
+                                <a href="{% url 'add_consult' i.pk %}" class="btn btn-primary btn-sm"
+                                   style="width: 80px; margin:2px 0">
+                                    新增记录
                                 </a>
                             </td>
                         </tr>

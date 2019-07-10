@@ -74,7 +74,7 @@ class CustomerForm(BSForm):
         }
 
 
-class ConsultRecord(BSForm):
+class ConsultRecordForm(BSForm):
     class Meta:
         model = models.ConsultRecord
         fields = '__all__'
@@ -84,16 +84,19 @@ class ConsultRecord(BSForm):
     #     if customer_id and customer_id != '0':
     #         self.fields['customer'].choices = [(i, str(i)) for i in models.Customer.objects.filter(pk=customer_id)]
     #     else:
-    #         self.fields['customer'].choices = [('', '-------------')] + [(i.pk, str(i)) for i in request.user_obj.customers.all()]
+    #         self.fields['customer'].choices = [('', '-------------')] +
+    #         [(i.pk, str(i)) for i in request.user_obj.customers.all()]
     #     self.fields['consultant'].choices = [(request.user_obj.pk, request.user_obj)]
 
     def __init__(self, *args, **kwargs):
-        super(ConsultRecord, self).__init__(*args, **kwargs)
+        super(ConsultRecordForm, self).__init__(*args, **kwargs)
+        # 如果id为 0， 则表示新增任意客户的跟进记录
+        # 不为0，则表示新增当前客户的跟进记录
         if self.instance.customer_id != '0':
-            self.fields['customer'].choices = [(self.instance.customer.name, self.instance.customer.name)]
+            self.fields['customer'].choices = [(self.instance.customer.pk, self.instance.customer.name)]
         else:
-            self.fields['customer'].choices = [('', '-------------')] + [(i.pk, str(i)) for i in
-                                                                         self.instance.consultant.customers.all()]
+            self.fields['customer'].choices = [('', '-------------')] + \
+                [(i.pk, str(i)) for i in self.instance.consultant.customers.all()]
         # 限制为当前销售
         self.fields['consultant'].choices = [(self.instance.consultant.pk, self.instance.consultant)]
 
@@ -105,8 +108,9 @@ class EnrollmentForm(BSForm):
 
     def __init__(self, *args, **kwargs):
         super(EnrollmentForm, self).__init__(*args, **kwargs)
-        # self.instance  models.Enrollment(customer_id=customer_id)
+        # 限制客户为当前客户
         self.fields['customer'].choices = [(self.instance.customer_id, self.instance.customer)]
-        print(self.fields['customer'].choices)
+        # 从客户信息表中，读取班级列表
         self.fields['enrolment_class'].choices = [(i.pk, str(i)) for i in self.instance.customer.class_list.all()]
-        print(self.fields['enrolment_class'].choices)
+        # print(self.fields['customer'].choices, type(self.fields['customer'].choices))
+

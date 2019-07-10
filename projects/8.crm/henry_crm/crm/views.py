@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.views import View
 
 from crm import models
-from crm.forms import RegForm, CustomerForm, ConsultRecord, EnrollmentForm
+from crm.forms import RegForm, CustomerForm, ConsultRecordForm, EnrollmentForm
 from utils.pagenation import Pagenation
 
 
@@ -145,13 +145,13 @@ class ConsultRecordList(View):
     def get(self, request, pk=0):
         all_item = models.ConsultRecord.objects.filter(consultant=request.user_obj)
         if pk:
-            # if request.path == reverse('consult_record', args=(pk,)):
             all_item = models.ConsultRecord.objects.filter(consultant=request.user_obj, customer_id=pk)
         obj = Pagenation(request, all_item.count(), per_page=3)
         return render(request, 'list_consult.html',
                       {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show, 'customer_id': pk})
 
 
+# # 通过传输参数
 # def modify_consult(request, pk=None, customer_id=None):
 #     user_obj = models.ConsultRecord.objects.filter(pk=pk).first()
 #     obj = ConsultRecord(request, customer_id, instance=user_obj)
@@ -164,18 +164,19 @@ class ConsultRecordList(View):
 #     return render(request, 'form.html', {'obj': obj})
 
 
+# 通过实例化，进行参数的间接传递
 def modify_consult(request, pk=None, customer_id=None):
-    user_obj = models.ConsultRecord(consultant=request.user_obj,
-                                    customer_id=customer_id) if customer_id else models.ConsultRecord.objects.filter(
-        pk=pk).first()
-    obj = ConsultRecord(instance=user_obj)
+    user_obj = models.ConsultRecord(consultant=request.user_obj, customer_id=customer_id) if customer_id \
+        else models.ConsultRecord.objects.filter(pk=pk).first()
+    obj = ConsultRecordForm(instance=user_obj)
     if request.method == 'POST':
-        obj = ConsultRecord(data=request.POST, instance=user_obj)
+        obj = ConsultRecordForm(data=request.POST, instance=user_obj)
         if obj.is_valid():
             obj.save()
             url = request.GET.get('next', '')
             return redirect(url if url else 'consult_record')
-    return render(request, 'form.html', {'obj': obj})
+    title = '修改记录' if pk else '新增记录'
+    return render(request, 'form.html', {'obj': obj, 'title': title, })
 
 
 class EnrollmentList(View):
@@ -200,4 +201,5 @@ def modify_enrollment(request, pk=None, customer_id=None):
             obj.save()
             url = request.GET.get('next', '')
             return redirect(url if url else 'list_enrollment')
-    return render(request, 'form.html', {'obj': obj})
+    title = '修改报名表' if pk else '添加报名表'
+    return render(request, 'form.html', {'obj': obj, 'title': title, })

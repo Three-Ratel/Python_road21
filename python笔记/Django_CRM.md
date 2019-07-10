@@ -618,7 +618,17 @@ QueryDict(mutable=True)                 # 可编辑
 </form>
 ```
 
+## 3. 分页器url 拼接搜索条件
+
+```python
+# self.params为querydict类型，默认None
+self.pararms['page'] = i
+li_li.append('<li><a href="?{}">{}</a></li>'.format(self.params.urlencode(), i))
+```
+
 # 6. 编辑后返回源界面
+
+- 使用get_full_path()方法获取，源界面的路径，作为参数拼接到编辑的url中
 
 ## 1. 自定义simple_tag
 
@@ -649,6 +659,93 @@ def reverse_url(request, name, *args, **kwargs):
 		<button type="button" class="btn btn-info">修改</button>
 </a>
 ```
+
+# 7. 限制条件
+
+1. 表单发送请求时，get方法会改变url的参数，原来的参数会被当前form表单的健值对替换
+2. post请求时，不该变url参数
+3. querydict中的**urlencode**方法会对**& / = ?** 都会进行编码 
+
+## 1. view函数
+
+- 使用实例化的方式进行参数的传递
+
+```python
+# 通过实例化，进行参数的间接传递
+def modify_consult(request, pk=None, customer_id=None):
+    user_obj = models.ConsultRecord(consultant=request.user_obj, customer_id=customer_id) if customer_id else models.ConsultRecord.objects.filter(pk=pk).first()
+    obj = ConsultRecord(instance=user_obj)
+    if request.method == 'POST':
+        obj = ConsultRecord(data=request.POST, instance=user_obj)
+        if obj.is_valid():
+            obj.save()
+            url = request.GET.get('next', '')
+            return redirect(url if url else 'consult_record')
+    title = '修改记录' if pk else '新增记录'
+    return render(request, 'form.html', {'obj': obj, 'title': title, })
+```
+
+## 2. ModelForm类
+
+### 2.1 样式类
+
+```python
+# forms.py
+# 自定义bootstrap样式类，其他modelform类，继承样式类
+class BSForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for i in self.fields.values():
+            if not isinstance(i, (MultiSelectFormField, DateField, BooleanField)):
+                i.widget.attrs['class'] = 'form-control'
+            if isinstance(i, DateField):
+                i.widget = forms.TextInput(attrs={'placeholder': "YYYY-MM-DD", 'autocomplete': "off", 'type': 'date'})
+```
+
+### 2.2 条件限制	
+
+1. 自定义其他modelform类，通过`__init__`方法进行，self.fields为有序字典
+2. 列表的相加、列表生成式
+3. self.fields['**外键**'].choices , 类型为 **<class 'list'>** ，值的格式为`[(20, <Customer: oleg1>), ...]`
+
+```python
+# forms.py
+# 通过自定义，__init__方法，获取当前销售对象，以及当前客户信息
+class ConsultRecordForm(BSForm):
+    class Meta:
+        model = models.ConsultRecord
+        fields = '__all__'
+        
+    def __init__(self, *args, **kwargs):
+        super(ConsultRecord, self).__init__(*args, **kwargs)
+        # 如果id为 0， 则表示新增任意客户的跟进记录
+        # 不为0，则表示新增当前客户的跟进记录
+        if self.instance.customer_id != '0':
+            self.fields['customer'].choices = [(self.instance.customer.pk, self.instance.customer.name)]
+        else:
+            self.fields['customer'].choices = [('', '-------------')] + 
+                [(i.pk, str(i)) for i in self.instance.consultant.customers.all()]
+        # 限制为当前销售
+        self.fields['consultant'].choices = [(self.instance.consultant.pk, self.instance.consultant)]
+```
+
+- 在实例化时，通过参数进行传递，注意执行super方法时的参数
+
+```python
+def __init__(self, request, customer_id, *args, **kwargs):
+    super(ConsultRecord, self).__init__(*args, **kwargs)
+    if customer_id and customer_id != '0':
+      	self.fields['customer'].choices = [(i, str(i)) for i in models.Customer.objects.filter(pk=customer_id)]
+    else:
+        self.fields['customer'].choices = [('', '-------------')] + [(i.pk, str(i)) for i in request.user_obj.customers.all()]
+    # 限制为当前销售
+		self.fields['consultant'].choices = [(request.user_obj.pk, request.user_obj)]
+```
+
+#### Note
+
+1. **本质**：通过参数的传递，经由orm操作帅选，并把字段对象的choices参数进行替换
 
 
 
@@ -748,6 +845,14 @@ admin.site.register(models.UserProfile)
 from django.app import AppConfig
 class App01Config(AppConfig):
 		name='app01'
+```
+
+## 2. 其他
+
+### 2.1 form表单错误
+
+```django
+{{ form_obj.non_field_errors.0 }}        {# 错误信息存放在__all__中 #}
 ```
 
 
