@@ -818,11 +818,6 @@ if form_set_obj.is_valid():
 {{ form_set_obj.management_form  }}
 {# 循环内部需要生成form表单的id #}
 {{ form.id }}
-
-
-
-
-
 ```
 
 

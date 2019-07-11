@@ -2865,6 +2865,7 @@ models.Author.objects.get(pk=1).books.all()
 ```
 
 - 反向查询(**book表中没有外键字段**)
+- 多对多也同样适用
 
 ```python
 # book对象
@@ -3992,14 +3993,14 @@ form 表单的功能
 ```python
 # views.py
 
-# 字段参数
-required=True,                # 是否允许为空
-widget=None,                  # HTML插件
-label=None,                   # 用于生成Label标签或显示内容
-initial=None,                 # 初始值
-error_messages=None，         # 错误信息 {'required': '不能为空', 'invalid': '格式错误'}
-validators=[],                # 自定义验证规则
-disabled=False,               # 是否可以编辑
+# 字段参数（form类属性对象的参数）
+1. required=True,                # 是否允许为空
+2. widget=None,                  # HTML插件
+3. label=None,                   # 用于生成Label标签或显示内容
+4. initial=None,                 # 初始值
+5. error_messages=None，         # 错误信息 {'required': '不能为空', 'invalid': '格式错误'}
+6. validators=[],                # 自定义验证规则
+7. disabled=False,               # 是否可以编辑
 
 min_length=6,								  # 最小长度
 max_length=8,									# 最大长度，前端页面输入到8位之后，不能继续输入
@@ -4257,6 +4258,7 @@ class RegForm(forms.Form):
           label='密码',
           widget=forms.widgets.PasswordInput,)
     def clean(self):
+      	super().clean() / self._validate_unique = True
         if not self.cleaned_data.get('pwd') == self.cleaned_data.get('re_pwd'):
             self.add_error('re_pwd','两次密码不一致')
             raise ValidationError('两次密码不一致')
