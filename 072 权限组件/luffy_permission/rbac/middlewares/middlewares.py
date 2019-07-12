@@ -21,6 +21,7 @@ class AuthMiddleWare(MiddlewareMixin):
         if not request.session.get('is_login'):
             return render(request, 'login.html')
         # print('豁免列表')
+        
         for url in settings.EXEMPT_URL:
             if re.match(url, path): return
 

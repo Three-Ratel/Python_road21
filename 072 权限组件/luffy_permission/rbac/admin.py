@@ -4,8 +4,8 @@ from rbac import models
 
 
 class PermissionConf(admin.ModelAdmin):
-    list_display = ['id', 'url', 'title']
-    list_editable = ['url', 'title']
+    list_display = ['id', 'url', 'title', 'icon', 'is_menu']
+    list_editable = ['url', 'title', 'icon', 'is_menu']
 
 
 admin.site.register(models.Permission, PermissionConf)

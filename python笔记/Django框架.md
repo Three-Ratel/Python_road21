@@ -2517,6 +2517,20 @@ admin.site.register(models.Person)
 cname = models.CharField(max_length=25, null=True, blank=True)
 ```
 
+- **多列显示**
+
+```python
+# admin.py
+from django.contrib import admin
+from rabc import models
+class PermissionConf(admin.ModelAdmin):
+  	# 展示多列
+  	list_display = ['id', 'url', 'title']
+    # 可编辑的
+    list_editable = ['url', 'title']
+admin.site.register(models.Permission, PermissionConf)
+```
+
 #### 3. db_column='new_name'
 
 - 指定数据库的字段名
@@ -4354,7 +4368,7 @@ error_messages = None   # 自定义错误信息
 
 - 五个方法，四个特征(执行**时间**和**顺序**，**参数**，**返回值**)
 - 中间件的方法可以选择性使用，中间件的类需要继承**MiddlewareMixin**
-- 中间件可以放于任意位置，需要在settings中进行注册，**具体到中间件类名**
+- **中间件可以放于任意位置**，需要在settings中进行注册，**具体到中间件类名**
 
 ```python
 # 注册中间件, settings.py
@@ -4364,7 +4378,7 @@ MIDDLEWARE=[
 ]
 ```
 
-- MIDDLEWARE配置项是一个列表，列表中是一个个字符串，这些字符串其实是一个个类，也就是一个个中间件。
+- MIDDLEWARE配置项是一个列表，列表中是一个个字符串，这些字符串其实是**一个个类**，也就是一个个**中间件**。
 
 ```python
 # app01.mymiddleware中的middleware.py
@@ -4377,7 +4391,7 @@ from django.utils.deprecation import MiddlewareMixin
 
 - **参数：self, request**
 
-#### 1. 示例
+### 1. 示例
 
 ```python
 # md1中间件
@@ -4395,20 +4409,20 @@ class Md2(MiddlewareMixin):
         # return HttpResponse("here's process_request method of Md2")
 ```
 
-#### 2. 特征
+### 2. 特征
 
 1. 执行时间：视图函数之前
-2. 参数：request 和视图函数是同一个request对象
+2. 参数：request(**最终传递给view函数**) 和视图函数是同一个request对象
 3. 执行顺序：按照注册的**顺序执行**
 4. 返回值：
-   - 为None的情况是正常流程
+   - 为**None**的情况是正常流程
    - **返回HttpResponse**，执行当前process_request方法，倒序执行其他中间件的process_response方法，响应给浏览器
 
 ## 2. process_view()
 
-- 参数：self, request，view_func, view_args, view_kwargs**
+- 参数：self, request，view_func, view_args, view_kwargs
 
-#### 1. 示例
+### 1. 示例
 
 ```python
 # md1中间件
@@ -4422,12 +4436,12 @@ class Md2(MiddlewareMixin):
         print('This is Md2 process_view, Md2')
 ```
 
-#### 2. 特征
+### 2. 特征
 
 1. 执行时间：**视图函数之前**， **process_request之后**
 2. 参数：
    - **request**和视图函数是同一个request对象
-   - **view_func**视图函数(路由匹配得到的视图函数)
+   - **view_func**：视图函数(路由匹配得到的视图函数)
    - **view_args**：视图的位置参数(**路由匹配时的分组**)
    - **view_kwargs**：视图的关键字参数
 3. 执行顺序：按照注册的**顺序执行**
@@ -4488,7 +4502,7 @@ class Md2(MiddlewareMixin):
 
 - **参数：self, request, exception**
 
-#### 1. 示例
+### 1. 示例
 
 ```python
 from django.http import HttpResponse
@@ -4534,7 +4548,7 @@ class Md2(MiddlewareMixin):
         return HttpResponse('错误,Md2')
 ```
 
-#### 2. 特征
+### 2. 特征
 
 1. 触发条件：**视图层面有错误**，视图函数之后
 2. 参数：

@@ -55,6 +55,14 @@ brew install tree
 tree
 ```
 
+### 1.7 开发者工具
+
+```python
+xcode-select --install
+```
+
+
+
 
 
 ##2. Homebrew 使用 

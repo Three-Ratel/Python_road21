@@ -20,5 +20,4 @@ from rbac import views
 urlpatterns = [
     url(r'^login/$', views.login, name='login'),
     url(r'^index/$', views.index, name='index'),
-    # url(r'^reg/$', customer.customer_list),
 ]
