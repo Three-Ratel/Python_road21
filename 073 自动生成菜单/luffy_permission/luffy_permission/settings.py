@@ -117,7 +117,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-
 WHITE_LIST = [
     '/login/$',
     '/reg/$',
@@ -128,3 +127,7 @@ EXEMPT_URL = [
     '/index/$'
 ]
 
+# 用户权限
+PERMISSION_SESSION_KEY = 'permissions'
+# 菜单
+MENU_SESSION_KEY = 'menus'

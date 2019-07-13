@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 
 from rbac import models
+from rbac.services.init_session import init_session
 
 
 def login(request):
@@ -9,15 +10,9 @@ def login(request):
         password = request.POST.get('password')
         obj = models.User.objects.filter(username=username, password=password).first()
         if obj:
-            request.session['is_login'] = True
-            permissions = obj.roles.exclude(permissions__url__isnull=True)
-            permissions_url = permissions.values('permissions__url').distinct()
-            menu_list = obj.roles.filter(permissions__url__isnull=False, permissions__is_menu=True).values(
-                'permissions__is_menu', 'permissions__title', 'permissions__url', 'permissions__icon')
-            request.session['permissions'] = list(permissions_url)
-            request.session['menu_list'] = list(menu_list)
+            # 登陆成功, 初始化登陆状态、权限和菜单的seesion信息
+            init_session(request, obj)
             return redirect('index')
-
     return render(request, 'login.html')
 
 

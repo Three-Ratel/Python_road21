@@ -873,7 +873,7 @@ from rabc import models
 class PermissionConf(admin.ModelAdmin):
   	# 展示多列
   	list_display = ['id', 'url', 'title']
-    # 可编辑的
+    # 可编辑的，id是django自动生成的，不可以更改
     list_editable = ['url', 'title']
 admin.site.register(models.Permission, PermissionConf)
 ```
@@ -889,6 +889,31 @@ request.session['permissions'] = list(permissions)
 
 - 白名单使用正则表达式：re.match(正则, 字符串)
 - 登陆状态、index、权限验证
+
+
+
+## 3. 使用inclusion_tag生成菜单
+
+```python
+from django.template import Library
+import re
+
+register = Library()
+@register.inclusion_tag('menu.html')
+def generator(request):
+    menu_list = request.session.get('menu_list')
+    url = request.path
+    for i in menu_list:
+        if re.match(r'{}$'.format(i['permissions__url']), url):
+            i['class'] = 'active'
+            break
+    return {'menu_list': menu_list, 'request': request}
+```
+
+## 4. static顺序
+
+- 按照app的注册顺序进行查找，一旦找到即结束(**命名不能相同**)
+- STATICFILES_DIRS是项目目录下的静态文件，app会自动查找不用配置
 
 
 
