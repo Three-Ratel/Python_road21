@@ -3659,7 +3659,7 @@ class Login(View):
 
 ### 2.1 什么是json
 
-1. JSON 指的是 JavaScript 对象表示法（JavaScript Object Notation）
+1. JSON 指的是 JavaScript 对象表示法（**JavaScript Object Notation**）
 2. JSON 是轻量级的文本数据交换格式
 4. JSON 具有自我描述性，更易理解
 5. JSON 使用 JavaScript 语法来描述数据对象，但是 JSON 仍然独立于语言和平台。JSON 解析器和 JSON 库支持许多不同的编程语言。

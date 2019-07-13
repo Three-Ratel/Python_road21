@@ -76,11 +76,6 @@ xcode-select --install
 # 卸载当前版本并安装最新版本
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
 
-# 更新brew
-brew update
-需要赋给/usr/local目录权限
-sudo chown -R $(whoami) /usr/local
-
 #继续报错：chown: /usr/local: Operation not permitted
 这是Mac OS 10.13版本之后加强了权限的限制，尤其是对/usr/local目录，默认开通 SIP （System Intergrity Protection），它禁止了软件以root身份在Mac上运行（参考https://blog.csdn.net/shaobo8910/article/details/81121314）。
   
@@ -102,6 +97,35 @@ brew update     更新brew
 brew home       用浏览器打开brew的官方网站
 brew info       显示软件信息
 brew deps       显示包依赖
+# 更新brew
+brew update
+# 需要赋给/usr/local目录权限
+sudo chown -R $(whoami) /usr/local
+
+# 安装软件
+brew install git
+# 卸载软件
+brew uninstall git
+# 搜索软件
+brew search git
+# 显示已经安装软件列表
+brew list
+#查看软件信息
+brew [info | home] [FORMULA...]
+# 删除旧版本安装包缓存
+brew cleanup git、brew cleanup
+# 查看那些已安装的程序需要更新
+brew outdated
+# 更新软件，把所有的Formula目录更新，并且会对本机已经安装并有更新的软件用*标明
+brew update
+# 更新某具体软件
+brew upgrade git
+# 锁定某个软件禁止更新:
+brew pin git
+# 解除禁更锁定
+brew unpin git
+# 查看brew存放安装包的缓存地址:
+brew --cache
 ```
 
 ###2.3 brew 安装与卸载其他软件
