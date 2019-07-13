@@ -907,13 +907,8 @@ def generator(request):
         if re.match(r'{}$'.format(i['permissions__url']), url):
             i['class'] = 'active'
             break
-    return {'menu_list': menu_list, 'request': request}
+    return {'menu_list': menu_list, 'request': request}. static查找顺序
 ```
-
-## 4. static顺序
-
-- 按照app的注册顺序进行查找，一旦找到即结束(**命名不能相同**)
-- STATICFILES_DIRS是项目目录下的静态文件，app会自动查找不用配置
 
 
 
@@ -1031,7 +1026,10 @@ class App01Config(AppConfig):
 {{ form_obj.non_field_errors.0 }}        {# 错误信息存放在__all__中 #}
 ```
 
+### 2.2  static查找顺序
 
+- 按照app的注册顺序进行查找，一旦找到即结束(**命名不能相同**)
+- STATICFILES_DIRS是项目目录下的静态文件，app会自动查找不用配置
 
 
 
