@@ -1,6 +1,8 @@
-from django.template import Library
 import re
+
 from django.conf import settings
+from django.template import Library
+
 register = Library()
 
 
@@ -12,4 +14,4 @@ def generator(request):
         if re.match(r'{}$'.format(i['url']), url):
             i['class'] = 'active'
             break
-    return {'menus': menus, 'request': request}
+    return {'menus': menus}
