@@ -299,9 +299,16 @@ $ git rm test.txt
 $ git commit -m 'del test'
 ```
 
+## 附录：
 
+### 1. 团队协同开发流程
 
-
+1. 分支：master dev 每个人
+2. 个人在个人分支上开发
+3. 开发完成后，推送到自己的分支
+4. 创建pull request 合并到dev分支
+5. leader 审核代码，接收合并
+6. dev 合并到 merge上
 
 
 

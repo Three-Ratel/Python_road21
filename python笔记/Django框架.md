@@ -3437,7 +3437,7 @@ def logout(request):
 #### 3. session存储
 
 1. Django默认把session保存到数据表中
-2. session还可以存储到：**cache**、**cache-db**、**file**、**signed_cookies**
+2. session还可以存储到(**4个位置**)：**cache**、**cache-db**、**file**、**signed_cookies**
 
 ### 2.2 使用
 
@@ -3596,9 +3596,9 @@ def logout(request):
 
 ## 3. Cookie的生命周期
 
-1. 如果不设置过期时间，则表示这个cookie生命周期为浏览器会话期间，只要关闭浏览器窗口，cookie就消失了。
+1. 如果不设置过期时间，则表示这个cookie生命周期为**浏览器会话期间(默认)**，只要关闭浏览器窗口，cookie就消失了。
 2. 这种生命期为浏览会话期的cookie被称为会话cookie。会话cookie一般不保存在硬盘上而是保存在内存里。
-3. 如果设置了过期时间，浏览器就会把cookie保存到硬盘上，关闭后再次打开浏览器，这些cookie依然有效直到超过设定的过期时间。存储在硬盘上的cookie可以在不同的浏览器进程间共享，比如两个IE窗口。而对于保存在内存的cookie，不同的浏览器有不同的处理方式。
+3. 如果**设置了过期时间**，浏览器就会把**cookie保存到硬盘上**，关闭后再次打开浏览器，这些cookie依然有效直到超过设定的过期时间。存储在硬盘上的cookie可以在不同的浏览器进程间共享，比如两个IE窗口。而对于保存在内存的cookie，不同的浏览器有不同的处理方式。
 
 # 11. ajax
 

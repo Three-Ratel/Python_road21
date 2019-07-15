@@ -825,18 +825,26 @@ if form_set_obj.is_valid():
 ## 1. 权限
 
 1. 让不同的人使用不同的功能
-2. **开发一个权限的组件**：实现一个完成功能
+
+2. **开发一个权限的组件**
+   
+   - 实现一个完成功能
+   
    - 提高开发效率，可以重复使用**权限组件**
+   
 3. web开发中的权限就是：**url代表权限**
-4. 表结构设计
+
+4. 表结构设计(基础功能)
    1. 用户表user：id username pwd role_id
    2. 权限表：permission
       - id url title
    3. **用户-权限关系表**：id role_id permission_id
    4. 角色表：id name 
    5. **用户-角色表** ：id user_id role_id
-5. RBAC：role-base access contorl
-6. 创建rbac的app
+
+5. **RBAC**：**role-base access contorl**
+
+### 1.1 创建rbac app
 
 ```python
 # models.py
@@ -862,9 +870,13 @@ class User(models.Model):
 
 - 数据库迁移(使用sqlite3)，文件型数据库
 
+- 实则5张表
+
   
 
 ## 2. admin插入数据
+
+- id**是不可编辑的**
 
 ```python
 # admin.py
@@ -882,15 +894,24 @@ admin.site.register(models.Permission, PermissionConf)
 - 查询权限
 
 ```python
+def login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        obj = models.User.objects.filter(username=username, password=password).first()
+        if obj:
+            # 登陆成功, 初始化登陆状态、权限和菜单的seesion信息
+            init_session(request, obj)
+            return redirect('index')
+    return render(request, 'login.html')
+# 添加session
 permissions = user_obj.roles.filter(permission_url__is_null=False).values('permission_url')
 # 保存到session，放入session中的数据，会json序列化，并加密存储
 request.session['permissions'] = list(permissions)
 ```
 
-- 白名单使用正则表达式：re.match(正则, 字符串)
+- **白名单使用正则表达式**：re.match(正则, 字符串)
 - 登陆状态、index、权限验证
-
-
 
 ## 3. 使用inclusion_tag生成菜单
 
@@ -900,14 +921,14 @@ import re
 
 register = Library()
 @register.inclusion_tag('menu.html')
-def generator(request):
+def menu(request):
     menu_list = request.session.get('menu_list')
     url = request.path
     for i in menu_list:
         if re.match(r'{}$'.format(i['permissions__url']), url):
             i['class'] = 'active'
             break
-    return {'menu_list': menu_list, 'request': request}. static查找顺序
+    return {'menu_list': menu_list, 'request': request}
 ```
 
 # 11. 菜单和breadcrump
@@ -919,6 +940,8 @@ def generator(request):
 3. 给菜单加优先级
 4. 使用有序字典，先排序后构造
 
+### 1.1 models.py
+
 ```python
 # model.py，优先级设置最好有些跨度
 class Menu(models.Model):
@@ -929,6 +952,10 @@ class Menu(models.Model):
     def __str__(self):
         return self.title
 ```
+
+### 1.2 my_tags.py
+
+- **sorted()**内置函数的应用
 
 ```python
 # my_tags.py
@@ -952,7 +979,9 @@ def generator(request):
     return {'menu_dic':od.values()}
 ```
 
-### 1.2 二级菜单开合
+### 1.3 二级菜单开合
+
+- js控制的选项卡
 
 ```js
 // 菜单的点击事件，功能就是“选项卡”
@@ -993,26 +1022,30 @@ from django.conf import settings
 def init_session(request, obj):
     request.session['is_login'] = True
     permissions = obj.roles.exclude(permissions__url__isnull=True).values(
+       # url和title用于菜单标题和链接
         'permissions__url',
         'permissions__title',
+        # 菜单相关
         'permissions__menu__icon',
         'permissions__menu__title',
-        'permissions__menu_id',
-        'permissions__menu__weight',
+        'permissions__menu_id',      # 二级菜单关联的外键
+        'permissions__menu__weight', # 优先级，用于对一级菜单的排序
+        # 二级菜单的子菜单，和面包屑
         'permissions__parent_id',
         'permissions__id',
     ).distinct()
 
-    # 构造权限和菜单字典
+    # 构造权限和菜单的字典
     permission_dic = {}
     menu_dic = {}
     for i in permissions:
         permission_dic[i['permissions__id']] = {
+       			# url和title用于菜单标题和链接
             'url': i.get('permissions__url'),
             'title': i.get('permissions__title'),
+          	# id 和 pid 用于访问二级菜单中的子菜单时，保持二级菜单处于活跃状态
             'id': i.get('permissions__id'),
             'pid': i.get('permissions__parent_id'),
-            # id 和 pid 用于访问二级菜单中的子菜单时，保持二级菜单处于活跃状态
         }
         
         menu_id = i.get('permissions__menu_id')
@@ -1039,6 +1072,10 @@ def init_session(request, obj):
     request.session[settings.MENU_SESSION_KEY] = menu_dic
 
 ```
+
+#### Note
+
+1. 
 
 ### 2.3 获取当前url的归属
 
@@ -1139,7 +1176,7 @@ def breadcrumb(request):
 
 - breadcrumb样式在bootstrap中
 
-```html
+```django
 <ol class="breadcrumb no-radius no-margin" style="border-bottom: 1px solid #ddd;">
     {% for breadcrumb in breadcrumb_list %}
         {% if forloop.last %}

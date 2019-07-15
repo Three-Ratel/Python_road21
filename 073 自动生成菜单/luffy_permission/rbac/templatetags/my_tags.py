@@ -6,7 +6,7 @@ from django.template import Library
 register = Library()
 
 
-@register.inclusion_tag('menu.html')
+@register.inclusion_tag('rbac/menu.html')
 def menu(request):
     # 一级菜单
     # menus = request.session.get(settings.MENU_SESSION_KEY)
@@ -37,6 +37,6 @@ def menu(request):
     return {'menu_dic': od}
 
 
-@register.inclusion_tag('breadcrumb.html')
+@register.inclusion_tag('rbac/breadcrumb.html')
 def breadcrumb(request):
     return {'breadcrumb_list': request.breadcrumb_list}

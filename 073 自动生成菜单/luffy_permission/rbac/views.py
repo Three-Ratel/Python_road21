@@ -13,8 +13,8 @@ def login(request):
             # 登陆成功, 初始化登陆状态、权限和菜单的seesion信息
             init_session(request, obj)
             return redirect('index')
-    return render(request, 'login.html')
+    return render(request, 'rbac/login.html')
 
 
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'rbac/index.html')

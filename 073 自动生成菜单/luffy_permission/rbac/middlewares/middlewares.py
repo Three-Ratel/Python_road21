@@ -20,7 +20,7 @@ class AuthMiddleWare(MiddlewareMixin):
                 return
         # print('校验登录状态')
         if not request.session.get('is_login'):
-            return render(request, 'login.html')
+            return render(request, 'rbac/login.html')
         # print('豁免列表')
         # 在 my_tags.py 使用了 current_menu 属性
         request.current_menu_id = None
@@ -45,13 +45,26 @@ class AuthMiddleWare(MiddlewareMixin):
                     # 当前访问子权限
                     request.current_menu_id = pid
                     # 路径导航
-                    request.breadcrumb_list.append({'title': permission_dic[str(pid)]['title'], 'url': permission_dic[str(pid)]['url']})
+                    request.breadcrumb_list.append(
+                        {'title': permission_dic[str(pid)]['title'], 'url': permission_dic[str(pid)]['url']})
                     request.breadcrumb_list.append({'title': i['title'], 'url': i['url']})
                 else:
                     # 当前访问父权限(二级菜单)
                     request.current_menu_id = sid
                     # 路径导航
                     request.breadcrumb_list.append({'title': i['title'], 'url': i['url']})
+
+                # # 自关联中外键不为空，减少菜单功能代码
+                # # 菜单的功能
+                # request.current_menu_id = pid
+
+                # # 面包屑的功能，确认当前url是第几层菜单
+                # if pid == sid:
+                #     request.breadcrumb_list.append({'title': i['title'], 'url': i['url']})
+                # else:
+                #     request.breadcrumb_list.append(
+                #         {'title': permission_dic[str(pid)]['title'], 'url': permission_dic[str(pid)]['url']})
+                #     request.breadcrumb_list.append({'title': i['title'], 'url': i['url']})
 
                 return
 
