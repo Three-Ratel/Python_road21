@@ -3437,7 +3437,7 @@ def logout(request):
 #### 3. session存储
 
 1. Django默认把session保存到数据表中
-2. session还可以存储到：cache、cache-db、file、signed_cookies
+2. session还可以存储到：**cache**、**cache-db**、**file**、**signed_cookies**
 
 ### 2.2 使用
 

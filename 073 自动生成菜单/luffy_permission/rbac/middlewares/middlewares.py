@@ -22,14 +22,28 @@ class AuthMiddleWare(MiddlewareMixin):
         if not request.session.get('is_login'):
             return render(request, 'login.html')
         # print('豁免列表')
-
+        request.current_menu_id = None
         for url in settings.EXEMPT_URL:
-            if re.match(url, path): return
-
-        permissions = request.session.get(settings.PERMISSION_SESSION_KEY)
-        # print('权限列表')
-        for i in permissions:
-            # print(i)
-            if re.match(r'{}$'.format(i), path):
+            if re.match(url, path):
                 return
+
+        permission_dic = request.session.get(settings.PERMISSION_SESSION_KEY)
+        # print('权限列表')
+        # print(permissions,'*'*8)
+        # print(permission_dic)
+        for i in permission_dic.values():
+            # print(permission_dic.values())
+            # 二级菜单的匹配
+            if re.match(r'{}$'.format(i.get('url')), path):
+                sid = i.get('id')
+                pid = i.get('pid')
+                # print(sid, pid)
+                if pid:
+                    # 当前访问子权限
+                    request.current_menu_id = pid
+                else:
+                    # 当前访问父权限(二级菜单)
+                    request.current_menu_id = sid
+                return
+
         return HttpResponse('没有访问权限，请联系管理员')

@@ -4,6 +4,7 @@ from django.db import models
 class Menu(models.Model):
     title = models.CharField('标题', max_length=32)
     icon = models.CharField('图标', max_length=100, null=True, blank=True)
+    weight = models.IntegerField('优先级', default=1)
 
     def __str__(self):
         return self.title
@@ -13,6 +14,7 @@ class Permission(models.Model):
     url = models.CharField('路径', max_length=100)
     title = models.CharField('标题', max_length=32)
     menu = models.ForeignKey('Menu', null=True, blank=True)
+    parent = models.ForeignKey('self', null=True, blank=True)
 
     def __str__(self):
         return self.title
