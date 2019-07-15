@@ -7,7 +7,7 @@ register = Library()
 
 
 @register.inclusion_tag('menu.html')
-def generator(request):
+def menu(request):
     # 一级菜单
     # menus = request.session.get(settings.MENU_SESSION_KEY)
     # url = request.path
@@ -19,8 +19,8 @@ def generator(request):
 
     # 二级菜单
     menu_dic = request.session.get(settings.MENU_SESSION_KEY)
-
-    # 通过有序字典，为菜单指定顺序
+    # print(menu_dic.values())
+    # 通过有序字典，为一级菜单指定顺序
     od = OrderedDict()
     keys = sorted(menu_dic, key=lambda x: menu_dic[x]['weight'], reverse=True)
     for i in keys:
@@ -31,7 +31,13 @@ def generator(request):
     for i in menu_dic.values():
         i['class'] = 'hide'
         for m in i['children']:
+            # print(m['id'])
             if request.current_menu_id == m['id']:
                 m['class'] = 'active'
                 i['class'] = ''
     return {'menu_dic': od}
+
+
+@register.inclusion_tag('breadcrumb.html')
+def breadcrumb(request):
+    return {'breadcrumb_list': request.breadcrumb_list}

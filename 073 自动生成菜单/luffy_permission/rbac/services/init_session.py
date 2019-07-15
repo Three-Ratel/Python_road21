@@ -21,8 +21,10 @@ def init_session(request, obj):
         permission_dic[i['permissions__id']] = {
             'url': i.get('permissions__url'),
             'title': i.get('permissions__title'),
+
             'id': i.get('permissions__id'),
-            'pid': i.get('permissions__parent_id')
+            'pid': i.get('permissions__parent_id'),
+            # id 和 pid 用于访问二级菜单中的子菜单时，保持二级菜单处于活跃状态
         }
 
         menu_id = i.get('permissions__menu_id')

@@ -22,7 +22,9 @@ class AuthMiddleWare(MiddlewareMixin):
         if not request.session.get('is_login'):
             return render(request, 'login.html')
         # print('豁免列表')
+        # 在 my_tags.py 使用了 current_menu 属性
         request.current_menu_id = None
+        request.breadcrumb_list = [{'title': '首页', 'url': '/index/'}]
         for url in settings.EXEMPT_URL:
             if re.match(url, path):
                 return
@@ -38,12 +40,19 @@ class AuthMiddleWare(MiddlewareMixin):
                 sid = i.get('id')
                 pid = i.get('pid')
                 # print(sid, pid)
+                # current_menu_id，当前url的对应的二级菜单的id
                 if pid:
                     # 当前访问子权限
                     request.current_menu_id = pid
+                    # 路径导航
+                    request.breadcrumb_list.append({'title': permission_dic[str(pid)]['title'], 'url': permission_dic[str(pid)]['title']})
+                    request.breadcrumb_list.append({'title': i['title'], 'url': i['url']})
                 else:
                     # 当前访问父权限(二级菜单)
                     request.current_menu_id = sid
+                    # 路径导航
+                    request.breadcrumb_list.append({'title': i['title'], 'url': i['url']})
+
                 return
 
         return HttpResponse('没有访问权限，请联系管理员')
