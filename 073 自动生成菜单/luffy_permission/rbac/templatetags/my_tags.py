@@ -27,7 +27,6 @@ def menu(request):
         od[i] = menu_dic[i]
 
     # 二级菜单样式
-    url = request.path
     for i in menu_dic.values():
         i['class'] = 'hide'
         for m in i['children']:

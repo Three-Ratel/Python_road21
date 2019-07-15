@@ -209,11 +209,67 @@ def menu(request):
 
 ## 3. 路径导航(breadcrumb)
 
-- json序列化时，字典中的**key**为数字为时，会变成字符串，反序列化后还是字符串
 - 添加父权限导航
   - 数据库查询
   - pid 循环字典
   - 改变数据结构
+
+### 3.1 通过中间件构造 breadcrumb_list
+
+- django在存储session时，会自动进行序列化和加密，data中的数字不受影响
+- json序列化时，字典中的**key**为数字为时，会变成字符串，反序列化后还是字符串
+- dict本质是一张hash表
+
+```python
+for i in permission_dic.values():
+  	# print(permission_dic.values())
+  	# 二级菜单的匹配
+  	if re.match(r'{}$'.format(i.get('url')), path):
+    		sid = i.get('id')
+    		pid = i.get('pid')
+        # print(sid, pid)
+        # current_menu_id，当前url的对应的二级菜单的id
+        if pid:
+              # 当前访问子权限
+              request.current_menu_id = pid
+              # 路径导航，注意此时的数字key 是字符串
+              request.breadcrumb_list.append({'title': permission_dic[str(pid)]['title'], 'url': permission_dic[str(pid)]['title']})
+              request.breadcrumb_list.append({'title': i['title'], 'url': i['url']})
+          else:
+                # 当前访问父权限(二级菜单)
+                request.current_menu_id = sid
+                # 路径导航
+                reqsuest.breadcrumb_list.append({'title': i['title'], 'url': i['url']})
+          return
+```
+
+### 3.2 my_tags.py和breadcrump.html
+
+#### 1. my_tags.py
+
+```python
+@register.inclusion_tag('breadcrumb.html')
+def breadcrumb(request):
+    return {'breadcrumb_list': request.breadcrumb_list}
+```
+
+#### 2. Breadcrump.html
+
+- breadcrumb样式在bootstrap中
+
+```html
+<ol class="breadcrumb no-radius no-margin" style="border-bottom: 1px solid #ddd;">
+    {% for breadcrumb in breadcrumb_list %}
+        {% if forloop.last %}
+            <li class="active">{{ breadcrumb.title }} </li>
+        {% else %}
+            <li><a href="{{ breadcrumb.url }}">{{ breadcrumb.title }}</a></li>
+        {% endif %}
+    {% endfor %}
+</ol>
+```
+
+
 
 
 
