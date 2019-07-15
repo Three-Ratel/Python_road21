@@ -3902,6 +3902,56 @@ $.ajaxSetup({
 
 # 12.form组件
 
+## 0. form简介
+
+### 1. Form.is_bound
+
+1. form对象可以绑定或者不绑定数据
+2. 通过is_bound(BaseForm**类变量**)可以查看是否绑定数据
+3. 一旦创建了一个form实例，不管是否有数据，实例变量都应该视为**不可变类型**。
+
+### 2. using forms to validate data
+
+- **没有数据**的form通不过校验，**错误字典为空**
+
+#### 2.1 Form.clean()
+
+- 分别为字段添加自定义validation，就会执行clean方法
+
+#### 2.2 Form.is_valid()
+
+- 通过Form校验数据的有效性，会调用is_valid()方法校验数据并返回**True** 或 **False**
+
+#### 2.3 Form.errors
+
+1. 通过**@property**装饰
+2. errors，字典的keys是字段名，字典values是错误列表(unicode 字符串)
+3. 字段的错误信息存储在list中
+4. 校验只会执行一次，
+
+#### 2.4 Form.errors.as_data()
+
+- Form.errors.as_json(), 序列化错误字典
+
+#### 2.5 Form.add_error(field, error)
+
+1. 如果字段的values是None，会通过Form.non_field_errors()返回一个non—field 错误，可以是一个简单的字符串或者ValidationError的实例。
+2. Form.add_error()：当调用这个方法时，会自动移除字段的clean_data。
+
+#### 2.6 Form.has_error(field, code=None)
+
+1. 返回以个bool值，表示数据是否合法。
+
+#### 2.7 Form.non_field_errors()
+
+1. 从Form.errors返回一个包含Form.clean()方法抛出的ValidationErrors和使用Form.add_error(None, '…')的错误list
+
+
+
+
+
+
+
 ## 1. form简单应用
 
 ### 1.1 普通手写功能

@@ -1075,7 +1075,7 @@ def init_session(request, obj):
 
 #### Note
 
-1. 
+1. 构造数据结构时，首先考虑**dict**类型
 
 ### 2.3 获取当前url的归属
 
@@ -1090,7 +1090,7 @@ for i in permissions:
         if pid:
             request.current_menu_id = sid
         else:
-            request.current_menu_id = id
+            request.current_menu_id = sid
         return 
 ```
 
