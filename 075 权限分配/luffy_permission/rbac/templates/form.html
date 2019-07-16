@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+{% block css %}
+<style>
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            float: left;
+            padding: 10px;
+            padding-left: 0;
+            width: 80px;
+        }
+
+        ul li i {
+            font-size: 18px;
+            margin-left: 5px;
+            color: #6d6565;
+        }
+
+</style>
+{% endblock %}
+{% block content %}
+    <form action="" method="post" style="margin-top: 20px">
+        {% csrf_token %}
+        {% for obj in form_obj %}
+            <div class="col-xs-3" style="text-align: right">
+            <label for="{{ obj.id_for_label }}">{{ obj.label }}: </label>
+            </div>
+            <div class="col-xs-7" style="margin: 10px 0">
+            {{ obj }}
+            </div>
+        {% endfor %}
+        <div class="col-xs-9 " style="text-align: right">
+            <button class="btn btn-sm btn-primary" style="margin-bottom: 30px">保存</button>
+        </div>
+    {{ form_obj.errors }}
+    </form>
+{% endblock %}
+

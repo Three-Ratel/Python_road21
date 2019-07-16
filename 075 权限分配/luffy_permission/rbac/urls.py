@@ -20,4 +20,13 @@ from rbac import views
 urlpatterns = [
     url(r'^login/$', views.login, name='login'),
     url(r'^index/$', views.index, name='index'),
+
+    url(r'^menu/list/$', views.menu_list, name='menu_list'),
+    url(r'^menu/add/$', views.menu_change, name='menu_add'),
+    url(r'^menu/edit/(\d+)/$', views.menu_change, name='menu_edit'),
+    url(r'^(menu|permission)/del/(\d+)/$', views.menu_del, name='del'),
+
+    url(r'^permission/add/$', views.permission_change, name='permission_add'),
+    url(r'^permission/edit/(\d+)/$', views.permission_change, name='permission_edit'),
+
 ]

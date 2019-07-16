@@ -13,6 +13,7 @@ class Menu(models.Model):
 class Permission(models.Model):
     url = models.CharField('路径', max_length=100)
     title = models.CharField('标题', max_length=32)
+    name = models.CharField('url别名', max_length=32, unique=True)
     menu = models.ForeignKey('Menu', null=True, blank=True)
     parent = models.ForeignKey('self', null=True, blank=True)
 

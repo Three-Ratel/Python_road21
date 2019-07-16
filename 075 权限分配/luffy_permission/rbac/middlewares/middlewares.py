@@ -28,7 +28,6 @@ class AuthMiddleWare(MiddlewareMixin):
         for url in settings.EXEMPT_URL:
             if re.match(url, path):
                 return
-
         permission_dic = request.session.get(settings.PERMISSION_SESSION_KEY)
         # print('权限列表')
         # print(permissions,'*'*8)
@@ -39,6 +38,7 @@ class AuthMiddleWare(MiddlewareMixin):
             if re.match(r'{}$'.format(i.get('url')), path):
                 sid = i.get('id')
                 pid = i.get('pid')
+                pname = i.get('pname')
                 # print(sid, pid)
                 # current_menu_id，当前url的对应的二级菜单的id
                 if pid:
@@ -46,7 +46,7 @@ class AuthMiddleWare(MiddlewareMixin):
                     request.current_menu_id = pid
                     # 路径导航
                     request.breadcrumb_list.append(
-                        {'title': permission_dic[str(pid)]['title'], 'url': permission_dic[str(pid)]['url']})
+                        {'title': permission_dic[pname]['title'], 'url': permission_dic[pname]['url']})
                     request.breadcrumb_list.append({'title': i['title'], 'url': i['url']})
                 else:
                     # 当前访问父权限(二级菜单)
