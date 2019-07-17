@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect, reverse
 
 from crm import models
 from crm.forms import RegForm
-
+from rbac.service.init_permission import init_permission
 
 def reg(request):
     form_obj = RegForm()
@@ -30,6 +30,7 @@ def login(request):
             url = request.GET.get('return_url')
             if url: ret = redirect(url)
             ret = redirect('customer')
+            init_permission(request, obj)
             request.session['user_id'] = obj.pk
             request.session['is_login'] = True
             return ret
