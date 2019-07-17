@@ -24,11 +24,11 @@ def index(request):
 
 def menu_list(request):
     mid = request.GET.get('mid')
-    all_menu = models.Menu.objects.all()
+    all_menu = models.Menu.objects.all().order_by('-weight')
     if not mid:
-        all_permission = models.Permission.objects.all()
+        all_permission = models.Permission.objects.all().order_by('weight')
     else:
-        all_permission = models.Permission.objects.filter(Q(menu_id=mid) | Q(parent__menu_id=mid))
+        all_permission = models.Permission.objects.filter(Q(menu_id=mid) | Q(parent__menu_id=mid)).order_by('weight')
     """
     构造权限字典
         { id : {
@@ -68,7 +68,12 @@ def menu_list(request):
         #         'name': i.name,
         #     }
     # print(permission_dic)
-    return render(request, 'rbac/menu_list.html', {'all_menu': all_menu, 'all_permission': permission_dic.values()})
+    return render(request, 'rbac/menu_list.html',
+                  {'all_menu': all_menu,
+                   'all_permission': permission_dic.values(),
+                   'mid': mid,
+                   }
+                  )
 
 
 def menu_change(request, pk=None):
@@ -84,7 +89,7 @@ def menu_change(request, pk=None):
 
 def menu_del(request, obj, pk):
     obj = getattr(models, obj.capitalize())
-    obj.objects.filter(pk__in=pk).delete()
+    obj.objects.filter(pk=pk).delete()
     return redirect('menu_list')
 
 

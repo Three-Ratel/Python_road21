@@ -36,6 +36,7 @@ class RegForm(forms.ModelForm):
                 'required': '信息不能为空',
                 'invalid': '邮箱格式不正确',}}
     def clean(self):
+      	self._validate_unique=True / super().clean()
         password = self.cleaned_data.get('password')
         re_password = self.cleaned_data.get('re_password')
         print(self.cleaned_data.get('department'))
@@ -827,7 +828,7 @@ if form_set_obj.is_valid():
 1. 让不同的人使用不同的功能
 
 2. **开发一个权限的组件**
-   
+  
    - 实现一个完成功能
    
    - 提高开发效率，可以重复使用**权限组件**
