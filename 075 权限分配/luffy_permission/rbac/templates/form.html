@@ -33,9 +33,9 @@
             </div>
         {% endfor %}
         <div class="col-xs-9 " style="text-align: right">
+            <p>{{ form_obj.errors.0 }}</p>
             <button class="btn btn-sm btn-primary" style="margin-bottom: 30px">保存</button>
         </div>
-    {{ form_obj.errors }}
     </form>
 {% endblock %}
 

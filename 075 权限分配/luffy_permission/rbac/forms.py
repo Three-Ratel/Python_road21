@@ -484,3 +484,11 @@ class PermissionForm(BsModelForm):
     class Meta:
         model = models.Permission
         fields = '__all__'
+        labels = {
+            'menu': '所属菜单',
+            'parent': '父权限', }
+
+    def __init__(self, *args, **kwargs):
+        super(PermissionForm, self).__init__(*args, **kwargs)
+        objs = models.Permission.objects.filter(menu_id__isnull=False)
+        self.fields['parent'].choices = [('', '---------')] + [(i.pk, i) for i in objs]
