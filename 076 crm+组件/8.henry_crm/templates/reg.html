@@ -1,55 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <title>注册</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-
-<div class="register-container">
-    <h1>Welcom to sign up Henry's CRM</h1>
-    <div class="connect">
-        <p>Link the world. Share to world.</p>
+{% extends 'login.html' %}
+{% block title %}
+    注册
+{% endblock %}
+{% block content %}
+    <div class="register-container">
+        <h1>Henry's CRM</h1>
+        <div class="connect">
+            <p>欢迎注册Henry's CRM</p>
+        </div>
+        <form action="" method="post" id="registerForm" novalidate="novalidate">
+            {% csrf_token %}
+            <div>
+                {{ form_obj.username }}
+                {{ form_obj.username.errors.0 }}
+            </div>
+            <div>
+                {{ form_obj.password }}
+                {{ form_obj.password.errors.0 }}
+            </div>
+            <div>
+                {{ form_obj.re_password }}
+                {{ form_obj.re_password.errors.0 }}
+            </div>
+            <div>
+                {{ form_obj.name }}
+                {{ form_obj.name.errors.0 }}
+            </div>
+            <div>
+                {{ form_obj.mobile }}
+                {{ form_obj.mobile.errors.0 }}
+            </div>
+            <div>
+                {{ form_obj.department }}
+                {{ form_obj.department.errors.0 }}
+            </div>
+            <p>{{ form_obj.errors }}</p>
+            <button id="submit" type="submit">注 册</button>
+        </form>
+        <a href="{% url 'login' %}">
+            <button type="button" class="register-tis">已经有账号？</button>
+        </a>
     </div>
-    <form action="" method="post" id="registerForm" novalidate="novalidate">
-        {% csrf_token %}
-        <div>
-            {{ form_obj.username }}
-            {{ form_obj.username.errors.0 }}
-        </div>
-        <div>
-            {{ form_obj.password }}
-            {{ form_obj.password.errors.0 }}
-        </div>
-        <div>
-            {{ form_obj.re_password }}
-            {{ form_obj.re_password.errors.0 }}
-        </div>
-        <div>
-            {{ form_obj.name }}
-            {{ form_obj.name.errors.0 }}
-        </div>
-        <div>
-            {{ form_obj.mobile }}
-            {{ form_obj.mobile.errors.0 }}
-        </div>
-        <div>
-            {{ form_obj.department}}
-            {{ form_obj.department.errors.0 }}
-        </div>
-        <button id="submit" type="submit">注 册</button>
-    </form>
-    <a href="{% url 'login' %}">
-        <button type="button" class="register-tis">已经有账号？</button>
-    </a>
-</div>
-
-<script src="{% static 'js/jquery.min.js' %}"></script>
-<script src="{% static 'js/common.js' %}"></script>
-<script src="{% static 'js/supersized.3.2.7.min.js' %}"></script>
-<script src="{% static 'js/supersized-init.js' %}"></script>
-<script src="{% static 'js/jquery.validate.min.js' %}"></script>
-</body>
-</html>
+{% endblock %}

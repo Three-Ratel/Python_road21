@@ -3,34 +3,39 @@
 <head>
     {% load static %}
     <meta charset="UTF-8">
-    <title>登陆</title>
+    <title>
+        {% block title %}
+            登陆
+        {% endblock %}
+    </title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-
-<div class="login-container">
-    <h1>Henry's CRM</h1>
-    <div class="connect">
-        <p>Link the world. Share to world.</p>
+{% block content %}
+    <div class="login-container">
+        <h1>Henry's CRM</h1>
+        <div class="connect">
+            <p>欢迎登录Henry's CRM</p>
+        </div>
+        <form action="" method="post" id="loginForm" novalidate="novalidate">
+            {% csrf_token %}
+            <div>
+                <input type="text" name="username" placeholder="用户名" value="henry@qq.com">
+            </div>
+            <div>
+                <input type="password" name="password" placeholder="密码" value="123123">
+            </div>
+            <div>
+                {{ error }}
+            </div>
+            <button id="submit" type="submit">登 陆</button>
+        </form>
+        <a href="{% url 'reg' %}">
+            <button type="button" class="register-tis">还有没有账号？</button>
+        </a>
     </div>
-    <form action="" method="post" id="loginForm" novalidate="novalidate">
-        {% csrf_token %}
-        <div>
-            <input type="text" name="username" class="username" placeholder="用户名" autocomplete="off" value="henry@qq.com">
-        </div>
-        <div>
-            <input type="password" name="password" class="password" placeholder="密码" oncontextmenu="return false"
-                   value="123123" onpaste="return false">
-        </div>
-        <div>
-            {{ error }}
-        </div>
-        <button id="submit" type="submit">登 陆</button>
-    </form>
-    <a href="{% url 'reg' %}">
-        <button type="button" class="register-tis">还有没有账号？</button>
-    </a>
-</div>
+{% endblock %}
+
 
 <script src="{% static 'js/jquery.min.js' %}"></script>
 <script src="{% static 'js/common.js' %}"></script>

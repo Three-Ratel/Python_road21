@@ -15,10 +15,12 @@ class BSForm(forms.ModelForm):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		for i in self.fields.values():
-			if not isinstance(i, (MultiSelectFormField, DateField, BooleanField)):
+			if not isinstance(i, (MultiSelectFormField, DateField, BooleanField,)):
 				i.widget.attrs['class'] = 'form-control'
 			if isinstance(i, DateField):
 				i.widget = forms.TextInput(attrs={'placeholder': "YYYY-MM-DD", 'autocomplete': "off", 'type': 'date'})
+			if isinstance(i, BooleanField):
+				i.widget = forms.CheckboxInput(attrs={'class': 'iselect'})
 
 
 class RegForm(forms.ModelForm):
@@ -105,6 +107,7 @@ class EnrollmentForm(BSForm):
 	class Meta:
 		model = models.Enrollment
 		fields = '__all__'
+	# exclude = ['contract_approved', 'contract_agreed']
 
 	def __init__(self, *args, **kwargs):
 		super(EnrollmentForm, self).__init__(*args, **kwargs)
@@ -112,7 +115,7 @@ class EnrollmentForm(BSForm):
 		self.fields['customer'].choices = [(self.instance.customer_id, self.instance.customer)]
 		# 从客户信息表中，读取班级列表
 		self.fields['enrolment_class'].choices = [(i.pk, str(i)) for i in self.instance.customer.class_list.all()]
-		# print(self.fields['customer'].choices, type(self.fields['customer'].choices))
+# print(self.fields['customer'].choices, type(self.fields['customer'].choices))
 
 
 class ClasslistForm(BSForm):
@@ -140,6 +143,3 @@ class CourseRecordForm(BSForm):
 class StudyRecordForm(BSForm):
 	class Meta:
 		fields = '__all__'
-
-
-
