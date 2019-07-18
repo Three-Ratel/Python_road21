@@ -663,7 +663,7 @@ def reverse_url(request, name, *args, **kwargs):
 
 # 7. 限制条件
 
-1. 表单发送请求时，get方法会改变url的参数，原来的参数会被当前form表单的健值对替换
+1. 表单发送请求时，get方法会改变url的参数，**原来的参数会被当前form表单的健值对替换**
 2. post请求时，不该变url参数
 3. querydict中的**urlencode**方法会对**& / = ?** 都会进行编码 
 
@@ -1189,7 +1189,149 @@ def breadcrumb(request):
 </ol>
 ```
 
+# 12. rbac组件应用
 
+1. 拷贝rbac组件到新项目中，并注册
+
+   ```
+   INSTALLED_APPS = [
+   		...
+       'rbac.apps.RbacConfig'
+   ]
+   ```
+
+2. 数据库迁移
+
+   1. 修改用户表
+
+      ```python
+      class User(models.Model):
+          """用户表"""
+          # username = models.CharField('用户名', max_length=32)
+          # password = models.CharField('密码', max_length=32)
+          roles = models.ManyToManyField(Role, verbose_name='用户所拥有的角色', blank=True)
+      	# 多对多关联写成类  不写字符串
+          class Meta:
+              abstract = True  # 数据库迁移时不生成表  作基类 继承使用
+      ```
+
+   2. 新项目的用户表继承User
+
+      ```python
+      from rbac.models import User
+      class UserProfile(User):
+      ```
+
+   3. 执行数据库迁移的命令
+
+      1. 先删除rbac中migrations中的除了init之外的py文件
+
+      2. 执行 
+
+         python manage.py makemigrations
+
+         python manage.py migrate
+
+3. 路由配置
+
+   ```python
+   urlpatterns = [
+    	....
+       url(r'^rbac/', include('rbac.urls')),
+   ]
+   ```
+
+4. 角色管理
+
+   <http://127.0.0.1:8000/rbac/role/list/>
+
+5. 一级菜单管理
+
+   <http://127.0.0.1:8000/rbac/menu/list/>
+
+6. 批量操作权限
+
+   <http://127.0.0.1:8000/rbac/multi/permissions/>
+
+   批量输入标题
+
+   给权限分配给一级菜单  给父权限分配子权限
+
+7. 分配权限
+
+   如果用的不是rbac的User，替换User为当前使用的用户model
+
+   给角色分权限
+
+   给用户分角色
+
+8. 应用权限的中间件
+
+   ```python
+   MIDDLEWARE = [
+   	...
+       'rbac.middlewares.middleware.AuthMiddleWare',
+   ]
+   ```
+
+   在settings中添加权限的配置
+
+   ```python
+   #  白名单
+   WHITE_LIST = [
+       r'/login/$',
+       r'/reg/$',
+       r'/admin/.*'
+   ]
+   
+   # 免认证的地址
+   NO_PERMISSION_LIST = [
+       r'/index/'
+   
+   ]
+   
+   # 权限的session的key
+   PERMISSION_SESSION_KEY = 'permission'
+   
+   # 菜单的session的key
+   MENU_SESSION_KEY = 'menu'
+   ```
+
+   登录成功后调用权限信息初始化的函数
+
+9. 动态生成二级菜单
+
+   ```django
+   {% load rbac %}
+   {% menu request %}
+   ```
+
+	使用 css js
+
+
+```python
+# css
+<link rel="stylesheet" href="{% static 'css/nav.css' %} "/>
+# js
+<script src="{% static 'rbac/js/menu.js' %} "></script>
+```
+
+10. 路径导航
+
+    ```django
+    {% breadcrumb request %}
+    ```
+
+11. 权限控制到按钮级别
+
+    ```python
+    {% load rbac %}
+    {% if request|has_permission:'add_consult' %}
+           <a href="{% url 'add_consult' customer_id %}" class="btn btn-primary">新增</a>
+    {% endif %}
+    ```
+
+    
 
 
 

@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.safestring import mark_safe
 from multiselectfield import MultiSelectField
-
+from rbac.models import User
 course_choices = (('Linux', 'Linux中高级'),
                   ('PythonFullStack', 'Python高级全栈开发'),)
 
@@ -63,7 +63,7 @@ class Department(models.Model):
         return self.name
 
 
-class UserProfile(models.Model):
+class UserProfile(User):
     """
     用户表
     """

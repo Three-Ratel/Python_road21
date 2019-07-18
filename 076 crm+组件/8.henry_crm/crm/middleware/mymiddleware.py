@@ -10,10 +10,10 @@ class CheckLogin(MiddlewareMixin):
 
     def process_request(self, request):
         url = request.path_info
-        if url in [reverse('login'), reverse('reg')]:
-            return
-        if url.startswith('/admin'):
-            return
+        # if url in [reverse('login'), reverse('reg')]:
+        #     return
+        # if url.startswith('/admin'):
+        #     return
 
         user = request.session.get('is_login')
         if not user:

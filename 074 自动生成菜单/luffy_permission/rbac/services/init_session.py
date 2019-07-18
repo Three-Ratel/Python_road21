@@ -16,7 +16,7 @@ def init_session(request, obj):
         'permissions__parent_id',
         'permissions__id',
     ).distinct()
-
+    # print(permissions)
     # 构造权限和菜单字典
     permission_dic = {}
     menu_dic = {}

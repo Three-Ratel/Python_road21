@@ -29,8 +29,6 @@
             </tr>
             </thead>
             <tbody class="menu-body">
-
-
             {% for menu in all_menu %}
                 <tr class="{% if menu.pk|safe == mid %} active {% endif %}">
                     <td><a href="?mid={{ menu.pk }}">{{ menu.title }}</a></td>

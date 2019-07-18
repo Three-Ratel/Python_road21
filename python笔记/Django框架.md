@@ -1349,6 +1349,7 @@ USE_L10N = False
 
 - Django的模板中会对HTML标签和JS等语法标签进行自动转义
 - 安全，告诉Django不用做转义
+- 把非字符串类型转换为字符串类型
 - js、超链接
 
 ```python

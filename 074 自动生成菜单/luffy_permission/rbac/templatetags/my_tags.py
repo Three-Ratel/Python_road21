@@ -23,6 +23,7 @@ def menu(request):
     # 通过有序字典，为一级菜单指定顺序
     od = OrderedDict()
     keys = sorted(menu_dic, key=lambda x: menu_dic[x]['weight'], reverse=True)
+    # print(keys, type(keys))
     for i in keys:
         od[i] = menu_dic[i]
 

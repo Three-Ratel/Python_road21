@@ -18,6 +18,7 @@ class Permission(models.Model):
     url = models.CharField('url地址', max_length=100)
     name = models.CharField('url别名', max_length=50, unique=True)
     title = models.CharField('标题', max_length=32)
+    weight = models.IntegerField('权重', null=True, blank=True)
     menu = models.ForeignKey('Menu', verbose_name='菜单', blank=True, null=True)
     parent = models.ForeignKey('self', verbose_name='父权限', blank=True, null=True)
 

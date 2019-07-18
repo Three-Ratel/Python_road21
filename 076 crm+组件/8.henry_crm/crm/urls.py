@@ -19,8 +19,8 @@ urlpatterns = [
     # 某个销售的所有跟进记录
     url(r'^consult_record/$', consultant.ConsultRecordList.as_view(), name='consult_record'),
     # 某个客户的跟进记录
-    url(r'^consult_record/(\d+)/', consultant.ConsultRecordList.as_view(), name='consult_record'),
-    # c
+    url(r'^consult_record/(\d+)/', consultant.ConsultRecordList.as_view(), name='p_consult_record'),
+    #
     url(r'^add_consult/(?P<customer_id>\d+)/', consultant.modify_consult, name='add_consult'),
     # 编辑某个客户的跟进记录
     url(r'^edit_consult/(\d+)/', consultant.modify_consult, name='edit_consult'),

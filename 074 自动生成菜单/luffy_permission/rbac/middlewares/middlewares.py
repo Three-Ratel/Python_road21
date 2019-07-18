@@ -45,7 +45,7 @@ class AuthMiddleWare(MiddlewareMixin):
                     # 当前访问子权限
                     request.current_menu_id = pid
                     # 路径导航
-                    request.breadcrumb_list.append(
+                    requ5est.breadcrumb_list.append(
                         {'title': permission_dic[str(pid)]['title'], 'url': permission_dic[str(pid)]['url']})
                     request.breadcrumb_list.append({'title': i['title'], 'url': i['url']})
                 else:

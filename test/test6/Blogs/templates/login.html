@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+</head>
+<body>
+<form action="" method="post">
+    {% csrf_token %}
+    <p><input type="text" name="username" value="henry"></p>
+    <p><input type="password" name="password" value="123"></p>
+    <p><button>登录</button></p>
+    <p>管理员：henry  123</p>
+    <p>运维：echo 123</p>
+</form>
+</body>
+</html>

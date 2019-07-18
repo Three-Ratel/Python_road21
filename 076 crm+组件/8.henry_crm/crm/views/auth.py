@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect, reverse
 
 from crm import models
 from crm.forms import RegForm
-
+from rbac.services.init_permission import init_permission
 
 def reg(request):
     form_obj = RegForm()
@@ -27,11 +27,11 @@ def login(request):
         md.hexdigest()
         obj = models.UserProfile.objects.filter(username=username, password=md.hexdigest(), is_active=True).first()
         if obj:
+            init_permission(request, obj)
             url = request.GET.get('return_url')
             if url: ret = redirect(url)
             ret = redirect('customer')
             request.session['user_id'] = obj.pk
-            request.session['is_login'] = True
             return ret
         return render(request, 'login.html', {'error': '用户名或密码错误'})
     return render(request, 'login.html')
