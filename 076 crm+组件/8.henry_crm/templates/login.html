@@ -16,11 +16,11 @@
     <form action="" method="post" id="loginForm" novalidate="novalidate">
         {% csrf_token %}
         <div>
-            <input type="text" name="username" class="username" placeholder="用户名" autocomplete="off">
+            <input type="text" name="username" class="username" placeholder="用户名" autocomplete="off" value="henry@qq.com">
         </div>
         <div>
             <input type="password" name="password" class="password" placeholder="密码" oncontextmenu="return false"
-                   onpaste="return false">
+                   value="123123" onpaste="return false">
         </div>
         <div>
             {{ error }}

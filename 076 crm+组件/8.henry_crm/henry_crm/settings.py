@@ -49,7 +49,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'rbac.middlewares.middlewares.AuthMiddleWare',
-    # 'crm.middleware.mymiddleware.CheckLogin',
 ]
 
 ROOT_URLCONF = 'henry_crm.urls'

@@ -2,11 +2,16 @@
 
 {% block content %}
     {% load my_tags %}
+    {% load rbac %}
     <div class="panel panel-primary">
         <div class="panel-body">
-            <a href="{% url 'add_consult' customer_id %}" style="color: white; margin-bottom: 10px" class="btn btn-info">
-                新增
-            </a>
+            {% if request|has_permission:'add_consult' %}
+                <a href="{% url 'add_consult' customer_id %}" style="color: white; margin-bottom: 10px"
+                   class="btn btn-info">
+                    新增
+                </a>
+            {% endif %}
+
             <table class="table table-striped table-hover">
                 <thead>
                 <tr>
@@ -17,7 +22,9 @@
                     <th style="cursor: default;">跟进人<em class=" NormalCss SortDescCss"></em></th>
                     <th style="cursor: default;">跟进日期<em class=" NormalCss SortDescCss"></em></th>
                     <th style="cursor: default;">删除状态<em class=" NormalCss SortDescCss"></em></th>
-                    <th style="width: 180px">操作</th>
+                    {% if request|has_permission:'p_consult_record' or reqeust|has_permission:'edit_consult' %}
+                        <th style="width: 180px">操作</th>
+                    {% endif %}
                 </tr>
                 </thead>
                 <tbody id="UserList">
@@ -31,14 +38,19 @@
                         <td>{{ i.consultant }}</td>
                         <td>{{ i.date }}</td>
                         <td>{{ i.delete_status }}</td>
-                        <td>
-                            <a href="{% url 'p_consult_record' i.customer_id %}" class="btn btn-primary btn-sm">
-                                跟进记录
-                            </a>
-
-                            <a href="{% reverse_url request 'edit_consult' i.pk %}" class="btn btn-primary btn-sm">
-                                修改
-                            </a>
+                        {% if request|has_permission:'p_consult_record' or reqeust|has_permission:'edit_consult' %}
+                            <td>
+                            {% if request|has_permission:'p_consult_record' %}
+                                <a href="{% url 'p_consult_record' i.customer_id %}" class="btn btn-primary btn-sm">
+                                    跟进记录
+                                </a>
+                            {% endif %}
+                            {% if request|has_permission:'edit_consult' %}
+                                <a href="{% reverse_url request 'edit_consult' i.pk %}" class="btn btn-primary btn-sm">
+                                    修改
+                                </a>
+                            {% endif %}
+                        {% endif %}
                         </td>
                     </tr>
                 {% endfor %}

@@ -15,6 +15,7 @@ def login(request):
         obj = UserProfile.objects.filter(username=username, password=password).first()
         if obj:
             # 登陆成功, 初始化登陆状态、权限和菜单的seesion信息
+            request.session['user_id'] = obj.pk
             init_permission(request, obj)
             return redirect('index')
     return render(request, 'rbac/login.html')

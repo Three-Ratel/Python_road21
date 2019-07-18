@@ -2,6 +2,7 @@ from django.conf import settings
 
 
 def init_permission(request, obj):
+    request.session['user_id'] = obj.pk
     request.session['is_login'] = True
     permissions = obj.roles.exclude(permissions__url__isnull=True).values(
         # url和title用于菜单标题和链接
