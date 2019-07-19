@@ -16,7 +16,8 @@ class CustomerList(BaseView):
             all_item = models.Customer.objects.filter(q, consultant__isnull=True)
         else:
             all_item = models.Customer.objects.filter(q, consultant=request.user_obj)
-        obj = Pagenation(request, all_item.count(), request.GET.copy(), 3)
+        # print(list(request.GET.items()))
+        obj = Pagenation(request, all_item.count(), request.GET.copy(), 2)
         return render(request, 'consultant/list_customer.html',
                       {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show})
 
@@ -64,7 +65,7 @@ class ConsultRecordList(BaseView):
         all_item = models.ConsultRecord.objects.filter(consultant=request.user_obj)
         if pk:
             all_item = models.ConsultRecord.objects.filter(consultant=request.user_obj, customer_id=pk)
-        obj = Pagenation(request, all_item.count(), per_page=3)
+        obj = Pagenation(request, all_item.count(), per_page=2)
         return render(request, 'consultant/list_consult.html',
                       {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show, 'customer_id': pk})
 
@@ -91,12 +92,13 @@ class EnrollmentList(BaseView):
             all_item = models.Enrollment.objects.filter(customer__in=request.user_obj.customers.all())
         else:
             all_item = models.Enrollment.objects.filter(customer_id=customer_id)
-        obj = Pagenation(request, all_item.count(), per_page=3)
+        obj = Pagenation(request, all_item.count(), per_page=2)
         return render(request, 'consultant/list_enrollment.html',
                       {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show, 'customer_id': customer_id})
 
 
 def modify_enrollment(request, pk=None, customer_id=None):
+    # print(pk, customer_id)
     user_obj = models.Enrollment(customer_id=customer_id) if customer_id \
         else models.Enrollment.objects.filter(customer_id=pk).first()
     obj = EnrollmentForm(instance=user_obj)

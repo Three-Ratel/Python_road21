@@ -58,7 +58,7 @@ class RegForm(forms.ModelForm):
 			self.cleaned_data['password'] = md.hexdigest()
 			return self.cleaned_data
 		self.add_error('re_password', '两次密码不一致')
-		raise ValidationError('两次密码不一致')
+		# raise ValidationError('两次密码不一致')
 
 
 class CustomerForm(BSForm):
