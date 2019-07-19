@@ -7,7 +7,7 @@
         <div class="panel-body">
             {% if request|has_permission:'add_consult' %}
                 <a href="{% url 'add_consult' customer_id %}" style="color: white; margin-bottom: 10px"
-                   class="btn btn-info">
+                   class="btn btn-primary">
                     新增
                 </a>
             {% endif %}

@@ -6,7 +6,7 @@
     <div class="panel panel-primary">
         <div class="panel-body">
             {# 编辑用户 #}
-            <div>
+            <div {% if request.path == '/crm/customer/' %}style="display: none"{% endif %}>
                 {% if request|has_permission:'add_customer' %}
                     <a href="{% url 'add_customer' %}"
                        style="color: white;">
@@ -41,7 +41,6 @@
                         <th style="cursor: default;">性别<em class=" NormalCss SortDescCss"></em></th>
                         <th style="cursor: default;">出生日期<em class=" NormalCss SortDescCss"></em></th>
                         <th style="cursor: default;">手机号<em class=" NormalCss SortDescCss"></em></th>
-{#                        <th style="cursor: default;">来源<em class=" NormalCss SortDescCss"></em></th>#}
                         <th style="cursor: default;">介绍学员<em class=" NormalCss SortDescCss"></em></th>
                         <th style="cursor: default;">咨询课程<em class=" NormalCss SortDescCss"></em></th>
                         <th style="cursor: default;">班级类型<em class=" NormalCss SortDescCss"></em></th>
@@ -66,7 +65,6 @@
                             <td>{{ i.phone| default:'暂无' }}</td>
                             <td>{{ i.get_source_display }}</td>
                             <td>{{ i.introduce_from }}</td>
-{#                            <td>{{ i.course }}</td>#}
                             <td>{{ i.get_class_type_display }}</td>
                             <td>{{ i.show_status }}</td>
                             <td>{{ i.next_date }}</td>
@@ -74,28 +72,35 @@
                             <td>{{ i.show_class }}</td>
                             {% if request|has_permission:'edit_customer' or request|has_permission:'add_enrollment' or  request|has_permission:'p_consult_record' or   request|has_permission:'add_consult' %}
                                 <td>
-                                {% if request|has_permission:'edit_customer' %}
-                                    <a href="{% reverse_url request 'edit_customer' i.pk %}" class="btn btn-info btn-sm"
-                                       style="width: 80px; margin:2px 0">
-                                        修改
-                                    </a>
-                                {% endif %}
-                                {% if request|has_permission:'add_enrollment' %}
-                                    <a href="{% url 'add_enrollment' i.pk %}" class="btn btn-info btn-sm"
-                                       style="width: 80px; margin:2px 0">
-                                        添加报名表
-                                    </a>
-                                {% endif %}
+                                <span  {% if request.path == '/crm/customer/' %}style="display: none"{% endif %}>
+
+                                    {% if request|has_permission:'edit_customer' %}
+                                        <a href="{% reverse_url request 'edit_customer' i.pk %}"
+                                           class="btn btn-info btn-sm"
+                                           style="width: 80px; margin:2px 0">
+                                            修改
+                                        </a>
+                                    {% endif %}
+                                    {% if request|has_permission:'add_enrollment' %}
+                                        <a href="{% url 'add_enrollment' i.pk %}" class="btn btn-info btn-sm"
+                                           style="width: 80px; margin:2px 0">
+                                            添加报名表
+                                        </a>
+                                    {% endif %}
+                                    {% if request|has_permission:'add_consult' %}
+                                        <a href="{% url 'add_consult' i.pk %}" class="btn btn-primary btn-sm"
+                                           style="width: 80px; margin:2px 0">
+                                            新增记录
+                                        </a>
+                                    {% endif %}
+
+                                </span>
+
+
                                 {% if request|has_permission:'p_consult_record' %}
                                     <a href="{% url 'p_consult_record' i.pk %}" class="btn btn-primary btn-sm"
                                        style="width: 80px; margin:2px 0">
                                         个人记录
-                                    </a>
-                                {% endif %}
-                                {% if request|has_permission:'add_consult' %}
-                                    <a href="{% url 'add_consult' i.pk %}" class="btn btn-primary btn-sm"
-                                       style="width: 80px; margin:2px 0">
-                                        新增记录
                                     </a>
                                 {% endif %}
                             {% endif %}

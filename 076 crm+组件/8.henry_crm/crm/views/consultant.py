@@ -91,7 +91,7 @@ class EnrollmentList(BaseView):
             all_item = models.Enrollment.objects.filter(customer__in=request.user_obj.customers.all())
         else:
             all_item = models.Enrollment.objects.filter(customer_id=customer_id)
-        obj = Pagenation(request, all_item.count(), per_page=2)
+        obj = Pagenation(request, all_item.count(), per_page=3)
         return render(request, 'consultant/list_enrollment.html',
                       {'all_item': all_item[obj.start:obj.end], 'all_page': obj.show, 'customer_id': customer_id})
 

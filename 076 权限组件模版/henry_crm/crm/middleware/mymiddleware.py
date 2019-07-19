@@ -15,9 +15,9 @@ class CheckLogin(MiddlewareMixin):
         # if url.startswith('/admin'):
         #     return
 
-        user = request.session.get('is_login')
-        if not user:
-            return redirect(reverse('login') + '?return_url={}'.format(url))
+        # user = request.session.get('is_login')
+        # if not user:
+            # return redirect(reverse('login') + '?return_url={}'.format(url))
         obj = models.UserProfile.objects.filter(pk=request.session.get('user_id')).first()
         if obj:
             request.user_obj = obj

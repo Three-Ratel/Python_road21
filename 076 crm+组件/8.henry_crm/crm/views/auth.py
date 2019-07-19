@@ -31,7 +31,7 @@ def login(request):
 			init_permission(request, obj)
 			url = request.GET.get('return_url')
 			if url: ret = redirect(url)
-			ret = redirect('customer')
+			ret = redirect('index')
 			return ret
 		return render(request, 'login.html', {'error': '用户名或密码错误'})
 	return render(request, 'login.html')

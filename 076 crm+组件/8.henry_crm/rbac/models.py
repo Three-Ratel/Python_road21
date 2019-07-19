@@ -31,7 +31,7 @@ class Role(models.Model):
 
 
 class User(models.Model):
-    roles = models.ManyToManyField(Role, verbose_name='角色')
+    roles = models.ManyToManyField(Role, verbose_name='角色', blank=True)
 
     class Meta:
         abstract = True
