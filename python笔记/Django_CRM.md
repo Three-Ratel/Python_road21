@@ -810,8 +810,9 @@ if form_set_obj.is_valid():
 - 模版中使用
 
 ```django
-{# form为循环出来的一个form表单对象 #}
-{{ form.instance }}
+{# form为循环出来的一个form表单对象,指定字段为不可变类型 #}
+{{ form.instance }}         {# 当前form对象 #}
+{{ form.instance.username }}  
 {# 循环出来的input/select框 #}
 {{ form.username }}
 
@@ -820,6 +821,13 @@ if form_set_obj.is_valid():
 {# 循环内部需要生成form表单的id #}
 {{ form.id }}
 ```
+
+```python
+modelformset_factory() uses formset_factory() to generate formsets. This means that a model formset is just an extension of a basic formset that knows how to interact with a particular model.
+# modelformset_factory()使用formset_factory()生成formsets，model formset是基出得formset的延伸。
+```
+
+
 
 # 10. 权限组件  
 
@@ -1193,7 +1201,7 @@ def breadcrumb(request):
 
 1. 拷贝rbac组件到新项目中，并注册
 
-   ```
+   ```python
    INSTALLED_APPS = [
    		...
        'rbac.apps.RbacConfig'

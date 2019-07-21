@@ -44,5 +44,6 @@ urlpatterns = [
 
     # 学习记录表
     url(r'^list_study_record/(\d+)/$', teacher.StudyRecord.as_view(), name='list_study_record'),
+    # url(r'^list_study_record/(\d+)/$', teacher.study_record_list, name='list_study_record'),
 
 ]

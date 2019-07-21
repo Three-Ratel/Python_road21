@@ -84,6 +84,7 @@ class StudyRecord(BaseView):
         ModelFormSet = modelformset_factory(models.StudyRecord, StudyRecordForm, extra=0)
         queryset = models.StudyRecord.objects.filter(course_record_id=pk)
         all_item = ModelFormSet(queryset=queryset, data=request.POST)
+        print(all_item)
         if all_item.is_valid():
             all_item.save()
             # return HttpResponse('保存成功')

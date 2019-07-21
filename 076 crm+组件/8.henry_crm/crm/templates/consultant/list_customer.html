@@ -3,7 +3,8 @@
 {% block content %}
     {% load my_tags %}
     {% load rbac %}
-    <div class="panel panel-primary">
+    <div class="panel panel-primary" style="margin-top: -20px;">
+        <div class="panel-heading"><h4 style="text-align: center">客户列表</h4></div>
         <div class="panel-body">
             {# 编辑用户 #}
             <div {% if request.path == '/crm/customer/' %}style="display: none"{% endif %}>
@@ -56,40 +57,40 @@
                     <tbody id="UserList">
                     {% for i in all_item %}
                         <tr>
-                            <td><input type="checkbox" name="edit_name" value="{{ i.pk }}"></td>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ i.qq }}</td>
-                            <td>{{ i.name }}</td>
-                            <td>{{ i.get_sex_display }}</td>
-                            <td>{{ i.birthday }}</td>
-                            <td>{{ i.phone| default:'暂无' }}</td>
-                            <td>{{ i.get_source_display }}</td>
-                            <td>{{ i.introduce_from }}</td>
-                            <td>{{ i.get_class_type_display }}</td>
-                            <td>{{ i.show_status }}</td>
-                            <td>{{ i.next_date }}</td>
-                            <td>{{ i.consultant.name| default:'暂无' }}</td>
-                            <td>{{ i.show_class }}</td>
+                            <td style="width:45px"><input type="checkbox" name="edit_name" value="{{ i.pk }}"></td>
+                            <td style="width:45px">{{ forloop.counter }}</td>
+                            <td style="width:80px">{{ i.qq }}</td>
+                            <td style="width:80px">{{ i.name }}</td>
+                            <td style="width:45px">{{ i.get_sex_display }}</td>
+                            <td style="width:80px">{{ i.birthday }}</td>
+                            <td style="width:45px">{{ i.phone| default:'暂无' }}</td>
+                            <td style="width:80px">{{ i.get_source_display }}</td>
+                            <td style="width:80px">{{ i.introduce_from }}</td>
+                            <td style="width:80px">{{ i.get_class_type_display }}</td>
+                            <td style="width:80px">{{ i.show_status }}</td>
+                            <td style="width:100px">{{ i.next_date }}</td>
+                            <td style="width:80px">{{ i.consultant.name| default:'暂无' }}</td>
+                            <td style="width:80px">{{ i.show_class }}</td>
                             {% if request|has_permission:'edit_customer' or request|has_permission:'add_enrollment' or  request|has_permission:'p_consult_record' or   request|has_permission:'add_consult' %}
-                                <td>
-                                <span  {% if request.path == '/crm/customer/' %}style="display: none"{% endif %}>
+                                <td style="width:65px">
+                                <span {% if request.path == '/crm/customer/' %}style="display: none"{% endif %}>
 
                                     {% if request|has_permission:'edit_customer' %}
                                         <a href="{% reverse_url request 'edit_customer' i.pk %}"
                                            class="btn btn-info btn-sm"
-                                           style="width: 80px; margin:2px 0">
+                                           style="width: 65px; margin:2px 0">
                                             修改
                                         </a>
                                     {% endif %}
                                     {% if request|has_permission:'add_enrollment' %}
                                         <a href="{% url 'add_enrollment' i.pk %}" class="btn btn-info btn-sm"
-                                           style="width: 80px; margin:2px 0">
-                                            添加报名表
+                                           style="width: 65px; margin:2px 0">
+                                            添加报名
                                         </a>
                                     {% endif %}
                                     {% if request|has_permission:'add_consult' %}
                                         <a href="{% url 'add_consult' i.pk %}" class="btn btn-primary btn-sm"
-                                           style="width: 80px; margin:2px 0">
+                                           style="width: 65px; margin:2px 0">
                                             新增记录
                                         </a>
                                     {% endif %}
@@ -99,7 +100,7 @@
 
                                 {% if request|has_permission:'p_consult_record' %}
                                     <a href="{% url 'p_consult_record' i.pk %}" class="btn btn-primary btn-sm"
-                                       style="width: 80px; margin:2px 0">
+                                       style="width: 65px; margin:2px 0">
                                         个人记录
                                     </a>
                                 {% endif %}

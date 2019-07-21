@@ -2,7 +2,8 @@
 
 {% block content %}
     {% load my_tags %}
-    <div class="panel panel-primary">
+    <div class="panel panel-primary" style="margin-top: -20px;">
+        <div class="panel-heading"><h4 style="text-align: center">学习记录表</h4></div>
         <div class="panel-body">
             <form action="" method="post">
                 {% csrf_token %}
@@ -29,6 +30,7 @@
                             <td class="hidden">{{ i.course_record }}</td>
                             <td class="hidden">{{ i.student }}</td>
                         </tr>
+                        {# {{ all_item.errors }}#}
                     {% endfor %}
 
                     </tbody>
