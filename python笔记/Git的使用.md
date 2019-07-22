@@ -299,6 +299,14 @@ $ git rm test.txt
 $ git commit -m 'del test'
 ```
 
+- 查看更改
+
+```python
+$ git diff
+```
+
+
+
 ## 附录：
 
 ### 1. 团队协同开发流程

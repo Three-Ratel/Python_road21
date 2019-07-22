@@ -294,8 +294,7 @@ class Customer(models.Model):
     course = MultiSelectField("咨询课程", choices=course_choices)
     class_type = models.CharField("班级类型", max_length=64, choices=class_type_choices, default='fulltime')
     customer_note = models.TextField("客户备注", blank=True, null=True, )
-    status = models.CharField("状态", choices=enroll_status_choices, max_length=64, default="unregistered",
-                              help_text="选择客户此时的状态")
+    status = models.CharField("状态", choices=enroll_status_choices, max_length=64, default="unregistered",  help_text="选择客户此时的状态")
     last_consult_date = models.DateField("最后跟进日期", auto_now_add=True)
     next_date = models.DateField("预计再次跟进时间", blank=True, null=True)
     consultant = models.ForeignKey('UserProfile', verbose_name="销售", related_name='customers', blank=True, null=True, )
@@ -330,8 +329,7 @@ class ClassList(models.Model):
     start_date = models.DateField("开班日期")
     graduate_date = models.DateField("结业日期", blank=True, null=True)
     teachers = models.ManyToManyField('UserProfile', verbose_name="老师")
-    class_type = models.CharField(choices=class_type_choices, max_length=64, verbose_name='班额及类型', blank=True,
-                                  null=True)
+    class_type = models.CharField(choices=class_type_choices, max_length=64, verbose_name='班额及类型', blank=True, null=True)
 
     class Meta:
         unique_together = ("course", "semester", 'campuses')
@@ -381,8 +379,7 @@ class PaymentRecord(models.Model):
     note = models.TextField("备注", blank=True, null=True)
     date = models.DateTimeField("交款日期", auto_now_add=True)
     course = models.CharField("课程名", choices=course_choices, max_length=64, blank=True, null=True, default='N/A')
-    class_type = models.CharField("班级类型", choices=class_type_choices, max_length=64, blank=True, null=True,
-                                  default='N/A')
+    class_type = models.CharField("班级类型", choices=class_type_choices, max_length=64, blank=True, null=True, default='N/A')
     enrolment_class = models.ForeignKey('ClassList', verbose_name='所报班级', blank=True, null=True)
     customer = models.ForeignKey('Customer', verbose_name="客户")
     consultant = models.ForeignKey('UserProfile', verbose_name="销售")
@@ -393,10 +390,8 @@ class PaymentRecord(models.Model):
         (2, '已审核'),
     )
     status = models.IntegerField(verbose_name='审核', default=1, choices=status_choices)
-
     confirm_date = models.DateTimeField(verbose_name="确认日期", null=True, blank=True)
-    confirm_user = models.ForeignKey(verbose_name="确认人", to='UserProfile', related_name='confirms', null=True,
-                                     blank=True)
+    confirm_user = models.ForeignKey(verbose_name="确认人", to='UserProfile', related_name='confirms', null=True, blank=True)
 
 
 class CourseRecord(models.Model):
@@ -810,24 +805,23 @@ if form_set_obj.is_valid():
 - 模版中使用
 
 ```django
+{# 编辑相关，只要是提交post表单就需要生成4个隐藏标签 #}
+{{ form_set_obj.management_form  }}
+
 {# form为循环出来的一个form表单对象,指定字段为不可变类型 #}
 {{ form.instance }}         {# 当前form对象 #}
 {{ form.instance.username }}  
 {# 循环出来的input/select框 #}
 {{ form.username }}
 
-{# 编辑相关 #}
-{{ form_set_obj.management_form  }}
 {# 循环内部需要生成form表单的id #}
 {{ form.id }}
 ```
 
 ```python
 modelformset_factory() uses formset_factory() to generate formsets. This means that a model formset is just an extension of a basic formset that knows how to interact with a particular model.
-# modelformset_factory()使用formset_factory()生成formsets，model formset是基出得formset的延伸。
+# modelformset_factory()使用formset_factory()生成formsets，model formset是基于formset的延伸。
 ```
-
-
 
 # 10. 权限组件  
 
