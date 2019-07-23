@@ -4243,19 +4243,17 @@ from django import forms
 class RegForm(forms.Form):
   	def __init__(self, *args, **kwargs):
     		super(RegForm, self).__init__( *args, **kwargs)
-    		self.fields['hobby'].choices = models.Hobby.objects.values_list()
-  	hobby = forms.MutipleChoiceField(
-    		# 从数据库中读取
-    		choices=models.Hobby.objects.all().values_list('pk', 'name'))
+    		self.fields['hobby'].choices = models.Hobby.objects.values_list('pk', 'name')
+    # 从数据库中读取
+  	hobby = forms.MutipleChoiceField(choices=models.Hobby.objects.all().values_list('pk', 'name'))
 ```
 
 - **方式二**：使用ModelChoiceField
 
 ```python
 from django import forms
-hobby = forms.ModelChoiceField(
-  # 从数据库中直接读取
-  queryset=models.Hobby.objects.all())
+# 从数据库中直接读取
+hobby = forms.ModelChoiceField(queryset=models.Hobby.objects.all())
 ```
 
 ## 3. 校验

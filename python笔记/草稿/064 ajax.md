@@ -2,7 +2,7 @@
 
 ### 1.1 装饰器
 
-- **csrf_exempt,**只能加到dispatch方法上(类中或者重写dispatch方法)
+- **csrf_exempt,** 只能加到dispatch方法上(类中或者重写dispatch方法)
 - **ensure_csrf_cookie**，一般加在get请求上，确保生成cookies
 
 ```python
@@ -175,6 +175,7 @@ def upload(request):
     if request.method == 'POST':
         data = request.FILES.get('file')
         print(data, type(data),'*'*8, data.name, type(data.name))
+        # 必须for循环取出文件的数据
         with open(data.name, mode='wb') as f:
             for i in data.chunks():
                 f.write(i)
