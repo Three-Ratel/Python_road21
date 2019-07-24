@@ -1009,7 +1009,7 @@ console.dir(box);                                 // 查看box所有属性和方
 
 ```js
 var box = document.getElementsByTagName('div');
-// 使用拍它思想，操作标签，点击任意一个改变样式，即改变类名
+// 使用排它思想，操作标签，点击任意一个改变样式，即改变类名
 var li = document.getElementsByTagName('li');
 			for (var i = 0; i < li.length; i++){
 				// console.log(li[i]);
@@ -1159,7 +1159,12 @@ l1i.setAttribute('class', 'active');
 // 设置样式
 li1.children[0].style.color = 'red';
 li1.children[0].style.fontSize = 20px;
-// 追加节点
+```
+
+- 添加、删除节点
+
+```js
+// 追加子节点
 ul.appendChild(li1);
 // 在li1前插入li2
 ul.insertBefore(li2, li1);
@@ -1370,11 +1375,11 @@ console.log($('input[type=text]'));       // 属性选择器
 
 4. **绑定事件**
    - **样式操作是css方法**
-   - **$('#box.active').click(function(){})**
+   - **$('.box.active').click(function(){})**
    - **绑定事件中的this指向当前的对象**
 
 ```js
-$('#box.active').click(function(){
+$('.box.active').click(function(){
   // this指向当前js节点对象
   console.log(this);
   // 样式操作
@@ -1402,14 +1407,14 @@ $(this).css({
   'color':'red',
 })
 // 获取属性值
-console.log($(this).css('color'));\
+console.log($(this).css('color'));
 ```
 
 5. **过滤选择器**
 
 ```js
 // eq,gt,lt，odd，even，first，last
-console.log($('ul li')[1];                        // js对象
+console.log($('ul li')[1]);                        // js对象
 console.log($('ul li:eq(1)'));                    // jq对象
 console.log($('ul li:gt(1)'));                    // 。。。
 console.log($('ul li:lt(1)'));                    // 。。。
@@ -1538,7 +1543,7 @@ for (let i = 0; i < btns.length; i++){
 2. **$('#btn').html(<p>hello</p>)**
    - html()：既获得标签，又获得文本
 3. **$('#btn').val()**
-   - 只针对于表单控件
+   - 只针对于**表单控件**
 
 #### 2.1 show/hide(毫秒,回调)
 
@@ -1674,7 +1679,7 @@ $(function(){
   $('p').removeAttr('title id a');
 })；
 
-// js中使用,js中的事件有覆盖现象
+// js中使用,js中的事件有覆盖现象，onload表示页面加载完成
 window.onload = function(){
   console.log(222);
 };
@@ -1718,9 +1723,9 @@ $('input[type=radio]').eq(0).prop('type');
 
 #### 2.1 插入
 
-1. append
+1. **append**
 
-- 父元素.append(子元素)；
+- **父元素.append(子元素)**；
 - 通常谁调用返回值就是那个对象
 
 ```js
@@ -1734,7 +1739,7 @@ $('#box').append(jq对象);
 
 2. appendTo
 
-- 子元素.appendTo(父元素)；
+- **子元素.appendTo(父元素)；**
 
 ```js
 $('<a href="">百度一下  </a>').appendTo('#box');
@@ -2034,7 +2039,7 @@ $.ajax({
 		</div>
 		<div id="content">
 			<ul></ul>
-		</div1>
+		</div>
 	
 		<script type="text/javascript">
 			// 获取导航头

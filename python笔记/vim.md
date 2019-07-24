@@ -147,5 +147,49 @@ ea			# 在单词结尾追加
 
 # 2. Moving Around in a Hurry
 
-
+| Movement                                                     | Command   |
+| ------------------------------------------------------------ | --------- |
+| Scroll forward one screen                                    | ^F        |
+| Scroll backward one screen                                   | ^B        |
+| Scroll forward half screen                                   | ^D        |
+| Scroll backward half screen                                  | ^U        |
+| Scroll forward one line                                      | ^E        |
+| Scroll backward one line                                     | ^Y        |
+| Move current line to top of screen and scroll                | z / Enter |
+| Move current line to center of screen and scroll             | z. / zz   |
+| Move current line to bottom of screen and scroll             | z-        |
+| Redraw the screen                                            | ^L        |
+| Move to home-the top line of screen                          | H         |
+| Move to home-the middle line of screen                       | M         |
+| Move to home-the bottom line of screen                       | L         |
+| Move to first character of next line                         | + / Enter |
+| Move to first character of previous line                     | -         |
+| Move to first nonblank character of current line             | ^         |
+| Move to column n of current line                             | n\|       |
+| Move to end of word                                          | e         |
+| Move to end of word(ignore punctuation)                      | E         |
+| Move to beginning of current sentence                        | (         |
+| Move to beginning of next sentence                           | )         |
+| Move to beginning of current paragraph                       | {         |
+| Move to beginning of next paragraph                          | }         |
+| Move to beginning of current section                         | [[        |
+| Move to beginning of next section                            | ]]        |
+| 搜索相关                                                     | 命令      |
+| Search forward for pattern                                   | /pattern  |
+| Search backward for pattern                                  | ?pattern  |
+| Repeat last search                                           | n         |
+| Repeat last search in opposite direction                     | N         |
+| Repeat last search forward                                   | /         |
+| Repeat last serach backward                                  | ?         |
+| Move to next occurrence of x in current line                 | fx        |
+| Move to previous occurrence of x in current line             | Fx        |
+| Move to just before next occurrence of  x in current line    | tx        |
+| Move to just before previous occurrence of  x in current line | Tx        |
+| Repeat previous find command in same direction               | ;         |
+| Repeat previous find command in opposite direction           | ,         |
+| Go to given line n                                           | nG        |
+| Go to end of file                                            | G         |
+| Return to previous mark of context                           | ``        |
+| Return to beginning of line containing previous mark         | ''        |
+| Show current line(not a movement command)                    | ^G        |
 
