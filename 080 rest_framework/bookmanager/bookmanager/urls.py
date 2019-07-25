@@ -19,6 +19,6 @@ from app01 import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^books/', views.BookListView.as_view()),
+    url(r'^book/(\d+)?', views.BookListView.as_view()),
     # url(r'^book/(\d+)/', views.BookView.as_view()),
 ]
