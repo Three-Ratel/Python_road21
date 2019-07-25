@@ -16,6 +16,8 @@ docker run -ti --rm -p 81:80 nginx bash
 
 ## 2. yum配置
 
+- **EPEL** (Extra Packages for Enterprise Linux)
+
 ```nginx
 yum -y install epel-release
 yum -y insatll vim
@@ -55,6 +57,7 @@ Storage Driver: overlay2
 ```nginx
 # 查看本机所有镜像
 docker image ls
+docker images
 # List Docker containers (running, all, all in quiet mode)
 docker container ls
 docker container ls --all
@@ -62,3 +65,22 @@ docker container ls -aq
 ```
 
 # Part2 Containers
+
+## 1. 进入容器
+
+```nginx
+docker ps
+docker exec -it d1fe90d74edc /bin/bash
+```
+
+- 删除镜像先删除container
+
+```nginx
+# 删除一个image
+docker rmi <image id>
+# 删除所有image
+docker rmi $(docker images -q)
+```
+
+
+
