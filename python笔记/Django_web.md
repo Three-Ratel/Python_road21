@@ -442,33 +442,35 @@ Respresentation State Transfer
    2. `https://example.org/api/ `api很简单
 3. 版本
    - url 如：`https://api.example.com/v1/`
-4. 请求头  跨域时，引发发送多次请求
-5. 路径，网络上任何东西都是资源，均使用名词表示(可复数)
-6. method
-   1. GET 获取服务器上的资源，返回资源列表或一个资源
-   2. POST 新建资源，返回新建资源
-   3. PUT 在服务器更新资源(客户端提供改变后的完整资源)，返回更改后的资源
+   - 版本加在请求头中
+4. 路径，网络上任何东西都是资源，**均使用名词表示**(可复数)
+5. method
+   1. GET 获取服务器上的资源，返回**资源列表或一个资源**
+   2. POST 新建资源，**返回新建资源**
+   3. PUT 在服务器更新资源(客户端提供改变后的完整资源)，**返回更改后的资源**
    4. PATCH 在服务器更新资源(更改某些数据)
-   5. DELETE 删除资源，返回空/提示
-7. 过滤，通过url上传参形式
+   5. DELETE 删除资源，**返回空/提示**
+   6. **出错返回信息**
+6. 过滤，通过url上传参形式
    1. `https://api.example.com/v1/zoos?limit=10`
    2. `https://api.example.com/v1/zoos?offset=10`
    3. ...
-8. 状态码
+7. 状态码
    1. 200 ok
-   2. 201 created  [POST/PUT/PATCH]：用户新建或修改数据成功
+   2. 201 created  **[POST/PUT/PATCH]**：用户新建或修改数据成功
    3. 201 Accepted 表示需要排队，异步
-   4. 204 No content [DELETE]：用户删除数据成功
+   4. 204 No content **[DELETE]**：用户删除数据成功
    5. 错误处理，状态码4xx，应返回错误信息，error当作key
-9. Hypermedia API 返回关联的数据时，尽量返回url地址
+      - 401验证失败，403权限不足，404资源不存在
+8. Hypermedia API **返回关联的数据时，尽量返回url地址**
 
 `www.ruanyifeng.com/blog/2014/05/restful_api.html`
-
-
 
 ## 3. 使用rest_framwork流程
 
 - **JsonResponse可以序列化datetime类型**
+  1. `[{"id": 1, "title": "python之旅", "pub__name": "工业出版社", "authors": 1},{"id": 1, "title": "python之旅", "pub__name": "工业出版社", "authors": 2}...]`
+  2. **数据有冗余，无法展示出版社名称和作者名称**
 
 ```python
 from django.http.response import JsonResponse
@@ -480,6 +482,8 @@ class BookListView(APIView):
 ```
 
 - **django提供的序列化器**
+  1. [{"model": "app01.book", "pk": 1, "fields": {"title": "python之旅", "price": "59.99", "pub": 2, "authors": [1, 2]}},
+  2. **层级深，无法展示出版社名称和作者名称**
 
 ```python
 """django的序列化器"""
@@ -495,9 +499,10 @@ class BookListView(APIView):
 
 ### 1. 注册rest_framework app 
 
-- **不使用序列化器时**，多对多关系对应多个值时，**会分别为关联值构造不同的字典**
-- 结构：**[{},{}...]**
-- rest_framework的**Response()不能序列化对象**
+1. **不使用序列化器时**，多对多关系对应多个值时，**会分别为关联值构造不同的字典**
+2. `[{"id":1,"title":"python之旅","price":"59.99","pub":{"name":"工业出版社"},"authors":[{"name":"echo"},{"name":"henry"}]}`
+3. **外键是字典，多对多是列表套字典**
+4. rest_framework的**Response()不能序列化对象**
 
 ```python
 from rest_framework.views import APIView
@@ -513,6 +518,10 @@ class BookListView(APIView):
 
 - 多对多关系使用**authors = serializers.SerializerMethodField(read_only=True)**方法
 - 需要实现**get_authors**方法
+
+#### 2.1 写法一(Serializer)
+
+- 类似form与modelform 的关系，写法几乎相同
 
 ```python
 # serializer.py文件，app目录下
@@ -564,10 +573,73 @@ class BookSerializer(serializers.Serializer):
         return instance   	
 ```
 
+#### 2.2 写法二(ModelSerializer)
+
+- 局部校验
+
+```python
+class BookSerializer(serializers.Serializer):
+		title = serializers.CharField(max_length=32)
+    ...
+    def validate_title(self, value):
+        if 'xx' in value:
+            raise serializers.ValitdatoinError
+        return value
+```
+
+- 全局校验
+
+```python
+class BookSerializer(serializers.Serializer):
+		title = serializers.CharField(max_length=32)
+    ...
+    # attrs为有序字典，所有数据
+    def validate(self, attrs):
+        pass
+```
+
+- 自定义校验
+
+```python
+# 类似于Form组建中的自定义校验规则
+def my_validata(value)
+    if 'xx' in value:
+      	raise serializers.ValitdatoinError
+    return value
+      
+class BookSerializer(serializers.Serializer):
+		title = serializers.CharField(max_length=32, validators=[my_validata, ])
+		...
+```
+
+- **使用ModelSerializer**
+
+```python
+class BookSerializer(serializers.ModelSerializer):
+  	pub_info = serializers.SerializersMethodField(read_only=True)
+    author_info = serializers.SerializersMethodField(read_only=True)
+    
+    def get_pub_info(self, obj):
+      	return PublisherSerializer(obj.pub).data
+      
+    def get_pub_info(self, obj):
+        return AuthorSerializer(obj.authors.all(), many=True).data
+    
+  	class Meta:
+      	model = models.Book
+        fields = '__all__'
+        # 取值深度，用来读取，即GET请求
+        # depth = 1 
+        extra_kwargs = {
+          	'pub':{'write_only':True},
+          	'authors':{'write_only':True},
+         }
+```
+
 ### 3. 导入view.py中使用
 
 1. 使用序列化器时，默认情况下一次只能序列化**一个对象**，如果是对象列表则需要使用**many=True**参数
-2. 使用序列化器后，WSGI封装的**request**此时为 **request._request**
+2. 使用**rest_framework**序列化器后，WSGI封装的**request**此时为 **request._request**
 3. 序列化后的对象，**obj.data**即为从数据库中读取的数据，tpye为**ordereddict的list**
    - [OrderedDict([(), ()…]), OrderedDict([(), ()…]), … ]
 

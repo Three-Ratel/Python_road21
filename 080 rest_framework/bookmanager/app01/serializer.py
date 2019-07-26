@@ -40,9 +40,11 @@ class BookSerializer(serializers.Serializer):
 		instance.title = validated_data.get('title', instance.title)
 		instance.price = validated_data.get('price', instance.price)
 		instance.pub_date = validated_data.get('pub_date', instance.pub_date)
-		instance.pub_id = validated_data.get('put_pub', instance.pub_id)
+		# print(instance.pub_id)
+		instance.pub_id = validated_data.get('post_pub', instance.pub_id)
+		# print(instance.pub_id)
 		instance.save()
-		instance.authors.set(validated_data.get('put_authors', instance.authors.all()))
+		instance.authors.set(validated_data.get('post_authors', instance.authors.all()))
 		return instance
 
 
