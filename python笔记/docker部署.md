@@ -71,6 +71,7 @@ docker container ls -aq
 ```nginx
 docker ps
 docker exec -it d1fe90d74edc /bin/bash
+sudo docker attach 容器ID  
 ```
 
 - 删除镜像先删除container
@@ -81,6 +82,168 @@ docker rmi <image id>
 # 删除所有image
 docker rmi $(docker images -q)
 ```
+
+## 2. 把容器打包成镜像
+
+```nginx
+docker commit 容器id centos-vim
+```
+
+## 3. Dockerfile
+
+### 3.1 创建dockerfile文件
+
+```nginx
+# Use an official Python runtime as a parent image
+FROM python:2.7-slim
+# Set the working directory to /app
+WORKDIR /app
+# Copy the current directory contents into the container at /app
+COPY . /app
+# Install any needed packages specified in requirements.txt
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
+# Make port 80 available to the world outside this container
+EXPOSE 80
+# Define environment variable
+ENV NAME World
+# Run app.py when the container launches
+CMD ["python", "app.py"]
+```
+
+### 3.2 创建app和requirements.txt
+
+#### 1. requirements.txt
+
+```nginx
+Flask
+Redis
+```
+
+#### 2. app.py
+
+```nginx
+from flask import Flask
+from redis import Redis, RedisError
+import os
+import socket
+
+# Connect to Redis
+redis = Redis(host="redis", db=0, socket_connect_timeout=2, socket_timeout=2)
+app = Flask(__name__)
+@app.route("/")
+def hello():
+    try:
+        visits = redis.incr("counter")
+    except RedisError:
+        visits = "<i>cannot connect to Redis, counter disabled</i>"
+
+    html = "<h3>Hello {name}!</h3>" \
+           "<b>Hostname:</b> {hostname}<br/>" \
+           "<b>Visits:</b> {visits}"
+    return html.format(name=os.getenv("NAME", "world"), hostname=socket.gethostname(), visits=visits)
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=80)
+```
+
+#### 3. build app
+
+```nginx
+$ ls
+Dokerfile	 app.py 	requirements.txt
+```
+
+- 创建镜像，存储到本机Docker image registry
+
+```nginx
+docker build --tag/-t=friendlyheloo
+# 查看镜像
+$ docker images
+```
+
+- tag默认是`latest`,完整语法
+
+```nginx
+--tag=friendlyhello:v0.0.1
+```
+
+#### Note for Linux
+
+- Linux 用户proxy server settings
+- ENV command 指定host 和 port
+
+```nginx
+# set proxy server, replace host:port with values for your servers
+ENV http_proxy host:port
+ENV http_proxy host:port
+```
+
+- DNS settings:DNS设置不当`pip`不能正常使用，需要设置DNS server使 pip 正常使用，为Docker daemon设置DNS编辑 `/etc/docker/daemon.json` 
+
+```nginx
+{
+  	'dns':['your_dns_address', '8.8.8.8']
+}
+```
+
+- 本机的dns不可用时，使用goole的dns，保存后重启docker service
+
+```nginx
+sudo service docker restart
+```
+
+#### 4. Run the app
+
+- 运行app，mapping 主机port 4000 端口和 80 使用 `-p`
+
+```nginx
+docker run -p 4000:80 friendlyhello
+```
+
+- 使用`http://0.0.0.0:80`查看或`curl http://localhost:4000`
+- 后台运行app
+
+```nginx
+docker run -d -p 4000:80 friendlyhello
+```
+
+#### 5. Log in with your Docker ID
+
+```nginx
+docker login
+```
+
+- 推送image到Docker Hub
+
+```nginx
+docker tag image username/repository:tag
+# For example
+docker tag friendlyhello henry/get-started:part2
+```
+
+- Publish the image
+
+```nginx
+docker push henry/repository:tag
+```
+
+- 再其他终端上运行app
+
+```nginx
+docker run -p 4000:80 username/repository:tag
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
