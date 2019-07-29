@@ -148,6 +148,8 @@ if __name__ == "__main__":
 
 #### 3. build app
 
+- Here's what ls should show
+
 ```nginx
 $ ls
 Dokerfile	 app.py 	requirements.txt
@@ -156,7 +158,7 @@ Dokerfile	 app.py 	requirements.txt
 - 创建镜像，存储到本机Docker image registry
 
 ```nginx
-docker build --tag/-t=friendlyheloo
+docker build --tag/-t=friendlyhello .
 # 查看镜像
 $ docker images
 ```
@@ -211,14 +213,17 @@ docker run -d -p 4000:80 friendlyhello
 
 ```nginx
 docker login
+# 或者
+docker login -u 用户名 -p 密码
 ```
 
 - 推送image到Docker Hub
 
 ```nginx
+# 添加tag标dock
 docker tag image username/repository:tag
 # For example
-docker tag friendlyhello henry/get-started:part2
+docker tag friendlyhello henrywzh/get-started:part2
 ```
 
 - Publish the image
@@ -227,10 +232,94 @@ docker tag friendlyhello henry/get-started:part2
 docker push henry/repository:tag
 ```
 
-- 再其他终端上运行app
+- 先在其他终端上登录：再运行app
 
 ```nginx
-docker run -p 4000:80 username/repository:tag
+docker run -p 4000:80 hernywzh/test:friendlyhello
+```
+
+# Part3 Services
+
+## 1. docker-compose.yml
+
+- 定义docker容器的参数
+
+```nginx
+version: "3"
+services:
+  web:
+    # replace username/repo:tag with your name and image details
+    image: henrywzh/test:hello
+    deploy:
+      replicas: 5
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "4000:80"
+    networks:
+      - webnet
+networks:
+  webnet:
+```
+
+## 2. Run new load-balanced app
+
+### 1. `docker stack deploy`命令
+
+- 需要执行如下命令
+
+```nginx
+docker swarm init
+```
+
+### 2. 为app命名
+
+- A single container running in a service is called a **task**
+
+```nginx
+docker stack deploy -c docker-compose.yml app名称
+# 获取service ID
+docker service ls
+# 查看所有服务with stack
+docker stack services app名称
+# 展示服务的所有task
+docker service ps mytest_web
+# 展示所有容器的id
+docker container ls -q
+```
+
+### 3. Scale the app
+
+```nginx
+# 修改docker-compose.yml中的replicas=3参数
+# 重新部署即可
+docker stack deploy -c docker-compose.yml mytest_web
+docker stack service ps mytest_web
+# 显示如下
+ID                  NAME                IMAGE                 NODE                    DESIRED STATE       CURRENT STATE            ERROR               PORTS
+o8fq9vr1lt04        mytest_web.1        henrywzh/test:hello   linuxkit-025000000001   Running             Running 11 minutes ago                       
+z5cyi8z0xrje        mytest_web.2        henrywzh/test:hello   linuxkit-025000000001   Running             Running 11 minutes ago                       
+cjsancy3bgpv        mytest_web.3        henrywzh/test:hello   linuxkit-025000000001   Running             Running 11 minutes ago                       
+k1ogibpmrnn2        mytest_web.4        henrywzh/test:hello   linuxkit-025000000001   Remove              Running 14 seconds ago                       
+sgddt44fe5aw        mytest_web.5        henrywzh/test:hello   linuxkit-025000000001   Remove              Running 14 seconds ago                       
+```
+
+### 4. take down the app and the swarm 
+
+#### 1. Take the app down
+
+```nginx
+docker stack rm mytest_web
+```
+
+#### 2. Take down the swarm
+
+```nginx
+docker swarm leave --force
 ```
 
 

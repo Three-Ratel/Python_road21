@@ -136,7 +136,7 @@ ea			# 在单词结尾追加
 | Append text at current position              | a        |
 | Append text at beginning of line             | A        |
 | Open new line below cursor for new text      | o        |
-| Open new line above cursor for new text      | O        |
+| Open new line above cursor for new           | O        |
 | Delete line and substitute text              | S        |
 | Overstrike existing characters with new text | R        |
 | Join current and next line                   | J        |
@@ -192,4 +192,124 @@ ea			# 在单词结尾追加
 | Return to previous mark of context                           | ``        |
 | Return to beginning of line containing previous mark         | ''        |
 | Show current line(not a movement command)                    | ^G        |
+
+#4. Beyond the Basic
+
+-  **Tabel 4-1 More editing commands􏰝􏰆􏰖􏰓􏰈 􏰱􏰲􏰳􏰘 􏰨􏰄􏰏􏰈 􏰈􏰇􏰒􏰍􏰒􏰁􏰐 􏰃􏰄􏰅􏰅􏰆􏰁􏰇􏰔􏰝􏰆􏰖􏰓􏰈 􏰱􏰲􏰳􏰘** 􏰨􏰄􏰏􏰈 􏰈􏰇􏰒􏰍􏰒􏰁􏰐 􏰃􏰄􏰅􏰅􏰆􏰁􏰇􏰔
+
+| Change    | Delete    | Copy     | Form cursor to...         |
+| --------- | --------- | -------- | ------------------------- |
+| cH        | dH        | yH       | Top of screen             |
+| cL        | dL        | yH       | Bottom of screen          |
+| c+        | d+        | y+       | Next line                 |
+| c5\|      | d5\|      | y5\|     | Column 5 of current line  |
+| 2c)       | 2d)       | 2y)      | Second sentence following |
+| c{        | d{        | y{       | Previous paragraph        |
+| c/pattern | d/pattern | y/patter | Pattern                   |
+| cn        | dn        | yn       | Next pattern              |
+| cG        | dG        | yG       | End of file               |
+| c13G      | d13G      | y13G     | Line number 13            |
+
+## 4.1 Options when staring vi
+
+- 指定位置打开文件
+
+```nginx
+# 光标在行首
+# 打开文件
+$ vi file
+# 打开文件，定位光标到 n 行
+$ vi +n file
+# 打开文件，定位光标到尾行
+$ vi + file
+# 打开文件到第一次匹配行
+$ vi +/pattern file
+# pattern中包含空格，必须使用引号
+$ vim +/'- F' test.md 
+or vim +/-\ F test.md
+```
+
+- Read-Only Mode
+
+```nginx
+$ vim -R file
+or view filevim 
+```
+
+- Recovering a Buffer
+
+```nginx
+# 展示system已经保存的文件
+$ ex -r 
+or vi -r
+# 恢复test文件
+$ vi -r test
+```
+
+- Making Use of Buffers
+
+```nginx
+使用数字id表示保存删除文本，即9次
+使用字符id表示保存copy文本，即a-z26次
+```
+
+- Recovering Deletions
+
+```nginx
+# type "，倒叙标识删除顺序
+"2p
+# 挨个查看删除内容，直到出现目标文本
+"1pu.u.u etc
+```
+
+- Yanking to Named Buffers
+
+```nginx
+# 复制当前文本到 buffer d
+"dyy
+# 复制the next 7 line to buffer a
+"a7yy
+```
+
+```nginx
+# 在光标前粘贴 buffer d 中的内容
+"dp
+# 在光标前粘贴 buffer a 中的内容
+"ap
+```
+
+```nginx
+# 删除 buffer a 中的 5行内容
+"a5dd 
+```
+
+- 如果使用 buffer name 的大写字母，复制或删除的文本将会追加到当前buffer中，可以选择移动或复制
+
+```nginx
+# 从当前光标删除到当前橘子结尾并保存到buffer z中
+"zd)
+# 移动 2 句
+2)
+# 追加 next senten到 buffer z中
+"Zy)
+```
+
+- Marking Your Place
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
