@@ -236,6 +236,8 @@ $ vim -R file
 or view filevim 
 ```
 
+## 4.2 Recovering 
+
 - Recovering a Buffer
 
 ```nginx
@@ -296,11 +298,36 @@ $ vi -r test
 
 - Marking Your Place
 
+## Review of vi Buffer and Marking Commands
 
+- **Table 4-2 Command-line options**
 
+| Option          | Meaning                                                      |
+| --------------- | ------------------------------------------------------------ |
+| +n file         | Open file at line number n                                   |
+| + file          | Open fiel at last line                                       |
+| +/pattern files | Open file at first occurrence of pattern                     |
+| -c command file | Run command after opening file;usually a line number or search(POSIX version of +) |
+| -R              | Operate in read-only mode(same as using view instead of vi)  |
+| -r              | Recover files after crash                                    |
 
+- **Table 4-3 Buffer names**
 
+| Buffer names | Buffer use                                                   |
+| ------------ | ------------------------------------------------------------ |
+| 1-9          | The last nine deletions, from most to least recent           |
+| a-z          | Named buffers for you to use as needed.Uppercase letters append to the buffer. |
 
+- **Table 4-4 Buffer and marking commands**
+
+| Command    | Meaning                                                     |
+| ---------- | ----------------------------------------------------------- |
+| "b command | Do command with buffer b                                    |
+| mx         | Mark current position with x                                |
+| 'x         | Move cursor to first character of line marked by x          |
+| `x         | Move cursor to character marked by x                        |
+| ``         | Return to exact position of previous mark or context        |
+| ''         | Return to beginning of the line of previous mark or context |
 
 
 
