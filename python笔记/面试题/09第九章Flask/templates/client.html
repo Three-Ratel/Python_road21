@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+发送内容:<input type="text" id="msg">
+
+账号:<input type="text" name="from_user" id="from_user">
+<button onclick="create_ws()" >登陆</button>
+
+发送给:<input type="text" name="to_user" id="to_user">
+<button onclick="send()" >提交</button>
+
+<div id="message"></div>
+
+
+<script type="application/javascript" src="../static/jquery-3.3.1.js"></script>
+<script>
+
+    function send() {
+        var message = document.getElementById('msg').value;
+        var to_user = document.getElementById('to_user').value;
+        if(to_user == null){
+            to_user = ''
+        }
+        var send_str = {
+            from_user:document.getElementById('from_user').value,
+            to_user:to_user,
+            message:message
+        };
+        var json_send_str = JSON.stringify(send_str);
+        ws.send(json_send_str);
+    }
+
+
+    var username = null;
+    var p = null;
+    function create_ws() {
+        username = document.getElementById("from_user").value;
+        console.log(username);
+        ws = new WebSocket("ws://127.0.0.1:9526/server/" + username);
+        ws.onmessage = function (eventMessage){
+
+            var recv_msg = JSON.parse(eventMessage.data);
+            p += '<p>' + recv_msg.from_user + ':' + recv_msg.message + '</p>';
+            $('#message').html(p);
+            console.log(recv_msg);
+        };
+
+    }
+
+</script>
+</body>
+</html>

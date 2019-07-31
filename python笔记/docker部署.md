@@ -279,13 +279,14 @@ docker swarm init
 ### 2. 为app命名
 
 - A single container running in a service is called a **task**
+- web服务的名称为 **app名称_web**
 
 ```nginx
-docker stack deploy -c docker-compose.yml app名称
+docker stack deploy -c docker-compose.yml app名称(如：mytest)
 # 获取service ID
 docker service ls
 # 查看所有服务with stack
-docker stack services app名称
+docker stack services mytest
 # 展示服务的所有task
 docker service ps mytest_web
 # 展示所有容器的id
@@ -322,7 +323,13 @@ docker stack rm mytest_web
 docker swarm leave --force
 ```
 
+# Part4 Swarms
 
+## 1. swarms definaiton
+
+- We've deployed an application onto a cluster, running it on multiple machines. **Multi-container, multi-machine** applications are made possible by joining **multiple machines** into a “Dockerized” cluster called a **swarm**.
+
+## 2. Understanding Swarm clusters
 
 
 

@@ -10,12 +10,14 @@
 10. 5.2.4：主版本号、次版本号、末版本号
 11. GPL
 12. aliyun
-13. 密码要求：
-    - 12位及其以上
-    - 必须包含大写字母，小写字母，数字，特殊字符
-    - 3个月或者半年更换一次
 
 # 1. Centos简介
+
+服务器密码要求：
+
+- 12位及其以上
+- 必须包含大写字母，小写字母，数字，特殊字符
+- 3个月或者半年更换一次
 
 ## 1. 虚拟机
 
@@ -36,8 +38,8 @@
 6. 串行终端
 
 ```SHELL
-# chvt N 命令让你切换到前台终端 N，这与按CTRL+ALT+Fn相同。如果它不存在，则创建相应的屏幕。
-# 进入tty/pts/2
+# chvt N 命令切换到前台终端 N，这与按CTRL+ALT+Fn相同。如果它不存在，则创建相应的屏幕。
+# 进入/dev/tty2
 chvt 2
 chvt 1    # 退出
 fgconsole # 查看活动虚拟控制台的总数
@@ -129,8 +131,9 @@ echo 'alias ce='cd /etc' >> /etc/bashrc
 # 执行本身含义
 "ls"  'ls'	\ls
 # 单双引号的区别
-echo "$name"  # 打印环境变量
-echo '$name'	# 打印$name
+echo "$name"  # 打印name变量
+echo ${name}	# 打印name变量
+echo '$name'	# 打印name变量名
 ```
 
 ## 5. 常用命令
@@ -149,6 +152,14 @@ command [options] [args...]
 ```
 
 ### 1. 时间相关
+
+1. F：年月日
+2. H/I：小时(24/12)
+3. y/m/d/H/M/S
+4. a/A：二/星期二
+5. T：时分秒
+6. s：时间戳
+7. W：第几周
 
 ```SHELL
 # 显示完整时间
@@ -271,23 +282,921 @@ yum info extras
 yum provides
 ```
 
-## 7. bash的快捷键
+# 2. 常用命令1
 
-- ctrl+l 清屏，相当于clear命令
-- ctrl+o 执行当前命令，并重新显示本命令
-- ctrl+s 阻止屏幕输出，锁定
-- ctrl+q 允许屏幕输出
-- ctrl+c 终止命令
-- ctrl+z 挂起命令
-- ctrl+a 光标移动到行首，相当于home
-- ctrl+e 光标移动到行尾，相当于end
-- ctrl+xx光标在命令行首和光标之间移动
-- ctrl+u 从光标处删除至命令行首
-- ctrl+k 从光标处删除至命令行尾
-- alt+r 删除当前整行
-- alt+f 光标向右移动一个单词尾
-- alt+b 光标向左移动一个单词首
-- **需要注意:** alt组合键经常和其他软件冲突
+
+
+## 1. 终端操作
+
+### 1. 终端快捷键(13)
+
+- 需要注意，alt会跟别的快捷键冲突
+
+```SHELL
+control + L  # 清屏
+control + s  # 锁定屏幕 !
+control + q  # 解锁 !
+control + c  # 终止命令
+control + a  # 移动 cursor 到行首
+control + e  # 移动 cursor 到行尾
+control + xx # 移动 cursor 到上次位置 !
+control + u  # 删除到行首
+control + k  # 删除到行尾
+control + d  # delete
+alt + r			 # 删除整行
+alt+f        # 光标向右移动一个单词尾
+alt+b        # 光标向左移动一个单词首
+```
+
+### 2. 补全功能
+
+1. 外部变量/命令补全：**cp**
+   - Shell 会根据**环境变量**从左到右依次查找，找到第一个匹配的则返回
+   - 如果部分命令只能搜索到一个则可以使用tab 补全
+   - 如果有多个则使用两次tab提示
+2. 目录补全
+   - 把用户给定的目录字符串只能搜索到一个则直接补全
+   - 如果匹配到多个则使用两次tab显示所有文件目录列表
+3. 回显echo
+   - 输入什么就输出什么，并切加入一个换行符
+
+```SHELL
+# 获取环境变量
+$ echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+```
+
+### 3. 帮助
+
+#### 1. 内部命令
+
+- help command
+- man bash
+
+#### 2. 外部命令
+
+- command —help/-h
+- man command(**q退出**)
+- 官方文档
+
+#### 3. Man
+
+- 9个章节
+
+```SHELL
+# 显示man
+man man
+1 用户命令
+2 系统调用(内核提供的功能)
+3 c库调用
+4 设备文件
+5 配置文件
+6 游戏
+7 其他
+8 管理类命令
+9 linux内核api
+```
+
+## 2. 目录结构
+
+### 1. 结构(4)
+
+1. 树形结构
+2. 目录严格区分大小写
+3. 隐藏文件以 . 开头
+4. 路径分隔符为 /
+
+### 2. 文件命令规范(4)
+
+1. 文件名最长为255个字符
+2. 包括路径在内最长4095个字符
+3. 除了 / 和 NULL 以外，其他字符都生效
+4. 大小写敏感
+
+### 3. 颜色表示(6)
+
+1. 蓝色：表示目录
+2. 绿色：表示可执行文件
+3. 红色：表示压缩文件
+4. 蓝绿色：表示链接文件
+5. 白色：普通文件
+6. 灰色：其他文件
+7. 蓝底白字：硬链接
+8. 红底黑字：软链接，原文件被删除
+
+### 4. 文件系统结构(20)
+
+```SHELL
+/			  # 根目录
+/boot   # 存放系统引导文件(内核文件、引导加载器)
+/run		# 服务或系统启动后生成的文件
+/etc    # 配置文件
+/home   # 普通用户的家目录
+/root 	# root用户家目录
+
+/bin    # 所有用户均可使用的命令
+/sbin   # 管理员可以使用的命令，管理类命令
+/lib		# 基本库文件，win的 *.dll, linux的 *.so
+/lib64  # 专门用于64位操作系统的一些辅助库文件
+
+/media	# 便携式文件的挂载点
+/mnt		# 临时文件的挂载，光盘、u盘
+/tmp		# 存放临时文件
+/srv		# 系统上允许的服务用到的数据
+/opt		# 一般第三方的安装程序
+/usr		# 安装程序
+/var		# 存放经常变化的数据，如：日志(/var/log), message:系统启动日志，sssd:链接的用户信息，secure:其他用户登录信息
+/proc		# 存放内核和进程的虚拟文件
+/dev	  # 存放设备信息
+/sys		# 存放硬件相关的虚拟文件
+```
+
+| 二进制文件      | 库文件           | 配置文件         | 帮助文件             |
+| --------------- | ---------------- | ---------------- | -------------------- |
+| /bin            | /lib             | /etc/*           | /usr/share/man       |
+| /sbin           | /lib/64          | /usr/local/etc/* | /usr/share/doc       |
+| /usr/bin        | /usr/lib         |                  | /usr/local/share/man |
+| /usr/sbin       | /usr/lib64       |                  | /usr/local/share/doc |
+| /usr/local/bin  | /usr/local/lib   |                  |                      |
+| /usr/local/sbin | /usr/local/lib64 |                  |                      |
+
+### 5. 相对路径和绝对路径
+
+- 绝对路径：从根开始，完整路径，可以找到任何存在的文件
+- 相对路径：相对于某个文件或目录开始，可以使用简短的形式
+  - .. 代表父目录， . 代表当前路径
+
+```SHELL
+# esc . 获取上条命令的参数
+# 获取文件名
+basename /etc/sysconfig/network-scripts/ifcfg-ens33
+# 获取文件目录
+dirname /etc/sysconfig/network-scripts/ifcfg-ens33
+```
+
+## 3. 常用命令
+
+### 1. cd pwd
+
+- 可以使用相对路径也可以使用绝对路径
+
+```SHELL
+cd /opt
+cd ../etc
+# 直接回到用户家目录
+cd
+# 回到上次目录
+cd -
+# 查看当前目录的绝对路径，print working directory
+pwd
+```
+
+### 2. ls
+
+#### 1. 参数
+
+1. -a / —all：表示所有(-A除了 . 和 ..)
+2. -l：使用长格式显示，显示**mtime**
+3. -R：递归显示指定文件中的所有文件
+4. -S：根据文件大小降序显示
+5. -u
+   - with lt 按照atime排序，the newest first
+   - with l 不排序，显示atime
+   - 按照atime排序显示
+6. -t：根据修改时间排序，the newest first
+7. -c
+
+   - with lt 表示按照ctime排序显示
+   - with l 不排序，显示ctime
+   - 按照ctime排序
+8. -d：只显示目录文件
+9. -h：自动调节文件大小的单位(一般和l连用)
+
+```SHELL
+# 查看所有文件
+ls -a / --all
+# 长格式显示文件
+ls -l
+# ls -la
+# 递归查看某个目录下的文件
+ls -R /etc
+# 长格式显示目录本身
+ls -ld 目录名
+# 竖着显示文件
+ls -1 /etc
+# 根据文件的大小进行排序
+ls -lS /    # 降序
+ls -lSr /   # 升序
+# 只能显示当前目录下的目录
+ls -d */
+# 自动调节文件大小的单位(一般和l连用)
+ls -h /
+```
+
+### 3. touch
+
+- 创建新文件、修改文件的时间戳
+
+#### 1. 用法
+
+- touch [选项]... 文件...
+
+#### 2. 参数
+
+- -a 仅改变atime 和ctime
+- -m 仅改变mtime和ctime
+
+```SHELL
+touch a.txt		  # 文件不存在创建，存在则修改时间戳
+touch a{1..10}  # 命令的展开
+touch a{a..z}
+touch a{1..10..2}
+touch a{a..z..2}
+echo a{1..10}
+```
+
+### 4. history
+
+- 命令保存在 ～/.bash_history中
+- 当用户登录系统后，会去读取 ～/.bash_history的内容，在正常退出后会把历史保存到改文件中
+
+```SHELL
+键盘上上下键查找
+# 查找所有执行过的命令
+history
+# 重复执行 第242 个命令
+!242
+# 重复执行最后一次命令
+!! / !-1
+# 重复执行倒数第二个命令
+!-2
+# 调出最后一次命令
+ctrl + p
+
+# 只执行命令，去掉参数(如：cd)
+!:0
+# 查找最近一次包含 echo 的命令
+!echo
+# 搜索之前执行过命令 control + d/g 退出
+control + r
+# 调用最后一次命令的参数
+ls + esc .
+# 只显示最后10条命令
+history 10
+# 清空命令历史
+history -c
+```
+
+### 5. seq
+
+- 用法：seq [选项]... 尾数
+- 或：seq [选项]... 首数 尾数
+- 或：seq [选项]... 首数 增量 尾数
+
+```SHELL
+seq 10
+seq 1 10
+touch a`seq 1 2 10`
+# 命令的引用
+ehco $(date +%T) >> filename
+echo `date`
+```
+
+- 文件通配符
+  1. `*`代表任意个字符
+  2. ？表示任意单个字符
+  3. [0-9] 表示数字
+  4. [a-z]字母：从a-z，**并且包括A-Y**
+  5. [A-Z]字母：从A-Z，**并且包括b-z**
+  6. [abcde]：其中一个
+  7. [^abcde]：取反
+  8. [:lower:]/[:upper:]：表示小写字符
+  9. [:digit:]：表示数字
+  10. [a-zA-z] / [:alpha:]：所有字母
+  11. [a-zA-Z0-9]/ [:alnum:]：所有**单个**数字和字母
+
+```SHELL
+ll a[0-9]
+# 查看以 a 开头的所有文件
+ls /etc/a*
+ls a[abcde] or ls a{a..e}
+ls a[^abcde]
+ls a[[:lower:]]/ ls a[[:upper:]]
+ls a[[:digit:]]
+```
+
+### 6. stat
+
+- 查看文件状态
+
+```SHELL
+[root@localhost test]#stat aa
+  文件："aa"
+  大小：0         	块：0          IO 块：4096   普通空文件
+设备：fd00h/64768d	Inode：17652659    硬链接：1
+权限：(0644/-rw-r--r--)  Uid：(    0/    root)   Gid：(    0/    root)
+环境：unconfined_u:object_r:admin_home_t:s0
+最近访问：2019-07-30 11:58:56.110953195 +0800
+最近更改：2019-07-30 11:58:56.110953195 +0800
+最近改动：2019-07-30 11:58:56.110953195 +0800
+创建时间：-
+# access:访问时间，（读取文件内容，touch） atime
+# modify:修改时间，（修改文件内容，touch） mtime，
+# change:改动时间，（修改文件内容，touch） ctime，改变状态或属性如：mv，chown等
+```
+
+### 7. copy
+
+#### 1. 用法
+
+- cp [选项]... [-T] 源文件 目标文件
+- 或：cp [选项]... 源文件... 目录
+- 或：cp [选项]... -t 目录 源文件...
+
+#### 2. 参数(9)
+
+1. -i：覆盖之前提示，交互
+2. -n：不覆盖已存在的文件，i失效
+3. -ni：会提示，谁在后谁有效
+4. -r：递归复制
+5. -rf：强制覆盖
+6. -rfv：显示详细的复制过程
+7. -b：覆盖之前对源文件做备份 **目标文件名~**
+8. —backup=numbered：覆盖之前对源文件做备份 文件名~1~，~2~...
+9. -p：复制文件完全一样，保留原来的属性
+
+```SHELL
+cp 1.txt 2.txt
+cp 1.txt test
+cp 1.txt 2.txt 目录
+cp -r test test2
+```
+
+- 如果source是文件
+  - 如果目标不存在则新建并写入数据，存在则直接覆盖，提示使用`-i`选项
+  - 如果目标是目录，则直接在目标文件夹中新建一个同名的文件
+  - 如果复制多个文件，则目标必须是**目录(存在)**
+- 如果source是目录
+  - 如果目标不存在，则创建指定的目录，使用 `-r`选项
+  - 如果目录存在
+    - 目标是一个文件，则报错
+    - 目标是一个目录，则在目标目录中创建同名目录
+
+### 8. mv
+
+- 移动、重命名
+
+#### 1. 用法
+
+- mv [选项]... [-T] 源文件 目标文件
+- 或：mv [选项]... 源文件... 目录
+- 或：mv [选项]... -t 目录 源文件...
+
+#### 2. 参数
+
+1. -i：交互式
+2. -f：强制移动
+3. -b：备份和copy一样
+4. -v：显示进度
+
+### 9. rm
+
+- Remove (unlink) the FILE(s).
+
+#### 1. 用法
+
+- rm [选项]... 文件...
+
+#### 2. 参数
+
+1. -i：交互（ctrl+backspace）
+2. -f：强制删除
+3. -r：递归删除
+
+
+
+# 3. 常用命令2
+
+## 1. 文件操作
+
+### 1. mkdir
+
+#### 用法
+
+`Usage: mkdir [OPTION]... DIRECTORY…`
+
+#### 参数(2)
+
+1. -p：创建多层目录
+2. -v：显示创建的过程如：-pv
+
+```SHELL
+mkdir test1 test2 ...
+mkdir test{1..10}
+mkdir -p test/test1/test2...
+# 递归创建目录,都好之间没有空格，否则报错
+mkdir -pv {s1,s2}/{ss1,ss2}/{sss1,sss2}
+```
+
+- 删除**空目录**
+
+```SHELL
+# 只能删除空目录
+rmdir test1
+# 递归删除空目录
+mkdir -p s1/s2/s3
+rmdir -p s1/s2/s3
+```
+
+### 2. tree
+
+#### 参数(2)
+
+1. -L：指定查看目录层级
+2. -d：只显示目录
+
+```SHELL
+yum install -y tree		# 需要配置yum源
+tree 目录
+tree -L 2
+tree -d
+```
+
+### 3. 链接文件
+
+#### 1. 软链接
+
+1. 相当于快捷方式
+2. 文件大小为：链接文件路径的字符数
+3. 删除源文件：软链接不能用
+4. 可以对目录做软链接
+5. 可以跨越分区
+
+```SHELL
+ln -s 源文件 目标文件	# 生成软链接
+ln -s b c
+```
+
+#### 2. 硬链接
+
+1. 指向同一磁盘位置
+2. 将文件的引用次数+1
+3. 删除源文件：硬链接只是该文件引用次数 -1，目标文件不受影响
+4. 不能对目录做硬链接
+5. 不能跨越分区
+
+```SHELL
+ln 源文件 目标文件	# 生成硬链接
+```
+
+- **目录引用次数一般为2，其内部有一个链接 .** 
+- 目录引用次数 = 2 + 目录中的文件数(目录和文件)
+
+#### 3. 查看文件类型
+
+```SHELL
+file 文件名
+```
+
+## 2. 输入输出
+
+### 1. 输入、输出
+
+1. 标准输入：接收键盘的输入 **stdin 0**
+2. 标准输出：默认输出到终端 **stdout 1**
+3. 错误输出：默认输出到终端 **stderr 2**
+
+### 2. I/O重定向
+
+- 把输出和错误信息重定向到文件或其他位置
+- `>` 覆盖，把**stdout**重定向到文件中
+- 2> 覆盖，把**stderr**重定向到文件中
+- &> 覆盖，把**stdout /stderr**重定向到文件中
+- `>>`追加
+- 2>>
+- &>>
+
+```SHELL
+# hhhhh不存在，默认显示到文件，
+ls /hhhhh 2> err.log
+# 把所有输出重定向到data.log文件
+(ls ; ls /hhhhh) &> data.log
+# 把所有输出重定向到data.log文件
+ls / /hhhhh &> data.log
+# 分开输出执行信息和错误信息
+ls / /hhhhh >info.log 2> error.log
+ls / /hhhhh >info.log 2> &1
+# 无限接收，输出信息不显示
+ls / /hhhhh &> /dev/null
+# 无限输出
+if = /dev/zero
+
+echo 哈哈哈哈 > a.log
+echo 嘻嘻嘻嘻 > a.log
+echo 嘻嘻嘻嘻 >> a.log
+# a.log文件不存在会新建，存在会清空
+>a.log
+```
+
+- 多行输入
+
+```SHELL
+# EOF结束，多行输入，结束时生成(保存)该文件
+cat > f1 <<EOF(自定义)
+# ctrl + c/d 结束，只要回车立即生成(保存)文件
+cat > f4
+# EOF：约定俗称的，end of file
+```
+
+### 3. tr
+
+- 替换、压缩和删除字符
+
+#### 1. 参数
+
+1. -t：截断替换
+2. -d：删除
+3. -s：压缩，去重
+4. -c：取反
+
+```SHELL
+# 输入ab显示12
+tr ab 12
+# 输入abc显示122，不足位数取最后一位去补
+tr abc 12
+# 截断替换
+tr -t abcd 12
+# 循环删除
+tr -d abcd
+# 此时重定向不能为原文件，如果为原文件，则文件会被清空
+tr -d abc < issue > issue
+tr -d abc < issue > issue2
+# 压缩，去重
+tr -s a
+# 取反去重
+tr -sc abc
+# 取反去重，ctrl + d 结束
+tr -dc abc
+or tr -dc "abc\n"
+# seq 1 10 > f1
+tr '\n' ' ' < f1 > f2
+tr ' ' '\n' < f2
+
+# 文件小写转为大写
+tr 'a-z' 'A-Z' < /etc/issue
+```
+
+### 4. 管道 ｜
+
+- 使用 ｜连接多个命令
+- 命令1 ｜ 命令2 ｜...
+  - 将命令1的stanout发送给命令2的stdin ...
+  - stderr默认不能通过管道传递
+
+```SHELL
+ls | tr 'a-z' 'A-Z'
+```
+
+## 3. 文件权限
+
+### 1. 文件类型
+
+```SHELL
+lrwxrwxrwx.		# 链接文件l
+-....					# 文件
+d....					# 目录文件
+s....					# socket 套接字
+b....					# 块文件
+c....					# 字符文件
+```
+
+```SHELL
+-rw-r--r--.   1      root root   14   Jul 30 16:24  1.cfg
+权限				引用次数    属主 属组   大小	   mtime时间   文件名
+```
+
+### 2. 更改属主、组
+
+- chown：change ower
+
+#### 1. 用法
+
+`Usage: chown [OPTION]... [OWNER][:[GROUP]] FILE…
+  or:  chown [OPTION]... --reference=RFILE FILE…`
+
+#### 2. 参数
+
+1. -R：递归更改属主
+2. `--reference=源文件`：指定组或主和源文件一样
+
+```SHELL
+chown 属主 filename
+chown 属主:属组 filename    # :和. 都可以
+chown 属主.属组t filename
+chown :属组 filename       # 只改变属组
+chown -R henry test       # 递归更改属主，不使用-R子文件属主不变
+```
+
+```SHELL
+# 修改组
+chgrp henry fielname
+# 指定filename1的组别和filename一样
+chgrp --reference=filename1 filename 
+```
+
+### 3. 权限操作
+
+#### 1. drwxr-xr-x
+
+1. 第一位：代表文件类型
+2. 三位为一组：属主(u)、属组(g)、其他的权限(o)
+3. rwx：读、写、执行
+4. root用户不受权限控制
+
+```SHELL
+# 设置不覆盖原文件
+set -C
+> a.txt
+# 允许覆盖原文件
+set +C
+> a.txt
+```
+
+```SHELL
+# 查看当前登录的用户
+[root@localhost ~]# whoami
+root
+[root@localhost ~]# who am i
+root     pts/3        2019-07-31 11:01 (172.16.44.1)
+# 查看当前所有用户正在执行的命令
+[root@localhost ~]# w
+```
+
+#### 2. 更改权限
+
+1. 文件
+   - r / 4：可以查看
+   - w / 2：可以写
+   - x / 1：可以执行
+2. 目录的权限：一般是r和x一起存在
+   - r / 4：可以使用ls查看
+   - w / 2：可以创建或删除文件
+   - x / 1：可以 cd 进文件夹，如果没有x权限w权限不生效，r生效只能查看哪些文件**权限看不到**
+
+```SHELL
+# 更改文件权限
+chmod o-r filename   # 给其他去掉r权限
+chmod +x filename    # 给所有加上x权限
+chmod ug-x filename  # 给u和g去掉x权限
+# 更改目录权限
+chmod o-x dirname
+chmod o+w dirname
+chmod o=w dirname    # 其他权限只有
+# 使用数字更改权限
+chmod 644 文件名
+chmod 755 目录
+- 建议：不要给777权限
+
+```
+
+```SHELL
+# 执行a.py文件
+echo '#!/usr/bin/python' > a.py
+echo '#coding:utf-8' >> a.py
+echo 'print(123)' >> a.py
+chmod +x a.py
+./a.py
+# 或者
+chmod -x a.py
+python a.py
+
+```
+
+#### 3. 特殊权限chattr
+
+**参数**：
+
+1. i：不能修改、删除、改名
+2. a：只能追加内容
+
+```SHELL
+# 设置 i 属性
+chattr +i a.txt
+# 查看特殊权限
+lsattr a.txt
+
+```
+
+## 4. 文本操作
+
+### 1. cat(4)
+
+参数：
+
+1. -E：在每行结束处显示"$"
+2. -n： 对输出的所有行编号
+3. -b：对非空输出行编号
+4. -s：折叠空行为一行
+
+```SHELL
+cat -E /etc/passwd
+cat -n /etc/passwd
+cat -b /etc/passwd
+cat -sn /etc/passwd
+```
+
+### 2. tac
+
+- 倒叙显示文件内容
+
+```SHELL
+tac /etc/passwd
+```
+
+### 3. less
+
+- 分屏显示，空格一屏，回车一行
+- /搜索， n：先后搜索 N：向前搜索
+- q：退出
+
+```SHELL
+less /etc/passwd
+# 搜索
+/root 回车
+```
+
+### 4. more
+
+- 分屏显示(百分比)，空格一屏，回车一行
+- -d：显示翻页和退出信息
+- 输出完自动退出，也可使用q提前退出
+
+```SHELL
+more -d /etc/passwdt
+```
+
+### 5. head
+
+- 显示前多少行，默认显示10行
+- -n：指定显示前 n 行
+
+```SHELL
+head /etc/passwd
+# 显示前 3 行
+head -3 /etc/passwd
+```
+
+### 6. tail
+
+- 显示后多少行，默认后10行
+- -n：指定显示后 n 行
+- -f：追踪显示文件新加入的内容，一般用于查看日志
+- tailf：相当于 tail -f
+
+```SHELL
+# 文件更改时访问
+tail /etc/passwd
+# 显示后 3 行
+tail -3 /etc/passwd
+```
+
+```SHELL
+# 实时访问文件
+tailf /etc/passwd
+```
+
+### 7. cut
+
+- 抽取文件
+
+#### 参数(3)
+
+1. -d：指定切割符，**必须与-f一起连用**
+2. -f：指定显示指定列的数据(3中方法可以混用)
+3. -c：按照字符切割，直接输出结果
+
+```SHELL
+cut -d: -f3 /etc/passwd
+cut -d: -f3,5,6 /etc/passwd
+cut -d: -f3-6 /etc/passwd
+cut -d: -f3-5,7,9 /etc/passwd
+# 按字符切割
+cut -c2-5 /etc/passwd
+```
+
+### 8. paste
+
+- -d：指定合并的符号
+  - 指定多个字符时，只选择第一个字符作为连接符
+- -s：把所有行合并一行显示
+
+```SHELL
+# 合并 b 和 d
+paste -d: b d
+# 默认是tab
+paste b d
+```
+
+## 5. 分析文本
+
+### 1. wc (word count)
+
+- 空格和换行都认为是单词结束
+
+#### 参数(5)
+
+1. -l：行数
+2. -w：单词个数
+3. -c：字节数
+4. -m：字符数
+5. -L：文件中最长行长度
+
+```SHELL
+[root@localhost ~]# wc /etc/passwd
+  43   86  2238 /etc/passwd
+ 行数  字数 字节数    文件
+ wc -l /etc/passwds
+```
+
+### 2. sort
+
+- 把文本显示在stdout中，不该变原文件
+
+#### 参数(7)
+
+1. 默认按照字母排序
+2. -n：按照数字排序
+3. -r：倒叙
+4. -R：随机排
+5. -f：忽略大小写
+6. -t：指定分割符
+7. -k：指定排序依据
+
+```SHELL
+sort b
+sort -n b
+sort -r b
+sort -R b
+# 先切割，根据第 3 列排序
+sort -t: -k3 /etc/passwd
+```
+
+### 3. uniq
+
+- 从输入中删除**前后相接**的重复行
+
+#### 参数
+
+1. -c：显示重复次数
+2. -d：只显示重复行
+3. -u：只显示不重复行
+
+```SHELL
+echo '1' >> b
+echo '1' >> b
+echo '2' >> b
+echo '1' >> b
+echo '1' >> b
+uniq b
+uniq -c b
+uniq -d b
+uniq -u b
+```
+
+```SHELL
+# 应用
+sort -n b | uniq -c
+w|sort|cut -d\  -f1|uniq -c
+ss -tnp| cut -d: -f2|tr -s ' '| cut -d' ' -f2|sort|uniq -c
+```
+
+### 4. diff
+
+- 对比两个文件
+
+```SHELL
+diff a.txt b.txt
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

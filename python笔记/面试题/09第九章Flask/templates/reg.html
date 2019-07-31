@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+<form action="" method="post">
+    {% for f in regf %}
+        {% if  f.label == "登陆" %}
+            <p>{{ f }}{{ f.errors.0 }}</p>
+        {% else %}
+            <p>{{ f.label }}{{ f }}{{ f.errors.0 }}</p>
+        {% endif %}
+    {% endfor %}
+
+</form>
+
+</body>
+</html>
