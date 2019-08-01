@@ -59,6 +59,8 @@ tree
 
 ```python
 xcode-select --install
+# 为app开放权限
+sudo spctl --master-disable  
 ```
 
 

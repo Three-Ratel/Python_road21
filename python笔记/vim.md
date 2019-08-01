@@ -48,7 +48,7 @@ U			# 撤销一行的所有编辑
 ## 1.4 Moving Text
 
 ```python
-e				# 移动到单词结尾
+e				# 当前或下一个单词词尾，除了下划线(_) 都是单词分隔符
 ```
 
 
@@ -233,7 +233,7 @@ or vim +/-\ F test.md
 
 ```nginx
 $ vim -R file
-or view filevim 
+or view file
 ```
 
 ## 4.2 Recovering 
