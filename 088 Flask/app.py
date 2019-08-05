@@ -19,10 +19,12 @@ STUDENT_DICT = {
     3: {'name': 'echo', 'age': 17, 'gender': '女'}
 }
 
-
 # app.debug = True
+from functools import wraps
+
 
 def warpper(func):
+    @wraps(func)
     def inner(*args, **kwargs):
         if session.get('username'):
             return func(*args, **kwargs)
@@ -61,7 +63,7 @@ def index():
 
 
 @app.route('/test')
-# @warpper
+@warpper
 def test():
     li = ['method', 'url', 'args', 'values', 'host', 'path', 'files', 'form', 'data', 'json', 'cookies']
     count = 0
