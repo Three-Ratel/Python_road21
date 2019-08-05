@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Detail</title>
+</head>
+<body>
+<table border="1px" cellspacing="0">
+    <tr>
+        <th>ID</th>
+        <th>name</th>
+        {% if flag.flag == 1 %}
+            <th>点击详情</th>
+        {% else %}
+            <th>age</th>
+            <th>gender</th>
+        {% endif %}
+
+    </tr>
+    {% for sid, stu in stus.items() %}
+        <tr>
+            <td>{{ sid }}</td>
+            <td>{{ stu.name }}</td>
+            {% if flag.flag == 1 %}
+                <td><a href="/detail?sid={{ sid }}">详情</a></td>
+            {% else %}
+                <td>{{ stu.age }}</td>
+                <td>{{ stu.gender }}</td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+
+
+</table>
+</body>
+</html>

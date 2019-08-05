@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Jin_test</title>
+</head>
+<body>
+{{ stu }}
+<table border="1px" cellspacing="0">
+    <tr>
+        <th>name</th>
+        <th>age</th>
+        <th>gender</th>
+    </tr>
+    <tr>
+        <td>{{ stu.name }}</td>
+        <td>{{ stu.age }}</td>
+        <td>{{ stu.gender }}</td>
+    </tr>
+</table>
+
+{{ stu_l }}
+<table border="1px" cellspacing="0">
+    <tr>
+        <th>name</th>
+        <th>age</th>
+        <th>gender</th>
+    </tr>
+    {% for stu in stu_l %}
+        <tr>
+            <td>{{ stu.name }}</td>
+            <td>{{ stu.age }}</td>
+            <td>
+                {% if stu.gender != '男' and stu.gender != '女' %}
+                    女
+                {% else %}
+                    {{ stu.gender }}
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+
+</table>
+
+{{ stu_d }}
+<table border="1px" cellspacing="0">
+    <tr>
+        <th>id</th>
+        <th>name</th>
+        <th>age</th>
+        <th>gender</th>
+    </tr>
+    {% for stu, item in stu_d.items() %}
+        <tr>
+            <td>{{ stu }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.age }}</td>
+            <td>
+                {% if item.gender != '男' and item.gender != '女' %}
+                    女
+                {% else %}
+                    {{ item.gender }}
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+
+
+</table>
+<p>
+    {{ btn }}
+</p>
+<p>
+    {{ ab(1,19) }}
+</p>
+<p>
+{#    {% macro my_input(na, ty) %}#}
+{#        <input type="{{ ty }}" name="{{ na }}" placeholder="customerize">#}
+{#    {% endmacro %}#}
+    {{ my_input('xixi','password') }}
+</p>
+</body>
+</html>
