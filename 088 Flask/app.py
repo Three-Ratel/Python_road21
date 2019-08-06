@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, request, render_template, session, redirect
 from markupsafe import Markup
 
@@ -83,10 +85,10 @@ def login():
         #     print(i,j)
         # print(username)
         # """接收文件"""
-        # file = request.files.get('file_data')
-        # print(file, type(file))
-        # filepath = os.path.join('media', file.filename)
-        # file.save(filepath)
+        file = request.files.get('file_data')
+        print(file, type(file))
+        filepath = os.path.join('media', file.filename)
+        file.save(filepath)
         if request.form.get('username') == 'henry':
             session['username'] = 'henry'
             return 'Login OK!'

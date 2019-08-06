@@ -781,7 +781,7 @@ echo 嘻嘻嘻嘻 >> a.log
 cat > f1 <<EOF(自定义)
 # ctrl + c/d 结束，只要回车立即生成(保存)文件
 cat > f4
-# EOF：约定俗称的，end of file
+# EOF：约定俗成的，end of file
 ```
 
 ### 3. tr
@@ -868,7 +868,7 @@ c....					# 字符文件
 ```SHELL
 chown 属主 filename
 chown 属主:属组 filename    # :和. 都可以
-chown 属主.属组t filename
+chown 属主.属组 filename
 chown :属组 filename       # 只改变属组
 chown -R henry test       # 递归更改属主，不使用-R子文件属主不变
 ```
@@ -2203,7 +2203,7 @@ sudo useradd dean4
    - 系统组
    - 可登录用户组
 
-### 2. groupadd
+### 2. groupadd(2)
 
 #### 1. 参数(2)
 
@@ -2232,7 +2232,7 @@ henry:x:1000:dean
 
 ```
 
-### 3. groupmod
+### 3. groupmod(2)
 
 - -g：修改gid
 - -n：修改gname
