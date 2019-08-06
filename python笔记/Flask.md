@@ -343,6 +343,7 @@ def home():
 #### 3. defaults={'count': 20}
 
 - 默认20，用于分页
+- url_for()
 
 ```python
 from flask import Flask

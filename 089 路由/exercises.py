@@ -5,7 +5,7 @@
 3.学生详情页面 ID name age gender
 """
 
-from flask import Flask, session, redirect, request
+from flask import Flask, session, redirect, request, url_for
 
 from settings import EXEMPT_SET
 
@@ -24,7 +24,7 @@ app.register_blueprint(info)
 
 @app.before_request
 def auth():
-    print(request.path, )
+    # print(request.path, )
 
     if request.path in EXEMPT_SET:
         return
@@ -36,6 +36,12 @@ def auth():
 # def error404(error):
 #     # print(error)
 #     return redirect('/detail')
+
+@app.template_global()
+def query(name, sid):
+    print(url_for(name))
+    # print(f'{url_for(name)}?sid={sid}')
+    return f'{name}?sid={sid}'
 
 
 
