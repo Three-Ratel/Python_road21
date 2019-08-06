@@ -10,7 +10,7 @@ from flask import Flask, session, redirect, request
 from settings import EXEMPT_SET
 
 app = Flask(__name__)
-from settings import DebugConfig, TestConfig
+from settings import DebugConfig
 
 app.config.from_object(DebugConfig)
 # app.config.from_object(TestConfig)
@@ -36,6 +36,7 @@ def auth():
 # def error404(error):
 #     # print(error)
 #     return redirect('/detail')
+
 
 
 if __name__ == '__main__':

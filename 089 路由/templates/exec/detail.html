@@ -27,7 +27,8 @@
                     <td>{{ sid }}</td>
                     <td>{{ stu.name }}</td>
                     {% if flag.flag == 1 %}
-                        <td><a href="/detail?sid={{ sid }}" class="btn btn-sm btn-primary" >详情</a></td>
+{#                        <td><a href="/detail?sid={{ sid }}" class="btn btn-sm btn-primary" >详情</a></td>#}
+                        <td><a href="{{ query('detail', sid)}}" class="btn btn-sm btn-primary" >详情</a></td>
                     {% else %}
                         <td>{{ stu.age }}</td>
                         <td>{{ stu.gender }}</td>

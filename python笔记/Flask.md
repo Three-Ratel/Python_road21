@@ -285,7 +285,7 @@ def homea():
     return render_template('a.html')
 ```
 
-# 2. route、config、blueprint、decorator
+# 2. Flask项目
 
 ## 1. 路由
 
