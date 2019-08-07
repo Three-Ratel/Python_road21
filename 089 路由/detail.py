@@ -2,7 +2,7 @@ from flask import Blueprint, request, render_template
 
 from settings import STUDENT_DICT
 
-info = Blueprint('detail', __name__)
+info = Blueprint('detail', __name__, url_prefix='/xx')
 
 
 @info.route('/detail', endpoint='detail')

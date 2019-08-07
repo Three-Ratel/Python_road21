@@ -45,10 +45,14 @@ def home():
   	return 'AH, you are visiting Flask-site!'
 
 if __name__ == '__main__':
-		app.run()
+	# 监听地址和端口
+	app.run('0.0.0.0', 5000)
+# werkzeug调用run_simple
+# wsgi处理请求头(网关接口)
+# wsgi处理后的数据，environment。		
 ```
 
-### 2. Flask的response
+### 2. response
 
 -  content type：浏览器根据此参数，判断响应类型
 
@@ -64,7 +68,7 @@ def index():
 
 #### 2. render_template
 
-- 响应模版
+- 响应模版，默认存放路径 templates，打开模版并替换，依赖包 MarkupSafe中的 Markup 发送给浏览器
 
 ```python
 @app.route('/index')
@@ -74,7 +78,7 @@ def index():
 
 #### 3. redirect
 
-- 在Response Header中加入 Location简直对
+- 在Response Header中加入 Location: '/login'
 
 ```python
 @app.route('/login')
@@ -124,31 +128,26 @@ def get_json():
 
 ## 4. request
 
-- request在flask中是够公共变量(顶头小写)，请求上下文管理
+- request在flask中是够公共变量(顶头小写)，请求上下文保存机制
 - 从reqeust中获取的数据类型为：ImmutableMultiDict([('id', '1')])
 
+```python
 1. request.method
-2. request.form
-   - 获取 FormData 中数据(ajax)
-   - request.from.to_dict()：返回对应的字典
-   - 类型：ImmutableMultiDict([])
-3. request.args
-   - 获取url中的参数
-4. reqeust.values
-   - 获取 url 和 FormData 中的数据，如果key相同 url中的会覆盖 form中数据
-   -  **CombinedMultiDict**([ImmutableMultiDict([('id', '1')]), ImmutableMultiDict([])])
-5. request.host：ip + port
-6. request.path：url路由地址
-7. request.url：完整路径
-8. request.cookies
-   - 字典，获取浏览器请求时带上的cookies
-9. request.files
-   - 获取Form中文件，返回 **FileStroage**中有 **save() 方法和 filename属性**
-10. request.json
-    - 请求中的Content-type:application/json
-    - 请求体中的数据被序列化到request.json中，以字典的形式存放
-11. request.data
-    - 请求中的Content-type 中不包含 Form 或 FormData，保留请求体中的原始数据，**b""类型**
+2. request.form				# 获取 FormData 中数据(ajax)
+   	  						# request.from.to_dict()：返回对应的字典
+   							# 类型：ImmutableMultiDict([])
+3. request.args				# 获取url中的参数
+4. reqeust.values			# 获取 url 和 FormData 中的数据，如果key相同 url中的会覆盖 form中数据
+							# CombinedMultiDict([ImmutableMultiDict([('id', '1')]), ImmutableMultiDict([])])
+5. request.host				# ip + port
+6. request.path				# url路由地址
+7. request.url				# 完整路径
+8. request.cookies			# 字典，获取浏览器请求时带上的cookies
+9. request.files			# 获取 Form 中文件，返回 FileStroage中有 save() 方法和 filename属性
+10.request.json				# 请求中的 Content-type:application/json
+   							# 请求体中的数据被序列化到request.json中，以字典的形式存放
+11.request.data				# Content-type 中不包含 Form 或 FormData，保留请求体中的原始数据，b""类型
+```
 
 ```python
 from flask import Flask
@@ -249,7 +248,7 @@ def my_input(na, ty):
 
 1. 基于请求上下文
 2. 一般和 request 一起导入
-3. **交由客户端保管机制**，加密后存到浏览器的cookies中。
+3. **交由客户端保管机制**，加密后存到浏览器的cookies中。保存一串字符串
 4. 原生：不建议添加过多的 key:values，健值对越多，浏览器需要保存的cookies越长，Flask会先对健值对进行压缩在加密
 5. flask理念：一切从简为服务器减轻压力
 6. flask-session：把session从浏览器，移动到服务端
@@ -330,7 +329,7 @@ def home():
 #### 2. endpoint=None
 
 - 解决装饰器不能装饰多个函数的问题
-- 路由地址和endpoint的mapping)
+- 路由地址和endpoint的mapping
 - 路由地址和视图之间mapping
 - 默认是视图函数名
 
@@ -380,7 +379,7 @@ def home():
 ### 3. 动态参数路由
 
 - str：可以收一切，默认是 str 类型
-- rule：`/ge t_music/<filename>`， `/home/<int:page>`， `/home/<ty>_<page>_<id>`，分页、获取文件、解决分类，解决正则路由
+- rule：`/home/<filename>`， `/home/<int:page>`， `/home/<ty>_<page>_<id>`，分页、获取文件、解决分类，解决正则路由
 - send_file()：需要限定文件目录
 
 ```python
@@ -438,8 +437,8 @@ app = Flask(__name__, static_folder='img', static_url_path='/static')
 #### 1. default_config
 
 - default_config = {} ：默认配置
-- 'TESTING'：False，日志级别为Debug
-- ''：31days
+- 'TESTING'：True，日志级别为Debug
+- ''：31days(默认)
 - JSONIFY_MIMETYPE='application/json'
 
 ```python
@@ -483,7 +482,7 @@ app.config.from_object(TestConfig)
 
 ## 3. Blueprint
 
-- 不能被run的flask实例，不存在config
+- 不能被run的flask实例，不存在config，**app的功能隔离**
 
 ```python
 from flask import Blueprint
@@ -493,6 +492,12 @@ bp = Blueprint('app01', __name__,url_prefix='/car')
 @bp.route('/user')
 def user():
     return 'I am app01!'
+
+# 或 bp.add_url_rule()
+# 访问当前蓝图中的装饰器
+@bp.before_request
+@bp.after_request
+@bp.errorhandler(Http错误码)
 ```
 
 ```python
@@ -539,10 +544,206 @@ def af2(res):
 
 - 监听状态码只能是 4xx和5xx
 - 需要接受错误信息
+- 返回值为响应，af会挨个执行
 
 ```python
 @app.errorhandler(404)
 def error404(error_message):
     print(error_message)
     return 'xxx' 		# 5种类型
+```
+
+# 3. CBV&session
+
+## 1. CBV
+
+1.  views.MethodView：继承让当前class可以成为视图类
+2.  定义视图类支持的请求方式
+3.  添加路由，as_view(name='login_login')。name就是endpoint(endpoint=None的情况下)
+4.  可以添加类变量：methods  / decorator = ['is_login']
+
+```python
+# CBV
+from flask import views
+app.add_url_rule('/login', view_func = Login.as_view(name='login_login'))
+
+@app.before_request
+def is_login():
+  	return 1
+
+@app.after_request
+def login_ok(res):
+  	return res
+# methods：默认是类对应的方法
+class Login(views.MethodView):
+  	# decorators = []
+  	def get(self):
+      	return 'here is get.'
+    def post(self):
+      	pass
+```
+
+-   add_url_rule()
+
+```python
+def add_url_rule(self, rule, endpoint=None, view_func=None, **options):pass
+# self：flask对象
+# rule：路由
+# endpoint=None，地址反解析使用，如果为None，则使用view_func的name
+# view_func，视图函数
+```
+
+-   view_func()：返回一个 view 函数
+
+```python
+def as_view(cls, name, *class_args, **class_kwargs):pass
+# cls：视图类
+# name：视图函数名
+```
+
+```python
+from flask import views
+class Index(views.MethodView):
+  	def get(self, *args, **kwargs):
+      	pass
+    ...
+
+app.add_url_rule('/index', endpoint=None, view_func=Login.as_views(name='login')
+```
+
+## 2. redis
+
+### 1. 安装
+
+```python
+# win
+下载redis到指定目录，配置PATH即可
+# mac
+brew install redis
+```
+
+### 2. 使用
+
+-   redis使用 key:value 方式存储，**哈希存储结构{key:value}**
+-   多次设置同一个key 会被覆盖
+
+```python
+# 总共 16 个库，0-15，用来数据隔离
+select 8					# 切换 8 号库，默认 0 号库
+set key value				# 设置一个健值对，哈希存储结构{key:value}
+keys pattern				# 查询当前数据库中所有的key,如keys * 查询当前数据库中所有key
+		 a*					# 查询以 a开头
+  	 *n*					# 包含 n
+...
+get key						# 查询 key 对应的 value
+```
+
+### 3. python操作redis
+
+-   --protected-mode no：测试使用，可以使用主机ip
+
+```python
+from redis import Redis
+redis_cli = Redis(host='127.0.0.1', port=6379, db=6)
+redis_cli.set('name', 'echo')
+```
+
+## 3. Flask-session
+
+1.  三方组件：pip install flask-session
+2.  app.config最终在 app.default_config中
+3.  settings.py中的DebugConfig中，不是大写英文的一律丢弃不管
+4.  使用**pickle**作为序列化器
+
+```python
+from flask import Flask, request, session
+from flask_session import Session
+
+app = Flask(__name__)
+# app.secret_key = '%^&*JBHJ%$*lkdsj'
+# 使用 flask_session并使用 redis 存储session
+app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_REDIS'] = Redis('127.0.0.1', 6379, db=10)
+Session(app)
+
+@app.route('/sets')
+def sets():
+  	session['key'] = 'henry'
+  	return 'set ok!'
+ 
+@app.route('/gets')
+def gets():
+  	return session.get('key')
+
+if __name__ == '__main__':
+		app.run()
+```
+
+-   flask 利用session_interface，选择session存放位置和机制
+
+```python
+app.session_interface			
+# session_interface = self._get_interface(app)
+app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_REDIS'] = Redis(host='192.168.12.9', 6379, db=10)
+# redis通过pickle序列化，secret_key只有原生的config需要
+```
+
+# 4. Flask上下文
+
+### 1. 偏函数
+
+-   flask中的requst 和session
+
+```python
+from functools import partial
+
+def ab(a, b):
+    return a+b
+
+new_func = partial(ab, 1, 3)
+
+print(new_func())
+```
+
+### 2. 线程安全
+
+```python
+import time
+# local：{线程号1:{变量名:值},...}
+from threading import local
+
+class Foo(local):
+    num = 0
+foo = Foo()
+
+def addi(i):
+    foo.num = i
+    time.sleep(0.2) 		# 相当于 i/o 操作
+   	print(foo.num)
+
+from threading import Thread
+for i in range(20):
+    th = Thread(target=addi, args=(i,))
+    th.strat()    
+```
+
+### 3.  werkzeug 搭建app
+
+```python
+# werkzeug 搭建app
+from werkzeug.wrappers import Response, Request
+from werkzeug.serving import run_simple
+
+@Request.application
+def app(req):
+    print(req, req.method)
+    return Response('200 ok')
+
+run_simple('0.0.0.0', 5000, app)
+
+
+# environ：wsgi 处理requset后的结果，请求原始信息
+# 对象相当于dict
+__slots__ = ('__stroage__', '__ident_func__')
 ```
