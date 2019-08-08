@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<input type="text" id="content" value="">
+<button onclick="send_message()">发送</button>
+<div id="content_list">
+    <p id="msg">
+
+    </p>
+</div>
+<script type="application/javascript">
+    var ws = new WebSocket('ws://127.0.0.1:5000/chat');
+    ws.onmessage = function (messageEvent) {
+        console.log(messageEvent.data);
+
+        var ptag = document.createElement('p');
+        ptag.innerText = messageEvent.data;
+        document.getElementById('content_list').appendChild(ptag);
+    };
+    function send_message() {
+        var msg = document.getElementById('content').value;
+        {#console.log(msg);#}
+        ws.send(msg);
+    }
+</script>
+</body>
+</html>

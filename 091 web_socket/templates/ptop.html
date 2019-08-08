@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p>
+    <input type="text" id="username">
+    <button onclick="login()">登录</button>
+</p>
+
+给 <input type="text" id="receiver"> 发
+<input type="text" id="content">
+<button onclick="send_message()">发送</button>
+<div id="content_list" style="width: 500px">
+
+</div>
+<script type="application/javascript">
+    var ws;
+    function send_message() {
+        var msg = {
+            sender:document.getElementById('username').value,
+            receiver:document.getElementById('receiver').value,
+            data:document.getElementById('content').value,
+        };
+        var data = JSON.stringify(msg);
+        ws.send(data);
+        var ptag = document.createElement('p');
+        ptag.innerText = msg.data + ':' + msg.sender;
+        ptag.style.cssText = "text-align:right";
+        document.getElementById('content_list').appendChild(ptag);
+
+
+    }
+
+    function login() {
+        var username = document.getElementById('username').value;
+        ws = new WebSocket('ws://127.0.0.1:5000/chat/' + username);
+        ws.onmessage = function (messageEvent) {
+            console.log(messageEvent.data);
+            var msg = JSON.parse(messageEvent.data);
+            var ptag = document.createElement('p');
+            ptag.innerText = msg.sender + ':' + msg.data;
+            document.getElementById('content_list').appendChild(ptag);
+        };
+
+
+
+    }
+
+</script>
+</body>
+</html>

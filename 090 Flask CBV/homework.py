@@ -31,8 +31,6 @@ def auth():
 
 @app.errorhandler(404)
 def error404(error):
-    # print(error)
-    # return redirect('/detail')
     return 'xxx'
 
 
@@ -44,3 +42,6 @@ def query(name, sid):
 
 if __name__ == '__main__':
     app.run()
+
+
+# app.__call__()

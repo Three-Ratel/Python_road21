@@ -217,14 +217,14 @@ def homea():
 
 ```jinja2
 {% macro my_input(na, ty) %}
-		<input type="{{ ty }}" name="{{ na }}">
+	<input type="{{ ty }}" name="{{ na }}">
 {% endmacro %}
 {{ my_input('username', 'text') }}
 ```
 
 ### 5. Markup
 
-- 在view 函数中先生成标签在使用
+- 在view 函数中，生成标签在使用
 
 ```python
 from markupsafe import Markup
@@ -251,7 +251,7 @@ def my_input(na, ty):
 3. **交由客户端保管机制**，加密后存到浏览器的cookies中。保存一串字符串
 4. 原生：不建议添加过多的 key:values，健值对越多，浏览器需要保存的cookies越长，Flask会先对健值对进行压缩在加密
 5. flask理念：一切从简为服务器减轻压力
-6. flask-session：把session从浏览器，移动到服务端
+6. flask-session：把加密的session从浏览器，移动到服务端
 
 ```python
 from flask import session
@@ -341,7 +341,7 @@ def home():
 
 #### 3. defaults={'count': 20}
 
-- 默认20，用于分页
+- 默认参数
 - url_for()
 
 ```python
@@ -590,7 +590,7 @@ def add_url_rule(self, rule, endpoint=None, view_func=None, **options):pass
 # self：flask对象
 # rule：路由
 # endpoint=None，地址反解析使用，如果为None，则使用view_func的name
-# view_func，视图函数
+# view_func，视图函数，视图类.as_view(name='xxx')
 ```
 
 -   view_func()：返回一个 view 函数
@@ -624,8 +624,8 @@ brew install redis
 
 ### 2. 使用
 
--   redis使用 key:value 方式存储，**哈希存储结构{key:value}**
--   多次设置同一个key 会被覆盖
+1.  redis使用 key:value 方式存储，**哈希存储结构{key:value}**
+2.  多次设置同一个key 会被覆盖
 
 ```python
 # 总共 16 个库，0-15，用来数据隔离
@@ -640,7 +640,8 @@ get key						# 查询 key 对应的 value
 
 ### 3. python操作redis
 
--   --protected-mode no：测试使用，可以使用主机ip
+1.  --protected-mode no：测试使用，没有设置密码可以使用主机ip
+2.   redis只能存储：byte, string or number
 
 ```python
 from redis import Redis

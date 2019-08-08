@@ -19,7 +19,7 @@ class Login(views.MethodView):
         return 'Failed'
 
 
-log.add_url_rule('/login', endpoint='login', view_func=Login.as_view(name='login'))
+log.add_url_rule('/login', view_func=Login.as_view(name='login'))
 
 
 """FBV"""
