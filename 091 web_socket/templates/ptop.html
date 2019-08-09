@@ -24,8 +24,10 @@
             receiver:document.getElementById('receiver').value,
             data:document.getElementById('content').value,
         };
+
         var data = JSON.stringify(msg);
         ws.send(data);
+
         var ptag = document.createElement('p');
         ptag.innerText = msg.data + ':' + msg.sender;
         ptag.style.cssText = "text-align:right";
@@ -39,6 +41,7 @@
         ws = new WebSocket('ws://127.0.0.1:5000/chat/' + username);
         ws.onmessage = function (messageEvent) {
             console.log(messageEvent.data);
+
             var msg = JSON.parse(messageEvent.data);
             var ptag = document.createElement('p');
             ptag.innerText = msg.sender + ':' + msg.data;

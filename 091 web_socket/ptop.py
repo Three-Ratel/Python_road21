@@ -1,8 +1,9 @@
+import json
+
 from flask import Flask, request, render_template
 from geventwebsocket.handler import WebSocketHandler
 from geventwebsocket.server import WSGIServer
 from geventwebsocket.websocket import WebSocket
-import json
 
 app = Flask(__name__)
 
@@ -20,12 +21,17 @@ def chat(username):
 
         msg_dict = json.loads(msg)
         receiver = msg_dict.get('receiver')
-        receiver_socket = websocket_dict.get(receiver)
+        try:
+            receiver_socket = websocket_dict.get(receiver)
 
-        receiver_socket.send(msg)
+            receiver_socket.send(msg)
+        except:
+            msg = {'sender': '系统',
+                   'receiver': username,
+                   'data':'对方不在线',
+            }
 
-
-
+            websocket_obj.send(json.dumps(msg))
 
 
 @app.route('/ws')
