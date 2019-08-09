@@ -7,7 +7,7 @@ SECRET_KEY = 'VZCXoeuHfViaAA2EThwIHLukAYcT0pf9'
 
 client = AipSpeech(APP_ID, API_KEY, SECRET_KEY)
 
-result = client.synthesis('床前明月光，疑是地上霜。举头望明月，低头思故乡。', 'zh', 1, {
+result = client.synthesis('明天去北京', 'zh', 1, {
     'vol': 5,
     'spd': 6,
     'pit': 6,

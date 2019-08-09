@@ -2,6 +2,8 @@ import os
 
 from aip import AipSpeech
 
+from similiar import nlp_client
+from robot import run
 """ 你的 APPID AK SK """
 APP_ID = '16981700'
 API_KEY = 'cHLC0p7dsOUVA0idSWQxV0lf'
@@ -22,18 +24,18 @@ res = client.asr(get_file_content(f'audio.mp3'), 'pcm', 16000, {
     'dev_pid': 1536,
 })
 
-data = res.get('result')[0]
+query = res.get('result')[0]
 
-A = '我不知道你在说什么'
-if data == '你叫什么名字':
-    A = '你猜猜看？'
+if nlp_client.simnet(query, '今天天气怎么样？').get('score') >= 0.6:
+    A = '今天有雷阵雨'
+else:
+    A = run(txt=query)
 result = client.synthesis(A, 'zh', 1, {
     'vol': 5,
     'spd': 4,
     'pit': 6,
     'per': 4,
 })
-
 
 
 # 识别正确返回语音二进制 错误则返回dict 参照下面错误码
