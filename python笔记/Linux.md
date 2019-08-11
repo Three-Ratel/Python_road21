@@ -2320,7 +2320,7 @@ du -sh /*
 4. bs：block size，**只能用整数**，单位可以是K M G T
 
 ```shell
-dd if=/def/zero of=/dev/null bs=10M count=10
+dd if=/dev/zero of=/dev/null bs=10M count=10
 ```
 
 ### 5. RAID
@@ -2330,7 +2330,7 @@ dd if=/def/zero of=/dev/null bs=10M count=10
 - 数据分开存储
 - 一般用于装系统
 
-1. 读写速度提生 磁盘个数N-1倍
+1. 读写速度提升磁盘个数N-1倍
 2. 可用空间: 单个磁盘容量*磁盘个数N
 3. 没有容错能力
 4. 最少需要2块磁盘
@@ -2492,7 +2492,7 @@ name-version(大版本.小版本.修订版)-作者修订次数.适用操作系�
 - 配置文件目录：/etc/yum.repo.d
 - 后缀：repo
 - $release：当前os的发行的主版本号
-- $basearch：基础平台
+- $basearch：基础平台，架构
 
 ```shell
 [epel]			# 名字
@@ -2506,8 +2506,6 @@ enabeled=1
 # 是否进行检查 gpgkey ，0:不检查，1检查
 gpgcheck=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7 
-$release 系统版本
-$basearch 架构
 ```
 
 ## 4. yum源
@@ -2561,4 +2559,544 @@ PATH=/opt /ptyhon/bin:$PATH
 source /etc/profile.d/python.sh
 ```
 
-- python里的随机数是根据cpu中的时间片计算出来的
+-   安装pip，安装之后，pip3位于/usr/local/bin目录下
+
+```shell
+yum install -y python36-setuptools
+easy_install pip
+```
+
+- python里的随机数是根据cpu中的时间片计算出来
+
+# 10. 系统相关
+
+## 1. corntab
+
+-   /etc/crontab
+
+### 1. 说明
+
+1.  计划任务
+2.  同步时间、备份、日志
+3.  *：代表所有
+4.  2,4,5：代表或关系
+5.  2-5：代表范围
+6.  /2：间隔时间
+
+```shell
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+
+# For details see man 4 crontabs
+
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu, fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+分钟 小时 天 月 周 用户名 	命名
+```
+
+### 2. 编辑/etc/crontab文件
+
+```shell
+# * 代表所有,每分钟的任务
+* * * * * root echo 123 >> /tmp/a.txt 
+# 每天 4点整的任务
+0 4 * * * root echo 04 >> /tmp/a.txt
+# 每个月的 3号
+0 4 3 * * root echo 043 >> /tmp/a.txt
+# 每周四的 4点 
+0 4 3 * * 4 root echo 043**4 >> /tmp/a.txt
+# 每天 4，6，8点的任务
+0 4,6,8 * * *  root echo 4,6,8 >> /tmp/a.txt
+# 每天8-22点的任务
+0 8-22 * * * root echo 8-22 >> /tmp/a.txt
+# /3表示每隔多长时间
+0 8-22/3 * * * root echo 8-22/3>> /tmp/a.txt
+# 没个月的3，10，15，25，30并且是周六，或关系 ***
+0 * 3,10,15,25,30 * 6 root echo 8-22 >> /tmp/a.txt
+```
+
+```shell
+# 切分日志
+/etc/cron.daily/logrotate
+```
+
+### 3. crontab命令创建
+
+-   定时任务文件：**/var/spool/cron/user**，为指定用户创建定时任务文件
+-   recommandations：分钟不要用 * 
+
+#### 1. options
+
+1.  -u：指定用户(默认 )
+2.  -e：编辑
+3.  -l：列出用户定时任务
+4.  -ru：删除用户任务
+
+```shell
+# 编辑当前用户的计划任务
+crontab -e
+01 * * * * echo 'dadada' >> /tmp/aa.txt
+# 只能读出/var/spool/cron/henry中的定时任务
+crontab -lu henry
+```
+
+## 2. 网络相关
+
+### 1.分类
+
+| 类别 | 最大网络数           | IP地址范围                | 单个网段最大主机数 | 私有IP地址范围              |
+| ---- | -------------------- | ------------------------- | ------------------ | --------------------------- |
+| A    | 126（2^7-2)          | 1.0.0.1-127.255.255.254   | 16777214           | 10.0.0.0-10.255.255.255     |
+| B    | 16384(2^14)          | 128.0.0.0-191.255.255.255 | 65534              | 172.16.0.0-172.31.255.255   |
+| C    | 2097152(2^21)        | 192.0.0.0-223.255.255.255 | 254                | 192.168.0.0-192.168.255.255 |
+| D    | 前四位位必须为 1110  | 224-239                   | 广播和多播使用     | -                           |
+| E    | 前五位位必须为 11110 | 240-254                   | 留作科研使用       | -                           |
+
+-   主机位全为 0 ，表示一个网段，全为1 表示广播地址 
+-   127网段为保留地址，用于本地测试使用
+
+### 2. CIDR(Classless Inter-Domain Routing))
+
+-   网络位向主机位借位 
+-   子网掩码：网络位全为1，主机位全为0
+-   异或 ^：相同为 0
+-   取反-(n+1)：~n
+-   左移 << ：n*2^位移数
+-   右移 >>：n/ (n*2^位移数) 向下取整
+
+### 3. ip获取方式
+
+-   手动
+-   dhcp服务器(Dynamic Host Configuration Protocol)
+
+### 4. ip配置
+
+#### 1. 使用ip命令
+
+```shell
+# 添加ip，测试使用
+ip addr add 192.168.182.200/24 dev ens33
+# 添加label：ens33:0
+ip a add 192.168.182.201/24 dev ens33 label ens33:0
+ip a (show)
+# 删除 ip 地址 
+ip a del 192.168.182.200/24 dev ens33
+ip a del 192.168.182.201/24 dev ens33:0
+```
+
+#### 2. 网卡配置文件
+
+-   编辑配置文件
+
+```shell
+# /etc/sysconfig/network-scripts/ifcfg-ens33
+TYPE=Ethernet				# 网卡接口类型，Ethernet Bridge
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=static			# none，dhcp，static
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=ens33
+UUID=22b1dd9a-aa5f-4f01-a652-b558bac89148 
+DEVICE=ens33				# 设备
+ONBOOT=yes					# 开机是否自启
+IPADDR=172.16.44.143		# 配置静态ip
+NETMASK=255.255.255.0		# 配置子网掩码
+GATEWAY=172.16.44.2			# 网关一般是1/255，虚拟机是 2
+DNS1=114.114.114.114
+DNS2=8.8.8.8				# google
+```
+
+-   生效
+
+```shell
+# 重启网络
+systemctl restart network
+```
+
+-   配置dns文件
+
+```shell
+# /etc/resolv.conf
+# Generated by NetworkManager
+nameserver 114.114.114.114
+nameserver 8.8.8.8
+```
+
+### 5. hostname
+
+-   查看/设置主机名
+
+```shell
+hostname
+# 重启终端生效，重启主机失效
+hostname henry
+```
+
+-   配置文件
+
+```shell
+# /etc/hostname
+localhost.localdomain
+# 永久生效
+hostnamectl set-hostname echo
+```
+
+### 6. 本地解析
+
+-   主机和ip的映射关系
+-   ip  +  域名
+
+```shell
+# /etc/hosts
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+```
+
+### 7. ss/netstat
+
+-   打印网络系统的状态
+
+#### 1. options
+
+1.  -t：tcp协议
+2.  -u：udp协议
+3.  -x：unix socket，指的是 s类型文件
+4.  -l：处于监听中的
+5.  -p：相关程序及pid
+6.  -n：显示端口
+
+```shell
+ss -t
+ss -u
+ss -x
+# 常用组合
+ss -tnlp ｜ gerp 22
+ss -aulp
+ss -tan
+```
+
+-   常用服务的端口号
+
+```shell
+ssh：22
+http：80，https：443
+mysql：3306
+redis：6379
+mongodb：27017
+windows远程桌面：3389
+oracle：1521
+ftp：20/21
+```
+
+### 8. wget
+
+-   下载命令
+
+#### 1. options
+
+1.  -O：指定下载后的文件路径
+2.  -P：指定文件下载路径
+3.  -q：静默模式
+4.  -r：递归下载
+5.  -p：下载所有的html元素
+
+```shell
+wget -O /tmp/filename url
+wget -P /tmp url
+# 
+wget -p url
+```
+
+## 3. 进程相关
+
+### 1. ps
+
+-   默认显示当前终端上的进程
+
+#### 1. 支持的格式
+
+-   unix：-h -a
+-   BSD：aux
+-   GNU：--help
+
+#### 2. options
+
+1.  -a：显示所有终端的进程
+2.  -x：显示不连接终端的进程
+3.  -u：显示不连接终端的进程
+4.  f：显示进程数信息
+5.  o：指定输出项
+6.  L：显示所有的属性
+7.  K 属性：从小到大排序，默认升序，倒叙：-属性
+8.  -e：显示显示所有的进程
+9.  -U username：显示指定用户的进程
+
+```shell
+ps -a		# 显示所有
+ps -x		# 显示不连接终端的进程
+ps -u		# 显示不连接终端的进程
+ps o %cpu,%mem,pid,cmd K %mem
+ps L
+ps -ef		# 显示完整信息
+ps -U henry
+```
+
+#### 3. 常用组合
+
+-   与grep组合使用
+
+```shell
+ps aux | grep ssh
+ps -ef
+pidof sshd		# 根据名称查进程
+kill pid		# 杀掉进程
+killall sshd	# 杀死所有 sshd 进程
+pkill sshd		# 按照模式杀死所有 sshd 进程
+```
+
+### 2. kill
+
+-   向进程发送信号，实现对进程的管理，每个信号都有不同的数字对应
+
+```shell
+kill - l		# 查看系统支持的所有信号
+# 常用信号
+1 sighup		# 重读配置文件，平滑重启
+2 sigint		# 终止正在运行的进程，相当于 ctrl+c
+9 sigkill		# 强制杀死进程
+18 sigont		# 继续运行
+19 sigstop		# 后台休眠
+
+# 启动sshd服务
+systemctl start sshd
+```
+
+## 4. 系统工具
+
+### 1. uptime
+
+-   显示当前时间	系统开启时长	当前在线人数	系统平均负载：1min，5min，15min的负载
+-   平均负载：在特定的时间内，cpu等待运行的进程数
+-   如果不超过cpu核心数的2倍则认为是良好的
+
+```shell
+uptime
+15:34:54 up  1:18,  	1 user,  	load average: 0.00, 0.01, 0.05
+# 当前时间	系统开启时长	当前在线人数	系统平均负载：1min，5min，15min的负载
+```
+
+### 2. top
+
+-   实时显示系统进程的详细信息
+
+#### 1. 排序
+
+-   T：按照占用cpu时长
+-   M：按照mem占用率排序
+-   P：按照cpu占用率排序
+
+#### 2. 首部信息显示
+
+-   uptime信息：l（1+1种模式）
+-   tasks和cpu信息：t（3+1种模式）
+-   mem和swap：m （3+1种模式）
+-   分别显示cpu：1（2种）
+-   修改刷新时间：s
+-   杀死正在执行的进程：k
+-   退出：q
+
+#### 3. options
+
+1.  -d：指定刷新时间
+2.  -b：显示所有的进程
+3.  -n：指定刷新多少次退出
+
+```shell
+top				# 查看
+top -d n		# 指定刷新时间
+top -n n
+```
+
+#### 4. htop
+
+-   在epel源中，升级版的top
+
+```shell
+yum install htiop 
+htop			# 支持鼠标，和空格
+```
+
+## 5. 性能分析
+
+### 1. free
+
+-   查看内存信息
+
+#### 1. options
+
+1.  -m/g/h
+2.  -s：指定刷新时间
+3.  -c：刷新次数
+
+```shell
+free -k/m/g/h		# 以mb/gb/自适应方式显示
+free -c n			# 刷新 n 次退出
+```
+
+### 2. vmstat
+
+1.  procs
+    -   r可运行(正在运行或等待运行)的进程个数
+    -   b处于不可中断的进程个数(被阻塞的队列长度)
+2.  memory
+    -   swpd：v交换内存的使用量
+    -   free：空闲的
+    -   buff/cache：buff和cache内存总量
+3.  swap
+    -   si：从磁盘到内存的数据速率(kb/s)
+    -   so：从内存到磁盘的数据速率(kb/s)
+4.  io
+    -   bi：从块设备读入数据到系统的速率
+    -   bo：从系统到块设备
+5.  cpu
+    -   us：用户空间
+    -   sy：系统空间
+
+```shell
+procs -----------memory-----  ---swap-- ---io-- -system- ------cpu-----
+ r  b   swpd  free  buff cache  si so    bi  bo   in  cs us sy id wa st
+ 2  0   0  130272    172 450452    0    0    72   8   55  75  0  1 99  0  0
+```
+
+### 3. iostat
+
+-   查看磁盘读写信息
+
+### 4. dstat
+
+-   yum search/provides dstat
+-   -c：显示cpu信息
+-   -m：显示mem信息
+-   -n：显示网卡信息
+
+## 6. 作业管理
+
+### 1. 后台运行
+
+```shell
+ctrl + z
+dstat &				# 输出到屏幕	
+nohup dstat &		# 输出到文件
+```
+
+### 2. systemctl
+
+-   管理服务
+
+```shell
+systemctl start/stop/restart sshd nginx redis   
+systemctl reload sshd		# 重新加载配置文件
+systemctl enable sshd 		# 开机自启
+systemctl disenable sshd 	# 关闭关机自启
+systemctl status firewalld	# 查看服务状态
+# 查看开机自启
+systemctl list-unit-files ｜ grep enabled
+```
+
+### 3. iptables
+
+-   firewalld
+
+```shell
+iptables -F 			# 清空防火墙规则
+systemctl stop iptables
+systemctl status firewalld
+```
+
+### 4. selinux
+
+```shell
+setenforce 0			# 临时关闭selinux
+getenforce				# 查看selinux状态
+```
+
+-   配置文件
+
+```shell
+# /etc/selinux/config
+SELINUX = disabled
+```
+
+## 7. 虚拟环境
+
+-   安装扩展的epel源
+
+```shell
+sudo yum -y install openssl openssl-devel 
+sudo yum -y install epel-release 
+sudo yum -y install zlib zlib-devel
+```
+
+### 1. python3
+
+```shell
+python3 -m venv 路径如:django
+# 进入虚拟环境
+source django1/bin/active
+pip3 install django==1.11 -i e
+# 退出
+deactivate
+# 进入django2
+cd django2
+source /bin/active
+```
+
+### 2. python2
+
+```shell
+# 安装好之后会生成virtualenv命令
+pip3 install virtualenv
+# 生成虚拟环境
+# --no-site-packages：生成一个干净的虚拟环境
+# --python=python：指定python版本
+virtualenv --no-site-packages --python=python3 test
+```
+
+### 3. 确保环境一致
+
+```shell
+# 导出python环境包
+pip freeze > requirements.txt
+# 安装虚拟环境，先切换虚拟环境
+pip install -r requirements.txt
+```
+
+### 4. virtualenvwrapper
+
+1.  ls virtualenv：直接切换虚拟环境
+2.  workon test：直接切换虚拟环境
+3.  cdvirtualenv：直接切换到当前env
+4.  cdsitepackages：直接切换到当前的site-packags中
+5.  lssitepackages：列出当前虚拟环境的site-packags
+6.  rmvirtualenv 虚拟环境名
+7.  deactive：退出
+
+```shell
+pip3 install virtualenvwrapper
+vim .bashrc
+# 创建虚拟环境
+makevirtualenv django3
+```

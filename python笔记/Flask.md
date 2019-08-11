@@ -748,3 +748,207 @@ run_simple('0.0.0.0', 5000, app)
 # 对象相当于dict
 __slots__ = ('__stroage__', '__ident_func__')
 ```
+
+# 5.websocket
+
+-   使用webscoket实现类似web 微信的一个即时通讯工具
+-   流程
+    1.  做前端
+    2.  建立webserver   django / flask
+    3.  制作聊天功能
+
+## 1. 轮询和长链接
+
+### 1. 轮询
+
+-   轮询：只是查询没有超时时间
+-   不能保证数据的实时性
+
+```python
+# A、B client：无限循环和服务器对话，有 xx 消息吗？
+```
+
+-   长轮询：默认有超时时间
+
+```python
+# A、B client：client 发起请求至 server，等待15s(默认http超时时间) --> 等待消息时间
+# -->主动断开连接
+# -->收到消息主动返回
+```
+
+### 2. 长链接
+
+-   短连接：通讯双方有数据交互时，就建立一个连接，数据发送完成后，则断开此连接，即每次连接只完成一项业务的发送。
+-   长连接，指在一个连接上可以连续发送多个数据包，在连接保持期间，如果没有数据包发送，需要双方发链路检测包。
+
+#### 长连接特性：
+
+1.  A、B client --> server 建立连接并保持连接不断开
+2.  A to B --> server 消息转发 -->B 建立连接的情况下，可以及时准确收到消息
+3.  客户端和服务器保持永久性连接
+4.  除非有一方主动发起断开
+5.  消息转发
+
+## 2. Websocket 
+
+### 1. 示例
+
+-   长连接
+-   web + socket
+-   Flask + Websocket 模块 + gevent-websocket
+
+```python
+# 下载 gevent-websocket，Websocket
+# 请求处理 WSGI 处理 HTTP 请求，WebSocketHandler处理socket请求
+# 使用 WSGIServer 替换flask的 Werkzueg
+# 语法提示
+from flask import Flask
+from geventwebsocket.hander import WebSocketHandler
+from geventwebsocket.server import WSGIServer
+from geventwebsocket.websocket import WebSocket
+
+app = Flask(__name__)
+
+@app.route('/ws')
+def ichat():
+    print(request.environ)
+    ws_socket = request.environ.get('wsgi.websocket') # type:WebSocket
+    try:
+        while True:
+            msg = ws_socket.receive()
+            print(msg)
+            ws_socket.send(b'xxx')
+    except:pass
+    # return '200 ok!'
+
+
+if __name__ == '__main__':
+    # handler_class=WSGIhandler（not sure），只支持http请求
+    http_server = WSGIServer(('0.0.0.0', 9527), app, handler_class=WebSocketHandler)
+    http_server.server_forever()
+```
+
+### 2. websocket的状态码
+
+-   0：连接创建失败，
+-   1：当前link激活，处于可用状态
+-   2：客户端主动断开连接，看不到其状态码
+-   3：服务器主动发起断开
+
+```js
+<script type='application/javascript'>
+	var ws = new WebSocket('ws://127.0.0.1:5000/chat');
+    ws.onmessage = function (messageEvent) {
+        console.log(messageEvent.data);
+
+        var ptag = document.createElement('p');
+        ptag.innerText = messageEvent.data;
+        document.getElementById('content_list').appendChild(ptag);
+    };
+    function send_message() {
+        var msg = document.getElementById('content').value;
+        ws.send(msg);
+    }
+</script>
+// ws.close
+```
+
+## 3. websocket
+
+### 1. 单聊示例
+
+1.  群聊时使用 socket_list = []，记录每个连接用户socket_obj
+2.  单聊时使用 socket_dict = {}，记录sender 、reciver 和 msg
+
+```python
+socket_list = []
+@app.route('/chat/<username>')
+def chat(username):
+    # print(request.environ)
+    websocket_obj = request.environ.get('wsgi.websocket')  # type:WebSocket
+    websocket_dict[username] = websocket_obj
+
+    while True:
+        msg = websocket_obj.receive()
+
+        msg_dict = json.loads(msg)
+        receiver = msg_dict.get('receiver')
+        try:
+            receiver_socket = websocket_dict.get(receiver)
+
+            receiver_socket.send(msg)
+        except:
+            msg = {'sender': '系统',
+                   'receiver': username,
+                   'data':'对方不在线',
+            }
+            websocket_obj.send(json.dumps(msg))
+
+
+@app.route('/ws')
+def ws():
+    return render_template('ptop.html')
+```
+
+-   ptop.html中的 js
+
+```javascript
+<script type="application/javascript">
+    var ws;
+    function send_message() {
+        var msg = {
+            sender:document.getElementById('username').value,
+            receiver:document.getElementById('receiver').value,
+            data:document.getElementById('content').value,
+        };
+
+        var data = JSON.stringify(msg);
+        ws.send(data);
+
+        var ptag = document.createElement('p');
+        ptag.innerText = msg.data + ':' + msg.sender;
+        ptag.style.cssText = "text-align:right";
+        document.getElementById('content_list').appendChild(ptag);
+    }
+
+    function login() {
+        var username = document.getElementById('username').value;
+        ws = new WebSocket('ws://127.0.0.1:5000/chat/' + username);
+        ws.onmessage = function (messageEvent) {
+            // 收到信息后先反序列化，在创建 p 标签并加入到div中
+            var msg = JSON.parse(messageEvent.data);
+            var ptag = document.createElement('p');
+            ptag.innerText = msg.sender + ':' + msg.data;
+            document.getElementById('content_list').appendChild(ptag);
+        };
+    }
+</script>
+```
+
+### 2. 基于websocket实现群聊
+
+1.  建立websocket 服务 + Flask web 框架 + Gevent-WebSocket
+2.  requst.environ.get('wsgi.websocket')获取链接，并保存到服务器中
+3.  基于长连接socket 接收用户传递的消息
+4.  将消息转发给其他用户
+
+### 3. 基于javascirpt 实现websocket客户端
+
+1.  服务器保存的连接方式变化，以dict形式储存
+    -   存储结构：{uid: websocket连接, user1:websocket}
+2.  消息发送时，receiver， data = {'sender':发送方, 'receiver':接收发, data:数据}
+    -   从data中找到接收方的key
+    -   去存储结构中找到 key 对应的websocket连接
+3.  websocket.send(data).  socket传输， bytes类型
+4.  js 中常用的事件
+
+```javascript
+var ws = new WebSocket('ws://ip:port/路径')
+// ws.onmessage 当ws客户端收到消息时执行回调函数
+// ws.onopen 当ws客户端建立完成连接时， status == 1 时执行
+// ws.onclose 当ws客户端关闭中后关闭，执行的回调函数，status 2 或 3
+// ws.onerror 当ws客户端出现错误时
+ws.onmessage = func(messageEvent){
+    ...
+}
+```
