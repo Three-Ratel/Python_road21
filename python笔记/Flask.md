@@ -692,7 +692,7 @@ app.config['SESSION_REDIS'] = Redis(host='192.168.12.9', 6379, db=10)
 
 # 4. Flask上下文
 
-### 1. 偏函数
+## 1. 偏函数
 
 -   flask中的requst 和session
 
@@ -707,7 +707,7 @@ new_func = partial(ab, 1, 3)
 print(new_func())
 ```
 
-### 2. 线程安全
+## 2. 线程安全
 
 ```python
 import time
@@ -729,7 +729,7 @@ for i in range(20):
     th.strat()    
 ```
 
-### 3.  werkzeug 搭建app
+## 3.  werkzeug 搭建app
 
 ```python
 # werkzeug 搭建app
