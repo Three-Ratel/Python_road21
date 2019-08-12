@@ -99,7 +99,8 @@ def login():
 @app.route('/jin_test')
 def jin_test():
     # return render_template('jin_test.html', stu=STUDENT, stu_l=STUDENT_LIST, stu_d=STUDENT_DICT)
-    btn = Markup('<input type="text" name="test" placeholder=test>')
+    # btn = Markup('<input type="text" name="test" placeholder=test>')
+    btn = '<input type="text" name="test" placeholder=test>'
     return render_template('jin_test.html',
                            btn=btn,
                            stu=STUDENT,

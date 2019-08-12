@@ -41,7 +41,8 @@ def query(name, sid):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run()   # 基于tcp的socket连接
 
 
-# app.__call__()
+app.__call__()
+from werkzeug.serving import run_simple

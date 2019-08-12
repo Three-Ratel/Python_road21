@@ -240,7 +240,7 @@ def my_input(na, ty):
 ```
 
 ```jinja2
-{{ btn | safe }} 或者使用  Markup{{ btn }}
+{{ btn | safe }}
 {{ my_input('username', 'text') }}
 ```
 

@@ -21,13 +21,13 @@ class Detail(views.MethodView):
 info.add_url_rule('/detail', view_func=Detail.as_view(name='detail'))
 
 
-# """FBV"""
-# @info.route('/detail', endpoint='detail')
-# def detail():
-#     sid = request.args.get('sid')
-#     if sid:
-#         stus = {sid: STUDENT_DICT[int(sid)]}
-#         flag = {'flag': 0}
-#         return render_template('detail.html', stus=stus, flag=flag, )
-#     flag = {'flag': 1}
-#     return render_template('detail.html', stus=STUDENT_DICT, flag=flag, )
+"""FBV"""
+@info.route('/detail', endpoint='detail')
+def detail():
+    sid = request.args.get('sid')
+    if sid:
+        stus = {sid: STUDENT_DICT[int(sid)]}
+        flag = {'flag': 0}
+        return render_template('detail.html', stus=stus, flag=flag, )
+    flag = {'flag': 1}
+    return render_template('detail.html', stus=STUDENT_DICT, flag=flag, )

@@ -2872,7 +2872,7 @@ pkill sshd		# 按照模式杀死所有 sshd 进程
 -   向进程发送信号，实现对进程的管理，每个信号都有不同的数字对应
 
 ```shell
-kill - l		# 查看系统支持的所有信号
+kill -l			# 查看系统支持的所有信号
 # 常用信号
 1 sighup		# 重读配置文件，平滑重启
 2 sigint		# 终止正在运行的进程，相当于 ctrl+c
@@ -2935,7 +2935,7 @@ top -n n
 -   在epel源中，升级版的top
 
 ```shell
-yum install htiop 
+yum install htop 
 htop			# 支持鼠标，和空格
 ```
 
@@ -2998,7 +2998,7 @@ procs -----------memory-----  ---swap-- ---io-- -system- ------cpu-----
 
 ```shell
 ctrl + z
-dstat &				# 输出到屏幕	
+dstat &				# 输出到屏幕
 nohup dstat &		# 输出到文件
 ```
 
@@ -3021,7 +3021,7 @@ systemctl list-unit-files ｜ grep enabled
 -   firewalld
 
 ```shell
-iptables -F 			# 清空防火墙规则
+iptables -F 				# 清空防火墙规则
 systemctl stop iptables
 systemctl status firewalld
 ```
@@ -3029,15 +3029,15 @@ systemctl status firewalld
 ### 4. selinux
 
 ```shell
-setenforce 0			# 临时关闭selinux
-getenforce				# 查看selinux状态
+setenforce 0				# 临时关闭selinux
+getenforce					# 查看selinux状态
 ```
 
 -   配置文件
 
 ```shell
 # /etc/selinux/config
-SELINUX = disabled
+SELINUX = disabled/endforcing
 ```
 
 ## 7. 虚拟环境
@@ -3086,7 +3086,7 @@ pip install -r requirements.txt
 
 ### 4. virtualenvwrapper
 
-1.  ls virtualenv：直接切换虚拟环境
+1.  ls virtualenv：查看虚拟环境
 2.  workon test：直接切换虚拟环境
 3.  cdvirtualenv：直接切换到当前env
 4.  cdsitepackages：直接切换到当前的site-packags中

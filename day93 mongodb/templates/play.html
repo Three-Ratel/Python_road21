@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>游戏...</title>
+    <script src="/static/jquery-1.10.2.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+</head>
+<body>
+
+<div class="row">
+    <div class="col-md-3 col-md-offset-2 " style="margin-top:100px;">
+        <div class="panel panel-primary">
+            <div class="panel-heading" style="text-align: center"><h4>角色信息</h4></div>
+            <div class="panel-body">
+                <table class="table table-striped table-hover">
+                    <tr>
+                        <th>
+                            角色名称
+                        </th>
+                        <th>
+                            {{ player.UserName }}
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            攻击力
+                        </td>
+                        <td>
+                            {{ player.ATC }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            防御力
+                        </td>
+                        <td>
+                            {{ player.DEF }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            生命值
+                        </td>
+                        <td>
+                            {{ player.LIFE }}
+                        </td>
+                    </tr>
+                </table>
+
+                <p>
+                    {% for equip in player.Equip %}
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            {{ equip.name }}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li>攻击力 {{ equip.atc }} }}</li>
+                            <li> 防御力 {{ equip.def }}</li>
+                            <li> 生命值 {{ equip.life }}</li>
+                            <li><a href="#"></a></li>
+                        </ul>
+                    {% endfor %}
+                </p>
+                {% for package in player.Package %}
+                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenu1"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        {{ package.name }}
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li>攻击力 {{ package.atc }} }}</li>
+                        <li> 防御力 {{ package.def }}</li>
+                        <li> 生命值 {{ package.life }}</li>
+                        <li><a href=""></a></li>
+                    </ul>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 col-md-offset-2" style="margin-top:100px;">
+        <div class="panel panel-danger">
+            <div class="panel-heading" style="text-align: center"><h4>敌方信息</h4></div>
+            <div class="panel-body">
+                <div class="dropdown">
+                    {% for one in enemy %}
+                        <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenu1"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            {{ one.UserName }}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li> 攻击力 {{ player.ATC }}</li>
+                        <li> 防御力 {{ player.DEF }}</li>
+                        <li> 生命值 {{ player.LIFE }}</li>
+                        <li><a href="#></a></li>
+                        </ul>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
