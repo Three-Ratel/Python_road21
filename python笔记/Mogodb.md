@@ -20,7 +20,7 @@
 | 数据行 | Row      | Documents             |
 
 
-### 2. 数据类型
+### 2. 数据类型(8)
 
 -   F6：执行（nosqlbooster-for-mongodb）
 
@@ -29,13 +29,13 @@ ObjecgtID : Documents 自动生成的 _id，时间戳+机器码(mac序列化结�
 string							# 必须是 utf-8的字符
 Boolean							# true/false
 Integer							# 整数据(int32, int64)
-Double							# 不指定默认是double，所有小数在mongo中都是double
-Arrays							# 类似python中的 list
+Double							# 不指定默认是double，所有小数在mongo中都是double，mongodb不存在float
+Array							# 类似python中的 list
 Object							# python中的dict，其他语言都叫object
 Null							# 空
 Timestamp						# 时间戳
 
-db.users.insert({data:ISODate()})
+**db.users.insert({data:ISODate()})
 ```
 
 ### 3. 常用操作
@@ -89,14 +89,14 @@ db.users.find({'$and':[{name:'henry'},{age:19}]})
 db.users.find({'$or':[{age:19}, {name:'echo'}]}) 
 ```
 
--   $in ：包含或者，同一字段或者条件
+-   $in ：包含或者，同一字段或者条件，**必须是交集**
 
 ```python
 # 或者
 db.users.find({age:{'$in':[18, 19, 20]}}) 
 ```
 
--   $all：必须是子集
+-   $all：**必须是子集**
 
 ```python
 db.users.find({hobby:[1,2,3,4,5]}) 
@@ -180,8 +180,9 @@ db.users.update({'hobby':0}, {'$set':{'hobby.9':123}})
 ```python
 # 删除所有数据
 db.Tables.remove({})
-# 删除一条数据，先删除最后一条
+# 删除一条数据，只删除第一一条
 db.users.remove({}, {justOne: true})
+db.users.remove({name:'oleg'}, {justOne:true})
 ```
 
 #### 7. 官方推荐
@@ -285,7 +286,7 @@ print(res.inserted_ids, type(res.inserted_ids))
 # 只更新第一条数据
 res = MongoDB.Users.update_one({}, {'$inc':{age:1}})
 # 更新所有
-res = MongoDB.Users.update({'age':20}, {'$inc':{age:1}})
+res = MongoDB.Users.update_many({'age':20}, {'$inc':{age:1}})
 ```
 
 -   删除数据
@@ -305,7 +306,7 @@ res = MongoDB.Users.find({}).limit(3)
 for row in res: print(row)
     
 # 跳过 3(n) 条数据
-res = MongoDB.Users.find({}).limit(3)
+res = MongoDB.Users.find({}).skip(3)
 for row in res: print(row)
 
 # 排序

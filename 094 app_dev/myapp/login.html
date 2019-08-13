@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Document</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="css/mui.css" />
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">注册</h1>
+		</header>
+		<div class="mui-content">
+			<div class="mui-input-row">
+				<label>用户名</label>
+				<input type="text" class="mui-input-clear" placeholder="请输入用户名" id="username">
+			</div>
+			<div class="mui-input-row">
+				<label>密码</label>
+				<input type="password" placeholder="请输入密码" id="password">
+			</div>
+			<div class="mui-input-row">
+				<label>确认密码</label>
+				<input type="password" placeholder="请确认密码" id="re_password">
+			</div>
+			<img id="my_icon" alt="">
+			<button type="button" class="mui-btn mui-btn-green btn-sm" id="register">注册</button>
+			<button type="button" class="mui-btn mui-btn-blue btn-sm" id="xc">上传头像</button>
+			<button type="button" class="mui-btn mui-btn-green btn-sm" id="xj">立即拍照</button>
+		</div>
+
+
+		<script src="js/mui.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			// var img_path = null;
+			document.getElementById('xj').addEventListener('tap', function() {
+				mui.toast('open...');
+				var cmr = plus.camera.getCamera(1);
+				console.log(cmr);
+				res = cmr.supportedImageResolutions[0];
+				fmt = cmr.supportedImageFormats[0];
+				cmr.captureImage(
+					function(s) {
+						// console.log(JSON.stringify(s));
+						console.log('拍照成功' + s);
+						// img_path = s;
+					},
+					function(err) {
+						console.log('拍照失败' + JSON.stringify(err));
+					}, {
+						resolution: res,
+						format: fmt
+					})
+			});
+			document.getElementById('register').addEventListener('tap', function() {
+				var username = document.getElementById("username").value;
+				var password = document.getElementById("password").value;
+				var re_password = document.getElementById("re_password").value;
+	
+				if (re_password != password) {
+					console.log('两次密码不一致');
+					mui.toast('两次密码不一致');
+				} else {
+					mui.post('http://192.168.12.4:9527/register', {
+						username: username,
+						password: password,
+
+					}, function(data) {
+						if (data.code==200) {
+							mui.back();
+						}
+						console.log(data.msg);
+						mui.toast(data.msg);
+					}, 'json');
+
+
+				}
+			})
+		</script>
+	</body>
+</html>
