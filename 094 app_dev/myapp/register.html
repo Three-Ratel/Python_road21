@@ -5,6 +5,8 @@
 		<title>Document</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link rel="stylesheet" type="text/css" href="css/mui.css">
+
+		<script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.js"></script>
 	</head>
 	<body>
 		<header class="mui-bar mui-bar-nav">
@@ -27,13 +29,14 @@
 			<button type="button" class="mui-btn mui-btn-green btn-sm" id="register">注册</button>
 			<button type="button" class="mui-btn mui-btn-blue btn-sm" id="xc">上传头像</button>
 			<button type="button" class="mui-btn mui-btn-green btn-sm" id="xj">立即拍照</button>
+			<button type="button" class="mui-btn mui-btn-green btn-sm" id="login">后悔了？回去登录</button>
 		</div>
 
 
 		<script src="js/mui.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript">
 			mui.init();
-			var img_path = null;
+			// var img_path = null;
 			document.getElementById('xj').addEventListener('tap', function() {
 				mui.toast('open...');
 				var cmr = plus.camera.getCamera(1);
@@ -58,7 +61,7 @@
 									// console.log(JSON.stringify(t));
 									res = JSON.parse(t.responseText);
 									// console.log(res.filename)
-									document.getElementById("my_icon").src = "http://192.168.12.4:9527/get_icon/"+res.filename;
+									document.getElementById("my_icon").src = res.http;
 								} else {}
 							})
 
@@ -88,18 +91,24 @@
 				} else {
 					mui.post('http://192.168.12.4:9527/register', {
 						username: username,
-						password: password,
+						password: md5(password),
 
 					}, function(data) {
 						if (data.code == 200) {
-							mui.back();
+							//打开关于页面
+							mui.openWindow({
+								url: 'login.html',
+								id: 'register'
+							});
 						}
 						console.log(data.msg);
 						mui.toast(data.msg);
 					}, 'json');
-
-
 				}
+			})
+
+			document.getElementById('login').addEventListener('tap', function() {
+				mui.openWindow('login.html', 'login', {})
 			})
 		</script>
 	</body>

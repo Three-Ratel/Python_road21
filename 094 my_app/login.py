@@ -26,7 +26,8 @@ def register():
     user = mongo.users.find({'username': username})
     if list(user):
         return {'code': -1, 'msg': '用户名已存在'}
-    mongo.users.insert_one(user_info)
+    if username.strip() != 'test':
+        mongo.users.insert_one(user_info)
     return {'code': 200, 'msg': '注册成功'}
 
 
@@ -43,7 +44,7 @@ def upload():
     file.save(file.filename)
     ret = {
         'code': 200,
-        'filename': file.filename,
+        'http': "http://192.168.12.4:9527/get_icon/"+file.filename,
         'msg': '上传成功'
     }
     return ret
