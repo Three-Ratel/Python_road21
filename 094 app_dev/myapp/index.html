@@ -7,60 +7,127 @@
 		<link rel="stylesheet" type="text/css" href="css/mui.css">
 	</head>
 	<body>
-		<header class="mui-bar mui-bar-nav">
-			<h1 class="mui-title">首页</h1>
-		</header>
 
-		<div class="mui-content">
-			<ul class="mui-table-view">
-				<li class="mui-table-view-cell mui-media">
-					<a href="javascript:;">
-						<img class="mui-media-object mui-pull-left" src="">
-						<div class="mui-media-body">
-							幸福
-							<p class="mui-ellipsis">能和心爱的人一起睡觉，是件幸福的事情；可是，打呼噜怎么办？</p>
-						</div>
+		<!-- <button type="button" id="open" class="mui-btn mui-btn-blue">打开摄像头</button> -->
+		<!-- <header class="mui-bar mui-bar-nav"> -->
+		<!-- 				<h1 class="mui-title">标题</h1>
+			</header>
+			<div class="mui-content">
+				<ul class="mui-table-view mui-grid-view mui-grid-9">
+				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+					<a href="#">
+						<span class="mui-icon mui-icon-home"></span>
+						<div class="mui-media-body">Home</div>
 					</a>
 				</li>
-				<li class="mui-table-view-cell mui-media">
-					<a href="javascript:;">
-						<img class="mui-media-object mui-pull-left" src="">
-						<div class="mui-media-body">
-							木屋
-							<p class="mui-ellipsis">想要这样一间小木屋，夏天挫冰吃瓜，冬天围炉取暖.</p>
-						</div>
+				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+					<a href="#">
+						<span class="mui-icon mui-icon-email"><span class="mui-badge mui-badge-red">5</span></span>
+						<div class="mui-media-body">Email</div>
 					</a>
 				</li>
-				<li class="mui-table-view-cell mui-media">
-					<a href="javascript:;">
-						<img class="mui-media-object mui-pull-left" src="">
-						<div class="mui-media-body">
-						    CBD
-							<p class="mui-ellipsis">烤炉模式的城，到黄昏，如同打翻的调色盘一般.</p>
-						</div>
+				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+					<a href="#">
+						<span class="mui-icon mui-icon-chatbubble"></span>
+						<div class="mui-media-body">Chat</div>
 					</a>
 				</li>
-			</ul>
-			<button type="button" id="open" class="mui-btn mui-btn-blue">打开摄像头</button>
-			<nav class="mui-bar mui-bar-tab">
-				<a class="mui-tab-item mui-active">
-					<span class="mui-icon mui-icon-home"></span>
-					<span class="mui-tab-label">首页</span>
-				</a>
-				<a class="mui-tab-item">
-					<span class="mui-icon mui-icon-phone"></span>
-					<span class="mui-tab-label">电话</span>
-				</a>
-				<a class="mui-tab-item">
-					<span class="mui-icon mui-icon-email"></span>
-					<span class="mui-tab-label">邮件</span>
-				</a>
-				<a class="mui-tab-item" id="login">
-					<span class="mui-icon mui-icon-gear"></span>
-					<span class="mui-tab-label">设置</span>
-				</a>
-			</nav>
-		</div>
+				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+					<a href="#">
+						<span class="mui-icon mui-icon-location"></span>
+						<div class="mui-media-body">Location</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+					<a href="#">
+						<span class="mui-icon mui-icon-search"></span>
+						<div class="mui-media-body">Search</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+					<a href="#">
+						<span class="mui-icon mui-icon-phone"></span>
+						<div class="mui-media-body">Phone</div>
+					</a>
+				</li>
+					</ul>
+				
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell mui-media">
+						<a href="javascript:;">
+							<img class="mui-media-object mui-pull-right" src="">
+							<div class="mui-media-body">
+								幸福
+								<p class="mui-ellipsis">能和心爱的人一起睡觉，是件幸福的事情；可是，打呼噜怎么办？</p>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media">
+						<a href="javascript:;">
+							<img class="mui-media-object mui-pull-right" src="">
+							<div class="mui-media-body">
+								木屋
+								<p class="mui-ellipsis">想要这样一间小木屋，夏天挫冰吃瓜，冬天围炉取暖.</p>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media">
+						<a href="javascript:;">
+							<img class="mui-media-object mui-pull-right" src="">
+							<div class="mui-media-body">
+							    CBD
+								<p class="mui-ellipsis">烤炉模式的城，到黄昏，如同打翻的调色盘一般.</p>
+							</div>
+						</a>
+					</li>
+				</ul>
+				<button type="button" class="mui-btn mui-btn-blue mui-btn-block" id='open'>按钮</button>
+				
+				
+				
+				<nav class="mui-bar mui-bar-tab">
+					<a class="mui-tab-item mui-active">
+						<span class="mui-icon mui-icon-home"></span>
+						<span class="mui-tab-label">首页</span>
+					</a>
+					<a class="mui-tab-item">
+						<span class="mui-icon mui-icon-phone"></span>
+						<span class="mui-tab-label">电话</span>
+					</a>
+					<a class="mui-tab-item">
+						<span class="mui-icon mui-icon-email"></span>
+						<span class="mui-tab-label">邮件</span>
+					</a>
+					<a class="mui-tab-item">
+						<span class="mui-icon mui-icon-gear"></span>
+						<span class="mui-tab-label">设置</span>
+					</a>
+				</nav>
+			</div> -->
+
+
+
+
+
+		<nav class="mui-bar mui-bar-tab">
+			<a class="mui-tab-item mui-active" id='home'>
+				<span class="mui-icon mui-icon-home"></span>
+				<span class="mui-tab-label">首页</span>
+			</a>
+			<a class="mui-tab-item">
+				<span class="mui-icon mui-icon-chatbubble"></span>
+				<span class="mui-tab-label">消息</span>
+			</a>
+			<a class="mui-tab-item">
+				<span class="mui-icon mui-icon-contact"></span>
+				<span class="mui-tab-label">通讯录</span>
+			</a>
+			<a class="mui-tab-item" id="login">
+				<span class="mui-icon mui-icon-person"></span>
+				<span class="mui-tab-label">我</span>
+			</a>
+		</nav>
+		<!-- </div> -->
 
 		<script src="js/mui.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript" src="js/mui.js"></script>
@@ -77,32 +144,79 @@
 					release: false
 				}
 			});
-			// 文档加载完毕后,加载其他的js
+
+
+			// 加载home页面
 			mui.plusReady(function() {
-				document.getElementById('open').addEventListener('tap', function() {
-					mui.toast('open...');
-					var cmr = plus.camera.getCamera(1);
-					console.log(cmr);
-					res = cmr.supportedImageResolutions[0];
-					fmt = cmr.supportedImageFormats[0];
-					cmr.captureImage(
-						function(path) {
-							// console.log(JSON.stringify(path));
-							console.log('拍照成功' + path);
-						},
-						function(err) {
-							console.log('拍照失败' + JSON.stringify(err));
-						}, {
-							resolution: res,
-							format: fmt
-						})
-				});
-				// 登录注册相关
-				document.getElementById('login').addEventListener('tap', function() {
-					mui.openWindow('login.html','login',{})
+				mui.openWindow({
+					url: 'home.html',
+					id: 'home',
+					styles: {
+						top: '0px',
+						bottom: '50px'
+					}
 				})
-				
 			})
+
+			// 绑定home页面
+			document.getElementById('home').addEventListener('tap', function() {
+				mui.openWindow({
+					url: 'home.html',
+					id: 'home',
+					styles: {
+						top: '0px',
+						bottom: '50px'
+					}
+				})
+			})
+
+
+			// 登录注册相关
+			document.getElementById('login').addEventListener('tap', function() {
+				var is_login = plus.storage.getItem('is_login')
+				// console.log(is_login)
+				if (is_login) {
+					mui.openWindow({
+						url: 'user_info.html',
+						id: 'user_info',
+						styles: {
+							top: '0px',
+							bottom: '50px'
+						}
+					})
+				} else {
+					mui.openWindow({
+						url: 'login.html',
+						id: 'login',
+						styles: {
+							top: '0px',
+							bottom: '50px'
+						}
+					})
+				}
+			})
+
+			// // 文档加载完毕后,加载其他的js
+			// mui.plusReady(function() {
+			// 	document.getElementById('open').addEventListener('tap', function() {
+			// 		mui.toast('open...');
+			// 		var cmr = plus.camera.getCamera(1);
+			// 		// console.log(cmr);
+			// 		res = cmr.supportedImageResolutions[0];
+			// 		fmt = cmr.supportedImageFormats[0];
+			// 		// console.log(res)
+			// 		// console.log(fmt)
+			// 		cmr.captureImage( function(s){
+			// 	
+			// 					console.log(s);  
+			// 				},
+			// 				function( error ) {
+			// 					console.log(JSON.stringify(error)); 
+			// 				},
+			// 				{resolution:res,format:fmt}
+			// 			);
+			// 
+			// 	});
 		</script>
 	</body>
 </html>

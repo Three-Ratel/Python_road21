@@ -25,24 +25,24 @@
 				<label>确认密码</label>
 				<input type="password" placeholder="请确认密码" id="re_password">
 			</div>
-			<img id="my_icon" alt="">
 			<button type="button" class="mui-btn mui-btn-green btn-sm" id="register">注册</button>
 			<button type="button" class="mui-btn mui-btn-blue btn-sm" id="xc">上传头像</button>
 			<button type="button" class="mui-btn mui-btn-green btn-sm" id="xj">立即拍照</button>
 			<button type="button" class="mui-btn mui-btn-green btn-sm" id="login">后悔了？回去登录</button>
+			<img id="my_icon" alt="" style="height: 100px;">
 		</div>
 
 
 		<script src="js/mui.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript">
 			mui.init();
-			// var img_path = null;
+			var icon_name = null;
 			document.getElementById('xj').addEventListener('tap', function() {
 				mui.toast('open...');
 				var cmr = plus.camera.getCamera(1);
 				// console.log(cmr);
-				res = cmr.supportedImageResolutions[0];
-				fmt = cmr.supportedImageFormats[0];
+				var res = cmr.supportedImageResolutions[0];
+				var fmt = cmr.supportedImageFormats[0];
 				cmr.captureImage(
 					function(s) {
 						// console.log(JSON.stringify(s));
@@ -50,7 +50,7 @@
 						// img_path = s;
 						// 创建上传任务
 						var task = plus.uploader.createUpload(
-							"http://192.168.12.4:9527/upload", {
+							window.serv + "/upload", {
 								method: "POST"
 							},
 							function(t, status) {
@@ -58,19 +58,17 @@
 								// console.log(t);
 								// console.log(status);
 								if (status == 200) {
-									// console.log(JSON.stringify(t));
-									res = JSON.parse(t.responseText);
-									// console.log(res.filename)
-									document.getElementById("my_icon").src = res.http;
+									// console.log(t);  t:object对象
+									icon_name = JSON.parse(t.responseText).filename
+									console.log('请求icon资源' + icon_name)
+									document.getElementById("my_icon").src = window.serv + '/get_icon/' + icon_name;
 								} else {}
 							})
 
-						console.log(s);
+						// console.log(s);
 						task.addFile(s, {
 							key: "my_icon"
 						});
-						// task.addData( "string_key", "string_value" );
-						//task.addEventListener( "statechanged", onStateChanged, false );
 						task.start();
 					},
 					function(err) {
@@ -84,21 +82,25 @@
 				var username = document.getElementById("username").value;
 				var password = document.getElementById("password").value;
 				var re_password = document.getElementById("re_password").value;
-
+				if (!(username && password)) {
+					mui.toast('用户名或密码必填')
+					return;
+				}
 				if (re_password != password) {
 					console.log('两次密码不一致');
 					mui.toast('两次密码不一致');
 				} else {
-					mui.post('http://192.168.12.4:9527/register', {
+					mui.post(window.serv + '/register', {
 						username: username,
 						password: md5(password),
+						icon_name: icon_name,
 
 					}, function(data) {
 						if (data.code == 200) {
 							//打开关于页面
 							mui.openWindow({
 								url: 'login.html',
-								id: 'register'
+								id: 'login'
 							});
 						}
 						console.log(data.msg);
@@ -108,7 +110,14 @@
 			})
 
 			document.getElementById('login').addEventListener('tap', function() {
-				mui.openWindow('login.html', 'login', {})
+				mui.openWindow({
+					url: 'login.html',
+					id: 'login',
+					styles: {
+						top: '0px',
+						bottom: '50px'
+					}
+				})
 			})
 		</script>
 	</body>

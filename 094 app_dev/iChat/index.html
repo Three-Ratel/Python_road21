@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Document</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="css/mui.css" />
+	</head>
+	<body>
+
+		<nav class="mui-bar mui-bar-tab">
+			<a class="mui-tab-item mui-active" id='home'>
+				<span class="mui-icon mui-icon-home"></span>
+				<span class="mui-tab-label">首页</span>
+			</a>
+			<a class="mui-tab-item" id='msg'>
+				<span class="mui-icon mui-icon-chatbubble" id='msg'></span>
+				<span class="mui-tab-label">信息</span>
+			</a>
+			<a class="mui-tab-item">
+				<span class="mui-icon mui-icon-contact"></span>
+				<span class="mui-tab-label">通讯录</span>
+			</a>
+			<a class="mui-tab-item" id="login_info">
+				<span class="mui-icon mui-icon-person"></span>
+				<span class="mui-tab-label">我</span>
+			</a>
+		</nav>
+
+		<script src="js/mui.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			// 加载子页面
+			mui.init({
+				subpages: [{
+					url: 'home.html',
+					id: 'home.html',
+					styles: {
+						top: '0px',
+						bottom: '50px'
+					},
+					extras: {}
+				}]			
+			})
+
+			// 首页 绑定事件
+			document.getElementById('home').addEventListener('tap', function() {
+				mui.openWindow({
+					url: 'home.html',
+					id: 'home.html',
+					styles: {
+						top: '0px',
+						bottom: '50px'
+					}
+				})
+			})
+
+			// 消息 绑定事件
+			document.getElementById('msg').addEventListener('tap', function() {
+				mui.openWindow({
+					url: 'record.html',
+					id: 'record.html',
+					styles: {
+						top: '0px',
+						bottom: '50px'
+					}
+				})
+			})
+
+			// 我 绑定事件
+			document.getElementById('login_info').addEventListener('tap', function() {
+				var is_login = plus.storage.getItem('is_login');
+				console.log(is_login)
+				if (is_login) {
+					mui.openWindow({
+						url: 'user_info.html',
+						id: 'user_info.html',
+						styles: {
+							top: '0px',
+							bottom: '50px'
+						}
+					})
+				} else{
+					mui.openWindow({
+						url: 'login.html',
+						id: 'login.html',
+						styles: {
+							top: '0px',
+							bottom: '50px'
+						}
+					})
+					
+				}
+				
+			})
+
+
+			// 初始化 websocket连接
+			var ws = null;
+			mui.plusReady(function() {
+				ws = new WebSocket('ws://172.20.10.13:9528/chat/app');
+			})
+			
+			
+			document.addEventListener("send_message", function(eventMessage) {
+				var send_str = JSON.stringify(eventMessage.detail);
+				console.log(send_str);
+				ws.send(send_str);
+			})
+		</script>
+	</body>
+</html>

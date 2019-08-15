@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<audio id="record" controls autoplay></audio>
+<script type="application/javascript">
+    var ws = new WebSocket("ws://172.20.10.13:9528/chat/web");
+    ws.onmessage = function (eventMessage) {
+        console.log(eventMessage.data);
+
+        document.getElementById('record').src = "http://172.20.10.13:9527/get_chat/" + eventMessage.data;
+    }
+</script>
+
+</body>
+</html>

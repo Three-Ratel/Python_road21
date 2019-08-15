@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Document</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="css/mui.css" />
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">消息</h1>
+		</header>
+		<div class="mui-content">
+			<nav class="mui-bar mui-bar-tab">
+				<a class="mui-tab-item mui-active" id='message'>
+					<span class="mui-icon mui-icon-mic"></span>
+					<span class="mui-tab-label">录音</span>
+				</a>
+			</nav>
+		</div>
+
+		<script src="js/mui.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init({
+				gestureConfig: {
+					tap: true,
+					doubletap: true,
+					longtap: true,
+					swipe: true,
+					drag: true,
+					hold: true,
+					release: true
+				}
+			});
+			mui.plusReady(function() {
+				var r = null;
+				document.getElementById('message').addEventListener('hold', function() {
+					r = plus.audio.getRecorder();
+					r.record({
+						recordFile: '_doc/record/',
+						format: 'amr',
+					}, function(s) {
+						// console.log(s);
+						reco_uploader(s);
+
+					})
+				})
+
+				document.getElementById('message').addEventListener('release', function() {
+					r.stop()
+				})
+			})
+
+
+
+			function reco_uploader(file_path) {
+				// console.log(window.server + '/upload_record')
+				var task = plus.uploader.createUpload(window.server + '/upload_record', {
+						method: "POST"
+					},
+
+					function(t, status) {
+						if (status == 200) {
+							// console.log('上传成功' + t.responseText);
+							// data_obj = JSON.stringify(t.responseText);
+							// console.log(data_obj)
+
+							var res = JSON.parse(t.responseText);
+							var send_str = {
+								"sender": "app",
+								"receiver": "web",
+								"data": res.filename
+							}
+							var index = plus.webview.getWebviewById("HBuilder");
+							mui.fire(index, 'send_message', send_str)							
+						}
+
+					});
+				task.addFile(file_path, {
+					'key': 'record'
+				})
+				task.start()
+			}
+		</script>
+	</body>
+</html>

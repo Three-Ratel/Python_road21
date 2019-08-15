@@ -15,11 +15,11 @@
 		<div class="mui-content">
 			<div class="mui-input-row">
 				<label>用户名</label>
-				<input type="text" class="mui-input-clear" placeholder="请输入用户名" id="username">
+				<input type="text" class="mui-input-clear" placeholder="请输入用户名" id="username" value="test">
 			</div>
 			<div class="mui-input-row">
 				<label>密码</label>
-				<input type="password" placeholder="请输入密码" id="password">
+				<input type="password" placeholder="请输入密码" id="password" value="123">
 			</div>
 			<button type="button" class="mui-btn mui-btn-green btn-sm" id="login">登录</button>
 			<button type="button" class="mui-btn mui-btn-green btn-sm" id="register">还没有账号？注册</button>
@@ -30,21 +30,35 @@
 			document.getElementById('login').addEventListener('tap', function() {
 				var username = document.getElementById("username").value;
 				var password = document.getElementById("password").value;
-				mui.post('http://192.168.12.4:9527/login', {
+				mui.post(window.serv + '/login', {
 					username: username,
 					password: md5(password),
 				}, function(data) {
 					if (data.code == 200) {
-						mui.openWindow('index.html', 'id', {})
+						void plus.storage.setItem('is_login',' ')
+						mui.openWindow({
+							url:'home.html',
+							id:'home',
+							styles:{
+								top:'0px',
+								bottom:'50px'
+							}
+						})
 					}
 					mui.toast(data.msg);
 					console.log(data.msg)
 				}, 'json');
 			})
-			
 			// 注册页面跳转
 			document.getElementById('register').addEventListener('tap',function () {
-					mui.openWindow('register.html', 'register', {})
+					mui.openWindow({
+						url:'register.html',
+						id:'register',
+						styles:{
+							top:'0px',
+							bottom:'50px'
+						}
+					})
 			})
 		</script>
 	</body>

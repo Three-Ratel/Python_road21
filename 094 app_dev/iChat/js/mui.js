@@ -7,8 +7,10 @@
  * MUI核心JS
  * @type _L4.$|Function
  */
-window.serv = 'http://192.168.12.119:9527'
+// window.server = 'http://192.168.12.119:9527'
+window.server = 'http://172.20.10.13:9527'
 
+window.server_avatar = window.server + '/get_avatar/'
 var mui = (function(document, undefined) {
 	var readyRE = /complete|loaded|interactive/;
 	var idSelectorRE = /^#([\w-]+)$/;
@@ -22,7 +24,7 @@ var mui = (function(document, undefined) {
 		if (!selector)
 			return wrap();
 		if (typeof selector === 'object')
-			if ($.isArrayLike(selector)) {
+			if ($.isArrayLike(selector)){
 				return wrap($.slice.call(selector), null);
 			} else {
 				return wrap([selector], null);
@@ -2788,12 +2790,12 @@ Function.prototype.bind = Function.prototype.bind || function(to) {
 	 * 后退
 	 */
 	$.back = function() {
-		// if (typeof $.options.beforeback === 'function') {
-		// 	if ($.options.beforeback() === false) {
-		// 		return;
-		// 	}
-		// }
-		// $.doAction('backs');
+		if (typeof $.options.beforeback === 'function') {
+			if ($.options.beforeback() === false) {
+				return;
+			}
+		}
+		$.doAction('backs');
 	};
 	window.addEventListener('tap', function(e) {
 		var action = $.targets.action;

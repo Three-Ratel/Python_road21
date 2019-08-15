@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Document</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="css/mui.css" />
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">登录</h1>
+		</header>
+		<div class="mui-content">
+			<form class="mui-input-group">
+				<div class="mui-input-row">
+					<label>用户名</label>
+					<input type="text" class="mui-input-clear" placeholder="请输入用户名" id='username' value='henry'>
+				</div>
+				<div class="mui-input-row">
+					<label>密码</label>
+					<input type="password" class="mui-input-password" placeholder="请输入密码" id='password' value="123">
+				</div>
+				<div class="mui-button-row">
+					<button type="button" class="mui-btn mui-btn-primary" id='login_btn'>Login</button>
+					<button type="button" class="mui-btn mui-btn-danger" id='register_btn'>Register</button>
+				</div>
+			</form>
+		</div>
+		<script src="js/mui.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init()
+
+			document.getElementById('login_btn').addEventListener('tap', function() {
+				var username = document.getElementById("username").value;
+				var password = document.getElementById("password").value;
+
+				user = {
+					username: username,
+					password: password,
+				}
+				// console.log(username)
+				// console.log(password)
+				console.log(window.server + '/login')
+				mui.post(window.server + '/login', user,
+					function(data) {
+						if (data.code == 0) {
+							void plus.storage.setItem('is_login', JSON.stringify(user));
+							var is_login = plus.storage.getItem('is_login')
+							console.log(is_login)
+							mui.openWindow({
+								url: 'user_info.html',
+								id: 'user_info',
+								styles: {
+									top: '0px',
+									bottom: '50px'
+								},
+								extras:data.data
+								
+							})
+						}
+					}, 'json'
+				);
+			})
+
+			document.getElementById('register_btn').addEventListener('tap', function() {
+				mui.openWindow({
+					url: 'register.html',
+					id: 'register.html',
+					styles: {
+						top: '0px',
+						bottom: '50px'
+					}
+				})
+			})
+		</script>
+	</body>
+</html>
