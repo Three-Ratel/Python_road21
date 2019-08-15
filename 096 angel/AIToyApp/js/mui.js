@@ -7,9 +7,15 @@
  * MUI核心JS
  * @type _L4.$|Function
  */
-window.server = 'http://192.168.11.33:9527'
 
-window.server_avatar = window.server + '/get_avatar/'
+window.serv = "http://192.168.11.33:9527";
+window.ws_serv = "ws://192.168.11.33:9528/app/";
+window.image_serv = window.serv + "/get_cover/";
+window.music_serv = window.serv + "/get_music/";
+window.chat_serv = window.serv + "/get_chat/";
+window.qr_serv = window.serv + "/get_qr/";
+
+
 var mui = (function(document, undefined) {
 	var readyRE = /complete|loaded|interactive/;
 	var idSelectorRE = /^#([\w-]+)$/;
@@ -23,7 +29,7 @@ var mui = (function(document, undefined) {
 		if (!selector)
 			return wrap();
 		if (typeof selector === 'object')
-			if ($.isArrayLike(selector)){
+			if ($.isArrayLike(selector)) {
 				return wrap($.slice.call(selector), null);
 			} else {
 				return wrap([selector], null);

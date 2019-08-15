@@ -39,8 +39,33 @@
 						bottom: '50px'
 					},
 					extras: {}
-				}]			
+				}]
 			})
+
+
+			// 初始化 websocket连接
+			var ws = null;
+			var user_data = null;
+			mui.plusReady(function() {
+				var user_id = plus.storage.getItem('is_login')
+				console.log(user_id)
+				console.log('xxxxxxxxxxx')
+				if (user_id) {
+					console.log(window.server + '/auto_login/' + user_id)
+					mui.post(window.server + '/auto_login/' + user_id, {
+
+					}, function(data) {
+						console.log('xxxxxxxxxxx')
+						user_data = data.data;
+						console.log(user_data)
+					}, 'json');
+				}
+
+
+				ws = new WebSocket('ws://172.20.10.13:9528/chat/app');
+			})
+
+			console.log(user_data)
 
 			// 首页 绑定事件
 			document.getElementById('home').addEventListener('tap', function() {
@@ -69,7 +94,8 @@
 			// 我 绑定事件
 			document.getElementById('login_info').addEventListener('tap', function() {
 				var is_login = plus.storage.getItem('is_login');
-				console.log(is_login)
+
+				// console.log(is_login)
 				if (is_login) {
 					mui.openWindow({
 						url: 'user_info.html',
@@ -77,30 +103,28 @@
 						styles: {
 							top: '0px',
 							bottom: '50px'
-						}
+						},
+						extras: user_data
 					})
-				} else{
+				} else {
 					mui.openWindow({
 						url: 'login.html',
 						id: 'login.html',
 						styles: {
 							top: '0px',
 							bottom: '50px'
-						}
+						},
+
 					})
-					
+
 				}
-				
+
 			})
 
 
-			// 初始化 websocket连接
-			var ws = null;
-			mui.plusReady(function() {
-				ws = new WebSocket('ws://172.20.10.13:9528/chat/app');
-			})
-			
-			
+
+
+
 			document.addEventListener("send_message", function(eventMessage) {
 				var send_str = JSON.stringify(eventMessage.detail);
 				console.log(send_str);

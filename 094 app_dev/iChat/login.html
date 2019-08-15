@@ -18,7 +18,7 @@
 				</div>
 				<div class="mui-input-row">
 					<label>密码</label>
-					<input type="password" class="mui-input-password" placeholder="请输入密码" id='password' value="123">
+					<input type="password" class="mui-input-password" placeholder="请输入密码" id='password' value='123'>
 				</div>
 				<div class="mui-button-row">
 					<button type="button" class="mui-btn mui-btn-primary" id='login_btn'>Login</button>
@@ -40,13 +40,14 @@
 				}
 				// console.log(username)
 				// console.log(password)
-				console.log(window.server + '/login')
+				// console.log(window.server + '/login')
 				mui.post(window.server + '/login', user,
 					function(data) {
 						if (data.code == 0) {
-							void plus.storage.setItem('is_login', JSON.stringify(user));
-							var is_login = plus.storage.getItem('is_login')
-							console.log(is_login)
+							// console.log(JSON.stringify(data.data));
+							void plus.storage.setItem('is_login', data.data._id);
+							// var is_login = plus.storage.getItem('is_login')
+							// console.log(is_login)
 							mui.openWindow({
 								url: 'user_info.html',
 								id: 'user_info',

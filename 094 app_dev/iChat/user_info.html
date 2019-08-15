@@ -36,20 +36,14 @@
 		<script src="js/mui.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript">
 			mui.init({
-				var user_info = plus.storage.getItem('is_login');
-				console.log(user_info)
-				if (user_info){
-					user_dic = JSON.parse(user_info);
-					console.log(user_dic)
-				}
 				
 			})
 			var Sdata = null
 			mui.plusReady(function() {
 				Sdata = plus.webview.currentWebview();
-				// console.log(Sdata.nickname)
-				// console.log(Sdata.username)
-				// console.log(Sdata.avatar)
+				console.log(Sdata.nickname)
+				console.log(Sdata.username)
+				console.log(Sdata.avatar)
 				document.getElementById("username").innerText = Sdata.username;
 				document.getElementById("nickname").innerText = Sdata.nickname;
 				document.getElementById("avatar").src = window.server_avatar + Sdata.avatar;

@@ -1,6 +1,8 @@
 # 静态文件配置
 MUSIC_PATH = 'Musics'
 COVER_PATH = 'Covers'
+QRCODE_PATH = 'QRcode'
+
 
 # 数据库配置
 from pymongo import MongoClient
@@ -14,3 +16,6 @@ RET = {
     "MSG": "",
     "DATA": {}
 }
+
+# 二维码生成API
+QRCODE_URL = 'http://qr.liantu.com/api.php?text=%s'
