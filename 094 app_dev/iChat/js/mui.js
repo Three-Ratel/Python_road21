@@ -7,7 +7,8 @@
  * MUI核心JS
  * @type _L4.$|Function
  */
-window.server = 'http://192.168.11.33:9527'
+// window.server = 'http://192.168.11.33:9527'
+window.server = 'http://172.20.10.13:9527'
 
 window.server_avatar = window.server + '/get_avatar/'
 var mui = (function(document, undefined) {
