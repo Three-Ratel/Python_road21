@@ -1,9 +1,177 @@
+
+
+# docke准备
+
+## 1. 安装docker
+
+```nginx
+# 删除旧版本的docker
+yum remove docker
+# 指定docker-ce源
+wget -O /etc/yum.repos.d/docker-ce.repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+# 安装
+yum install -y docker-ce
+```
+
+```nginx
+# 启动docker
+systemctl start docker
+# 编辑配置文件 /etc/docker/daemon.json
+{
+    "registry-mirrors": [
+        "https://1nj0zren.mirror.aliyuncs.com",
+        "https://docker.mirrors.ustc.edu.cn",
+        "http://f1361db2.m.daocloud.io",
+        "https://registry.docker-cn.com"
+    ]
+}
+# 测试hello-world
+docker run -it hello-world
+```
+
+## 2. 制作镜像
+
+-   一般使用 乌班图 (较小)
+-   作为基础镜像
+
+### 1. dockerfile文件
+
+-   如果复制目录则需要在后面加上目录名称，只复制目录中的文件
+
+```nginx
+# 创建dockerfile文件
+vim DockerFile
+1. 指定基础镜像
+FROM 镜像名
+2. 构建执行的命令
+RUN yum install -y wget
+RUN mkdir /mydata
+3. 添加文件到 /mydata，如果是压缩包则自动解压
+ADD etc.tar.gz /mydata
+4. 本地文件copy到镜像中
+COPY test.txt /mydata
+
+5. 工作目录，启动后的目(默认根目录)
+WORKDIR /mydata
+6.ENV设置变量
+ENV name=henry
+7. VOLUME，指定当前的数据卷
+VOLUME ["/data"]
+8. EXPOSE,指定 image 的端口，必须声明
+EXPOSE 5900
+9. LABEL指定标签
+
+10. 执行的命令，只执行最后一个CMD
+CMD echo $HOME >> home.txt
+CMD ['nginx', 'g', 'daemon off;']
+```
+
+```nginx
+# 在当前目录下构建
+docker build  -t myimage -f 文件名 .
+```
+
+```nginx
+# 执行，通过浏览器访问测试
+docker run -it -P myimage
+```
+
+### 2. docker仓库
+
+-   这将使用官方的 registry 镜像来启动私有仓库。
+-   默认情况下，仓库会被创建在容器的 /var/lib/registry 目录下。
+-   可以通过 -v 参数来将镜像文件存放在本地的指定路径。
+
+```nginx
+# 搭建私有 docker 仓库
+docker run -d -p 5000:5000 --restart=always -v /opt/register:/var/lib/registery registery
+
+# 修改名称
+docker tag redis 127.0.0.1:5000/redis
+# push，修改 /etc/docker/daemon.jsonre
+{	
+	# 本地仓库地址
+    "insecure-registries":[
+   		"192.168.12.4:5000"
+   	]
+}
+
+docker push 127.0.0.1:5000/redis
+docker push 192.168.12.4:5000/redis
+# 其他主机进行 pull redis，也需要修改 /etc/docker/daemon.json
+docker push 192.168.12.4:5000/redis
+# 查看
+curl 127.0.0.1:5000/v2/_catalog
+```
+
+### 3. docker-compose
+
+-   docker编排工具：swarms，docker-compose
+-   yml/yaml 语法
+
+```nginx
+# 安装docker-compose
+pip install docker-compose
+# yml可以用来做配置文件，后缀名：yml，yaml，数据类型string，int，list，dict...
+vim docker-compose.yml
+version: "3"			# 和docker版本相对应
+services:
+	web: 
+		build: 
+			context: .  					# 指定dockerfile文件目录
+			dockerfile: "dockerfile文件"	   # 指定dockerfile文件名
+		ports:
+		- "3000:5000
+	redis:
+		image: "redis"	# 镜像名称
+:wq
+# 启动
+docker-compose up
+```
+
+```python
+# flask应用
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return 'Hello Flask'
+
+if __name__ = '__main__':
+    app.run('0.0.0.0', 5000)
+```
+
+-   yml文件语法
+
+```nginx
+# dict类型，冒号、- 后面都必须有空格, 严格要求缩进
+name: 'henry'
+age: 19
+addr:
+- 'haidian'
+- 'beijing'
+```
+
+### 4. 常用命令
+
+```nginx
+# 删除 stoped 的容器
+docker-compose rm
+# 重新构建容器，自动调用当前目录 .yml文件
+docker-compose build 
+# 查看容器状态
+docker-compose ps
+# 查看 镜像
+docker-compose images
+```
+
 # docker部署
 
 ## 1. pull环境
 
 ```nginx
-docker pull centos
+docker pull centos:tag-name
 docker pull nginx
 ```
 
@@ -50,26 +218,97 @@ Server Version: 18.09.2
 Storage Driver: overlay2
  Backing Filesystem: extfs
 ...
+# 查看镜像信息
+docker inspect 镜像名
 ```
 
 ## 2. Recap and cheat sheet
+
+### 1. 查看命令
 
 ```nginx
 # 查看本机所有镜像
 docker image ls
 docker images
+# 只显示 images 的 id
+docker images -q
 # List Docker containers (running, all, all in quiet mode)
 docker container ls
 docker container ls --all
 docker container ls -aq
+# offical 表示是否是docker的官方镜像
+docker search mysql
+
+# 查看容器启动后的logs
+options：
+	-f：实时查看日志
+docker logs 容器ID
+
+# 查看容器的资源占用率
+docker stats 容器id
+# 实时查看日志
+docker logs -f 容器id/name
 ```
+
+### 2. 删除
+
+```nginx
+# 删除镜像，只要 run 过就需要先删除 对应的容器,如果tag为none则是其他镜像的依赖
+docker rmi 镜像id
+# 强制删除image
+docker rmi -f 镜像id
+# 删除容器
+options：
+	-f：强制删除
+docker rm 容器id/别名
+docker rm -f 容器id/别名
+# 删除所有 stopped 的容器
+docker container prune
+# 删除所有容器和镜像
+docker rm -f `docker ps -qa`
+docker rmi -f `docker images -q`
+```
+
+### 3. 启动
+
+```nginx
+# 启动容器
+格式：docker run [选项] 镜像 [执行的命令]
+	-d：表示后台启动，如果启动失败则需要与-it连用
+	-it： 交互式终端
+	--name：指定启动后的容器名称
+	--rm：用于测试使用，退出容器后自动删除
+	-v：宿主机目录:容器使用的目录，把容器目录挂载到宿主机
+	-p：宿主机port:容器使用的port，把容器使用的port映射到宿主机的port
+	-P：宿主机的port是随机的
+	
+docker run -it redis
+```
+
+### 4.备份
+
+```nginx
+	 
+# 导出镜像
+docker save -o redis.tar.gz redis
+docker save redis > redis.tar.gz
+# 导入镜像
+docker load -i redis.tar.gz
+docker load < redis.tar.gz
+# push镜像
+docker commit 容器id			# 生成镜像	
+docker tag 镜像id mycentos	# 给镜像加上tag，没有tag则添加，有怎复制一份
+docker push repositoryname:tagname
+```
+
+
 
 # Part2 Containers
 
 ## 1. 进入容器
 
 ```nginx
-docker ps
+docker ps -a
 docker exec -it d1fe90d74edc /bin/bash
 sudo docker attach 容器ID  
 ```

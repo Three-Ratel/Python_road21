@@ -279,7 +279,7 @@ control + xx # 移动 cursor 到上次位置 !
 control + u  # 删除到行首
 control + k  # 删除到行尾
 control + d  # delete
-alt + r			 # 删除整行
+alt + r		 # 删除整行
 alt+f        # 光标向右移动一个单词尾
 alt+b        # 光标向左移动一个单词首
 ```
@@ -363,19 +363,19 @@ man man
 ### 4. 文件系统结构(20)
 
 ```SHELL
-/			  # 根目录
-/boot   # 存放系统引导文件(内核文件、引导加载器)
+/			# 根目录
+/boot   	# 存放系统引导文件(内核文件、引导加载器)
 /run		# 服务或系统启动后生成的文件
-/etc    # 配置文件
-/home   # 普通用户的家目录
-/root 	# root用户家目录
+/etc    	# 配置文件
+/home   	# 普通用户的家目录
+/root 		# root用户家目录
 
-/bin    # 所有用户均可使用的命令
-/sbin   # 管理员可以使用的命令，管理类命令
+/bin    	# 所有用户均可使用的命令
+/sbin   	# 管理员可以使用的命令，管理类命令
 /lib		# 基本库文件，win的 *.dll, linux的 *.so
-/lib64  # 专门用于64位操作系统的一些辅助库文件
+/lib64  	# 专门用于64位操作系统的一些辅助库文件
 
-/media	# 便携式文件的挂载点
+/media		# 便携式文件的挂载点
 /mnt		# 临时文件的挂载，光盘、u盘
 /tmp		# 存放临时文件
 /srv		# 系统上允许的服务用到的数据
@@ -383,7 +383,7 @@ man man
 /usr		# 安装程序
 /var		# 存放经常变化的数据，如：日志(/var/log), message:系统启动日志，sssd:链接的用户信息，secure:其他用户登录信息
 /proc		# 存放内核和进程的虚拟文件
-/dev	  # 存放设备信息
+/dev	    # 存放设备信息
 /sys		# 存放硬件相关的虚拟文件
 ```
 
@@ -436,14 +436,13 @@ pwd
 3. -R：递归显示指定文件中的所有文件
 4. -S：根据文件大小降序显示
 5. -u
-   - with lt 按照atime排序，the newest first
-   - with l 不排序，显示atime
+   - with -lt 按照atime排序，the newest first
+   - with -l 不排序，显示atime
    - 按照atime排序显示
 6. -t：根据修改时间排序，the newest first
 7. -c
-
-   - with lt 表示按照ctime排序显示
-   - with l 不排序，显示ctime
+- with -lt 表示按照ctime排序显示
+   - with -l 不排序，显示ctime
    - 按照ctime排序
 8. -d：只显示目录文件
 9. -h：自动调节文件大小的单位(一般和l连用)
@@ -2816,7 +2815,6 @@ ftp：20/21
 ```shell
 wget -O /tmp/filename url
 wget -P /tmp url
-# 
 wget -p url
 ```
 
@@ -2877,11 +2875,12 @@ kill -l			# 查看系统支持的所有信号
 1 sighup		# 重读配置文件，平滑重启
 2 sigint		# 终止正在运行的进程，相当于 ctrl+c
 9 sigkill		# 强制杀死进程
-18 sigont		# 继续运行
+18 sigcont		# 继续运行
 19 sigstop		# 后台休眠
 
 # 启动sshd服务
 systemctl start sshd
+systemclt daemon-reload 
 ```
 
 ## 4. 系统工具
@@ -3022,6 +3021,7 @@ systemctl list-unit-files ｜ grep enabled
 
 ```shell
 iptables -F 				# 清空防火墙规则
+iptables -L 				# 查看防火墙规则
 systemctl stop iptables
 systemctl status firewalld
 ```
@@ -3101,3 +3101,4 @@ vim .bashrc
 makevirtualenv django3
 ```
 
+ 
