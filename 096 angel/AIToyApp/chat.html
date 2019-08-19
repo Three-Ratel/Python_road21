@@ -48,7 +48,8 @@
 					from_user:Sdata.friend_id,
 					to_user:window.localStorage.getItem("user_id")
 				}, function(data) {
-					console.log(JSON.stringify(data));
+					// console.log(JSON.stringify(data));
+					console.log('xxxxxxxxxxxxxxxx')
 					for(var i = 0; i < data.DATA.length; i++) {
 						chat_url = window.chat_serv + data.DATA[i].chat
 						if(data.DATA[i].from_user == window.localStorage.getItem("user_id")) {
@@ -81,7 +82,7 @@
 
 			function create_chat(chat_info, pppp, self) {
 
-				console.log(JSON.stringify(chat_info));
+				// console.log(JSON.stringify(chat_info));
 
 				var div = document.createElement("div");
 				var span = document.createElement("span");

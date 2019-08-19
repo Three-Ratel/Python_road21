@@ -641,7 +641,7 @@ get key						# 查询 key 对应的 value
 ### 3. python操作redis
 
 1.  --protected-mode no：测试使用，没有设置密码可以使用主机ip
-2.   redis只能存储：byte, string or number
+2.   redis只能存储：**byte, string or number**
 
 ```python
 from redis import Redis

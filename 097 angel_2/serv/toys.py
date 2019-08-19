@@ -8,7 +8,7 @@ toys = Blueprint('toys', __name__)
 
 
 @toys.route('/web')
-def simulate():
+def web():
     return render_template('WebToy.html')
 
 
@@ -16,15 +16,10 @@ def simulate():
 def open_toy():
     device_key = request.form.get('device_key')
     # print(device_key)
-    device = mongo.devices.find_one({'device_key': device_key})
+
 
     # 如果没有玩具的二维码，玩具未授权
     ret = {}
-    if not device:
-        ret['code'] = 1
-        ret['music'] = "Nobind.mp3"
-        # print('玩具未授权', ret)
-        return jsonify(ret)
 
     toy = mongo.toys.find_one({'device_key': device_key})
     if toy:
@@ -33,7 +28,14 @@ def open_toy():
         ret['toy_id'] = str(toy.get('_id'))
         ret['name'] = str(toy.get('toy_name'))
     else:
-        ret['code'] = 2
-        ret["music"] = "Nolic.mp3"
-    # print(ret)
+        # print(ret)
+        device = mongo.devices.find_one({'device_key': device_key})
+        if device:
+            ret['code'] = 1
+            ret['music'] = "Nobind.mp3"
+        else:
+            # print('玩具未授权', ret)
+            ret['code'] = 2
+            ret["music"] = "Nolic.mp3"
+
     return jsonify(ret)

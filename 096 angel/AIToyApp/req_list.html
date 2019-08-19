@@ -22,7 +22,8 @@
 	    mui.post(window.serv + '/req_list',{
 	    		user_id : window.localStorage.getItem("user_id")
 	    	},function(data){
-	    		console.log(JSON.stringify(data));
+				// 打印好友请求
+	    		// console.log(JSON.stringify(data));
 	    		for (var i = 0; i < data.DATA.length; i++) {
 	    			create_req(data.DATA[i]);
 	    		} 

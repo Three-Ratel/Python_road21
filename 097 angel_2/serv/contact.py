@@ -6,6 +6,18 @@ from config import mongo, RET
 contact = Blueprint('contact', __name__)
 
 
+@contact.route('/req_list', methods=['post'])
+def req_list():
+    
+
+
+
+
+
+
+
+
+
 @contact.route('/add_req', methods=['post'])
 def add_req():
     request_info = request.form.to_dict()

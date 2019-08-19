@@ -2,7 +2,7 @@ import os
 
 from flask import Blueprint, jsonify, send_file
 
-from config import mongo, RET, COVER_PATH, MUSIC_PATH, QRCODE_PATH
+from config import mongo, RET, COVER_PATH, MUSIC_PATH, QRCODE_PATH, CHAT_PATH
 
 content = Blueprint('content', __name__)
 
@@ -12,7 +12,6 @@ def content_list():
     data_list = list(mongo.content.find({}))
     for index, info in enumerate(data_list):
         info['_id'] = str(info['_id'])
-    # print(data_list)
     RET['CODE'] = 0
     RET['MSG'] = '资源获取成功'
     RET['data'] = data_list
@@ -29,8 +28,6 @@ def get_cover(filename):
 @content.route('/get_music/<filename>', methods=['get'])
 def get_music(filename):
     path_music = os.path.join(MUSIC_PATH, filename)
-    # print(path_music)
-    # os.system(f'ffplay {path_music}')
     return send_file(path_music)
 
 
@@ -40,4 +37,8 @@ def get_qr(filename):
     return send_file(path_code)
 
 
-
+@content.route('/get_chat/<filename>', methods=['get'])
+def get_chat(filename):
+    path_chat = os.path.join(CHAT_PATH, filename)
+    print(path_chat)
+    return send_file(path_chat)

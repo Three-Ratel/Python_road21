@@ -68,7 +68,8 @@
     var serv = "http://127.0.0.1:9527";
 
     var reco = null;
-    var audio_context = new AudioContext();//音频内容对象
+    {#var audio_context = new AudioContext();//音频内容对象#}
+    var audio_context = null;//音频内容对象
     navigator.getUserMedia = (navigator.getUserMedia ||
         navigator.webkitGetUserMedia ||
         navigator.mozGetUserMedia ||
@@ -79,6 +80,7 @@
     });
 
     function create_stream(user_media) {
+        audio_context = new AudioContext();//音频内容对象
         var stream_input = audio_context.createMediaStreamSource(user_media);
         reco = new Recorder(stream_input);
     }

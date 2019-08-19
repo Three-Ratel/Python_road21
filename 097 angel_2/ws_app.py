@@ -14,18 +14,17 @@ web_socket = {}
 def app(user_id):
     app_socket = request.environ.get('wsgi.websocket')  # type:WebSocket
     web_socket[user_id] = app_socket
-    print('建立app_socket连接', app_socket)
+    print('建立app_socket连接', app_socket, user_id)
     while True:
         try:
+            # 收发数据
             msg = app_socket.receive()
             msg_info = json.loads(msg)
-            # print('xxxxxxxxxxx', msg_info)
             receiver = msg_info.get('to_user')
             receiver_socket = web_socket.get(receiver)
-            # print(receiver_socket)
             receiver_socket.send(msg)
-        finally:
-            return 'ok'
+        except:
+            pass
 
 
 @ws.route('/toy/<toy_id>')
@@ -33,13 +32,16 @@ def toy(toy_id):
     toy_socket = request.environ.get('wsgi.websocket')  # type:WebSocket
     web_socket[toy_id] = toy_socket
     print('保持toy_socket连接。。。', toy_socket)
-    try:
-        while True:
+
+    while True:
+        try:
             msg = toy_socket.receive()
             msg_info = json.loads(msg)
-            print('toy接收', msg_info)
-    finally:
-        return 'ok'
+            receiver = msg_info.get('to_user')
+            receiver_socket = web_socket.get(receiver)
+            receiver_socket.send(msg)
+        except:
+            pass
 
 
 if __name__ == '__main__':

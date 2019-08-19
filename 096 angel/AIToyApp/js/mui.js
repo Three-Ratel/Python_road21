@@ -9,6 +9,9 @@
  */
 
 // window.serv = "http://172.20.10.13:9527";
+// window.ws_serv = "ws://172.20.10.13:9528/app/";
+
+
 window.serv = "http://192.168.11.26:9527";
 window.ws_serv = "ws://192.168.11.26:9528/app/";
 window.image_serv = window.serv + "/get_cover/";

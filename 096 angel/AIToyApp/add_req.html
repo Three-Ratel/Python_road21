@@ -46,7 +46,7 @@
 				}else{
 					var user_id = window.localStorage.getItem("user_id")
 				}
-				console.log(JSON.stringify(Sdata))
+				// console.log(JSON.stringify(Sdata))
 			    mui.post(window.serv + '/add_req',{
 			    		add_user:user_id,
 			    		toy_id:Sdata.toy_id,
@@ -54,7 +54,7 @@
 			    		req_info:req_info,
 			    		remark:remark
 			    	},function(data){
-			    		console.log(JSON.stringify(data));
+			    		// console.log(JSON.stringify(data));
 			    	},'json'
 			    );    
 			})

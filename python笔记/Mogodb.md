@@ -3,11 +3,9 @@
 -   port：27017，mysql：3306，redis：6379
 -   NoSQL 不仅仅只是SQL
 
-## 1. mongodb基础
-
 ### 1. mongodb中概念
 
-1.  使用了不存在的对象即创建该对象
+1.  使用不存在的对象即创建该对象
 2.  Json结构存储。dict用法
 
 #### table1-1 mysql和mongodb对比
@@ -25,7 +23,7 @@
 -   F6：执行（nosqlbooster-for-mongodb）
 
 ```python
-ObjecgtID : Documents 自动生成的 _id，时间戳+机器码(mac序列化结果)+PID+计数器(整个数据库的计数器，会共享给server中的其他Mongodb)
+ObjecgtID : Documents 自动生成的 _id，时间戳+机器码(mac地址序列化结果)+PID+计数器(整个数据库的计数器，会共享给server中的其他Mongodb)
 string							# 必须是 utf-8的字符
 Boolean							# true/false
 Integer							# 整数据(int32, int64)
@@ -35,7 +33,7 @@ Object							# python中的dict，其他语言都叫object
 Null							# 空
 Timestamp						# 时间戳
 
-**db.users.insert({data:ISODate()})
+db.users.insert({data:ISODate()})
 ```
 
 ### 3. 常用操作
@@ -228,8 +226,8 @@ db.tablename.delete({age:1})
 ```python
 # 升序排序，-1则为逆序
 db.users.find({}).sort({age:1})
-# 筛选前 3(n) 条
-db.users.find({}).limit(3)
+# 筛选前 -3(n) 条
+db.users.find({}).limit(-3)
 # 跳过前 3(n) 条
 db.users.find({}).skip(3)
 # 顺序任意

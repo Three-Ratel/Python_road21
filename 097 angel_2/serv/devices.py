@@ -91,7 +91,7 @@ def bind_toy():
     mongo.users.update_one({'_id': ObjectId(user_id)},
                            {'$set': {'friend_list': user['friend_list'], 'bind_toys': user['bind_toys']}})
     # 更新 chats 数据库中的数据
-    user_list = [user_id, chat_id]
+    user_list = [user_id, toy_id]
     mongo.chats.update_one({'_id': chat.inserted_id}, {'$set': {'user_list': user_list}})
     RET['CODE'] = 0
     RET['MSG'] = '绑定成功'
