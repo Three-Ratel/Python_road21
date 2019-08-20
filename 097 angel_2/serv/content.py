@@ -1,3 +1,10 @@
+"""
+content_list: 从服务器获取内容
+get_cover: 获取歌曲图片
+get_music: 获取歌曲
+get_qr: 获取二维码
+get_chat：获取聊天语音
+"""
 import os
 
 from flask import Blueprint, jsonify, send_file
@@ -40,5 +47,7 @@ def get_qr(filename):
 @content.route('/get_chat/<filename>', methods=['get'])
 def get_chat(filename):
     path_chat = os.path.join(CHAT_PATH, filename)
-    print(path_chat)
     return send_file(path_chat)
+
+
+

@@ -18,7 +18,7 @@
 				<span class="mui-icon mui-icon-chat"><span class="mui-badge mui-badge-red" id="count">0</span></span>
 				<span class="mui-tab-label">消息</span>
 			</a>
-			<a class="mui-tab-item" id="req_list"> 
+			<a class="mui-tab-item" id="req_list">
 				<span class="mui-icon mui-icon-email"></span>
 				<span class="mui-tab-label">好友请求</span>
 			</a>
@@ -40,21 +40,21 @@
 				extras: {}
 			}]
 		})
-		
+
 		var ws = null;
 		var user_info = null;
-		mui.plusReady(function () {
-			if(window.localStorage.getItem("user_id")){
-				mui.post(window.serv + '/auto_login',{
-						_id:window.localStorage.getItem("user_id")
-				},function(data){ 
-						user_info = data.DATA;
-						// console.log(JSON.stringify(user_info));
-						document.getElementById("count").innerText = user_info.chat.count;
-						create_ws(data.DATA._id);
-					},'json'
-				);
-			}		    
+		mui.plusReady(function() {
+			if (window.localStorage.getItem("user_id")) {
+				mui.post(window.serv + '/auto_login', {
+					_id: window.localStorage.getItem("user_id")
+				}, function(data) {
+					user_info = data.DATA;
+					// console.log(JSON.stringify(user_info));
+					// console.log("xxxxxxxxxxxxxxx");
+					document.getElementById("count").innerText = user_info.chat.count;
+					create_ws(data.DATA._id);
+				}, 'json');
+			}
 		})
 
 		function create_ws(id) {
@@ -62,15 +62,15 @@
 			// console.log(window.ws_serv + id)
 			ws.onmessage = function(eventMessage) {
 				var recv_msg = JSON.parse(eventMessage.data);
-//				user_info[recv_msg.from_user] += 1;
-				document.getElementById("count").innerText = parseInt(document.getElementById("count").innerText)+1;
-//				var p = plus.audio.createPlayer(window.chat_serv + recv_msg.chat);
-////				mui.toast("开始播放语音消息");
-//				p.play();
+				user_info[recv_msg.from_user] += 1;
+				document.getElementById("count").innerText = parseInt(document.getElementById("count").innerText) + 1;
+				var p = plus.audio.createPlayer(window.chat_serv + recv_msg.chat);
+				mui.toast("开始播放语音消息");
+				p.play();
 				var chat = plus.webview.getWebviewById("chat.html");
-				mui.fire(chat,'add_chat',recv_msg);
-				
-				
+				mui.fire(chat, 'add_chat', recv_msg);
+
+
 				// console.log(eventMessage.data);
 			};
 			ws.onclose = function() {
@@ -80,18 +80,18 @@
 
 		document.addEventListener("send_music", function(event) {
 			var s = JSON.stringify(event.detail);
-			console.log('推送音乐到toy'+s)
+			console.log('推送音乐到toy' + s)
 			ws.send(s);
 		});
-		
+
 		document.addEventListener("send_chat", function(event) {
 			var s = JSON.stringify(event.detail);
 			ws.send(s);
 			mui.back()
 		});
-		
+
 		document.getElementById('self').addEventListener('tap', function() {
-			if(window.localStorage.getItem("user_id")) {
+			if (window.localStorage.getItem("user_id")) {
 				mui.openWindow({
 					url: "user_info.html",
 					id: "user_info.html",
@@ -99,7 +99,7 @@
 						top: "0px",
 						bottom: "50px"
 					},
-					extras:user_info
+					extras: user_info
 				})
 			} else {
 				mui.openWindow({
@@ -125,9 +125,9 @@
 				extras: {}
 			});
 		})
-		
-		document.getElementById('friend_list').addEventListener('tap',function () {
-		    mui.openWindow({ 
+
+		document.getElementById('friend_list').addEventListener('tap', function() {
+			mui.openWindow({
 				url: 'message.html',
 				id: 'message.html',
 				styles: {
@@ -135,26 +135,26 @@
 					bottom: "50px"
 				},
 				extras: user_info,
-				createNew:true
-			});    
+				createNew: true
+			});
 		})
-		
-		document.addEventListener("cut",function(eventMessage){
+
+		document.addEventListener("cut", function(eventMessage) {
 			var cut = eventMessage.detail.cut;
 			var count = parseInt(document.getElementById("count").innerText);
 			document.getElementById("count").innerText = count - cut;
 		})
-		
-		document.getElementById('req_list').addEventListener('tap',function () {
-		    mui.openWindow({ 
+
+		document.getElementById('req_list').addEventListener('tap', function() {
+			mui.openWindow({
 				url: 'req_list.html',
 				id: 'req_list.html',
 				styles: {
 					top: "0px",
 					bottom: "50px"
 				},
-				createNew:true
-			});        
+				createNew: true
+			});
 		})
 	</script>
 

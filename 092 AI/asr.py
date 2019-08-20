@@ -18,7 +18,7 @@ def get_file_content(filePath):
 
 
 # 识别本地文件
-res = client.asr(get_file_content(f'audio.mp3'), 'pcm', 16000, {
+res = client.asr(get_file_content('audio.mp3'), 'pcm', 16000, {
     'dev_pid': 1536,
 })
 

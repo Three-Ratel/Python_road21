@@ -128,7 +128,7 @@ def get_json():
 
 ## 4. request
 
-- request在flask中是够公共变量(顶头小写)，请求上下文保存机制
+- request在flask中是公共变量(顶头小写)，请求上下文保存机制
 - 从reqeust中获取的数据类型为：ImmutableMultiDict([('id', '1')])
 
 ```python
@@ -178,14 +178,14 @@ if __name__ == '__main__':
 
 ## 5. Jinja2
 
-### 1.  与templates不同
+### 1.  与templates不同(4)
 
-1. {{ my_input(arg1, arg2...) }}：引用或执行，函数必须有括号
+1. {{ my_input(arg1, arg2...) }}：引用或执行，**函数必须有括号**
 2. {% %}：逻辑，方法需要有()
 3. dict类型可以使用 info['username']
 4. 如果变量没有定义会报错
 
-### 2. 传递变量
+### 2. 传递变量(关键字传参)
 
 ```python
 app.config['DEBUG'] = True
@@ -199,7 +199,7 @@ app.run('0.0.0.0:9527')
 
 ### 3. 传递函数
 
-- @app.template_global()：项目中任何地方都可以使用被装饰的函数
+- **@app.template_global()**：项目中任何地方都可以使用被装饰的函数
 
 ```python
 @app.template_global()
@@ -246,12 +246,12 @@ def my_input(na, ty):
 
 ## 6. session
 
-1. 基于请求上下文
+1. **基于请求上下文**
 2. 一般和 request 一起导入
 3. **交由客户端保管机制**，加密后存到浏览器的cookies中。保存一串字符串
-4. 原生：不建议添加过多的 key:values，健值对越多，浏览器需要保存的cookies越长，Flask会先对健值对进行压缩在加密
+4. 原生：不建议添加过多的 key:values，健值对越多，浏览器需要保存的cookies越长，Flask会先对健值对进行压缩和加密
 5. flask理念：一切从简为服务器减轻压力
-6. flask-session：把加密的session从浏览器，移动到服务端
+6. **flask-session：把加密后的session从浏览器，移动到服务端**
 
 ```python
 from flask import session
@@ -399,7 +399,7 @@ def home(filename):
 
 ## 2. Flask中的配置
 
-### 1. 初始化配置
+### 1. 初始化配置(3)
 
 #### 1. template_folder=''
 
@@ -482,7 +482,7 @@ app.config.from_object(TestConfig)
 
 ## 3. Blueprint
 
-- 不能被run的flask实例，不存在config，**app的功能隔离**
+- **不能被run的flask实例，不存在config，app的功能隔离**
 
 ```python
 from flask import Blueprint
@@ -557,9 +557,9 @@ def error404(error_message):
 
 ## 1. CBV
 
-1.  views.MethodView：继承让当前class可以成为视图类
+1.  **views.MethodView**：继承让当前class可以成为视图类
 2.  定义视图类支持的请求方式
-3.  添加路由，as_view(name='login_login')。name就是endpoint(endpoint=None的情况下)
+3.  添加路由，as_view(name='login_login')。**name就是endpoint(endpoint=None的情况下)**
 4.  可以添加类变量：methods  / decorator = ['is_login']
 
 ```python
@@ -574,6 +574,7 @@ def is_login():
 @app.after_request
 def login_ok(res):
   	return res
+
 # methods：默认是类对应的方法
 class Login(views.MethodView):
   	# decorators = []
@@ -583,7 +584,7 @@ class Login(views.MethodView):
       	pass
 ```
 
--   add_url_rule()
+-   **add_url_rule()：添加路由**
 
 ```python
 def add_url_rule(self, rule, endpoint=None, view_func=None, **options):pass
@@ -593,7 +594,7 @@ def add_url_rule(self, rule, endpoint=None, view_func=None, **options):pass
 # view_func，视图函数，视图类.as_view(name='xxx')
 ```
 
--   view_func()：返回一个 view 函数
+-   **view_func()：返回一个 view 函数**
 
 ```python
 def as_view(cls, name, *class_args, **class_kwargs):pass
@@ -628,6 +629,8 @@ brew install redis
 2.  多次设置同一个key 会被覆盖
 
 ```python
+# 终端
+redis-cli
 # 总共 16 个库，0-15，用来数据隔离
 select 8					# 切换 8 号库，默认 0 号库
 set key value				# 设置一个健值对，哈希存储结构{key:value}
@@ -680,7 +683,7 @@ if __name__ == '__main__':
 		app.run()
 ```
 
--   flask 利用session_interface，选择session存放位置和机制
+-   **flask 利用session_interface，选择session存放位置和机制**
 
 ```python
 app.session_interface			

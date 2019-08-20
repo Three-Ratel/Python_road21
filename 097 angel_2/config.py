@@ -10,6 +10,13 @@ from pymongo import MongoClient
 MG = MongoClient('localhost', 27017)
 mongo = MG['Angel']
 
+
+# Redis 配置
+from redis import Redis
+
+RDB = Redis(host='127.0.0.1', port=6379)
+
+
 # 返回配置
 RET = {
     "CODE": 0,

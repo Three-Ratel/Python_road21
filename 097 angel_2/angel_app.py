@@ -1,11 +1,10 @@
 from flask import Flask
 
-from serv.chat import chat
 from serv.contact import contact
 from serv.content import content
 from serv.devices import devices
 from serv.friends import friend
-from serv.toys import toys
+from serv.uploader import uploader
 from serv.users import users
 
 app = Flask(__name__)
@@ -14,9 +13,8 @@ app.register_blueprint(users)
 app.register_blueprint(content)
 app.register_blueprint(devices)
 app.register_blueprint(contact)
-app.register_blueprint(toys)
 app.register_blueprint(friend)
-app.register_blueprint(chat)
+app.register_blueprint(uploader)
 
 """调用生成toys的二维码函数"""
 # from QRcreate import get_code

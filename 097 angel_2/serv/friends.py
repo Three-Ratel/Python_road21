@@ -1,12 +1,16 @@
-import os
+"""
+friend_list: 获取好友列表
+chat_list: 聊天信息
+recv_msg: toy 获取消息
+"""
 import time
 from uuid import uuid4
-
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
 
-from baiduAI import text2audio
-from config import mongo, RET, CHAT_PATH
+from config import mongo, RET
+from tools.BaiduAI import text2audio
+from tools.redis_msg import get_msg
 
 friend = Blueprint('friend', __name__)
 
@@ -19,6 +23,7 @@ def friend_list():
     RET['CODE'] = 0
     RET['MSG'] = '好友查询'
     RET['DATA'] = friend_info.get('friend_list')
+    print(RET)
     return jsonify(RET)
 
 
@@ -30,77 +35,37 @@ def chat_list():
 
     RET['CODE'] = 0
     RET['MSG'] = '查询聊天记录'
-    RET['DATA'] = chat_win.get('chat_list')[-1:]
+    chat_list = chat_win.get('chat_list')
+    if len(chat_list) >= 5:
+        RET['DATA'] = chat_list[-5:]
+    else:
+        RET['DATA'] = chat_list
 
     return jsonify(RET)
 
 
-@friend.route('/app_uploader', methods=['post'])
-def app_uploader():
-    chat_info = request.form.to_dict()
-    print('chat_info', chat_info)
-    sender = chat_info.get('user_id')
-    receiver = chat_info.get('to_user')
-    rec = request.files.get('reco_file')
-    file_path = os.path.join(CHAT_PATH, rec.filename)
-    rec.save(file_path)
-    os.system(f'ffmpeg -i {file_path} {file_path}.mp3')
-    os.remove(file_path)
+@friend.route('/recv_msg', methods=['post'])
+def recv_msg():
+    from_user = request.form.get('from_user')
+    to_user = request.form.get('to_user')
+    chat_info = mongo.chats.find_one({'user_list': {'$all': [from_user, to_user]}})
 
-    rec_chat_info = {
-        'from_user': sender,
-        'to_user': receiver,
-        'chat': f'{rec.filename}.mp3',
-        'createTime': time.time()
-
-    }
-
-    mongo.chats.update_one({'user_list': {'$all': [sender, receiver]}}, {'$push': {'chat_list': rec_chat_info}})
-
-    print(mongo.chats.find_one({'user_list': {'$all': [sender, receiver]}}))
-    friend_remark = '你爸爸'
-    friend_list = mongo.toys.find_one({'_id': ObjectId(receiver)}).get('friend_list')
-    for i in friend_list:
-        if i.get('friend_id') == sender:
-            friend_remark = i.get('friend_remark')
+    # 从玩具表中查找 friend_remark 即在 friend_list 中的备注
+    toy = mongo.toys.find_one({'_id': ObjectId(to_user)})
+    friend_list = toy.get('friend_list')
+    friend_remark = '小伙伴'
+    for friend in friend_list:
+        if friend.get('friend_id') == from_user:
+            friend_remark = friend.get('friend_remark')
             break
 
-    text2audio(f'你收到了来自{friend_remark}的消息')
-    RET['CODE'] = 0
-    RET['MSG'] = '上传成功'
-    RET['DATA'] = {"filename": 'notification.mp3', "friend_type": "app"}
-    return jsonify(RET)
-
-
-@friend.route('/toy_uploader', methods=['post'])
-def toy_uploader():
-    chat_info = request.form.to_dict()
-    sender = chat_info.get('user_id')
-    receiver = chat_info.get('to_user')
-    print(chat_info)
-    # 语音消息
-    rec = request.files.get('reco')
-    file_path = os.path.join(CHAT_PATH, rec.filename)
-    rec.save(file_path)
-
-    # 为toy的录音文件创建一个文件名 .mp3
-    uid = uuid4()
-    filename = f'{rec.filename}{uid}.mp3'
-    new_file_path = os.path.join(CHAT_PATH, filename)
-    os.system(f'ffmpeg -i {file_path} {new_file_path}')
-    print(file_path, new_file_path)
-    os.remove(file_path)
-
-    rec_chat_info = {
-        'from_user': sender,
-        'to_user': receiver,
-        'chat': f'{filename}',
-        'createTime': time.time()
-    }
-    mongo.chats.update_one({'user_list': {'$all': [sender, receiver]}}, {'$push': {'chat_list': rec_chat_info}})
-
-    RET['CODE'] = 0
-    RET['MSG'] = '上传成功'
-    RET['DATA'] = {"filename": f"{filename}", "friend_type": "app"}
-    print(RET)
-    return jsonify(RET)
+    # 从redis数据库中获取 未读条数
+    count = get_msg(from_user, to_user)
+    file_name = text2audio(f'您收到了来自{friend_remark}的{count}条消息', filename=f'{uuid4()}.mp3')
+    if count != 0:
+        ret = chat_info.get('chat_list')[-count:]
+        ret.reverse()
+        ret.append({"from_user": from_user, "chat": file_name, "create_time": time.time()})
+    else:
+        ret = [{"from_user": from_user, "chat": file_name, "create_time": time.time()}]
+    return jsonify(ret)

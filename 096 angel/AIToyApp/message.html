@@ -19,25 +19,26 @@
 		<script src="js/mui.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript">
 			mui.init();
-			mui.back = function(){};
+			mui.back = function() {};
 			var Sdata = null;
 			var index = null;
-			mui.plusReady(function(){
+			mui.plusReady(function() {
 				Sdata = plus.webview.currentWebview();
 				index = plus.webview.getWebviewById("H5945F808");
-				mui.post(window.serv + '/friend_list',{
-						_id:window.localStorage.getItem("user_id")
-					},function(data){
-						console.log(JSON.stringify(data));
-						for (var i = 0; i < data.DATA.length; i++) {
-							create_friend(data.DATA[i]);
-						}
-					},'json'
-				);
+				mui.post(window.serv + '/friend_list', {
+					_id: window.localStorage.getItem("user_id")
+				}, function(data) {
+					console.log(JSON.stringify(data));
+					for (var i = 0; i < data.DATA.length; i++) {
+						create_friend(data.DATA[i]);
+					}
+				}, 'json');
 			})
 
 			function create_friend(friend_info) {
-				
+				console.log(JSON.stringify(friend_info));
+				console.log('xxxxxxxxxxxxxxxxxxx');
+
 				var span = document.createElement("span");
 				span.className = "mui-badge mui-badge-red";
 				span.innerText = Sdata.chat[friend_info.friend_id];
@@ -47,7 +48,9 @@
 				var a = document.createElement("a");
 				a.onclick = function() {
 					span.innerText = 0;
-					mui.fire(index,'cut',{cut:Sdata.chat[friend_info.friend_id]})
+					mui.fire(index, 'cut', {
+						cut: Sdata.chat[friend_info.friend_id]
+					})
 					mui.openWindow({
 						url: "chat.html",
 						id: "chat.html",
@@ -56,7 +59,7 @@
 				};
 				var img = document.createElement("img");
 				img.className = "mui-media-object mui-pull-left";
-				img.src = "avatar/"+friend_info.friend_avatar;
+				img.src = "avatar/" + friend_info.friend_avatar;
 				var div = document.createElement("div");
 				div.className = "mui-media-body";
 				div.innerText = friend_info.friend_remark;

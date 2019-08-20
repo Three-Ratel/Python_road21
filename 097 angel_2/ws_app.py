@@ -14,7 +14,7 @@ web_socket = {}
 def app(user_id):
     app_socket = request.environ.get('wsgi.websocket')  # type:WebSocket
     web_socket[user_id] = app_socket
-    print('建立app_socket连接', app_socket, user_id)
+    print('建立app_socket连接。。。', app_socket, user_id)
     while True:
         try:
             # 收发数据
@@ -31,8 +31,7 @@ def app(user_id):
 def toy(toy_id):
     toy_socket = request.environ.get('wsgi.websocket')  # type:WebSocket
     web_socket[toy_id] = toy_socket
-    print('保持toy_socket连接。。。', toy_socket)
-
+    print('保持toy_socket连接。。。', toy_socket, toy_id)
     while True:
         try:
             msg = toy_socket.receive()

@@ -1,7 +1,16 @@
+"""
+scan_qr: 扫描二维码接口
+bind_body: app绑定玩具
+toy_list: app获取绑定玩具信息
+
+web: 前端模拟玩具
+open_toy: 玩具开机验证
+"""
+
 from bson import ObjectId
 from flask import Blueprint, request, jsonify, render_template
 
-from config import mongo, RET
+from config import RET, mongo
 
 devices = Blueprint('devices', __name__)
 
@@ -112,4 +121,37 @@ def toy_list():
     return jsonify(RET)
 
 
+"""返回模拟玩具 web端"""
 
+
+@devices.route('/web')
+def web():
+    return render_template('WebToy.html')
+
+
+@devices.route('/open_toy', methods=['post'])
+def open_toy():
+    device_key = request.form.get('device_key')
+    # print(device_key)
+
+    # 如果没有玩具的二维码，玩具未授权
+    ret = {}
+
+    toy = mongo.toys.find_one({'device_key': device_key})
+    if toy:
+        ret['code'] = 0
+        ret['music'] = "Success.mp3"
+        ret['toy_id'] = str(toy.get('_id'))
+        ret['name'] = str(toy.get('toy_name'))
+    else:
+        # print(ret)
+        device = mongo.devices.find_one({'device_key': device_key})
+        if device:
+            ret['code'] = 1
+            ret['music'] = "Nobind.mp3"
+        else:
+            # print('玩具未授权', ret)
+            ret['code'] = 2
+            ret["music"] = "Nolic.mp3"
+
+    return jsonify(ret)
