@@ -126,7 +126,8 @@
 							mui.fire(index, 'send_chat', {
 								chat: res.DATA.filename,
 								to_user: Sdata.friend_id,
-								from_user: window.localStorage.getItem("user_id")
+								from_user: window.localStorage.getItem("user_id"),
+								friend_type: res.DATA.friend_type
 							})
 
 							create_chat(Sdata, file_path, "self")

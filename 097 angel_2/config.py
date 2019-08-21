@@ -43,3 +43,20 @@ VOICE = {
     'pit': 6,
     'per': 4,
 }
+
+
+# 图灵机器人
+TU_SERVER_URL = 'http://openapi.tuling123.com/openapi/api/v2'
+DATA = {
+
+    "perception": {
+        "inputText": {
+            "text": "附近的酒店"
+        }
+    },
+
+    "userInfo": {
+        "apiKey": "2213889293634c759484cac88a91c170",
+        "userId": "110"
+    }
+}

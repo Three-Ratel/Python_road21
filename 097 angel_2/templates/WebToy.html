@@ -7,7 +7,8 @@
 </head>
 <body>
 <audio id="player" autoplay controls></audio>
-<p>DeviceKey:<input type="text" id="device_key" value="16ea28f610687bf42859c94cc3a74eda">
+<p>DeviceKey:<input type="text" id="device_key" value="6a3d17b99dd2ef65c1de6f1289a2f1af"> // 小粉球
+{#<p>DeviceKey:<input type="text" id="device_key" value="16ea28f610687bf42859c94cc3a74eda"> // 小懒猪#}
     <button onclick="open_toy()">玩具开机</button>
 </p>
 <p>消息来自：<span id="from_user"></span></p>
@@ -111,7 +112,7 @@
                 dataType: 'json',
                 success: function (data) {
                     console.log(data);
-                    if (data.DATA.code == 0) {
+                    if (data.CODE == 0) {
                         document.getElementById("player").src =
                             "http://127.0.0.1:9527/get_music/SendOK.mp3";
                     }

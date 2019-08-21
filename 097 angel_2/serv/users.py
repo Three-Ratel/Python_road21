@@ -3,12 +3,12 @@ reg: 用户注册
 login: 用户登录
 auto_login: 登录过的用户自动登录
 """
-import json
 
 from bson import ObjectId
 from flask import Blueprint, request
 
-from config import mongo, RET, RDB
+from config import mongo, RET
+from tools.redis_msg import get_msg_count
 
 users = Blueprint('users', __name__)
 
@@ -16,7 +16,6 @@ users = Blueprint('users', __name__)
 @users.route('/reg', methods=['post'])
 def reg():
     user_info = request.form.to_dict()
-    # print(user_info)
     user_info['avatar'] = 'baba.jpg' if user_info['gender'] == '2' else 'mama.jpg'
     user_info['bind_toys'] = []
     user_info['friend_list'] = []
@@ -30,10 +29,7 @@ def reg():
 @users.route('/login', methods=['post'])
 def login():
     user_info = request.form.to_dict()
-    # print(user_info)
     user = mongo.users.find_one(user_info, {'password': 0})
-    # print(user, type(user))
-    RET = {}
     user['_id'] = str(user['_id'])
 
     if user:
@@ -44,17 +40,13 @@ def login():
         RET['CODE'] = -1
         RET['MSG'] = '用户名或密码错误'
         RET['DATA'] = {}
-    # print(RET)
-    # RET['DATA']['avatar'] = 'mama.jpg'
-    user_id = str(user.get('_id'))
-    chat_list = RDB.get(user_id)
-    if chat_list:
-        RET['DATA']['chat'] = json.loads(chat_list)
-        RET['DATA']['chat']['count'] = sum(json.loads(RDB.get(user_id)).values())
-    else:
-        RET['DATA']['chat'] = {'count': 0}
 
-    print(RET)
+    # 获取未读消息 数
+    chat_dict = get_msg_count(str(user.get('_id')))
+
+    RET['DATA']['chat'] = chat_dict
+
+    # print(RET)
     return RET
 
 
@@ -69,12 +61,10 @@ def auto_login():
     RET['MSG'] = '自动登录成功'
     RET['DATA'] = user
 
-    chat_list = RDB.get(user_id)
-    if chat_list:
-        RET['DATA']['chat'] = json.loads(chat_list)
-        RET['DATA']['chat']['count'] = sum(json.loads(RDB.get(user_id)).values())
-    else:
-        RET['DATA']['chat'] = {'count': 0}
+    # 获取未读消息 数
+    chat_dict = get_msg_count(user_id)
 
-    print(RET)
+    RET['DATA']['chat'] = chat_dict
+
+    # print(RET)
     return RET

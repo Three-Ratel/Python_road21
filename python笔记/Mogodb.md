@@ -222,6 +222,7 @@ db.tablename.delete({age:1})
 ### 4. 高级函数
 
 -   排序：sort > 跳过：skip > 筛选：limit (优先级次序，mongodb内部逻辑)
+-   count()：计算查找到数据的条数
 
 ```python
 # 升序排序，-1则为逆序

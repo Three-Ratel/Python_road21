@@ -28,7 +28,7 @@
 				mui.post(window.serv + '/friend_list', {
 					_id: window.localStorage.getItem("user_id")
 				}, function(data) {
-					console.log(JSON.stringify(data));
+					// console.log(JSON.stringify(data));
 					for (var i = 0; i < data.DATA.length; i++) {
 						create_friend(data.DATA[i]);
 					}
@@ -36,13 +36,14 @@
 			})
 
 			function create_friend(friend_info) {
-				console.log(JSON.stringify(friend_info));
-				console.log('xxxxxxxxxxxxxxxxxxx');
+				// console.log(JSON.stringify(friend_info));
+				console.log('************ message.html 页面 ************');
 
 				var span = document.createElement("span");
 				span.className = "mui-badge mui-badge-red";
 				span.innerText = Sdata.chat[friend_info.friend_id];
-				friend_info.self_avatar = Sdata.avatar;
+				friend_info.self_avatar = Sdata.avatar;				
+				
 				var li = document.createElement("li");
 				li.className = "mui-table-view-cell mui-media";
 				var a = document.createElement("a");

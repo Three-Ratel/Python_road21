@@ -50,7 +50,6 @@
 				}, function(data) {
 					user_info = data.DATA;
 					// console.log(JSON.stringify(user_info));
-					// console.log("xxxxxxxxxxxxxxx");
 					document.getElementById("count").innerText = user_info.chat.count;
 					create_ws(data.DATA._id);
 				}, 'json');
@@ -64,14 +63,11 @@
 				var recv_msg = JSON.parse(eventMessage.data);
 				user_info[recv_msg.from_user] += 1;
 				document.getElementById("count").innerText = parseInt(document.getElementById("count").innerText) + 1;
-				var p = plus.audio.createPlayer(window.chat_serv + recv_msg.chat);
-				mui.toast("开始播放语音消息");
-				p.play();
+				// var p = plus.audio.createPlayer(window.chat_serv + recv_msg.chat);
+				// mui.toast("开始播放语音消息");
+				// p.play();
 				var chat = plus.webview.getWebviewById("chat.html");
 				mui.fire(chat, 'add_chat', recv_msg);
-
-
-				// console.log(eventMessage.data);
 			};
 			ws.onclose = function() {
 				create_ws(id);

@@ -9,7 +9,7 @@ from uuid import uuid4
 from bson import ObjectId
 from flask import Blueprint, request, jsonify
 
-from config import mongo, RET, CHAT_PATH
+from config import mongo, CHAT_PATH
 from tools.BaiduAI import text2audio, dispose_reco
 from tools.redis_msg import set_msg
 
@@ -19,16 +19,14 @@ uploader = Blueprint('uploader', __name__)
 @uploader.route('/app_uploader', methods=['post'])
 def app_uploader():
     chat_info = request.form.to_dict()
-    # print('chat_info', chat_info)
     # 消息发送者和接收者以及语音信息
     sender = chat_info.get('user_id')
     receiver = chat_info.get('to_user')
     rec = request.files.get('reco_file')
-
     # 保存语音信息消息并进行格式转换为 mp3，录音格式为 .amr
     file_path = os.path.join(CHAT_PATH, rec.filename)
     rec.save(file_path)
-    os.system(f'ffmpeg -i {file_path} {file_path}.mp3')
+    os.system(f'ffmpeg -f -i {file_path} {file_path}.mp3')
     os.remove(file_path)
 
     # 需要更新的聊天记录
@@ -38,12 +36,10 @@ def app_uploader():
         'chat': f'{rec.filename}.mp3',
         'createTime': time.time()
     }
-
     # 更新聊天记录表中的 聊天记录
     mongo.chats.update_one({'user_list': {'$all': [sender, receiver]}}, {'$push': {'chat_list': rec_chat_info}})
     # 存储未读信息条数
     set_msg(sender, receiver)
-
     # 如果没有找到则使用默认值：小伙伴
     friend_remark = '小伙伴'
     friend_list = mongo.toys.find_one({'_id': ObjectId(receiver)}).get('friend_list')
@@ -59,20 +55,19 @@ def app_uploader():
     RET['CODE'] = 0
     RET['MSG'] = '上传成功'
     RET['DATA'] = {"filename": filename, "friend_type": "app"}
-    print(RET)
+    # print(RET)
     return jsonify(RET)
 
 
 @uploader.route('/toy_uploader', methods=['post'])
 def toy_uploader():
     chat_info = request.form.to_dict()
-
+    # print(chat_info)
     # toy 发送的数据信息，发送者，接收者和语音
     sender = chat_info.get('user_id')
     receiver = chat_info.get('to_user')
-    # print(chat_info)
-    # 语音消息
     rec = request.files.get('reco')
+
     file_path = os.path.join(CHAT_PATH, rec.filename)
     rec.save(file_path)
 
@@ -93,11 +88,25 @@ def toy_uploader():
     # 存储未读信息条数
     set_msg(sender, receiver)
 
+    # 如果发送语音给 toy 则使用 百度AI 合成消息提示音
+    if chat_info.get('friend_type') == 'toy':
+        receiver_info = mongo.toys.find_one({'_id': ObjectId(receiver)})
+
+        friend_list = receiver_info.get('friend_list')
+        friend_remark = '小伙伴'
+        for i in friend_list:
+            if i.get('friend_id') == sender:
+                friend_remark = i.get('friend_remark', '小伙伴')
+                break
+
+        filename = text2audio(f'您收到了来自{friend_remark}的1条消息', filename=f'{uuid4()}.mp3')
+
+    RET = {}
     # 返回值
     RET['CODE'] = 0
     RET['MSG'] = '上传成功'
-    RET['DATA'] = {"filename": f"{filename}", "friend_type": "app"}
-    # print('toy上传返回值', RET)
+    RET['DATA'] = {"filename": filename, "friend_type": chat_info.get('friend_type')}
+    # print(RET)
     return jsonify(RET)
 
 

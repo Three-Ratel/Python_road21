@@ -1,6 +1,5 @@
 from flask import Flask
 
-from serv.contact import contact
 from serv.content import content
 from serv.devices import devices
 from serv.friends import friend
@@ -12,7 +11,6 @@ app.debug = True
 app.register_blueprint(users)
 app.register_blueprint(content)
 app.register_blueprint(devices)
-app.register_blueprint(contact)
 app.register_blueprint(friend)
 app.register_blueprint(uploader)
 
