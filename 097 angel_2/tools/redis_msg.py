@@ -1,3 +1,10 @@
+"""
+使用redis，用于存储 app 和 toy 未读的聊天记录条数
+1. set_msg: 用户发送语音消息时，toy 为接收的消息数量
+2. get_msg: toy 获取未读语音消息时，清空计数器
+3. get_msg_count: 用于app端获取未读消息的条数
+"""
+
 import json
 
 from config import RDB
@@ -14,6 +21,7 @@ def set_msg(sender, receiver):
             msg_dict[sender] = 1
     else:
         msg_dict = {sender: 1}
+    # print(msg_dict)
     RDB.set(receiver, json.dumps(msg_dict))
 
 
@@ -35,8 +43,7 @@ def get_msg(sender, receiver):
 
     msg_dict[sender] = 0
     RDB.set(receiver, json.dumps(msg_dict))
-
-    return count, sender, receiver
+    return count, sender
 
 
 def get_msg_count(receiver):

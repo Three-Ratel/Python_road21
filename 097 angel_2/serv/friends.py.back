@@ -22,7 +22,7 @@ friend = Blueprint('friend', __name__)
 def friend_list():
     user = request.form.to_dict()
     friend_info = mongo.users.find_one({'_id': ObjectId(user.get('_id'))})
-
+    RET = {}
     RET['CODE'] = 0
     RET['MSG'] = '好友查询'
     RET['DATA'] = friend_info.get('friend_list')
@@ -31,10 +31,11 @@ def friend_list():
 
 @friend.route('/chat_list', methods=['post'])
 def chat_list():
+    # print(request.form)
     chat_info = request.form.to_dict()
     chat_id = chat_info.get('chat_id')
     chat_win = mongo.chats.find_one({'_id': ObjectId(chat_id)})
-
+    RET = {}
     RET['CODE'] = 0
     RET['MSG'] = '查询聊天记录'
     chat_list = chat_win.get('chat_list')
@@ -42,7 +43,8 @@ def chat_list():
         RET['DATA'] = chat_list[-10:]
     else:
         RET['DATA'] = chat_list
-
+    print(request.form.get('from_user'), request.form.get('to_user'))
+    get_msg(request.form.get('from_user'), request.form.get('to_user'))
     return jsonify(RET)
 
 
@@ -53,20 +55,18 @@ def recv_msg():
     chat_info = mongo.chats.find_one({'user_list': {'$all': [from_user, to_user]}})
 
     # 从redis数据库中获取 未读条数
-    count, sender = get_msg(from_user, to_user)
+    count, sender, reciver = get_msg(from_user, to_user)
 
     # 判断 sender 是 toy 还是 app 并查找 friend_remark 即在 friend_list 中的备注
-    type_info = mongo.toys.find_one({'_id': ObjectId(sender)})
+    type_info = mongo.toys.find_one({'_id': ObjectId(reciver)})
 
     if type_info:
         sender_info = type_info
     else:
-        sender_info = mongo.users.find_one({'_id': ObjectId(sender)})
+        sender_info = mongo.users.find_one({'_id': ObjectId(reciver)})
 
     friend_list = sender_info.get('friend_list')
-    print(friend_list)
-    print('ppp',from_user)
-    print(to_user)
+
     friend_remark = '小伙伴'
     for friend in friend_list:
         if friend.get('friend_id') == from_user:

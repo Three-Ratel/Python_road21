@@ -38,6 +38,7 @@
 				}
 			});
 
+			
 			var Sdata = null;
 			mui.plusReady(function() {
 				Sdata = plus.webview.currentWebview();
@@ -45,14 +46,14 @@
 
 				mui.post(window.serv + '/chat_list', {
 					chat_id: Sdata.friend_chat,
-					from_user:Sdata.friend_id,
-					to_user:window.localStorage.getItem("user_id")
+					from_user: Sdata.friend_id,
+					to_user: window.localStorage.getItem("user_id")
 				}, function(data) {
 					// console.log(JSON.stringify(data));
 					console.log('xxxxxxxxxxxxxxxx')
-					for(var i = 0; i < data.DATA.length; i++) {
+					for (var i = 0; i < data.DATA.length; i++) {
 						chat_url = window.chat_serv + data.DATA[i].chat
-						if(data.DATA[i].from_user == window.localStorage.getItem("user_id")) {
+						if (data.DATA[i].from_user == window.localStorage.getItem("user_id")) {
 							create_chat(Sdata, chat_url, "self")
 						} else {
 							create_chat(Sdata, chat_url, "")
@@ -93,7 +94,7 @@
 				div2.className = "left speech";
 				img.src = "avatar/" + chat_info.friend_avatar;
 
-				if(self) {
+				if (self) {
 					div.className = "rightd";
 					span.className = "rightd_h";
 					div2.className = "right speech";
@@ -118,7 +119,7 @@
 				var up = plus.uploader.createUpload(
 					window.serv + "/app_uploader", {},
 					function(upload, status) {
-						if(status == 200) {
+						if (status == 200) {
 							//发送消息给WebToy
 							//upload.responseText
 							var res = JSON.parse(upload.responseText);
@@ -145,7 +146,7 @@
 
 			document.addEventListener("add_chat", function(event) {
 				var recv_msg = event.detail;
-				if(recv_msg.from_user == Sdata.friend_id) {
+				if (recv_msg.from_user == Sdata.friend_id) {
 					create_chat(Sdata, window.chat_serv + recv_msg.chat, "");
 				}
 			})

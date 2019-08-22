@@ -1,4 +1,5 @@
 """
+app 端获取幼教内容、绑定玩具信息二维码、语音聊天记录信息
 content_list: 从服务器获取内容
 get_cover: 获取歌曲图片
 get_music: 获取歌曲
@@ -10,6 +11,7 @@ import os
 from flask import Blueprint, jsonify, send_file
 
 from config import mongo, RET, COVER_PATH, MUSIC_PATH, QRCODE_PATH, CHAT_PATH
+from tools.redis_msg import get_msg_count
 
 content = Blueprint('content', __name__)
 
@@ -50,4 +52,6 @@ def get_chat(filename):
     return send_file(path_chat)
 
 
-
+@content.route('/get_msg_num/<user_id>', methods=['post'])
+def get_msg_num(user_id):
+    return get_msg_count(user_id)

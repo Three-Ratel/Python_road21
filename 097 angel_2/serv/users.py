@@ -31,7 +31,7 @@ def login():
     user_info = request.form.to_dict()
     user = mongo.users.find_one(user_info, {'password': 0})
     user['_id'] = str(user['_id'])
-
+    RET = {}
     if user:
         RET['CODE'] = 0
         RET['MSG'] = '登录成功'
@@ -56,7 +56,7 @@ def auto_login():
     # print(user_id)
     user = mongo.users.find_one({'_id': ObjectId(user_id)}, {'password': 0})
     user['_id'] = str(user['_id'])
-
+    RET = {}
     RET['CODE'] = 0
     RET['MSG'] = '自动登录成功'
     RET['DATA'] = user

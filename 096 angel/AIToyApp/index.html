@@ -41,6 +41,10 @@
 			}]
 		})
 
+		// var wss=plus.webview.currentWebview();
+		// console.log(wss.id)
+
+
 		var ws = null;
 		var user_info = null;
 		mui.plusReady(function() {
@@ -49,7 +53,9 @@
 					_id: window.localStorage.getItem("user_id")
 				}, function(data) {
 					user_info = data.DATA;
-					// console.log(JSON.stringify(user_info));
+					console.log('xxxxxxxxxxxxxxxxxxxxxxxx');
+					console.log(JSON.stringify(user_info));
+					console.log('xxxxxxxxxxxxxxxxxxxxxxxx');
 					document.getElementById("count").innerText = user_info.chat.count;
 					create_ws(data.DATA._id);
 				}, 'json');
@@ -60,18 +66,25 @@
 			ws = new WebSocket(window.ws_serv + id);
 			// console.log(window.ws_serv + id)
 			ws.onmessage = function(eventMessage) {
+				console.log('ws 接收一条消息');
+				console.log(JSON.stringify(eventMessage.data));
+				console.log('----------------------------');
+				
 				var recv_msg = JSON.parse(eventMessage.data);
 				user_info[recv_msg.from_user] += 1;
 				document.getElementById("count").innerText = parseInt(document.getElementById("count").innerText) + 1;
 				// var p = plus.audio.createPlayer(window.chat_serv + recv_msg.chat);
 				// mui.toast("开始播放语音消息");
 				// p.play();
+				console.log(recv_msg)
 				var chat = plus.webview.getWebviewById("chat.html");
 				mui.fire(chat, 'add_chat', recv_msg);
 			};
 			ws.onclose = function() {
 				create_ws(id);
-			}
+			};
+
+
 		}
 
 		document.addEventListener("send_music", function(event) {
@@ -137,8 +150,16 @@
 
 		document.addEventListener("cut", function(eventMessage) {
 			var cut = eventMessage.detail.cut;
+			var friend_id = eventMessage.detail.friend_id;
+			user_info.chat[friend_id] = 0;
+
+			console.log('---------------', cut, '-------------------');
 			var count = parseInt(document.getElementById("count").innerText);
+			if (count - cut < 0) {
+				count = cut = 0
+			}
 			document.getElementById("count").innerText = count - cut;
+
 		})
 
 		document.getElementById('req_list').addEventListener('tap', function() {

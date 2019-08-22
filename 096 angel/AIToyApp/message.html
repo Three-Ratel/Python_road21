@@ -24,15 +24,18 @@
 			var index = null;
 			mui.plusReady(function() {
 				Sdata = plus.webview.currentWebview();
-				index = plus.webview.getWebviewById("H5945F808");
+				// index = plus.webview.getWebviewById("H5945F808");
+				index = plus.webview.getWebviewById("HBuilder");
 				mui.post(window.serv + '/friend_list', {
 					_id: window.localStorage.getItem("user_id")
 				}, function(data) {
 					// console.log(JSON.stringify(data));
 					for (var i = 0; i < data.DATA.length; i++) {
+						// friend_list中的信息
 						create_friend(data.DATA[i]);
 					}
 				}, 'json');
+
 			})
 
 			function create_friend(friend_info) {
@@ -41,16 +44,27 @@
 
 				var span = document.createElement("span");
 				span.className = "mui-badge mui-badge-red";
-				span.innerText = Sdata.chat[friend_info.friend_id];
-				friend_info.self_avatar = Sdata.avatar;				
-				
+				// 改动1
+				if (Sdata.chat[friend_info.friend_id]) {
+					span.innerText = Sdata.chat[friend_info.friend_id];
+				} else {
+					span.className = ''
+				}
+
+				friend_info.self_avatar = Sdata.avatar;
+
 				var li = document.createElement("li");
 				li.className = "mui-table-view-cell mui-media";
 				var a = document.createElement("a");
 				a.onclick = function() {
-					span.innerText = 0;
+					// 改动2
+					span.className = '';
+					span.innerText = '';
 					mui.fire(index, 'cut', {
-						cut: Sdata.chat[friend_info.friend_id]
+						cut: Sdata.chat[friend_info.friend_id],
+						// 改动3
+						friend_id: friend_info.friend_id,
+
 					})
 					mui.openWindow({
 						url: "chat.html",

@@ -1,6 +1,8 @@
 """
+语音指令和语音消息上传
 app_uploader: app 发送语音给玩具
 toy_uploader: toy 给app回语音
+ai_uploader: 智能指令
 """
 import os
 import time
@@ -26,7 +28,7 @@ def app_uploader():
     # 保存语音信息消息并进行格式转换为 mp3，录音格式为 .amr
     file_path = os.path.join(CHAT_PATH, rec.filename)
     rec.save(file_path)
-    os.system(f'ffmpeg -f -i {file_path} {file_path}.mp3')
+    os.system(f'ffmpeg -i {file_path} {file_path}.mp3')
     os.remove(file_path)
 
     # 需要更新的聊天记录
@@ -36,6 +38,7 @@ def app_uploader():
         'chat': f'{rec.filename}.mp3',
         'createTime': time.time()
     }
+
     # 更新聊天记录表中的 聊天记录
     mongo.chats.update_one({'user_list': {'$all': [sender, receiver]}}, {'$push': {'chat_list': rec_chat_info}})
     # 存储未读信息条数
@@ -98,7 +101,6 @@ def toy_uploader():
             if i.get('friend_id') == sender:
                 friend_remark = i.get('friend_remark', '小伙伴')
                 break
-
         filename = text2audio(f'您收到了来自{friend_remark}的1条消息', filename=f'{uuid4()}.mp3')
 
     RET = {}
@@ -106,7 +108,6 @@ def toy_uploader():
     RET['CODE'] = 0
     RET['MSG'] = '上传成功'
     RET['DATA'] = {"filename": filename, "friend_type": chat_info.get('friend_type')}
-    # print(RET)
     return jsonify(RET)
 
 

@@ -1,9 +1,11 @@
 """
-friend_list: 获取好友列表
-chat_list: 聊天信息
-recv_msg: toy 获取消息
-add_req: 添加好友请求信息
-req_list: 获取请求列表
+1. friend_list: 获取好友列表
+2. chat_list: 聊天信息
+3. recv_msg: toy 获取消息
+4. add_req: 添加好友请求信息
+5. req_list: 获取请求列表
+6. ref_req: 拒绝好友请求
+7. acc_req: 接收好友请求
 """
 import time
 from uuid import uuid4
@@ -13,7 +15,7 @@ from flask import Blueprint, jsonify, request
 
 from config import mongo, RET
 from tools.BaiduAI import text2audio
-from tools.redis_msg import get_msg
+from tools.redis_msg import get_msg, get_msg_count
 
 friend = Blueprint('friend', __name__)
 
@@ -22,20 +24,18 @@ friend = Blueprint('friend', __name__)
 def friend_list():
     user = request.form.to_dict()
     friend_info = mongo.users.find_one({'_id': ObjectId(user.get('_id'))})
-    RET = {}
     RET['CODE'] = 0
     RET['MSG'] = '好友查询'
     RET['DATA'] = friend_info.get('friend_list')
+
     return jsonify(RET)
 
 
 @friend.route('/chat_list', methods=['post'])
 def chat_list():
-    # print(request.form)
     chat_info = request.form.to_dict()
     chat_id = chat_info.get('chat_id')
     chat_win = mongo.chats.find_one({'_id': ObjectId(chat_id)})
-    RET = {}
     RET['CODE'] = 0
     RET['MSG'] = '查询聊天记录'
     chat_list = chat_win.get('chat_list')
@@ -43,8 +43,9 @@ def chat_list():
         RET['DATA'] = chat_list[-10:]
     else:
         RET['DATA'] = chat_list
-    print(request.form.get('from_user'), request.form.get('to_user'))
-    get_msg(request.form.get('from_user'), request.form.get('to_user'))
+    # 在 redis 中清空当前 窗口中的未读消息条数
+    get_msg(chat_info.get('from_user'), chat_info.get('to_user'))
+
     return jsonify(RET)
 
 
@@ -52,24 +53,24 @@ def chat_list():
 def recv_msg():
     from_user = request.form.get('from_user')
     to_user = request.form.get('to_user')
-    chat_info = mongo.chats.find_one({'user_list': {'$all': [from_user, to_user]}})
+    # print(request.form)
 
     # 从redis数据库中获取 未读条数
-    count, sender, reciver = get_msg(from_user, to_user)
-
+    count, sender = get_msg(from_user, to_user)
+    chat_info = mongo.chats.find_one({'user_list': {'$all': [sender, to_user]}})
     # 判断 sender 是 toy 还是 app 并查找 friend_remark 即在 friend_list 中的备注
-    type_info = mongo.toys.find_one({'_id': ObjectId(reciver)})
+    type_info = mongo.toys.find_one({'_id': ObjectId(to_user)})
 
     if type_info:
         sender_info = type_info
     else:
-        sender_info = mongo.users.find_one({'_id': ObjectId(reciver)})
+        sender_info = mongo.users.find_one({'_id': ObjectId(to_user)})
 
     friend_list = sender_info.get('friend_list')
 
     friend_remark = '小伙伴'
     for friend in friend_list:
-        if friend.get('friend_id') == from_user:
+        if friend.get('friend_id') == sender:
             friend_remark = friend.get('friend_remark')
             break
 
