@@ -15,7 +15,7 @@ from flask import Blueprint, jsonify, request
 
 from config import mongo, RET
 from tools.BaiduAI import text2audio
-from tools.redis_msg import get_msg, get_msg_count
+from tools.redis_msg import get_msg
 
 friend = Blueprint('friend', __name__)
 
@@ -51,22 +51,16 @@ def chat_list():
 
 @friend.route('/recv_msg', methods=['post'])
 def recv_msg():
-    from_user = request.form.get('from_user')
-    to_user = request.form.get('to_user')
+    from_user = request.form.get('from_user')  # 发送方 id
+    to_user = request.form.get('to_user')  # toy_id
     # print(request.form)
 
     # 从redis数据库中获取 未读条数
     count, sender = get_msg(from_user, to_user)
     chat_info = mongo.chats.find_one({'user_list': {'$all': [sender, to_user]}})
-    # 判断 sender 是 toy 还是 app 并查找 friend_remark 即在 friend_list 中的备注
-    type_info = mongo.toys.find_one({'_id': ObjectId(to_user)})
 
-    if type_info:
-        sender_info = type_info
-    else:
-        sender_info = mongo.users.find_one({'_id': ObjectId(to_user)})
-
-    friend_list = sender_info.get('friend_list')
+    toy = mongo.toys.find_one({'_id': ObjectId(to_user)})
+    friend_list = toy.get('friend_list')
 
     friend_remark = '小伙伴'
     for friend in friend_list:

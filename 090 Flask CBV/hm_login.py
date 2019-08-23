@@ -34,3 +34,10 @@ log.add_url_rule('/login', view_func=Login.as_view(name='login'))
 #             session['username'] = 'henry'
 #             return redirect('/detail')
 #         return 'Failed'
+
+
+# from redis import Redis
+#
+# red_cli = Redis(db=2)
+# red_cli.set(123, 456)
+# red_cli.get(123)

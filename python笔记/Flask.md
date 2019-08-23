@@ -208,7 +208,7 @@ def ab(a,b):
 
 @app.route('/a')
 def homea():
-  	return render_template('a.html')
+  	return render_template('a.html', ab=ab)
 ```
 
 ### 4. 宏指令
@@ -746,7 +746,6 @@ def app(req):
 
 run_simple('0.0.0.0', 5000, app)
 
-
 # environ：wsgi 处理requset后的结果，请求原始信息
 # 对象相当于dict
 __slots__ = ('__stroage__', '__ident_func__')
@@ -757,7 +756,7 @@ __slots__ = ('__stroage__', '__ident_func__')
 -   使用webscoket实现类似web 微信的一个即时通讯工具
 -   流程
     1.  做前端
-    2.  建立webserver   django / flask
+    2.  建立webserver   djan go / flask
     3.  制作聊天功能
 
 ## 1. 轮询和长链接

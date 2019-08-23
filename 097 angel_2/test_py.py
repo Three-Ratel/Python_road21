@@ -19,3 +19,6 @@ pyc = lazy_pinyin(c, TONE3)
 print(pya)
 print(pyb)
 print(pyc)
+
+
+from redis import Redis

@@ -1,9 +1,9 @@
 import json
 
 from flask import Flask, request, render_template
-from geventwebsocket.handler import WebSocketHandler    # 请求处理 WSGI HTTP
-from geventwebsocket.server import WSGIServer           # 替换Flask原来的WSGI服务
-from geventwebsocket.websocket import WebSocket         # 语法提示
+from geventwebsocket.handler import WebSocketHandler  # 请求处理 WSGI HTTP
+from geventwebsocket.server import WSGIServer  # 替换Flask原来的WSGI服务
+from geventwebsocket.websocket import WebSocket  # 语法提示
 
 app = Flask(__name__)
 
@@ -18,13 +18,25 @@ def my_ws(username):
     print(len(socket_dict), socket_dict)
 
     while True:
-        msg = ws_socket.receive()
+        print('----------------')
+        try:
+            try:
+                msg = ws_socket.receive()
+            except:
+                socket_dict.pop(username)
+                return
 
-        msg_dict = json.loads(msg)
-        receiver = msg_dict.get("receiver")
-        receiver_socket = socket_dict.get(receiver)
+            print(msg)
+            print('****************')
+            if msg:
+                msg_dict = json.loads(msg)
+                receiver = msg_dict.get("receiver")
+                receiver_socket = socket_dict.get(receiver)
+                if receiver_socket:
+                    receiver_socket.send(msg)
 
-        receiver_socket.send(msg)
+        finally:
+            print(socket_dict, 'socket 连接')
 
 
 @app.route("/wechat")

@@ -14,6 +14,7 @@ def chat(username):
     # print(request.environ)
     socket_obj = request.environ.get('wsgi.websocket')  # type:WebSocket
     websocket_dict[username] = socket_obj
+    print(socket_obj, username)
 
     while True:
         msg = socket_obj.receive()
@@ -39,4 +40,4 @@ def ws():
 if __name__ == '__main__':
     http_server = WSGIServer(('127.0.0.1', 5000), app, handler_class=WebSocketHandler)
     http_server.serve_forever()
-    app.run()
+    # app.run()
