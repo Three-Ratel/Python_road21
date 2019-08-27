@@ -11,7 +11,6 @@ websocket_dict = {}
 
 @app.route('/chat/<username>')
 def chat(username):
-    # print(request.environ)
     socket_obj = request.environ.get('wsgi.websocket')  # type:WebSocket
     websocket_dict[username] = socket_obj
     print(socket_obj, username)

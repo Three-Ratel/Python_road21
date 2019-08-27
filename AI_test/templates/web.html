@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title id="title">聊天室</title>
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" crossorigin="anonymous">
+    <script src="/static/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<div class="panel panel-default">
+    <div class="row">
+
+        <div class="col-md-6">
+            <audio id="player" autoplay controls></audio>
+            <div><a href="">
+                <button>群聊</button>
+            </a></div>
+            <p>
+                用户名：<span id="username">{{ username }}</span>
+                <input type="text" id="user_id" value="{{ user_id }}" style="display: none">
+            </p>
+            <p>消息来自：<span id="from_sender"></span></p>
+            <div id="rec_info" style="display: none">
+                <span>收 件 人:</span>
+                <span type="text" id="receiver"></span>
+                <input type="text" id="receiver_id" style="display: none">
+            </div>
+            <div>
+                <button onclick="start_reco()">开始录音</button>
+                <button onclick="stop_reco()">发送语音消息</button>
+            </div>
+            <p>
+                <button onclick="ai_reco()" style="background-color: cornflowerblue">发送语音指令</button>
+            </p>
+
+            <div>
+                <span>消息内容:</span>
+                <input type="text" id="content">
+                <button onclick="send_message()">发送</button>
+            </div>
+
+            <div class="panel-body">
+                <div id="content_list" style="width: 500px">
+
+                </div>
+            </div>
+        </div>
+
+        <div id="friend_list" class="col-md-4">
+            <h3>当前在线{{ count }}人在线</h3>
+            <span>点击好友列表私WebToy.html聊</span>
+            {% for i in friend_list %}
+                <div class="friend">
+                    <img src="/get_icon/{{ i.user_icon }}" style="width:20px; border-radius: 2px">
+                    <span class="rec_name">{{ i.user_name }}</span>
+                    <i class="user_id" style="display: none">{{ i.user_id }}</i>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+
+</body>
+<script type="application/javascript" src="/static/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="/static/Recorder.js"></script>
+<script type="application/javascript">
+    var ws = null;
+    var toy_id = null;
+
+    var user_id = document.getElementById('user_id').value;
+    console.log(user_id);
+    ws = new WebSocket("ws://127.0.0.1:9528/chat/" + user_id);
+    ws.onmessage = function (eventMessage) {
+
+        var data = JSON.parse(eventMessage.data);
+        console.log(data);
+        if (data.filename) {
+            document.getElementById("player").src = "http://127.0.0.1:9527/get_chat/" + data.filename;
+            document.getElementById('from_sender').innerText = data.send_name;
+        } else {
+            var ptag = document.createElement('p');
+            ptag.innerText = data.sender_name + ':' + data.data;
+            ptag.style.cssText = "text-align:left";
+            document.getElementById('content_list').appendChild(ptag);
+            document.getElementById('receiver').value = data.sender_name;
+            document.getElementById('receiver').style = '';
+        }
+
+    };
+
+    ws.close = function () {
+        ws = new WebSocket("ws://127.0.0.1:9528/chat/" + user_id);
+    };
+    var username = $('#username').text();
+
+    function send_message() {
+        var msg = {
+            sender: document.getElementById('user_id').value,
+            receiver: document.getElementById('receiver_id').value,
+            data: document.getElementById('content').value,
+            sender_name: username,
+        };
+
+        var data = JSON.stringify(msg);
+        ws.send(data);
+
+        var ptag = document.createElement('p');
+        ptag.innerText = msg.data + ':' + username;
+        ptag.style.cssText = "text-align:right";
+        document.getElementById('content_list').appendChild(ptag);
+
+    }
+
+    $('.friend').click(function () {
+        var user_name = $(this).find('span').text();
+        var receiver_id = $(this).find('i').text();
+        document.getElementById('receiver').innerText = user_name;
+        document.getElementById('receiver_id').value = receiver_id;
+        document.getElementById('rec_info').style = '';
+    });
+
+
+    var serv = "http://127.0.0.1:9527";
+
+    var reco = null;
+    var audio_context = null;//音频内容对象
+    navigator.getUserMedia = (navigator.getUserMedia ||
+        navigator.webkitGetUserMedia ||
+        navigator.mozGetUserMedia ||
+        navigator.msGetUserMedia);
+
+    navigator.getUserMedia({audio: true}, create_stream, function (err) {
+        console.log(err)
+    });
+
+    function create_stream(user_media) {
+        audio_context = new AudioContext();//音频内容对象
+        var stream_input = audio_context.createMediaStreamSource(user_media);
+        reco = new Recorder(stream_input);
+    }
+
+
+    function start_reco() {
+        reco.record();
+    }
+
+    function stop_reco() {
+        reco.stop();
+
+        reco.exportWAV(function (wav_file) {
+            console.log(wav_file);
+            var formdata = new FormData(); // form 表单 {key:value}
+            formdata.append("reco", wav_file); // form input type="file"
+            formdata.append("user_id", user_id);
+
+            $.ajax({
+                url: serv + "/web_uploader",
+                type: 'post',
+                processData: false,
+                contentType: false,
+                data: formdata,
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    if (data.CODE == 0) {
+                        document.getElementById("player").src =
+                            "http://127.0.0.1:9527/get_chat/" + data.data.filename;
+                    }
+                    var send_str = {
+                        sender: document.getElementById("user_id").value,
+                        receiver: document.getElementById("receiver_id").value,
+                        filename: data.data.filename,
+                        send_name: username,
+                    };
+                    ws.send(JSON.stringify(send_str));
+                }
+            })
+        });
+
+        reco.clear();
+    }
+
+    function ai_reco() {
+        reco.stop();
+
+        reco.exportWAV(function (wav_file) {
+            console.log(wav_file);
+            var formdata = new FormData(); // form 表单 {key:value}
+            formdata.append("reco", wav_file); // form input type="file"
+            formdata.append("user_id", user_id);
+            $.ajax({
+                url: serv + "/ai_uploader",
+                type: 'post',
+                processData: false,
+                contentType: false,
+                data: formdata,
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    if (data.chat) {
+                        document.getElementById("user_id").innerText = data.from_user;
+                        document.getElementById("player").src = "http://127.0.0.1:9527/get_chat/" + data.chat;
+                    } else {
+                        document.getElementById("user_id").innerText = data.from_user;
+                        document.getElementById("player").src = "http://127.0.0.1:9527/get_music/" + data.music;
+                    }
+                }
+            })
+        });
+
+        reco.clear();
+    }
+
+</script>
+</html>
