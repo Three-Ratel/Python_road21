@@ -21,6 +21,7 @@
 #
 # for i in range(10):
 #     MyProcess(i).start()
+import time
 
 """
 9.4 cp模型/线程
@@ -234,17 +235,19 @@ JoinableQueue
 #     print(i.result())
 
 """map提交任务"""
-# from concurrent.futures import ThreadPoolExecutor
-#
-#
-# def get_page(i):
-#     return i
-#
-# pp = ThreadPoolExecutor(5)
-# t = map(get_page, range(1000))
-# pp.shutdown()
-# for i in t:
-#     print(i)
+from concurrent.futures import ThreadPoolExecutor
+
+
+def get_page(i):
+    time.sleep(0.5)
+    return i
+
+
+pp = ThreadPoolExecutor(5)
+t = pp.map(get_page, range(100))
+pp.shutdown()
+for i in t:
+    print(i, )
 
 """
 回调函数

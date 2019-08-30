@@ -206,8 +206,6 @@ update 表 set 字段名=值 where id=2;
 delete from 表 where id=1；
 ```
 
-
-
 ## 1.2 表的介绍
 
 ### 1. 存储引擎
@@ -310,9 +308,7 @@ t2.MYI 索引
 ```mysql
 # 指定engine为memory
 create table t2(id int, name char(10)) engine=memory;
-
 t2. 数据
-
 ```
 
 ### 2. mysql数据类型
