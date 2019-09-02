@@ -324,7 +324,6 @@ create table 表名(
 1. 在同一张表中，字段名是不能相同
 2. 宽度和约束条件可选
 3. 字段名和类型是必须的
-
 ```
 
 - 数值：
@@ -945,7 +944,6 @@ select * from t1 where name like '%n';
 ```mysql
 select * from t1 where name regexp 正则表达式;
 SELECT * FROM employee WHERE emp_name REGEXP 'on$';
-
 ```
 
 ### 3. 分组聚合
@@ -978,7 +976,6 @@ select post from employee group by post;
 select count(*/ 主键) from employee;
 # 只算id不为空的字段个数
 select count(id) from employee;
-
 ```
 
 - **avg/sum**
@@ -986,7 +983,6 @@ select count(id) from employee;
 ```mysql
 select avg(salary) from employee;
 select sum(salary) from employee;
-
 ```
 
 #### 3.3 分组聚合

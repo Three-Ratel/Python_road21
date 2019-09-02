@@ -2,14 +2,14 @@
 __pycache__/
 *.py[cod]
 *$py.class
-*/*.jgp
+*.jgp
 *.jpeg
 *.mp3
 *.mp4
 *.rmvb
 *.mkv
 .DS_Store
-.idea
+.idea/
 
 # C extensions
 *.so
