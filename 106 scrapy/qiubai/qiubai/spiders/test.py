@@ -22,8 +22,8 @@ class TestSpider(scrapy.Spider):
             item['content'] = content
             yield item
 
-            if self.page < 10:
-                self.page += 1
-                new_url = self.url % self.page
-                print(new_url)
-                yield scrapy.Request(new_url, callback=self.parse)
+        if self.page < 10:
+            self.page += 1
+            new_url = self.url % self.page
+            print(new_url)
+            yield scrapy.Request(new_url, callback=self.parse)
