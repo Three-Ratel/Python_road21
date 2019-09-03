@@ -7,32 +7,46 @@
 
 from time import sleep
 
+import pymysql
+
 from .tools import BaiduAI
 
 
 class WangyiPipeline(object):
+
+    def open_spider(self, spider):
+        print('*' * 32)
+        # self.conn = pymysql.Connect(host='127.0.0.1', port=3306, user='root', password='root', db='spider',
+        #                            charset='utf8')
+        # self.cursor = self.conn.cursor()
+
     def process_item(self, item, spider):
         title = item['title']
         content = item['content']
-        print(title)
+        # print(title)
 
         # """ 调用文章分类 """
-        # res = BaiduAI.client.topic(title, content)
-        # sleep(0.5)
-        # lv1_tag_list = res.get('item').get('lv1_tag_list')
-        # if lv1_tag_list:
-        #     tag = lv1_tag_list[0].get('tag')
-        #     item['tag'] = tag
-        #     print(item['title'], item['tag'], )
+        res = BaiduAI.client.topic(title, content)
+        sleep(0.5)
+        lv1_tag_list = res.get('item').get('lv1_tag_list')
+        if lv1_tag_list:
+            tag = lv1_tag_list[0].get('tag')
+            item['tag'] = tag
+            print(item['title'], item['tag'], )
 
             # sql = f"insert into article value('{tag}', '{title}', '{content}')"
             # print(sql)
             # try:
-            #     from .tools import databases
-            #     databases.cursor.execute(sql)
-            #     databases.conn.commit()
+            #     self.cursor.execute(sql)
+            #     self.conn.commit()
             # except Exception as e:
             #     print(e)
-            #     databases.conn.rollback()
+            #     self.conn.rollback()
 
         return item
+
+    def close_spider(self, spider):
+        # print(self.cursor, self.conn)
+        # self.cursor.close()
+        # self.conn.close()
+        pass
