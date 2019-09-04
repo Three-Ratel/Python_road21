@@ -287,7 +287,7 @@ show variables like '%关键字%';
 ```mysql
 # 创建表
 create table t1(id int, name char(10)) engine=innodb;
-# 查看表的结构，包括存储引擎和编码 \G 格式化输出，带	\G 不能使用分号
+# 查看表的结构，包括存储引擎和编码 \G 格式化输出，带 \G 不能使用分号
 show create table t1 \G
 # 只查看表字段基础信息
 describle t1;
@@ -308,7 +308,7 @@ t2.MYI 索引
 ```mysql
 # 指定engine为memory
 create table t2(id int, name char(10)) engine=memory;
-t2. 数据
+t2.xxx 数据
 ```
 
 ### 2. mysql数据类型
