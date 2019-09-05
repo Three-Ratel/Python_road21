@@ -8,4 +8,8 @@
 
 class LagouPipeline(object):
     def process_item(self, item, spider):
+        count = 0
+        if count == 0:
+            print(item)
+            count = 1
         return item

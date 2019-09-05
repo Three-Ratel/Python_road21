@@ -10,5 +10,15 @@ import scrapy
 
 class LagouItem(scrapy.Item):
     # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    company_name = scrapy.Field()
+    addr = scrapy.Field()
+    field = scrapy.Field()
+    position_name = scrapy.Field()
+    direction = scrapy.Field()
+    salary = scrapy.Field()
+    education = scrapy.Field()
+    work_year = scrapy.Field()
+    desc = scrapy.Field()
+    requirements = scrapy.Field()
+    company_size = scrapy.Field()
+
