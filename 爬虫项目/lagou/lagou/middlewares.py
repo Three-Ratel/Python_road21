@@ -4,6 +4,8 @@
 #
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+import random
+
 
 class LagouDownloaderMiddleware(object):
 
@@ -31,6 +33,10 @@ class LagouDownloaderMiddleware(object):
             'Mozilla/5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.3 Mobile/14E277 Safari/603.1.30',
             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
         ]
+        print(request.cookies, '中间件测试cookies', '---'*8)
+        # 使用UA伪装
+        url = 'https://www.lagou.com/jobs/positionAjax.json?px=default&city=北京&needAddtionalResult=false'
+        if request.url == url:
 
-
+            request.headers['User-Agent'] = random.choice(user_agent_list)
         return None

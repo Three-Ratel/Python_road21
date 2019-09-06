@@ -147,11 +147,11 @@ create database henry；
 # 查看指定用户权限
 show grants for '用户名'(@'网段.%');
 # 授权 * 表示所有
-grant	all(select/insert) on henry.* to '用户名'@'ip网段.%';
+grant all(select/insert) on henry.* to '用户名'@'ip网段.%';
 # 设置立即生效
 flush privileges
 # 创建账号并授权,必须有密码
-grant all on herny.* to 'henry'@'%' identified by '123';
+grant all on 库名.* to '用户名'@'%' identified by '123';
 #select, insert, update, delete, create, drop, index, alter, grant, references, reload, shutdown, process, file等14个权限
 
 # 取消用户权限
@@ -633,7 +633,7 @@ alter table 表名 rename 新表名;
 
 ```mysql
 # 添加字段
-alter table 表名 add 添加字段名 数据类型(宽度)  约束
+alter table 表名 add 添加字段名 数据类型(宽度)  约束;
 # 删除字段
 alter table 表名 drop 删除字段名;
 ```

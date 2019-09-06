@@ -16,7 +16,7 @@ NEWSPIDER_MODULE = 'lagou.spiders'
 LOG_LEVEL = 'ERROR'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36'
+# USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -40,7 +40,8 @@ ROBOTSTXT_OBEY = False
 
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {
-    'Referer': 'https://www.lagou.com/jobs/list_python/p-city_2?px=default',
+    'refferer': 'https://www.lagou.com/jobs/list_python/p-city_2?px=default',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36',
 }
 
 # Enable or disable spider middlewares
@@ -51,9 +52,10 @@ DEFAULT_REQUEST_HEADERS = {
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-# DOWNLOADER_MIDDLEWARES = {
-#    'lagou.middlewares.LagouDownloaderMiddleware': 543,
-# }
+DOWNLOADER_MIDDLEWARES = {
+    'lagou.middlewares.LagouDownloaderMiddleware': 543,
+
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -64,7 +66,7 @@ DEFAULT_REQUEST_HEADERS = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'lagou.pipelines.LagouPipeline': 300,
+    'lagou.pipelines.LagouPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
