@@ -67,8 +67,9 @@ def sort(alist):
                     break
         gap //= 2
     print(alist)
-sort(alist)
 
+
+# sort(alist)
 
 # # 增量为gap的 shell sort
 # def shell(alist):
@@ -93,6 +94,8 @@ sort(alist)
 # print(alist)
 
 """快速排序"""
+
+
 # def quick_sort(alist, left, right):
 #     # 结束递归的条件
 #     if left >= right:
@@ -115,3 +118,54 @@ sort(alist)
 #
 # quick_sort(alist, 0, len(alist) - 1)
 # print(alist)
+
+
+def quick_sort(alist, left, right):
+    if left >= right:
+        return
+
+    low = left
+    high = right
+    base = alist[low]
+    while low < high:
+        while low < high and base < alist[high]:
+            high -= 1
+        alist[low] = alist[high]
+
+        while low < high and alist[low] <= base:
+            low += 1
+        alist[high] = alist[low]
+    alist[low] = base
+    quick_sort(alist, left, low - 1)
+    quick_sort(alist, low + 1, right)
+
+
+# alist = [5, 4, 3, 2, 1, 5, 3]
+# quick_sort(alist, 0, len(alist) - 1)
+# print(alist)
+
+def bubble_sort(li):
+    for i in range(len(li) - 1):
+        for j in range(1, len(li) - i):
+            if li[j - 1] > li[j]:
+                li[j - 1], li[j] = li[j], li[j - 1]
+
+
+li = [5, 4, 3, 2, 8, 2]
+
+
+# bubble_sort(li)
+# print(li)
+
+
+def select_sort(li):
+    for j in range(len(li) - 1, 0, -1):
+        max = 0
+        for i in range(j+1):
+            if li[max] < li[i]:
+                max = i
+        li[max], li[j] = li[j], li[max]
+    print(li)
+
+
+select_sort(li)

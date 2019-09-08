@@ -541,7 +541,7 @@ INSTALLED_APPS = [
 
 #### 1. 创建mysql数据库
 
-```python
+```mysql
 create database django53;
 ```
 
@@ -554,7 +554,7 @@ create database django53;
 DATABASES = {
   'default':{
         # 引擎
-      'ENGINE':'django.db.backbends.mysql',
+      'ENGINE':'django.db.backends.mysql',
       'NAME':'django53',
       'HOST':'127.0.0.1',
       'PORT':3306,
@@ -972,8 +972,6 @@ def edit_book(request):
 ## 3. 作者的管理
 
 ### 3.1 设计作者表和外键
-
-
 
 ```python
 # models.py
