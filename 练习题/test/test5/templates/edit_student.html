@@ -1,0 +1,34 @@
+{% extends 'layout.html' %}
+{% block title %}
+    编辑
+{% endblock %}
+{% block content %}
+    <label for="student" class="control-label">编辑学生</label>
+    </div>
+    <div class="panel-body">
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <div class="col-sm-10">
+                    <input type="text" name="stu_name" class="form-control" id="student"
+                           value="{{ stu.s_name }}">
+                    <input type="text" name="stu_score" class="form-control" id="student"
+                           value="{{ stu.score }}">
+                    <select name="stu_class" id="pk">
+                        {% for i in all_class %}
+                            {% if stu.my_class_id == i.id %}
+                                <option value="{{ i.id }}" selected>{{ i.c_name }}</option>
+                            {% else %}
+                                <option value="{{ i.id }}">{{ i.c_name }}</option>
+                            {% endif %}
+
+                        {% endfor %}
+                    </select>
+                    <p>{{ error }}</p>
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+

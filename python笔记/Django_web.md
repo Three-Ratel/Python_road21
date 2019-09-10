@@ -486,7 +486,7 @@ class BookListView(APIView):
   2. **层级深，无法展示出版社名称和作者名称**
 
 ```python
-"""django的序列化器"""
+"""数据的序列化器"""
 from django.http.response import HttpResponse
 from django.core import serializers
 

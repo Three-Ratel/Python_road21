@@ -3897,8 +3897,6 @@ $.ajaxSetup({
 2. 如果你的视图渲染的HTML文件中**没有包含** {% csrf_token %}，Django可能不会设置CSRFtoken的cookie。
 3. 这个时候需要使用**ensure_csrf_cookie()**装饰器强制设置Cookie。
 
-
-
 # 12.form组件
 
 ## 0. form简介
@@ -3944,10 +3942,6 @@ $.ajaxSetup({
 #### 2.7 Form.non_field_errors()
 
 1. 从Form.errors返回一个包含Form.clean()方法抛出的ValidationErrors和使用Form.add_error(None, '…')的错误list
-
-
-
-
 
 
 
@@ -4036,7 +4030,7 @@ def register(request):
 </form>
 ```
 
-form 表单的功能
+### 1.3 form 表单的功能
 
 - 前端页面是form类的对象生成的                                      -->生成HTML标签功能
 - 当用户名和密码输入为空或输错之后 页面都会提示        -->用户提交校验功能
@@ -4657,7 +4651,31 @@ def index(request):
 
 ![dragon处理请求流程](/Users/henry/Documents/截图/Py截图/dragon处理请求流程.png)
 
+# Django rest_framework
 
+-   APIView：自定义
+-   GenericAPIView：get_queryset/get_serilaizer_class
+-   ListAPIView
+-   ModelViewSet
+
+```python
+from rest_framework.serializers import ModelSerializer
+class UserModelSerializer():
+    class meta:
+        models.User
+        fields = '__all__'
+
+class UserView(ListAPIView):
+    queryset = models.User.objects
+    serilaizer_class = UserModelSerializer
+# 具有增删改查的功能
+class UserView(ModelViewSet):
+    queryset = models.User.objects
+    serilaizer_class = UserModelSerializer
+        
+```
+
+![drf类的继承](/Users/henry/Documents/截图/Py截图/drf类的继承.png)
 
 
 

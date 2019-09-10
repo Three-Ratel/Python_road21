@@ -60,25 +60,23 @@
 for i in range(0, 100):
     print(fib(1000))
 """
-li = [1, 1]
-
-
-def func(num=1000):
-    a, b = 1, 1
-    while a + b < num:
-        b = li[-1] + li[-2]
-        a = li[-2]
-        li.append(b)
-        yield b
-
-
-for i in func():
-    print(i)
+# li = [1, 1]
+#
+#
+# def func(num=1000):
+#     a, b = 1, 1
+#     while a + b < num:
+#         b = li[-1] + li[-2]
+#         a = li[-2]
+#         li.append(b)
+#         yield b
+#
+#
+# for i in func():
+#     print(i)
 
 # for i in range(100):
 #     print(fib(1000))
-
-
 
 
 """
@@ -127,12 +125,6 @@ def fun(count):
         return ''.join(result[::-1])
 
 
-# check_list()
-# v = fun(run())
-# print(v)
-
-
-
-
-
-
+check_list()
+v = fun(run())
+print(v)

@@ -16,8 +16,6 @@ sec = timer.timerit(1000)
 print(sec)
 ```
 
-DS
-
 # 数据结构
 
 ## 1. stack
@@ -470,32 +468,5 @@ alist = [22, 13, 4, 6, 8, 9, 23, 45, 76]
 quick_sort(alist, 0, len(alist) -1)
 print(alist)
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

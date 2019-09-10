@@ -3052,6 +3052,13 @@ sudo yum -y install zlib zlib-devel
 
 ### 1. python3
 
+```python
+# 下载 virtualenv 模块
+virtualenv 
+```
+
+
+
 ```shell
 python3 -m venv 路径如:django
 # 进入虚拟环境

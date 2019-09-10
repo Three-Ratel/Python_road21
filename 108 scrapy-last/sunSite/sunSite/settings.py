@@ -65,7 +65,7 @@ USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) AppleWebKit/605.1.15
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'sunSite.pipelines.SunsitePipeline': 300,
+    'sunSite.pipelines.SunsitePipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
