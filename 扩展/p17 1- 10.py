@@ -60,21 +60,21 @@
 for i in range(0, 100):
     print(fib(1000))
 """
-# li = [1, 1]
-#
-#
-# def func(num=1000):
-#     a, b = 1, 1
-#     while a + b < num:
-#         b = li[-1] + li[-2]
-#         a = li[-2]
-#         li.append(b)
-#         yield b
-#
-#
-# for i in func():
-#     print(i)
+li = [1, 1]
 
+
+def func(num=1000):
+    a, b = 1, 1
+    while a + b < num:
+        b = li[-1] + li[-2]
+        a = li[-2]
+        li.append(b)
+        yield b
+
+
+for i in func():
+    print(i)
+#
 # for i in range(100):
 #     print(fib(1000))
 
@@ -89,42 +89,42 @@ for i in range(0, 100):
 """
 10. 写一个base62encode函数，把
 """
-result = []
-li = [str(i) for i in range(10)]
-
-
-def check_list():
-    i = 65
-    while i <= 90:
-        li.append(chr(i))
-        i += 1
-    i = 97
-    while 97 <= i <= 122:
-        li.append(chr(i))
-        i += 1
-
-
-def run():
-    while 1:
-        num = input('please input a num: ')
-        if not num.isdecimal():
-            print('your num is wrong')
-            continue
-        num = int(num)
-        return num
-
-
-def fun(count):
-    a, b = divmod(count, 62)
-    result.append(li[b])
-    if a > 62:
-        fun(a)
-    else:
-        if a:
-            result.append(str(a))
-        return ''.join(result[::-1])
-
-
-check_list()
-v = fun(run())
-print(v)
+# result = []
+# li = [str(i) for i in range(10)]
+#
+#
+# def check_list():
+#     i = 65
+#     while i <= 90:
+#         li.append(chr(i))
+#         i += 1
+#     i = 97
+#     while 97 <= i <= 122:
+#         li.append(chr(i))
+#         i += 1
+#
+#
+# def run():
+#     while 1:
+#         num = input('please input a num: ')
+#         if not num.isdecimal():
+#             print('your num is wrong')
+#             continue
+#         num = int(num)
+#         return num
+#
+#
+# def fun(count):
+#     a, b = divmod(count, 62)
+#     result.append(li[b])
+#     if a > 62:
+#         fun(a)
+#     else:
+#         if a:
+#             result.append(str(a))
+#         return ''.join(result[::-1])
+#
+#
+# check_list()
+# v = fun(run())
+# print(v)

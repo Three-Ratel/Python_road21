@@ -51,5 +51,20 @@ li.sort()
 #             print(f'{i}*{j}={i*j}', end='\t')
 
 
+"""
+76. a=dict(zip(('a', 'b', 'c', 'd', 'e'), (1,2,3,4,5))) 请问a是什么？
+"""
+a = dict(zip(('a', 'b', 'c', 'd', 'e'), (1, 2, 3, 4, 5)))
+# print(a)
 
 
+"""
+108. 输出结果是
+"""
+import math
+
+# print(math.floor(5.5))
+
+"""
+
+"""

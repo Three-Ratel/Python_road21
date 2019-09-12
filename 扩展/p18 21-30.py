@@ -6,12 +6,17 @@
 """
 # 1. 根据定义参数，方法有一个self形参，函数没有
 # 2. 根据调用方式不同，函数调用是fun()，方法一般需要对象调用
-
+# from types import MethodType, FunctionType
+# def f():
+#     pass
+# print(isinstance(f, FunctionType))
 
 """
 22. 请编写一个函数实现ip地址转换为和一个整数
 """
-
+# ip = '192.168.12.87'
+# res = int(''.join([bin(int(i)).replace('0b', '').zfill(8) for i in ip.split('.')]), base=2)
+# print(res)
 
 # def ip_transfer(ip):
 #     print(int(''.join([bin(int(i)).replace('0b', '').zfill(8) for i in ip.split('.')]), base=2))
@@ -88,24 +93,18 @@
 29. 简述yield和yield from 关键字
 """
 # yield：用于定义生成器函数，yield后的值在for循环的时候会生成
-# yield from：用于生成器函数中，调用其他函数或生成器函数
+# yield from：用于生成器函数中，调用其他函数或生成器函数, python3之后
 
 
 """
 30. 有processFunc变量，初始化为processFunc = collapse  and (lambda s:''.join(s.split()))) or (lambda s:s)
 """
-
-
-
-
-
-
-
-
-
-
-
-
-
+# collapse = True
+# processFunc = collapse and (lambda s: " ".join(s.split())) or (lambda s:s)
+# print(processFunc('i\tam\ntest\tobject !'))
+#
+# collapse = False
+# processFunc = collapse and (lambda s: " ".join(s.split())) or (lambda s:s)
+# print(processFunc('i\tam\ntest\tobject !'))
 
 

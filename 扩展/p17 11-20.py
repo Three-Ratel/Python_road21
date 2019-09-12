@@ -6,13 +6,23 @@
 11. 实现一个装饰器，限制该函数调用频率，如10s 一次
 """
 # import time
+#
+#
 # def wrapper(func):
+#     start = 0
+#
 #     def inner():
-#         v = func()
-#         time.sleep(10)
-#         return v
+#         nonlocal start
+#         if time.time() - start >= 10:
+#             start = time.time()
+#             v = func()
+#             return v
+#         else:
+#             print('限制访问')
+#
 #
 #     return inner
+#
 #
 # @wrapper
 # def function():
@@ -21,7 +31,7 @@
 #
 # while 1:
 #     function()
-
+#     time.sleep(1)
 
 """
 12. 实现一个装饰器，通过一次调用函数重复执行5次
@@ -54,6 +64,7 @@
 """
 14.解释生成器与函数的不同，并实现和简单使用generator
 """
+
 # 1.语法上和函数类似：生成器函数和常规函数几乎一模一样的,他们都是使用def语句进行定义，
 # \区别在于，生成器使用yield语句返回一个值，而常规函数使用return语句返回一个值
 # 2.自动实现迭代器的协议：对于生成器，python自动实现迭代器协议，所以我们可以调用它的next
@@ -61,8 +72,17 @@
 # 3.状态挂起，生成器使用yield语句返回一个值.yield语句挂起该生成器函数的状态，保留足够的信息，
 # \方便之后离开的地方继续执行
 
-# print((i for i in range(100)))
 
+# def g():
+#     print('one')
+#     yield 'two'
+#
+#
+# g1 = g()
+# print(g1.__next__())
+
+# for i in [1, 2, 3, 4].__iter__():
+#     print(i)
 
 """
 15. [i % 2 for i in range(10)] 和(i % 2 for i in range(10))
@@ -79,7 +99,7 @@
 """
 17. python定义函数时，如何书写可变参数和关键字参数
 """
-# def func(*args, **kwargs):
+# def func(*args, k=5, **kwargs):
 #     pass
 
 
@@ -120,6 +140,4 @@
 """
 # functools.partial
 # functools.reduce
-#
-
-
+# functools.wrap(func)   # 装饰器一般需要使用，彻底装饰一个行数

@@ -1853,11 +1853,11 @@ class AddPublisher(View):
   	# 给post方法加装饰器
   	@method_decorator(timer)
   	def post(self, request):
-    		# 处理post请求
-    		return response 
+    	# 处理post请求
+    	return response 
   	def delete(self, request):
-    		# 处理post请求
-    		return response 
+    	# 处理post请求
+    	return response 
 ```
 
 #### 2. 给dispatch加

@@ -4,9 +4,9 @@ import time
 from multiprocessing import Process
 
 
-def son1():
+def son1(a):
     while True:
-        print(123)
+        print(a)
         time.sleep(0.5)
 
 
@@ -17,7 +17,7 @@ def son2():
 
 
 if __name__ == '__main__':
-    p = Process(target=son1)
+    p = Process(target=son1, args=('hello', ))
     p.daemon = True
     p.start()
     time.sleep(2)
