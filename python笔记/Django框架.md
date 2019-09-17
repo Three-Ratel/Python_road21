@@ -187,13 +187,14 @@ sk.close()
 
 #### 7. http请求和响应格式
 
-- 请求格式
+-   get请求没有请求体
+-   请求格式
 
-![ http请求格式](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/http%E8%AF%B7%E6%B1%82%E6%A0%BC%E5%BC%8F.jpg)
+![http请求格式](/Users/henry/Documents/截图/Py截图/http请求格式.jpg)
 
 - 响应格式
 
-![http响应格式](/Users/henry/Documents/%E6%88%AA%E5%9B%BE/Py%E6%88%AA%E5%9B%BE/http%E5%93%8D%E5%BA%94%E6%A0%BC%E5%BC%8F.jpg)
+![http响应格式](/Users/henry/Documents/截图/Py截图/http响应格式.jpg)
 
 ### 1.3 web框架的功能
 
@@ -202,8 +203,6 @@ sk.close()
 3. 返回动态页面
 
 - Django**:支持2和3；**Flask**:支持2（轻量级，其他功能需要其他模块）；**Tornado**:支持1、2和3(**异步非阻塞**)（同flask）
-
-
 
 ## 2. 服务器程序和应用程序
 
@@ -1363,8 +1362,6 @@ USE_L10N = False
 {{forloop.counter|divisibleby:2}}
 ```
 
-
-
 ### 1.3 自定义filter
 
 1. 在app下创建一个名为**templatetags**的python包(包名是固定的)
@@ -1457,9 +1454,9 @@ def add_(value, arg):
 
 ```django
 {# 整除，需要过滤器 #}
-{% if forloop.counter|divisibleby:2%}
+{% if forloop.counter|divisibleby:2 %}
 {# 偶数行、偶数列 #}
-{% if forloop.partent.forloop.counter|divisibleby:2%}
+{% if forloop.partent.forloop.counter|divisibleby:2 %}
 ```
 
 ```django
@@ -1559,7 +1556,7 @@ li = [1,2,3,4]
 {# form表单中加入 #}
 {# form表单中有一个隐藏标签 #}
 {% csrf_token %}
-name = csrfmiddlewaretoken
+name = csrfmiddlewaretoken {# 64位 #}
 ```
 
 #### Note(2)
@@ -1700,13 +1697,15 @@ def page(num):
 {% page 10 %}
 ```
 
-### 3. 自定义方法的使用流程
+### 2.11 自定义方法的使用流程
 
-filter、simple_tag、inclusion_tag
+-   filter、simple_tag、inclusion_tag
 
 #### 1. 在已注册的App下建立templatetags的pyhton 包
 
-#### 2. 在包中，创建py文件
+#### 2. 在包中，创建my_tag.py文件
+
+-   py文件名自定义
 
 #### 3. 在py文件中导入模块，并注册
 
@@ -1715,12 +1714,24 @@ from django import template
 register = template.Library()
 ```
 
-#### 4. 写函数
+#### 4. 写函数+装饰器
 
 ```python
+# page至多两个参数
+@register.filter
+def page(value,arg):
+  return xxx
+
+# simple_tag
+@register.simple_tag
+def page(value,*arg):
+  return xxx
+
+# inclusion_tag
 @register.inclusion_tag('page.html')
 def page(num):
-  return {'num': range(1, num+1)}
+  # 必须返回字典
+  return {'num': range(1, num+1)
 ```
 
 #### 5. 写模版
@@ -1741,7 +1752,7 @@ def page(num):
 ```django
 {# filter #}
 {% load my_tag %}
-{{'xxx'|add_:'a'}}
+{{'xxx'|add_:'a'}}		{# 可以使用if判断中 #}
 {# simple_tag #}
 {% load my_tag %}
 {% join_str 1 2 k1='v1' k2='v2' %}
@@ -1919,8 +1930,6 @@ class AddPublisher(View):
    - 是一个函数，其作用：Converts a function decorator into a method decorator
 2. 传入的参数将会发生变化
 
-
-
 ## 3. reuqest对象
 
 - django将请求报文中的请求行、头部信息、内容主体封装成 **HttpRequest 类中的属性**。
@@ -1936,15 +1945,15 @@ class AddPublisher(View):
 | 1    | **request.path_info/path** | 返回用户访问url，**不包括域名**                              |
 | 2    | **request.method**         | 请求中使用的HTTP方法的字符串表示，**全大写**表示。           |
 | 3    | **request.GET**            | 包含所有HTTP  GET参数的类字典对象,**QuerySet**               |
-| 4    | **request.POST**           | 包含所有HTTP POST参数的类字典对象**QuerySet**                |
+| 4    | **request.POST**           | 包含所有HTTP POST参数的类字典对象**QuerySet**，数据类型是**urlencoded** |
 | 5    | **request.body**           | **http请求体**，**byte类型** request.POST的数据就是从body里面提取到的 |
 | 6    | request.scheme             | 请求方案，通常为http 或 https                                |
 | 7    | request.encoding           | 编码方式，为None则则表示使用 DEFAULT_CHARSET 的设置，默认为 '**utf-8**'）。 |
-| 8    | **request.FILES**          | 上传的文件                                                   |
-| 9    | request.META               | 获取请求头，全大写，加HTTP， - 变称_s                        |
+| 8    | **request.FILES**          | 上传的文件，**可以有多个**                                   |
+| 9    | request.META               | **获取请求头**，全大写，加HTTP， - 变称_s                    |
 | 10   | request.user               | Django提供的auth模块，获得当前登陆的用户                     |
-| 11   | request.session            |                                                              |
-| 12   | request.COOKIES            |                                                              |
+| 11   | request.session            | session数据                                                  |
+| 12   | request.COOKIES            | 普通的cookie，请求头cookie                                   |
 
 - FILES属性示例
 
@@ -1984,6 +1993,8 @@ with open(f1.name, 'wb') as f:
 | 6    | request.get_raw_url()        | 获取全部url                         |
 
 ## 4. response对像
+
+-   TemplateResponse(request, 'html页面', {k:v....})
 
 ### 41. response
 
@@ -2268,6 +2279,7 @@ urlpatterns = [
 
 - 如果命名分组名和传参名相同则优先选择，关键字传参的值
 - 源码采用传参的dict数据更新命名分组的dict数据。
+- 分组得到的参数都是**字符串类型**的数据
 
 ```python
 # app(bolg)内的urls.py
@@ -4685,139 +4697,6 @@ class UserView(ModelViewSet):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 
 
 
 

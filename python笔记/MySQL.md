@@ -125,7 +125,7 @@ sudo mysql.server start/stop/restart
 - sql语句(structure query language)
 
   - SQL : 结构化查询语言(**Structured Query Language)**简称SQL(发音：/ˈes kjuː ˈel/ "S-Q-L")，是一种特殊目的的编程语言，是一种数据库查询和程序设计语言，用于存取数据以及查询、更新和管理关系数据库系统。
-  - SQL语言主要用于存取数据、查询数据、更新数据和管理关系数据库系统,SQLsu语言由IBM开发。**SQL语言分为3种类型**：
+  - SQL语言主要用于存取数据、查询数据、更新数据和管理关系数据库系统，SQL语言由IBM开发。**SQL语言分为3种类型**：
 
   1. **DDL**语句 数据库定义语言：数据库，表，视图，索引，存储规程
   2. **DML**语句 数据库操纵语言：插入数据insert，delete，update，alter
@@ -201,7 +201,7 @@ insert into student values(1, 'henry');
 # 数据查看
 select * from student;
 # 修改数据，必须设置条件，确定为一条数据data
-update 表 set 字段名=值 where id=2;
+update 表 set 字段名 =值 where id=2;
 # 删除数据
 delete from 表 where id=1；
 ```
@@ -248,7 +248,7 @@ delete from 表 where id=1；
 1. InnoDB
    - MySql 5.6 版本默认的存储引擎。InnoDB 是一个事务安全的存储引擎，它具备提交、回滚以及崩溃恢复的功能以保护用户数据。InnoDB 的行级别锁定以及 Oracle 风格的一致性无锁读提升了它的多用户并发数以及性能。InnoDB 将用户数据存储在聚集索引中以减少基于主键的普通查询所带来的 I/O 开销。为了保证数据的完整性，**InnoDB 还支持外键约束**。
 2. MyISAM
-   - MyISAM既不支持事务、也不支持外键、其优势是访问速度快，但是**表级别的锁**定限制了它在读写负载方面的性能，因此它经常应用于**只读**或者**以读为主**的数据场景。
+   - MyISAM既不支持事务、也不支持外键、其优势是访问速度快，但是**表级别的锁**限制了它在读写负载方面的性能，因此它经常应用于**只读**或者**以读为主**的数据场景。
 3. Memory
    - 在内存中存储所有数据，应用于对非关键数据由快速查找的场景。Memory类型的表访问数据非常快，因为它的数据是存放在内存中的，并且默认使用**HASH**索引，但是一旦服务关闭，表中的数据就会丢失
 4. BLACKHOLE
@@ -311,7 +311,7 @@ create table t2(id int, name char(10)) engine=memory;
 t2.xxx 数据
 ```
 
-### 2. mysql数据类型
+### 2. mysql数据类型(4)
 
 ```mysql
 # 语法：
@@ -419,8 +419,8 @@ select concat(name2, '---') from t7;
 1. ENUM中文名称叫枚举类型，它的值范围需要在创建表时通过枚举方式显示。ENUM**只允许从值集合中选取单个值，而不能一次取多个值**。
 2. SET和ENUM非常相似，也是一个**字符串对象**，里面可以包含**0-64**个成员。根据成员的不同，存储上也有所不同。set类型可以**允许值集合中任意选择1或多个元素进行组合**。对超出范围的内容将不允许注入，而对重复的值将进行自动去重。
 
-- en ENUM('male', 'female')：单选框
-- s set('')：多选框
+- ENUM('male', 'female')：单选框
+- set('')：多选框
 - 5.6版本取交集，5.7版本插入的数据必须和指定数据一致，不然会报错
 
 ```mysql
@@ -441,7 +441,7 @@ create table t8(name char(12),
 
 ## 1.3 表的完整性约束
 
-### 1. 约束
+### 1. 约束(5)
 
 - unsigned：设置无符号
 
@@ -472,7 +472,6 @@ create table t2(id int not null,
                gender enum('male', 'female') not null default 'male'
                );       
 insert into t2(id, name) values(1, 'henry');
-
 ```
 
 #### 1.3 unique
@@ -485,7 +484,6 @@ create table t3(id int unique,
                username char(12) not null unique,
                pwd char(18)
                );
-
 ```
 
 - **联合唯一**(**key MUL**)
@@ -496,7 +494,6 @@ create table t4(id int not null unique,
                server char(10),
                port int,
                unique(ip, port))  # 联合唯一,不能同时重复
-
 ```
 
 #### 1.4 auto_increment
@@ -523,7 +520,7 @@ insert into t5(username, pwd) values('henry', '123');
 create table student(id int primary key auto_increment,
                      name varchar(20),
                      gender enum('male','female') default 'male'
-                    )auto_increment=3;
+                    ) auto_increment=3;
 ```
 
 - **mysql自增步长**
@@ -556,7 +553,6 @@ show variables like 'auto_incre%';
 create table t6(id int not null unique,
                name char(10) not null unique);
 # 第一个指定为not null nuique 字段被定义为主键
-
 ```
 
 ```mysql
@@ -564,7 +560,7 @@ create table t7(id int primary key,
                name char(10) not null unique);
 ```
 
-- 联合主键
+- **联合主键**
 
 ```mysql
 create table t8(id int,
@@ -696,7 +692,6 @@ alter table 表名 add primary key(id);
 alter table 表名 add constraint 外键名 foreign key(字段) references press(字段);
 # 删除外键
 alter table 表名 drop foreign key 外键名;
-
 ```
 
 #### 2.9 删除表
@@ -821,7 +816,6 @@ insert into t1 value(1, 'henry', 19);
 insert into t1 values(1, 'henry', 19), (2, 'echo', 18);
 # 指定字段写入
 insert into t1(name, age) value('henry', 19);
-
 ```
 
 #### 4.2 删除
@@ -839,8 +833,6 @@ update 表 set 字段=值 where 条件;
 # 注意null只能使用 is 匹配
 where name is null;
 ```
-
-
 
 ## 1.4 查询
 
@@ -1005,7 +997,7 @@ select min(hire_date) from employee group by post;
 ```
 
 - **查询分组内所有成员名**
-  - group_concat()
+  - **group_concat()**
 
 ```mysql
 # 查询岗位名以及岗位包含的所有员工名字
@@ -1098,9 +1090,8 @@ select * from employee limit 10,5;
 - 数据准备
 
 ```mysql
-#建表
-create table department(id int,
-                        name varchar(20) );
+# 建表
+create table department(id int, name varchar(20) );
 
 create table staff(id int primary key auto_increment,
                    name varchar(20),
@@ -1629,7 +1620,7 @@ con = pymysql.connect(host='127.0.0.1', user='root', password='123', database='t
 cur = con.cursor(pymysql.cursors.DictCursor)
 # 操作
 cur.execute('sql语句')
-# 获取返回值,cur类似操作文件的游标指针
+# 获取返回值，cur类似操作文件的游标指针
 ret = cur.fetchone()/ fetchmany(n)/ fetchall()
 con.commit()
 con.close()
@@ -1764,13 +1755,13 @@ db.close()
         4.  默认是异步复制的
             -   binlog：sql语句历史
             -   把binlog日志交给从库
-            -   异步：不关心复制的结果
-            -   同步：需要等待复制结果，从ralylog中取出sql二进制命令执行，并写入binlog中，返回结果
-            -   半同步：ralylog记录主库推过来的binlog，只要写入ralylog就返回结果
+            -   **异步**：不关心复制的结果
+            -   **同步**：需要等待复制结果，从ralylog中取出sql二进制命令执行，并写入binlog中，返回结果
+            -   **半同步**：ralylog记录主库推过来的binlog，只要写入ralylog就返回结果
         5.  分表
-            -   水平分表：大表从中间分开，拆分成小表
-            -   垂直分表：经常查的数据和不常查的数据分开
-    2.  尽量把鼎昌的字段放在前面，尽量多使用定长字段
+            -   **水平分表**：大表从中间分开，拆分成小表
+            -   **垂直分表**：经常查的数据和不常查的数据分开
+    2.  尽量把定长的字段放在前面，尽量多使用定长字段
     3.  建立索引
     4.  把固定长度的字段放在前面、分库分表
 2.  sql语句

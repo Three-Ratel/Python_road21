@@ -57,35 +57,56 @@
 # print(v)
 
 
-from threading import Thread
+# from threading import Thread
+#
+#
+# class Mythread(Thread):
+#
+#     def __init__(self, func, args=()):
+#         self.func = func
+#         self.args = args
+#         super().__init__()
+#
+#     def run(self):
+#         self.result = self.func(*self.args)
+#
+#     def get_result(self):
+#         Thread.join(self)  # 等待线程执行完毕
+#         try:
+#             return self.result
+#         except Exception:
+#             return None
+#
+#
+# def func(i):
+#     # print(i)
+#     return i
+#
+#
+# th_l = []
+# for i in range(5):
+#     obj = Mythread(func, (i,))
+#     obj.start()
+#     res = obj.get_result()
+#     print(res)
+
+import gevent
 
 
-class Mythread(Thread):
-
-    def __init__(self, func, args=()):
-        self.func = func
-        self.args = args
-        super().__init__()
-
-    def run(self):
-        self.result = self.func(*self.args)
-
-    def get_result(self):
-        Thread.join(self)  # 等待线程执行完毕
-        try:
-            return self.result
-        except Exception:
-            return None
+def play():
+    print("start play")
+    gevent.sleep(1)
+    print("end play")
 
 
-def func(i):
-    # print(i)
-    return i
+# def sleep():
+#     print("start sleep")
+#     gevent.sleep(1)
+#     print("end sleep")
 
 
-th_l = []
-for i in range(5):
-    obj = Mythread(func, (i,))
-    obj.start()
-    res = obj.get_result()
-    print(res)
+g1= gevent.spawn(play)
+g2 = gevent.spawn(play)
+# gevent.joinall([g1, g2])
+g1.join()
+g2.join()
