@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crm.apps.CrmConfig',
     'rbac.apps.RbacConfig',
+
 ]
 
 MIDDLEWARE = [
@@ -47,8 +48,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
     'rbac.middlewares.middlewares.AuthMiddleWare',
+
 ]
 
 ROOT_URLCONF = 'henry_crm.urls'

@@ -1,3 +1,5 @@
+
+
 # 1. Django基础
 
 ## 1. web框架的本质
@@ -4689,7 +4691,501 @@ class UserView(ModelViewSet):
 
 ![drf类的继承](/Users/henry/Documents/截图/Py截图/drf类的继承.png)
 
+# Django的其他配置
 
+## 1. django-debug-toolbar
+
+-   django-debug-toolbar 是一组可配置的面板，可显示有关当前请求/响应的各种调试信息，并在单击时显示有关面板内容的更多详细信息。
+-   **在返回 html 页面时，生效**
+
+### 1. 安装
+
+```python
+pip3 install django-debug-toolbar
+```
+
+### 2. 配置
+
+#### 1. settings.py
+
+```python
+INSTALLED_APPS = [
+    …
+    'debug_toolbar',
+]
+# 本地调试使用
+INTERNAL_IPS = ['127.0.0.1', ]
+
+MIDDLEWARE = [
+    # ...
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # ...
+]
+```
+
+#### 2. urls.py
+
+```python
+from django.conf import settings
+from django.conf.urls import include, url
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
+```
+
+#### 3. 配置jquery
+
+```python
+DEBUG_TOOLBAR_CONFIG = {
+    "JQUERY_URL": '//cdn.bootcss.com/jquery/2.2.4/jquery.min.js',
+}
+```
+
+-   如果在Django项目中使用了jquery的话就可以直接将这一项置为空，那么django-debug-toolbar 就会使用你项目中用到的jquery
+
+```python
+DEBUG_TOOLBAR_CONFIG = {
+    "JQUERY_URL": '',
+} 
+```
+
+## 2. 缓存
+
+### 1. 配置
+
+-   settings.py
+
+```python
+# 内存
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        # 缓存超时时间（默认300，None表示永不过期，0表示立即过期）
+        'TIMEOUT': 300, 
+        'OPTIONS': {
+            # 最大缓存个数（默认300）
+            'MAX_ENTRIES': 100, 
+            # 缓存到达最大个数之后，剔除缓存个数的比例，即：1/CULL_FREQUENCY（默认3）
+            'CULL_FREQUENCY': 3,
+        },
+    }
+}
+```
+
+### 2. 应用
+
+#### 1. 缓存视图
+
+```Python
+from django.views.decorators.cache import cache_page
+
+@cache_page(5)
+def student_list(request, *args, **kwargs):
+    students = models.Student.objects.all()
+    print('students')
+    return render(request, 'student_list.html', {'students': students})
+```
+
+#### 2. 全栈缓存
+
+```python
+MIDDLEWARE = [
+    'django.middleware.cache.UpdateCacheMiddleware',
+		....
+    'django.middleware.cache.FetchFromCacheMiddleware',
+]
+```
+
+#### 3. 局部缓存
+
+```django
+{% load cache %}
+{% cache 5 'xxx' %}
+    {# 缓存 #}
+    {{ now }}
+{% endcache %}
+
+```
+
+### 3. 缓存使用redis
+
+```python
+pip install django-redis
+```
+
+-   配置
+
+```python
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+```
+
+```python
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+```
+
+## 3. 信号
+
+### 1. 内置信号
+
+```python
+# 请求结束后，自动触发
+from django.core.signals import request_finished
+# 请求到来前，自动触发
+from django.core.signals import request_started
+# 请求异常后，自动触发
+from django.core.signals import got_request_exception
+
+# 程序启动时，检测已注册的app中 model 类，对于每一个类，自动触发
+from django.db.models.signals import class_prepared 
+
+# pre_init，django的 model 执行其构造方法前，自动触发
+# post_init，django的 model 执行其构造方法后，自动触发
+from django.db.models.signals import pre_init, post_init
+
+# pre_save，django的 model对象保存前，自动触发
+# post_save，django的 model 对象保存后，自动触发
+from django.db.models.signals import pre_save, post_save
+
+# pre_delete，django的 model 对象删除前，自动触发
+# post_delete，django的 model 对象删除后，自动触发  
+from django.db.models.signals import pre_delete, post_delete
+
+# django的modal中使用m2m字段操作第三张表（add,remove,clear）前后，自动触发
+from django.db.models.signals import m2m_changed
+
+# pre_migrate，执行 migrate 命令前，自动触发
+# post_migrate，执行m igrate 命令后，自动触发
+from django.db.models.signals import pre_migrate, post_migrate
+
+# 使用test测试修改配置文件时，自动触发
+from django.test.signals import setting_changed
+# 使用test测试渲染模板时，自动触发	
+from django.test.signals import template_rendered
+# 创建数据库连接时，自动触发
+from django.db.backends.signals import connection_created
+```
+
+-   **注册信号**
+    -   与settings.py 同级的`__init__.py`
+
+```python
+from django.db.models.signals import pre_save, post_save
+
+# 方式一
+def callback(sender, **kwargs):
+    print("xxoo_callback")
+    print(sender, kwargs)
+
+# 可以同时触发多个
+post_save.connect(callback)
+post_save.connect(callback2)
+...
+
+# 方式二
+from django.dispatch import receiver
+@receiver(post_save)
+def callback1(sender, **kwargs):
+    print("xxoo_callback1111111")
+    print(sender, kwargs)
+```
+
+### 2. 自定义信号
+
+-   **定义信号**：sg.py
+
+```python
+import django.dispatch
+pizza_done = django.dispatch.Signal(providing_args=['toppings', 'size'])
+```
+
+-   **注册信号**：`__init__.py`，与settings.py 同级
+
+```python
+from sg import pizza_done
+
+from django.dispatch import receiver
+@receiver(pizza_done)
+def callback(sender, **kwargs):
+    print("pizza_done")
+    print(sender, kwargs)
+```
+
+-   **触发信号**：views.py
+
+```python
+from sg import pizza_done
+ 
+pizza_done.send(sender='echo', toppings=123, size=456
+```
+
+## 4. 多个数据库配置
+
+### 1. 数据的读写分离
+
+```python
+# 多个数据库配置
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'crm',
+        'HOST': 'localhost',
+        'PORT': 3306,
+        'USER': 'root',
+        'PASSWORD': 'root',
+    },
+    'db':{
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
+```
+
+-   数据库迁移
+
+```shell
+# default、db是配置文件中的数据库的 key
+python manage.py migrate --database default
+python manage.py migrate --database db
+```
+
+-   读取
+
+```python
+# 默认使用default数据库
+models.Student.objects.all()
+# 指定数据库
+models.Student.objects.all().using('db') or
+models.Student.objects.using('db').all()
+
+```
+
+-   写入
+
+```python
+# 指定数据库写入数据
+models.Student.objects.using('db').create(name='echo', classes_id=1)
+```
+
+-   修改
+
+```python
+obj = models.Student.objects.using('db').update()
+obj.name = 'dean'
+# 保存到来源数据库
+obj.save()
+# 保存到指定数据库
+obj.save(using='default')
+```
+
+-   myroute.py
+    -   与manage.py同级
+
+```python
+class Router:
+    """读写分离"""
+    def db_for_write(self, model, **kwargs):
+        return 'db'
+    
+    def db_for_read(self, model, **kwargs):
+        return 'default'
+```
+
+-   Settings.py
+
+```python
+DATAVASE_ROUTER = ['myrouter.Router']
+```
+
+### 2. 一主多从
+
+```python
+import random
+class Router:    
+    """一主多从"""    
+    def db_for_write(self, model, **kwargs):        
+        return 'db'        
+    
+    def db_for_read(self, model, **kwargs):        
+        return random.choices(['db2', 'db3'...])
+
+```
+
+### 3. 分库分表
+
+```python
+class Router:
+    """
+    分库分表
+    app01 models db1
+    app02 models db2
+    """ 
+    
+    def db_for_write(self, model, **kwargs):  
+        app_name = model._meta.app_label
+        if app_name = 'app01':
+            db = 'db1'
+        elif app_name = 'app02':
+            db = 'db2'
+        
+        return db
+    
+    def db_for_read(self, model, **kwargs):                
+        app_name = model._meta.app_label
+        if app_name = 'app01':
+            db = 'db1'
+        elif app_name = 'app02':
+            db = 'db2'
+        
+        return db
+
+```
+
+### 4. django执行原生sql
+
+```python
+# extra
+  
+
+# 通过raw执行，和 Student 没关系，只是为了拿到 objects
+ret = models.Student.objects.raw('select * from main.app01_classes')
+print(ret)
+
+# 通过connection执行
+from django.db import connection, connections
+# 使用默认数据库
+cursor = connectsion.sursor()
+# 指定 db2 数据库
+cursor = connectsions['db2'].sursor()
+cursor.execute(r"select * from main.app01_classes where id=%s", [1])
+row = cursor.fetchall()
+print(row)
+
+```
+
+### 5. orm性能相关(5)
+
+1.  **跨表查询时**，尽量不查对象，使用values()
+    -   使用对象查询，查出条件后会，一一使用条件再查询，效率低
+    -   使用values时，使用的是 inner join 连表查询
+    -   得到的结果是 **querydict**
+2.  **select_related**('外键字段') 
+    -   连表查询 inner jion，多对一、一对一
+3.  **prefetch_related**('关联字段') 
+    -   **子查询** ，多对一 、多对多
+4.  only('name')、defer('name')
+    -   only：指定某些字段 
+    -   defer：表示指定排除某些字段  
+    -   得到的结果是 **对象**
+5.  queryset 特性
+
+## crm+权限
+
+### 1. crm
+
+-   客户关系管理系统
+-   功能：
+    1.  销售
+        -   客户的信息
+        -   公户和私户
+        -   跟进记录管理
+        -   报名记录管理
+        -   缴费记录管理
+    2.  班主任
+        -   班级管理
+        -   课程记录管理
+        -   学生学习记录管理
+-   公户和私户
+    1.  避免抢单的情况
+    2.  有没有现成的crm系统
+        -   学邦、销售易
+        -   自己开发，可定制化程度比较高
+-   crm表(10张)
+
+## 2. rbac
+
+-   6张表
+-   在web开发中，url地址当作权限
+-   表结构设计
+-   登录成功后保存用户的权限 + 中间件校验用户的权限
+
+### 技术点
+
+1.  登录成功后，保存权限信息
+    -   查询：跨表查询、去空、去重
+    -   session
+        -   json序列化
+        -   字典的key是数字，序列化后变成了字符串
+2.  中间件
+    -   url request.path_info
+    -   白名单
+        1.  settings []
+        2.  re正则匹配
+    -   登录状态校验
+    -   免认证校验
+    -   权限校验
+        1.  从session中获取权限信息
+        2.  for循环进行校验
+            -   有pid表示是子权限，记录 pid
+            -   没有pid表示是二级菜单
+    -   最后返回HttpResponse()对象
+3.  动态生成菜单
+    -   inclusion_tag
+    -   排序、有序字典、sorted
+
+### 表结构
+
+```python
+# 权限表 Permission
+# 用户表 User
+# 角色表 Role
+
+# 生成一级菜单
+Permission 中添加 is_menu 字段
+
+
+# 生成二级菜单
+# 菜单表 Menu
+
+
+```
+
+### 数据结构
+
+```python
+# 简单权限控制
+permissions = [{'permission__url':'xxx'}, ...]
+
+# 生成一级菜单
+permission_list = [{'url':'xxx'}]
+menu_list = [{'url':'title', 'icon':'icon'}]
+
+# 生成二级菜单
+menu_dict = {
+    '一级菜单id':{
+        title:'xxx',
+        icon:'xxx',
+        weight:1,
+        chirldren:[{
+            url:'xxx',
+            title:'xxx',
+        }]
+    }
+}
+```
 
 
 
