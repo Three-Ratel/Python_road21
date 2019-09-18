@@ -45,7 +45,7 @@ def home():
   	return 'AH, you are visiting Flask-site!'
 
 if __name__ == '__main__':
-	# 监听地址和端口
+	# 监听地址和端口，默认是127.0.0.1:5000
 	app.run('0.0.0.0', 5000)
 # werkzeug调用run_simple
 # wsgi处理请求头(网关接口)
@@ -144,7 +144,7 @@ def get_json():
 7. request.url				# 完整路径
 8. request.cookies			# 字典，获取浏览器请求时带上的cookies
 9. request.files			# 获取 Form 中文件，返回 FileStroage中有 save() 方法和 filename属性
-10.request.json				# 请求中的 Content-type:application/json
+10.request.json				# 请求头的 Content-type:application/json
    							# 请求体中的数据被序列化到request.json中，以字典的形式存放
 11.request.data				# Content-type 中不包含 Form 或 FormData，保留请求体中的原始数据，b""类型
 ```
@@ -370,7 +370,8 @@ def home():
 
 #### 5. redirect_to='/'
 
-- 永久重定向，状态码，308/301
+- **永久重定向**，状态码，308/301
+- 不进入视图函数，直接重定向
 
 ```python
 @app.route(rule, endpoint=None, redirect_to='/')
@@ -378,7 +379,7 @@ def home():
 
 ### 3. 动态参数路由
 
-- str：可以收一切，默认是 str 类型
+- str：可以收一切，**默认是 string 类型**
 - rule：`/home/<filename>`， `/home/<int:page>`， `/home/<ty>_<page>_<id>`，分页、获取文件、解决分类，解决正则路由
 - send_file()：需要限定文件目录
 
@@ -399,14 +400,16 @@ def home(filename):
 
 ## 2. Flask中的配置
 
+-   static_host=None：静态文件的服务器
+
 ### 1. 初始化配置(3)
 
 #### 1. template_folder=''
 
-- 指定模板存放路径，默认时templates
+- **指定模板存放路径**，默认时templates
 
 ```python
-app = Flask(__name__,  template_folder='templates')
+app = Flask(__name__, template_folder='templates')
 ```
 
 #### 2. staic_folder='static'
@@ -436,13 +439,13 @@ app = Flask(__name__, static_folder='img', static_url_path='/static')
 
 #### 1. default_config
 
-- default_config = {} ：默认配置
-- 'TESTING'：True，日志级别为Debug
+- **default_config** = {} ：默认配置
+- 'TESTING'：True，日志级别为Debug，修改代码后不自动重启，错误环境不透传，接近生产环境
 - ''：31days(默认)
 - JSONIFY_MIMETYPE='application/json'
 
 ```python
-# 开启 debug 模式
+# 开启 debug 模式，自动重启、透传错误信息、log级别较低 debug 级别
 app.debug = True
 # 使用session
 app.secret_key = 'R&w34hr*&%^R7ysdjh9qw78r^*&A%863'
@@ -482,12 +485,15 @@ app.config.from_object(TestConfig)
 
 ## 3. Blueprint
 
-- **不能被run的flask实例，不存在config，app的功能隔离**
+- **不能被run的flask实例，不存在config**
+- **app的功能隔离**
+- **视图路由分割**
 
 ```python
 from flask import Blueprint
-
+# 蓝图标识必须唯一
 bp = Blueprint('app01', __name__,url_prefix='/car')
+bp = Blueprint(__name__, __name__,url_prefix='/car')
 
 @bp.route('/user')
 def user():
@@ -527,6 +533,8 @@ def be2():
 ### 2. @app.after_request
 
 - 在响应返回客户端之前，结束view之后
+- 会有**response**参数
+- 执行顺序与定义顺序相反
 
 ```python
 @app.after_request
@@ -536,7 +544,7 @@ def af1(res):
 
 @app.after_request
 def af2(res):
-    print('i am in afp2')
+    print('i am in af2')
     return res
 ```
 
@@ -609,7 +617,7 @@ class Index(views.MethodView):
       	pass
     ...
 
-app.add_url_rule('/index', endpoint=None, view_func=Login.as_views(name='login')
+app.add_url_rule('/index', endpoint=None, view_func=Login.as_vxwiews(name='login')
 ```
 
 ## 2. redis
@@ -792,6 +800,8 @@ __slots__ = ('__stroage__', '__ident_func__')
 5.  消息转发
 
 ## 2. Websocket 
+
+-   实现的组件：werkzeug、gevent-websocket
 
 ### 1. 示例
 
@@ -1008,3 +1018,4 @@ if __name__ == '__main__':
     http_server.serve_forever()
 ```
 
+## DButils模块：数据库连接池

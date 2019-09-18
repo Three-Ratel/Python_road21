@@ -1,6 +1,6 @@
 from flask import Blueprint, request, render_template, session, redirect
 
-log = Blueprint('login', __name__,)
+log = Blueprint('login', __name__, )
 
 
 @log.route('/login', methods=['GET', 'POST'])

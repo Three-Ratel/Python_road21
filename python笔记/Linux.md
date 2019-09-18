@@ -3053,7 +3053,7 @@ make install
 PATH=$PATH:/opt/ptyhon/bin
 # 永久生效，添加python3的环境变量,注意,要添加到开头
 vim /etc/profile
-PATH='/opt/ptyhon/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin'
+PATH='/opt/ptyhon36/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin'
 source /etc/profile
 ```
 
