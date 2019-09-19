@@ -1167,7 +1167,7 @@ class Student(BaseModel):
     name = Column(String(32), nullable=False)
     sch_id = Column(Integer, ForeignKey('shool.id'))
 	# mapping
-    stu2sch = 'cf'('School', backref='sch2stu')
+    stu2sch = relationship('School', backref='sch2stu')
 
 BaseModel.metadata.create_all(engine)
 ```
@@ -1192,12 +1192,11 @@ db_session.add(stu)
 db_session.commit()
 db_seesion.close()
 # 3. relastionship 反向添加
-sch = School(name='ShangHai')
-sch.sch2stu = [Student(name='iris'),
-               Student(name='oleg'),
-              ]
+sch = School(name='Shanghai')
+sch.sch2stu = [Student(name='henry'), Student(name='echo')]
+db_session.add(sch)
 db_session.commit()
-db_seesion.close()
+db_session.close()
 ```
 
 #### 2. 删除
@@ -1209,11 +1208,11 @@ db_seesion.close()
 ```python
 # 正向查询
 res = db_session.query(Student).all()
-print([stu.name, stu.stu2sch.name for stu in res])
+print([(stu.name, stu.stu2sch.name) for stu in res])
 # 反向查询
 res = db_session.query(School).all()
-print([sch.name, len(sch.sch2stu) for sch in res])
-print([sch.name, *[stu.name for stu in sch.sch2stu] for sch in res])
+print([(sch.name, len(sch.sch2stu)) for sch in res])
+print([(sch.name, [stu.name for stu in sch.sch2stu]) for sch in res])
 ```
 
 ## 4. ManyToMany
@@ -1224,10 +1223,10 @@ print([sch.name, *[stu.name for stu in sch.sch2stu] for sch in res])
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.engine import create_engine
-from sqlalchemy.orm imoprt relationship
+from sqlalchemy.orm import relationship
 # 几乎支持所有的关系型数据库
 engine=create_engine('mysql+pymysql://root:root@127.0.0.1:3306/sqlalchemy?chrset=utf8')
-BaseModel = declarative_base()
+BaseModel = declarative_base()bd
 ```
 
 -   多对多表
@@ -1285,6 +1284,8 @@ db_sesion.close()
 ```
 
 #### 2. 查询
+
+-   查询结果必须使用 .all() 或者 .first()
 
 ```python
 # 正向查询

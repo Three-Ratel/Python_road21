@@ -2,9 +2,9 @@
 from sqlalchemy.engine import create_engine
 
 engine = create_engine('mysql+pymysql://root:root@127.0.0.1:3306/sqlalchemy?charset=utf8')
-from 操作.sqlalchemy_study import engine
+from sqlalchemy_study.sqlalchemy_study import engine
 # 2. 选择表
-from 操作.sqlalchemy_study import User
+from sqlalchemy_study.sqlalchemy_study import User
 # 3. 创建查询窗口
 from sqlalchemy.orm import sessionmaker
 
@@ -34,16 +34,15 @@ db_session = select_db()
 #     print(i.id, i.name)
 # db_session.close()
 
-# res = db_session.query(User).first()
+# res = db_session.query(User).filter(User.name == 'dean').first()
 # print(res.id, res.name)
-
 
 # res = db_session.query(User).filter(User.id == 3, User.name == '123').all()
 # res = db_session.query(User).filter(True).all()
-res = db_session.query(User).filter(User.id == 1).update({'name': 'henry123'})
-res = db_session.query(User).filter(User.id == 1).first()
-res = db_session.query(User).filter(User.id == 1).delete()
-db_session.commit()
-db_session.close()
-print(res)
+# res = db_session.query(User).filter(User.id == 1).update({'name': 'henry123'})
+# res = db_session.query(User).filter(User.id == 1).first()
+# res = db_session.query(User).filter(User.id == 1).delete()
+# db_session.commit()
+# db_session.close()
+# print(res)
 
