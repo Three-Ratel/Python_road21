@@ -8,6 +8,7 @@ info = Blueprint('detail', __name__)
 
 @info.route('/detail', endpoint='detail')
 def detail():
+    print(request.url)
     sid = request.args.get('sid')
     if sid:
         stus = {sid: STUDENT_DICT[int(sid)]}

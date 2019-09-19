@@ -25,7 +25,6 @@ app.register_blueprint(info)
 @app.before_request
 def auth():
     # print(request.path, )
-
     if request.path in EXEMPT_SET:
         return
     if not session.get('username'):
@@ -46,4 +45,4 @@ def query(name, sid):
 
 if __name__ == '__main__':
     app.run()
-    app.__call__
+    # app.__call__()
