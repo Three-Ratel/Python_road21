@@ -268,6 +268,13 @@ uwsgi --http :8000 --module henry_crm.wsgi
 uwsgi --http :8000 --module henry_crm.wsgi   --py-autoreload=1 
 ```
 
+-   测试
+
+```python
+# 需要清空防火墙规则
+iptables -F
+```
+
 ### 3. uwsgi配置文件启动 
 
 -   把启动参数，写入到一个文件中，然后执行这个文件即可
@@ -286,7 +293,7 @@ chdir           = /opt/projects/henry_crm
 module          = henry_crm.wsgi
 # the virtualenv (full path)
 # 找到虚拟环境的绝对路径
-home            = /opt/uwsgi_crm
+home            = /opt/projects/env/crm_env
 # process-related settings
 # master
 master          = true
@@ -418,7 +425,7 @@ touch uwsgi.ini
 [uwsgi]
 chdir           = /opt/projects/luffy_boy
 module          = luffy_boy.wsgi
-home            = /opt/uwsgi_vue
+home            = /opt/env/uwsgi_vue
 master          = true
 processes       = 2
 socket          = 0.0.0.0:8000
@@ -472,7 +479,7 @@ v8.6.0
 
 ```shell
 # 进入vue代码目录,开始编译代码,生成dist静态文件夹
-cd /opt/projects/vue_luffy/
+cd /opt/projects/luffy_vue/
 #开始安装这个项目所有需要的node模块,默认去读取 package.json
 npm install 
 #开始编译vue代码,生成dist静态网页文件夹,丢给nginx 
@@ -486,11 +493,11 @@ npm run build
 # 这个是nginx+vue的虚拟主机
 server {
         listen 80; 
-        server_name www.vue.com;
+        server_name www.myvue.com;
         error_page  404              /404.html;
         # 请求来到这里时,返回vue的页面
         location / { 
-            root   /opt/projects/vue_luffy/dist;
+            root   /opt/projects/luffy_vue/dist;
             index index.html;
             # 404报错
             try_files $uri $uri/ /index.html;
@@ -510,25 +517,3 @@ server {
 ```
 
 ### 4. 安装并启动redis
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

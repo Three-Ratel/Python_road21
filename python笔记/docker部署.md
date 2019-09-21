@@ -1,12 +1,14 @@
+# docke基础
 
+## 0. 基础概念
 
-# docke准备
+-   容器是随时创建,随时删除的,轻量级,每次docker run 都会生成新的容器记录 
 
 ## 1. 安装docker
 
 ```nginx
 # 删除旧版本的docker
-yum remove docker
+yum remove docker*
 # 指定docker-ce源
 wget -O /etc/yum.repos.d/docker-ce.repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 # 安装
@@ -29,82 +31,49 @@ systemctl start docker
 docker run -it hello-world
 ```
 
-## 2. 制作镜像
+## 2. docker仓库
 
--   一般使用 乌班图 (较小)
--   作为基础镜像
-
-### 1. dockerfile文件
-
--   如果复制目录则需要在后面加上目录名称，只复制目录中的文件
-
-```nginx
-# 创建dockerfile文件
-vim DockerFile
-1. 指定基础镜像
-FROM 镜像名
-2. 构建执行的命令
-RUN yum install -y wget
-RUN mkdir /mydata
-3. 添加文件到 /mydata，如果是压缩包则自动解压
-ADD etc.tar.gz /mydata
-4. 本地文件copy到镜像中
-COPY test.txt /mydata
-
-5. 工作目录，启动后的目(默认根目录)
-WORKDIR /mydata
-6.ENV设置变量
-ENV name=henry
-7. VOLUME，指定当前的数据卷
-VOLUME ["/data"]
-8. EXPOSE,指定 image 的端口，必须声明
-EXPOSE 5900
-9. LABEL指定标签
-
-10. 执行的命令，只执行最后一个CMD
-CMD echo $HOME >> home.txt
-CMD ['nginx', 'g', 'daemon off;']
-```
-
-```nginx
-# 在当前目录下构建
-docker build  -t myimage -f 文件名 .
-```
-
-```nginx
-# 执行，通过浏览器访问测试
-docker run -it -P myimage
-```
-
-### 2. docker仓库
-
--   这将使用官方的 registry 镜像来启动私有仓库。
+-   使用官方的 registry 镜像来启动私有仓库。
 -   默认情况下，仓库会被创建在容器的 /var/lib/registry 目录下。
 -   可以通过 -v 参数来将镜像文件存放在本地的指定路径。
 
-```nginx
-# 搭建私有 docker 仓库
-docker run -d -p 5000:5000 --restart=always -v /opt/register:/var/lib/registery registery
+#### 搭建私有 docker 仓库流程
 
-# 修改名称
-docker tag redis 127.0.0.1:5000/redis
-# push，修改 /etc/docker/daemon.jsonre
-{	
-	# 本地仓库地址
-    "insecure-registries":[
-   		"192.168.12.4:5000"
-   	]
+```nginx
+# 1. 宿主机port:docker的port
+# --privileged=true，docker容器的安全机制：设置特权级运行的容器
+# --restart=always，仓库挂掉会重启
+docker run --privileged=true --restart=always -d -p 5000:5000 -v /opt/data/registry:/var/lib/registry registry
+
+# 2. 修改 /etc/docker/daemon.json
+{
+    # 镜像加速器
+    "registry-mirrors": [
+        "https://1nj0zren.mirror.aliyuncs.com",
+        "https://docker.mirrors.ustc.edu.cn",
+        "http://f1361db2.m.daocloud.io",
+        "https://registry.docker-cn.com"
+        ],
+    # 本地仓库地址
+    "insecure-registries":["172.16.44.142:5000"]
 }
 
-docker push 127.0.0.1:5000/redis
-docker push 192.168.12.4:5000/redis
-# 其他主机进行 pull redis，也需要修改 /etc/docker/daemon.json
-docker push 192.168.12.4:5000/redis
-# 查看
-curl 127.0.0.1:5000/v2/_catalog
+# 3. 修改docker的启动文件
+vim /lib/systemd/system/docker.service
+[Service]
+EnvironmentFile=-/etc/docker/daemon.json
+# 4. 修改了docker配置文件，重新加载docker
+systemctl daemon-reload
+# 5. 重启docker服务
+systemctl restart docker
+# 6. 修改名称，push镜像
+docker tag redis-test 172.16.44.142:5000/redis
+docker push 172.16.44.142:5000/redis
+# 7. 查看
+curl 172.16.44.142:5000/v2/_catalog
 ```
 
-### 3. docker-compose
+## 3. docker-compose
 
 -   docker编排工具：swarms，docker-compose
 -   yml/yaml 语法
@@ -153,7 +122,7 @@ addr:
 - 'beijing'
 ```
 
-### 4. 常用命令
+## 4. 常用命令
 
 ```nginx
 # 删除 stoped 的容器
@@ -168,6 +137,21 @@ docker-compose images
 
 # docker部署
 
+## 0. docker镜像加速器
+
+```nginx
+# 编辑配置文件 /etc/docker/daemon.json
+{
+    "registry-mirrors": [
+        "https://1nj0zren.mirror.aliyuncs.com",
+        "https://docker.mirrors.ustc.edu.cn",
+        "http://f1361db2.m.daocloud.io",
+        "https://registry.docker-cn.com",
+        阿里云
+    ]
+}
+```
+
 ## 1. pull环境
 
 ```nginx
@@ -178,7 +162,7 @@ docker pull nginx
 - 测试启动
 
 ```nginx
-docker  run -ti --rm  centos:latest  bash
+docker run -ti --rm  centos:latest  bash
 docker run -ti --rm -p 81:80 nginx bash
 ```
 
@@ -271,6 +255,8 @@ docker rmi -f `docker images -q`
 
 ### 3. 启动
 
+-   docker容器进程，如果**没有在后台运行**的话，就会**立即挂掉**(容器中必须有正在工作的进程)
+
 ```nginx
 # 启动容器
 格式：docker run [选项] 镜像 [执行的命令]
@@ -280,15 +266,16 @@ docker rmi -f `docker images -q`
 	--rm：用于测试使用，退出容器后自动删除
 	-v：宿主机目录:容器使用的目录，把容器目录挂载到宿主机
 	-p：宿主机port:容器使用的port，把容器使用的port映射到宿主机的port
-	-P：宿主机的port是随机的
+	-P：宿主机的port是随机的，自动指定端口
 	
-docker run -it redis
+docker run -d -P redis
 ```
 
 ### 4.备份
 
+-   注意导出的文件是**压缩文件， xxx.tar.gz**
+
 ```nginx
-	 
 # 导出镜像
 docker save -o redis.tar.gz redis
 docker save redis > redis.tar.gz
@@ -301,16 +288,15 @@ docker tag 镜像id mycentos	# 给镜像加上tag，没有tag则添加，有怎�
 docker push repositoryname:tagname
 ```
 
-
-
 # Part2 Containers
 
 ## 1. 进入容器
 
 ```nginx
 docker ps -a
+# 进入后台启动过的容器
 docker exec -it d1fe90d74edc /bin/bash
-sudo docker attach 容器ID  
+sudo docker attach 容器ID
 ```
 
 - 删除镜像先删除container
@@ -325,28 +311,88 @@ docker rmi $(docker images -q)
 ## 2. 把容器打包成镜像
 
 ```nginx
+# 二次修改容器并打包
+# 进入纯净的容器
+docker run -it centos /bin/bash
+# 安装vim
+yum install vim -y
+# 退出容器
+exit
+# 提交容器文件
 docker commit 容器id centos-vim
 ```
 
 ## 3. Dockerfile
 
+-   一般使用 乌班图 (较小)
+-   作为基础镜像
+
 ### 3.1 创建dockerfile文件
+
+1.  对于复杂的RUN命令，避免无用的分层，多条命令用反斜线换行，合成一条命令
+2.  ADD存在压缩文件解压的功能，因此，仅仅添加文件到容器内，用COPY而不是ADD 
+3.  添加远程文件/目录使用curl或wget
+4.  ENV，环境变量，尽可能使用ENV增加可维护性
+    -   `ENV MYSQL_VERSION 5.6`，设置一个mysql常量
+    -   `RUN yum install -y mysql-server="${MYSQL_VERSION}" `
+
+5.  **参数注释**
+
+-   如果复制目录则需要在后面加上目录名称，只复制目录中的文件
+
+```nginx
+# 创建dockerfile文件
+vim DockerFile
+1. 指定基础镜像
+FROM 镜像名
+2. 构建执行的命令
+RUN yum install -y wget
+RUN mkdir /mydata
+3. 添加文件到 /mydata，如果是压缩包则自动解压
+ADD etc.tar.gz /mydata
+4. 本地文件copy到镜像中
+COPY test.txt /mydata
+
+5. 切换工作目录，启动后的目(默认根目录)，需要使用绝对路径，没有则创建
+WORKDIR /mydata
+6.ENV设置变量
+ENV name=henry
+7. VOLUME，指定当前的数据卷
+VOLUME ["/data"]
+8. EXPOSE,指定 image 的端口，必须声明
+EXPOSE 5900
+9. LABEL指定标签，容器元信息，帮助信息
+LABEL version="1.0"
+10. 执行的命令，只执行最后一个CMD
+CMD echo $HOME >> home.txt
+CMD ['nginx', 'g', 'daemon off;']
+```
+
+-   **flask示例**
+    -   注意需要修改`/etc/redis.conf`，关闭保护模式，并更换bind 的ip
 
 ```nginx
 # Use an official Python runtime as a parent image
-FROM python:2.7-slim
+FROM python
 # Set the working directory to /app
 WORKDIR /app
 # Copy the current directory contents into the container at /app
 COPY . /app
 # Install any needed packages specified in requirements.txt
-RUN pip install --trusted-host pypi.python.org -r requirements.txt
+RUN pip install -i https://pypi.douban.com/simple -r requirements.txt
 # Make port 80 available to the world outside this container
 EXPOSE 80
 # Define environment variable
 ENV NAME World
 # Run app.py when the container launches
 CMD ["python", "app.py"]
+```
+
+```nginx
+# 在当前目录下构建
+docker build  -t myimage -f 文件名 .
+# 执行，通过浏览器访问测试
+docker run -it -P myimage
 ```
 
 ### 3.2 创建app和requirements.txt
@@ -367,7 +413,7 @@ import os
 import socket
 
 # Connect to Redis
-redis = Redis(host="redis", db=0, socket_connect_timeout=2, socket_timeout=2)
+redis = Redis(host="172.16.44.142", port=6379, db=0, socket_connect_timeout=2, socket_timeout=2)
 app = Flask(__name__)
 @app.route("/")
 def hello():
@@ -395,6 +441,8 @@ Dokerfile	 app.py 	requirements.txt
 ```
 
 - 创建镜像，存储到本机Docker image registry
+    - -t：指定tag
+    - .：表示当前Dockerfile文件所在目录
 
 ```nginx
 docker build --tag/-t=friendlyhello .
@@ -569,16 +617,3 @@ docker swarm leave --force
 - We've deployed an application onto a cluster, running it on multiple machines. **Multi-container, multi-machine** applications are made possible by joining **multiple machines** into a “Dockerized” cluster called a **swarm**.
 
 ## 2. Understanding Swarm clusters
-
-
-
-
-
-
-
-
-
-
-
-
-
