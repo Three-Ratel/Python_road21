@@ -296,7 +296,6 @@ subscribe go
 
 #### 1. 触发方式
 
-1.  手动执行或定期执行
 2.  产生了一个经过压缩的二进制文件，保存到磁盘
 3.  配置文件
     -   myredis_rdb.conf
@@ -323,11 +322,11 @@ save
 
 #### 2. 基于快照的持久化
 
--   速度更快，一般用作备份，主从肤质也是依赖rdb持久化
+-   基于快照的持久化，速度更快，一般用作备份，主从复制也是依赖于rdb持久化功能
 
 ### 2. 方式二：aof
 
--   AOF（append-only log file）
+-   AOF（append-only log file），将修改类的操作命令,追加到日志文件中
 -   AOF 文件中的命令全部以**redis协议的格式**保存，新命令追加到文件末尾。
 -   优点：最大程序保证数据不丢
 -   缺点：日志记录非常大
@@ -352,33 +351,49 @@ appendfsync always			# 总是修改类操作
     		no				# 依赖于系统自带的缓存大小机制
 ```
 
-#### 2. 基于
+#### 2. 基于aof的持久化
 
--   
+-   以追加的方式记录redis操作日志的文件。可以最大程度的保证redis数据安全，类似于mysql的binlog
 
 ### 3. rdb方式转换aof
 
 #### 1. 环境准备
 
+-   **确保redis版本在2.2以上**
+-   本文在redis4.0中，通过**config set**命令，达到不重启redis服务，从RDB持久化切换为AOF
+
 ```shell
 # 版本>4.0
 redis -v 
 # 准备rdb配置文件
-
+daemonize yes
+port 6379
+logfile /data/6379/redis.log
+dir /data/6379
+dbfilename  myredis.rdb
+bind  127.0.0.1
+requirepass test
+save 900 1
+save 300 10
+save  60  10000
+# 启动redis
+redis-server redis.conf
 # 临时生效
 redis-cli
+# 开启 aof 持久化方式
 config set appendonly yes
+# 关闭 rdb 持久化方式
 config set save ''
-# 永久生效，修改配置文件
-
-
-
+# 永久生效，修改配置文件，/etc/redis.conf
+# 此时RDB已经正确切换AOF，注意还得修改redis.conf添加AOF设置，不然重启后，通过config set的配置将丢失
+appendonly yes
 ```
 
 ## 6. redis主从复制
 
 ### 1. redis 支持多实例
 
+-   一台机器可以同时运行多个redis数据库
 -   环境准备：运行3个redis数据库，达到1主2从的配置
 -   主库：6379.conf
 -   从库
@@ -386,16 +401,45 @@ config set save ''
     -   `sed 's/6379/6380/' 6379.conf > 6380.conf`
 -   开启主从配置功能
 
+#### 1. master库
+
+-   redis.conf
+
 ```shell
+daemonize yes
+bind  127.0.0.1
+port 6379
+loglevel notice
+logfile /data/6379/redis.log
+dir /data/6379
+pidfile /data/6379/redis.pid
+dbfilename dump.rdb
+```
+
+#### 2. slave库
+
+-   6380.conf 、6381l.conf
+
+```shell
+# 6380和 6381配置主从
+sed 's/6379/6380/g' redis.conf > 6380.conf
+sed 's/6379/6381/g' redis.conf > 6381.conf
+# 启动数据库
+redis-server redis.conf
+redis-server 6380.conf
+redis-server 6381.conf
+# 修改配置文件
+echo 'slave of 127.0.0.1 6379' >> 6380.conf
+echo 'slave of 127.0.0.1 6379' >> 6381.conf
 # 查看数据库信息
 redis-cli info replication
-# 6380和 6381配置主从
 redis-cli -p 6380 slaveof 127.0.0.1 6379
 redis-cli -p 6381 slaveof 127.0.0.1 6379
+redis-cli info replication
 # 主库用于插入数据、从库用于读取，实现读写分离
 ```
 
-### 2. master故障
+### 2. master故障切换
 
 #### 1. 手动切换 6380 为主库
 
@@ -405,28 +449,84 @@ redis-cli -p 6380 slaveof no one
 # 2. 设置其他从库的主库
 redis-cli -p 6381 slaveof 127.0.0.1 6380
 # 3. 修改配置文件中的主从关系
+sed -i 's/slaveof 127.0.0.1 6379//g' 6380.conf
+sed -i 's/slaveof 127.0.0.1 6379/slaveof 127.0.0.1 6380/g' 6381.conf
 ```
 
-### 3. Redis-Sentinel
+#### 2. 实现细节
 
--   高可用，用于检测主从集群，自动发信master宕机，进行自动切换主从
+1.  在开启主从复制的时候，使用的是RDB方式的，同步主从数据的
+2.  同步开始之后，通过**主库命令传播的方式**，主动的复制方式实现
+3.  2.8以后实现PSYNC的机制，实现断线重连
+
+### 3. redis-sentinel主从复制高可用
+
+#### 1. 简介
+
+1.  Redis-Sentinel是redis官方推荐的高可用性解决方案，当用redis作master-slave的高可用时，如果master本身宕机，redis本身或者客户端都没有实现主从切换的功能。
+2.  redis-sentinel就是一个独立运行的进程，用于监控多个master-slave集群，自动发现master宕机，进行自动切换slave > master。
+
+#### 2. sentinel主要功能
+
+1.  不时的监控redis是否良好运行，如果节点不可达就会对节点进行**下线标识**
+2.  如果被标识的是主节点，sentinel就会和其他的sentinel节点“协商”，如果其他节点也人为主节点不可达，就会选举一个sentinel节点来完成自动故障转移
+3.  在master-slave进行切换后，master_redis.conf、slave_redis.conf和sentinel.conf的内容都会发生改变，即master_redis.conf中会多一行slaveof的配置，sentinel.conf的监控目标会随之调换
+
+#### 3. 工作方式(8)
+
+1. 每个Sentinel以**每秒钟一次的频率向它所知的Master，Slave以及其他 Sentinel 实例发送一个 PING 命令**
+
+2. 如果一个实例（instance）距离最后一次有效回复 PING 命令的时间**超过 down-after-milliseconds** 选项所指定的值， 则这个实例会被 Sentinel **标记为主观下线**。
+
+3. 如果一个**Master被标记为主观下线**，则正在监视这个Master的**所有 Sentinel 要以每秒一次的频率确认Master的确进入了主观下线状态**。
+
+4. 当有足够数量的 Sentinel（大于等于配置文件指定的值）在指定的时间范围内确认Master的确进入了主观下线状态， 则**Master会被标记为客观下线**
+
+5. 在一般情况下， 每个 Sentinel 会以**每 10 秒一次的频率**向它已知的所有Master，Slave**发送 INFO 命令**
+
+6. 当Master被 Sentinel 标记为客观下线时，**Sentinel 向下线的 Master 的所有 Slave 发送 INFO 命令的频率会从 10 秒一次改为每秒一次**
+
+7. 若没有足够数量的 Sentinel 同意 Master 已经下线， Master 的客观下线状态就会被移除。
+
+8. 若 Master 重新向 Sentinel 的 PING 命令返回有效回复， Master 的主观下线状态就会被移除。
+
+#### 4. 主观下线和客观下线
+
+-   **主观下线**：**Subjectively Down**，简称 SDOWN，指的是当前 Sentinel 实例对某个redis服务器做出的下线判断。
+-   **客观下线**：Objectively Down， 简称 ODOWN，指的是多个 Sentinel 实例在对Master Server做出 SDOWN 判断，并且通过 SENTINEL is-master-down-by-addr 命令互相交流之后，得出的Master Server下线判断，然后开启failover.
+-   SDOWN**适合于Master和Slave**，只要一个 Sentinel 发现Master进入了ODOWN， 这个 Sentinel 就可能会被其他 Sentinel 推选出， 并对下线的主服务器执行自动故障迁移操作。
+-   ODOWN**只适用于Master**，对于Slave的 Redis 实例，Sentinel 在将它们判断为下线前不需要进行协商， 所以Slave的 Sentinel 永远不会达到ODOWN。
+
+### 4. redis-sentinel使用
 
 #### 1. 环境准备
 
 -   三个redis数据库实例，三个配置文件
 
 ```shell
-
+# sentinel_6379.conf
+port 6379
+daemonize yes
+logfile "6379.log"
+dbfilename "dump-6379.rdb"
+dir "/var/redis/data/"
+# sentinel_6380.conf 
+port 6380
+daemonize yes
+logfile "6380.log"
+dbfilename "dump-6380.rdb"
+dir "/var/redis/data/"
+slaveof 127.0.0.1 6379
+# sentinel_6381.conf 
+port 6381
+daemonize yes
+logfile "6381.log"
+dbfilename "dump-6381.rdb"
+dir "/var/redis/data/"
+slaveof 127.0.0.1 6379
 ```
 
--   三个哨兵监控，三个配置文件
--   sentinel-26379.conf、sentinel-26380.conf、sentinel-26381.conf
-
-```shell
-
-```
-
--   启动数据库
+#### 2. 启动数据库
 
 ```shell
 redis-server 6379.conf
@@ -434,42 +534,158 @@ redis-server 6380.conf
 redis-server 6381.conf
 ```
 
--   启动哨兵：第一次启动后配置文件会自动修改
-    -   daemonize yes
+#### 3. 哨兵配置
+
+-   三个哨兵监控，三个配置文件
+-   sentinel-26379.conf、sentine-26380.conf、sentinel-26381.conf
 
 ```shell
-redis-sentinel sentienl-26379.conf
-redis-sentinel sentienl-26380.conf
-redis-sentinel sentienl-26381.conf
+# sentinel-26379.conf  
+port 26379  
+dir /var/redis/data/
+logfile "26379.log"
+# 当前Sentinel节点监控 127.0.0.1:6379 这个主节点
+# 2 代表判断主节点失败至少需要 2 个Sentinel节点节点同意
+# mymaster 是主节点的别名
+sentinel monitor 127.0.0.1 6379 2
+# 每个Sentinel节点都要定期 PING 命令来判断 Redis 数据节点和其余Sentinel节点是否可达，如果超30000毫秒30s且没有回复，则判定不可达
+sentinel down-after-milliseconds mymaster 30000
+# 当Sentinel节点集合对主节点故障判定达成一致时，Sentinel领导者节点会做故障转移操作，选出新的主节点，
+# 原来的从节点会向新的主节点发起复制操作，限制每次向新的主节点发起复制操作的从节点个数为1
+sentinel parallel-syncs mymaster 1
+# 故障转移超时时间为180000毫秒，3分钟
+sentinel failover-timeout mymaster 180000
+#加一个后台运行
+daemonize yes
+```
+
+```python
+# sentinel-26380.conf、sentinel-26381.conf
+sed 's/26379/26380/g' sentinel-26379.conf > sentinel-26380.conf
+sed 's/26379/26381/g' sentinel-26379.conf > sentinel-26381.conf
+```
+
+#### 4. 启动哨兵
+
+-   第一次启动后配置文件会自动修改
+-   daemonize yes
+
+```shell
+redis-sentinel sentinel-26379.conf
+redis-sentinel sentinel-26380.conf
+redis-sentinel sentinel-26381.conf
 # 测试哨兵是否启动成功
 redis-cli -p 26379 info sentinel
+redis-cli -p 26380 info sentinel
+redis-cli -p 26381 info sentinel
 ```
+
+#### 5. 测试
 
 -   断掉主库检查主从状态
 
+```shell
+kill -9 主库的pid
+redis-cli -p 6379 info replication
+redis-cli -p 6380 info replication
+redis-cli -p 6381 info replication
+```
+
+
+
 ## 7. redis-cluster配置
 
--   支持更大的并发
--   解决redis内存不足的情况
+### 0. 结局并发和数据量问题
 
-### 1. 环境准备
+#### 1. 简介
 
--   配置文件：redis-7001.conf、redis-7002.conf、redis-7003.conf、redis-7004.conf
+1.  redis官方生成可以达到 10万/每秒,每秒执行10万条命令
+2.  一台服务器内存正常是16~256G，假如你的业务需要500G内存
+3.  数据量过大
+    -   一台服务器内存正常是16~256G，假如你的业务需要500G内存，新浪微博作为世界上最大的redis存储，就超过1TB的数据，去哪买这么大的内存条？
+    -   各大公司有自己的解决方案，推出各自的集群功能，核心思想都是将数据分片（sharding）存储在多个redis实例中，每一片就是一个redis实例。
+4.  各大企业集群方案：
+    -   twemproxy由Twitter开源
+    -   Codis由豌豆荚开发，基于GO和C开发
+    -   redis-cluster官方3.0版本后的集群方案
+
+#### 2. 客户端分片
+
+-   redis3.0集群采用P2P模式，完全去中心化，将redis所有的key分成了**16384**个槽位，每个redis实例负责一部分slot，集群中的所有信息通过节点数据交换而更新。
+-   redis实例集群主要思想是将redis数据的key进行散列，通过hash函数特定的key会映射到指定的redis节点上
+
+#### 3. 数据分布理论
+
+-   分布式数据库首要解决把整个数据集按照分区规则映射到多个节点的问题，即把数据集划分到多个节点上，每个节点负责整个数据的一个子集。
+-   常见的分区规则有**哈希分区和顺序分区**。`Redis Cluster`采用**哈希分区规则**，因此接下来会讨论哈希分区规则。
+    1.  节点取余分区
+    2.  一致性哈希分区
+    3.  **虚拟槽分区(redis-cluster采用的方式)**
+
+#### 4. 哈希分区
+
+-   节点取余
+
+```shell
+# 例如按照节点取余的方式，分三个节点
+# 1~100的数据对3取余，可以分为三类
+1. 余数为0
+2. 余数为1
+3. 余数为2
+
+# 那么同样的分4个节点就是hash(key)%4
+# 节点取余的优点是简单，客户端分片直接是哈希+取余
+```
+
+-   一致性哈希
+
+    -   客户端进行分片，哈希+顺时针取余
+-   虚拟槽分区
+    1.  Redis Cluster`采用虚拟槽分区
+    2.  虚拟槽分区巧妙地使用了哈希空间，使用分散度良好的哈希函数把所有的数据映射到一个固定范围内的整数集合，整数定义为槽（slot）。
+    3.  Redis Cluster槽的范围是0 ～ 16383。
+    4.  槽是集群内数据管理和迁移的基本单位。采用大范围的槽的主要目的是为了方便数据的拆分和集群的扩展，
+    5.  每个节点负责一定数量的槽。
+
+### 1. 搭建redis cluster
+
+#### 1. 环境准备
+
+-   配置文件：redis-7000.conf、redis-7001.conf、redis-7002.conf、redis-7003.conf、redis-7004.conf、redis-7005.conf
 -   仅仅是端口的区别
 
 ```shell
-
+port 7000
+daemonize yes
+dir "/opt/redis/data"
+logfile "7000.log"
+dbfilename "dump-7000.rdb"
+cluster-enabled yes   					#开启集群模式
+cluster-config-file nodes-7000.conf		#集群内部的配置文件
+# redis cluster需要16384个slot都正常的时候才能对外提供服务，换句话说，只要任何一个slot异常那么整个cluster不对外提供服务。 因此生产环境一般为no
+cluster-require-full-coverage no　　	
 ```
-
-### 2. 启动
 
 ```shell
-redis-cli 7000.conf
-redis-cli 7001.conf
-...
+sed 's/7000/7001/g' redis-7000.conf > redis-7001.conf
+sed 's/7000/7002/g' redis-7000.conf > redis-7002.conf
+sed 's/7000/7003/g' redis-7000.conf > redis-7003.conf
+sed 's/7000/7004/g' redis-7000.conf > redis-7004.conf
+sed 's/7000/7005/g' redis-7000.conf > redis-7005.conf
 ```
 
-### 3. 分配redis slot 槽位
+#### 2. 启动
+
+```shell
+redis-server redis-7000.conf
+redis-server redis-7001.conf
+redis-server redis-7002.conf
+redis-server redis-7003.conf
+redis-server redis-7004.conf
+redis-server redis-7005.conf
+```
+
+#### 3. 分配redis slot 槽位
 
 -   手动编写c语言，分配
 -   使用ruby的一个redis 模块，自动分配
@@ -484,13 +700,13 @@ yum install -y ruby
 -   下载ruby操作redis的模块
 
 ```shell
-wget 
+wget http://rubygems.org/downloads/redis-3.3.0.gem
 ```
 
--   使用ruby包管理工具安装
+-   使用ruby包管理工具安装gem
 
 ```shell
-gem install -l redid-3.3.0.gem
+gem install -l redis-3.3.0.gem
 ```
 
 -   通过ruby一键分配槽位
@@ -499,7 +715,7 @@ gem install -l redid-3.3.0.gem
 # 找到redis-trib.rb命令
 find / -name redis-trib.rb
 # 开启集群开启槽位
-
+/opt/redis-4.0.10/src/redis-trib.rb create --replicas 1 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005
 # 分配好集群后，向集群中写入数据
 redis-cli -c -p 7000
 set name 'xiake'
@@ -536,11 +752,45 @@ get key						# 查询 key 对应的 value
 
 ## 3. python操作redis
 
-1.  --protected-mode no：测试使用，没有设置密码可以使用主机ip
-2.  redis只能存储：**byte, string or number**
+### 1. 操作单个库
+
+-   --protected-mode no：测试使用，没有设置密码可以使用主机ip
+-   安装redis
+
+```python
+pip install redis
+```
+
+-   使用
 
 ```python
 from redis import Redis
 redis_cli = Redis(host='127.0.0.1', port=6379, db=6)
 redis_cli.set('name', 'echo')
 ```
+
+### 2. 操作 redis-cluster
+
+-   安装redis-py-cluster
+
+```python
+pip install redis-py-cluster
+```
+
+-    使用
+
+```python
+import rediscluster
+nodes=[
+    {"host":"172.16.44.142","port":7000},
+    {"host":"172.16.44.142","port":7001},
+    {"host":"172.16.44.142","port":7002},
+    {"host":"172.16.44.142","port":7003},
+    {"host":"172.16.44.142","port":7004},
+    {"host":"172.16.44.142","port":7005}
+]
+# decode_responses：默认打印 bytes 类型数据
+cluster = rediscluster.RedisCluster(startup_nodes=nodes,decode_responses=True)
+print(cluster.get('name'))
+```
+

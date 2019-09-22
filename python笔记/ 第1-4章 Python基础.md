@@ -216,7 +216,7 @@ str操作常用的 14 (9+5) 种
 1.upper/lower 2.isdigit/isdecimal 3.strip 4.replace 5.split 6.startswith/endswith 7.encode 8.format 9.join
 ```
 
-1. s.upper() / s.lower()
+#### 1. s.upper() / s.lower()
 
 ```python
 # 大小写转换
@@ -224,7 +224,7 @@ s = 'Henry'
 print(s.upper(), s.lower())
 ```
 
-2. s.isdigit() / **s.isdecimal()**
+#### 2. s.isdigit() / **s.isdecimal()**
 
 ```python
 # 判断是否是数字
@@ -235,7 +235,7 @@ print(s1.isdigit(), s2.isdigit())		# True Flase
 # isdecimal只判断是否是整数
 ```
 
-3. s.strip()
+#### 3. s.strip()
 
 ```python
 # 默认去除两边空格+ \n + \t
@@ -245,7 +245,7 @@ print('-->', s.strip(), '<--')
 print('-->', s.strip().strip(','), '<--')
 ```
 
-4. s.replace('a', 'b', n)
+#### 4. s.replace('a', 'b', n)
 
 ```python
 # repalce 中的 a 和 b 必须是str类型， n 必须是int类型
@@ -254,7 +254,7 @@ print(s.replace('a', '666'))
 print(s.replace('a', '666', 1))
 ```
 
-5. s.split('_')
+#### 5. s.split('_')
 
 ```python
 # str的分割
@@ -263,7 +263,7 @@ li = s.split('_')
 print(li)  # 分割后的元素永远比分隔符号多一个
 ```
 
-6. s.startswith() / s.endswith()
+#### 6. s.startswith() / s.endswith()
 
 ```python
 # 判断开始/结束位置是否是指定元素
@@ -272,7 +272,7 @@ print(s.startswith('ab'), s.endswith('cd'))
 # True  Flase
 ```
 
-7. str 的格式化输出(2种)
+#### 7. str 的格式化输出(2种)
 
 ```python
 # 如果使用格式化输入，打印%需要使用 %%
@@ -311,7 +311,7 @@ v2 = '我是{0}, 年龄{1}'.format('alex', 18)
 v2 = '我是{0}, 年龄{1}'.format(*('alex', 18) )
 ```
 
-8. encode
+#### 8. encode
 
 ```python
 # 指定编码类型
@@ -320,7 +320,7 @@ print(s.encode('utf-8'))   # 6个字节
 print( s.encode('gbk'))		 # 4个字节
 ```
 
-9. '_'.join(s)
+#### 9. '_'.join(s)
 
 ```python
 # 用于循环加入指定字符
@@ -339,46 +339,36 @@ print('_'.join(s))    # 下划线连接个字符
 
 ### 2. 其他操作
 
-1. s.find('a') / s.rfind()
-
-```python
-# 返回第一个 a 的索引值，没有则返回 -1 
-s = 'aaasdfgsh'
-index = s.find('a')
-print(index)
-```
-
-2. s.index('a') / s.rindex() /s.lindex()
-
-```python
-# 返回第一个 a 的索引值，没有报错
-s = 'aaasdfgsh'
-index = s.find('a')
-print(index)
-```
-
-3. s.isupper() / s.islower()
-4. s.capitalize()
-5. s.casefold()
-6. s.center(20, "*").  # 可以为空
-7. s.ljust(20, "*")/s.rjust()
-8. s.zfill()  # 用0填充
-9. s.count('a', [start], [end])  # 查找'a' 的个数
-10. s.isalnum()
-11. s.isalpha()
-12. s.isnumeric()
-13. s.isprintable()
-14. s.istitle()
-15. s.partition('a')  / s.rpartition()# 分成三部分，a左边，a右边
-16. s.swapcase()
+1.   s.find('a') / s.rfind()
+    -   返回第一个 a 的索引值，没有则返回 -1 
+2.   s.index('a') / s.rindex() /s.lindex()
+    -   返回第一个 a 的索引值，没有报错
+3.  s.isupper() / s.islower()
+4.  s.capitalize()
+5.   s.casefold()
+6.  s.center(20, "*")
+    -   可以为空
+7.  s.ljust(20, "*")/s.rjust()
+8.  s.zfill()
+    -    用0填充
+9.  s.count('a', [start], [end]) 
+    -   查找'a' 的个数
+10.  s.isalnum()
+11.  s.isalpha()
+12.  s.isnumeric()
+13.  s.isprintable()
+14.  s.istitle()
+15.  s.partition('a')  / s.rpartition()
+     -   分成三部分，a左边，a右边
+16.  s.swapcase()
 
 ____
 
 ____
 
-### 3. 公共功能
+### 3. 公共方法
 
-1. len(s)
+#### 1. len(s)
 
 ```python
 # 返回s长度
@@ -386,7 +376,7 @@ s = '1234567890'
 print(len(s))     # 10
 ```
 
-2. s[index]
+#### 2. s[index]
 
 ```python
 # 索引取值
@@ -394,14 +384,14 @@ s = '123456789'
 print(s[3])   # 4
 ```
 
-3. 切片
+#### 3. 切片
 
 ```python
 s = '123456789'
 print(s[3:5])   # 45
 ```
 
-4. setp
+#### 4. setp
 
 ```python 
 # 根据step进行切片
@@ -409,7 +399,7 @@ s = '123456789'
 print(s[3::2])   # 468
 ```
 
-5. for循环
+#### 5. for循环
 
 ```python
 s = '123456789'
@@ -427,7 +417,7 @@ for i in s:
 list操作目前一共有15(8+7)种， 1.append 2.insert 3.remove 4.pop 5.clear 6.reverse 7.sort 8.extend
 ```
 
-1. li.append('666')
+#### 1. li.append('666')
 
 ```python
 # 任意类型数据，li操作不能直接放在print()中
@@ -438,7 +428,7 @@ li.append(['henry'])
 print(li)
 ```
 
-2. li.insert(2, 'henry')
+#### 2. li.insert(2, 'henry')
 
 ```python
 # 按照index位置插入指定内容
@@ -447,7 +437,7 @@ li.insert(3, 'henry')
 print(li)
 ```
 
-3. li.remove('aa')
+#### 3. li.remove('aa')
 
 ```python
 # 删除指定list中的元素
@@ -458,7 +448,7 @@ li.remove('bb')
 print(li)  # 会报错
 ```
 
-4. li.pop(index)
+#### 4. li.pop(index)
 
 ```python
 # 按index删除list中的元素
@@ -469,7 +459,7 @@ li.pop(3)
 print(li)
 ```
 
-5. li.clear()
+#### 5. li.clear()
 
 ```python
 # 清空list中的所有元素
@@ -478,7 +468,7 @@ li.clear()
 print(li)
 ```
 
-6. li.reverse()
+#### 6. li.reverse()
 
 ```python
 # 反转list中的元素
@@ -487,7 +477,7 @@ li.reverse()
 print(li)
 ```
 
-7. li.sort(reveres = True)
+#### 7. li.sort(reveres = True)
 
 ```python
 # reverse = True 从大到小
@@ -509,7 +499,7 @@ li.sort()
 print(li)
 ```
 
-8. li.extend(s)
+#### 8. li.extend(s)
 
 ```python
 # 把s中的元素，循环取出，逐个追加到list中
@@ -524,20 +514,22 @@ li.extend(s)
 print(li)
 ```
 
-### 2. 其他：
+### 2. 其他
 
-1. li.count('a')
-2. li.copy(). # 浅拷贝
-3. li.count() # 只计算第一层，不考虑嵌套
-4. li.index('val')
+1.  li.count('a')
+2.   li.copy()
+    -   浅拷贝
+3.   li.count()
+    -   只计算第一层，不考虑嵌套
+4.   li.index('val')
 
 ___
 
 ___
 
-### 3. 公共功能
+### 3. 公共方法
 
-1. len(s)
+#### 1. len(s)
 
 ```python
 li = [1, 2, 3, 4, 5, 6]
@@ -545,7 +537,7 @@ print(len(li))
 
 ```
 
-2. index 取值
+#### 2. index 取值
 
 ```python
 li = [1, 2, 3, 4, 5, 6]
@@ -553,7 +545,7 @@ print(li[2])
 
 ```
 
-3. 切片
+#### 3. 切片
 
 ```python
 li = [1, 2, 3, 4, 5, 6]
@@ -561,7 +553,7 @@ print(li[2:5])
 
 ```
 
-4. step
+#### 4. step
 
 ```python
 li = [1, 2, 3, 4, 5, 6]
@@ -569,7 +561,7 @@ print(li[2::2])
 
 ```
 
-5. for循环
+#### 5. for循环
 
 ```python
 li = [1, 2, 3, 4, 5, 6]
@@ -578,7 +570,7 @@ for i in li:
 
 ```
 
-6. **修改**
+#### 6. 修改
 
 ```python
 # 使用index修改，如果只是一个值，则正常修改
@@ -593,7 +585,7 @@ li[2:3] = 'a', 'b', 'c'
 print(li)
 ```
 
-7. 删除del li[]
+#### 7. 删除del li[]
 
 ```python
 # del 也不能放在print()里面
@@ -615,35 +607,35 @@ print(li
 
 ### 1. 常用操作
 
-1. len()
+#### 1. len()
 
 ```python
 t = (1, 2, 3,)
 print(len(t))
 ```
 
-2. index
+#### 2. index
 
 ```python
 t = (1, 2, 3,)
 print(t[2])
 ```
 
-3. 切片
+#### 3. 切片
 
 ```python
 t = (1, 2, 3,)
 print(t[1:])
 ```
 
-4. step
+#### 4. step
 
 ```python
 t = (1, 2, 3, 4, 5, 6, 7, 8, 9, 0)
 print(t[1::2])
 ```
 
-5. for 循环
+#### 5. for 循环
 
 ```python
 t = (1, 2, 3, 4, 5, 6, 7, 8, 9, 0)
@@ -667,8 +659,9 @@ dict 目前一共有 14(9 + 5) 种操作, 1.keys 2.values 3.items 4.get 5.pop 6.
 # key不能重复
 ```
 
-1. info/ info.keys()
-   - 类似 list ，但不是list，例如：dict_keys(['name', 'age', 'gender'])
+#### 1. info/ info.keys()
+
+- 类似 list ，但不是list，例如：dict_keys(['name', 'age', 'gender'])
 
 ```python
 # 取所有key
@@ -677,7 +670,7 @@ for key i info:
   print(key)
 ```
 
-2. Info.values()
+#### 2. Info.values()
 
 ```python
 # 取所有value
@@ -686,7 +679,7 @@ for v in info.values():
     print(v)
 ```
 
-3. info.items()
+#### 3. info.items()
 
 ```python
 # 取所有key值对
@@ -696,7 +689,7 @@ for pair in info.items():
     print(pair)
 ```
 
-4. Info.get(key, 666)
+#### 4. Info.get(key, 666)
 
 ```python
 # 有key则取出， 没有则返回指定 值
@@ -706,7 +699,7 @@ print(info.get(1, 666))
 print(info.get(4, 666))
 ```
 
-5. info.pop(key)
+#### 5. info.pop(key)
 
 ```python
 info = {1: 'henry', 2: 'echo', 3: 'eliane'}
@@ -714,7 +707,7 @@ print(info.pop(1))
 print(info.pop(4))
 ```
 
-6. info.update(info1)
+#### 6. info.update(info1)
 
 ```python
 # 只能用dict类型更新
@@ -724,7 +717,7 @@ info.update(info1)
 print(info)
 ```
 
-7. info.setdefalut(key, value)
+#### 7. info.setdefalut(key, value)
 
 ```python
 # 查询key，有则取出，没有则添加
@@ -736,7 +729,7 @@ val = info.setdefault(4, 'i hate you')
 print(val)
 ```
 
-8. info.popitem()
+#### 8. info.popitem()
 
 ```python
 # 不能加参数，删除最后一个key值对
@@ -745,7 +738,7 @@ v = info.popitem()
 print(v,info)   # v是tuple
 ```
 
-9. info.clear()
+#### 9. info.clear()
 
 ```python
 # 清空所有元素
@@ -756,8 +749,8 @@ print(info)
 
 ### 2. 其他
 
-1. info.copy()  # 浅拷贝
-2. info.fromkeys()
+1.  info.copy()  # 浅拷贝
+2.   info.fromkeys()
 
 ```python
 li = [1, 2, 3, 4, 5]
@@ -772,23 +765,23 @@ ___
 
 ___
 
-### 3. 公共功能
+### 3. 公共方法
 
-1. len(info)
+#### 1. len(info)
 
 ```python
 info = {1: 'henry', 2: 'echo', 3: 'eliane'}
 print(len(info))
 ```
 
-2. Index 取值
+#### 2. Index 取值
 
 ```python
 info = {1: 'henry', 2: 'echo', 3: 'eliane'}
 print(info[1])
 ```
 
-3. for 循环
+#### 3. for 循环
 
 ```python
 info = {1: 'henry', 2: 'echo', 3: 'eliane'}
@@ -800,7 +793,7 @@ for pair in info.items():
   print(pair)
 ```
 
-4. 修改
+#### 4. 修改
 
 ```python
 # key一样则修改，不一样则追加
@@ -811,7 +804,7 @@ info[4] = 'you are smart'
 print(info)
 ```
 
-5. 删除
+#### 5. 删除
 
 ```python
 info = {1: 'henry', 2: 'echo', 3: 'eliane'}
@@ -842,7 +835,7 @@ set 目前一共有11(10 + 2)种操作，空集合用set()表示。
 # 无序，不重复
 ```
 
-1. s.add('a')
+#### 1. s.add('a')
 
 ```python
 s = {1, 'henry', 2, 'echo', 3, 'eliane'}
@@ -850,7 +843,7 @@ s.add(5)
 print(s)
 ```
 
-2. s.update(s1)
+#### 2. s.update(s1)
 
 ```python
 # 可以用str ， list， tuple， dict， set， 也可以混合多种类型放入update中
@@ -875,7 +868,7 @@ s.update(s4)
 print(s)
 ```
 
-3. s.pop()
+#### 3. s.pop()
 
 ```python
 # 随机删除，此时pop中不能有任何参数
@@ -884,7 +877,7 @@ s.pop()  # 默认删除第一个元素/随机
 print(s)
 ```
 
-4. s.discard()
+#### 4. s.discard()
 
 ```python
 # 必须有一个参数，没有不报错, 不会返回值
@@ -894,7 +887,7 @@ print(s)
 print(val)
 ```
 
-5. s.remove('a')
+#### 5. s.remove('a')
 
 ```python
 # 必须有一个参数，没有会报错
@@ -903,7 +896,7 @@ s.remove(3)
 print(s)
 ```
 
-6. s.clear()
+#### 6. s.clear()
 
 ```python
 s = {1, 'henry', 2, 'echo', 3, 'eliane'}
@@ -911,7 +904,7 @@ s.clear()
 print(s)
 ```
 
-7. s.intersection(s1)
+#### 7. s.intersection(s1)
 
 ```python
 # 取v1 和v2 的交集
@@ -921,7 +914,7 @@ v = v1.intersection(v2)
 print(v)
 ```
 
-8. v.union(v1)
+#### 8. v.union(v1)
 
 ```python
 # 取并集
@@ -931,7 +924,7 @@ v = v1.union(v2)
 print(v)
 ```
 
-9. v.difference(v1)
+#### 9. v.difference(v1)
 
 ```python
 v1 = {1, 'henry', 2, 'echo', 3, 'eliane'}
@@ -940,7 +933,7 @@ v = v1.difference(v2)
 print(v)
 ```
 
-10. v.symmetric_difference(v1)
+#### 10. v.symmetric_difference(v1)
 
 ```python
 v1 = {1, 'henry', 2, 'echo', 3, 'eliane'}
@@ -968,16 +961,16 @@ ___
 
 ___
 
-### 3. 公共功能
+### 3. 公共方法
 
-1. len(v)
+#### 1. len(v)
 
 ```python
 v = {1, 'henry', 2, 'echo', 3, 'eliane'}
 print(len(v))
 ```
 
-2. for 循环
+#### 2. for 循环
 
 ```python
 # 无序输出
@@ -986,9 +979,7 @@ for i in v:
     print(i)
 ```
 
-## 3.8 公共功能
-
-
+## 3.8 公共方法
 
 |                       | int  | bool | str  | list | tuple | dict | set  |
 | :-------------------: | :--: | :--: | :--: | :--: | :---: | :--: | :--: |
@@ -1002,15 +993,11 @@ for i in v:
 
 
 
-## 3.9 嵌套&深浅copy
+## 3.9 内存相关&深浅拷贝
 
-### 1. 可嵌套的数据类型
+### 0. 可嵌套的数据类型
 
-​	所有的容器类例如：list，tuple， dict，set 都可以嵌套，但set(), 只能嵌套可**hash**（int, bool, str, tuple 4种）的数据类型。
-
-
-
-## 3.10 内存相关&深浅拷贝
+-   所有的容器类例如：list，tuple， dict，set 都可以嵌套，但set(), 只能嵌套可**hash**（int, bool, str, tuple 4种）的数据类型。
 
 ### 1. 内存相关
 
