@@ -1,5 +1,7 @@
 # 1. Flask基础
 
+-   **flask理念**：一切从简为服务器减轻压力
+
 ## 1. 框架对比
 
 | Django               | Flask                                              |
@@ -15,16 +17,16 @@
 | 占用资源，cpu，ram   | 先天不足，第三方组件稳定性较差                     |
 | 创建项目复杂度高     |                                                    |
 
-## 2. Flask
+## 2. Flask安装
 
 1. 安装：pip3 install Flask
    - 直接创建python文件
    - ps：不要使用工具中的插件创建Flask项目
 2. 三行启动flask项目
 3. Flask：框架源码
-   - Jinja2：模版语言
-   - MarkupSafe：render基于此，防止xss攻击
-   - Werkzeug：类似django的uwsgi底层都是基于wsgi，承载flask服务，类似tomcat
+   - **Jinja2**：模版语言
+   - **MarkupSafe**：render基于此，防止**xss**攻击
+   - **Werkzeug**：类似django的uwsgi底层都是基于wsgi，承载flask服务，类似tomcat
 
 ## 3. 创建项目
 
@@ -97,12 +99,12 @@ def login():
 
 #### content-type(6)
 
-1. text/html
-2. text/plain，保留当前文件格式
-3. image/jepg或者 image/png
-4. audio/mpeg：<video> ，应该是<audio>，chrome完成
-5. video/mp4：<video> 标签
-6. application/x-msdownload：xx.exe
+1. `text/html`
+2. `text/plain`，保留当前文件格式
+3. `image/jepg`或者 `image/png`
+4. `audio/mpeg：<video> ，应该是<audio>`，chrome完成
+5. `video/mp4：<video>` 标签
+6. `application/x-msdownload：xx.exe`
 
 - 文件类型：一般是文件第一行就是文件类型
 
@@ -126,27 +128,36 @@ def get_json():
     return jsonify(d)
 ```
 
-## 4. request
+## 4. request(11)
 
 - request在flask中是公共变量(顶头小写)，请求上下文保存机制
 - 从reqeust中获取的数据类型为：ImmutableMultiDict([('id', '1')])
 
 ```python
-1. request.method
+# 请求方式和数据 5
+1. request.method			# 获取请求的方式
 2. request.form				# 获取 FormData 中数据(ajax)
-   	  						# request.from.to_dict()：返回对应的字典
+   .to_dict()	  			# request.from.to_dict()：返回对应的字典
    							# 类型：ImmutableMultiDict([])
 3. request.args				# 获取url中的参数
 4. reqeust.values			# 获取 url 和 FormData 中的数据，如果key相同 url中的会覆盖 form中数据
 							# CombinedMultiDict([ImmutableMultiDict([('id', '1')]), ImmutableMultiDict([])])
-5. request.host				# ip + port
-6. request.path				# url路由地址
-7. request.url				# 完整路径，如：http://127.0.0.1:5000/detail?id=2
-8. request.cookies			# 字典，获取浏览器请求时带上的cookies
-9. request.files			# 获取 Form 中文件，返回 FileStroage中有 save() 方法和 filename属性
-10.request.json				# 请求头的 Content-type:application/json
+5. request.files			# 获取 Form 中文件，返回 FileStroage中有 save() 方法和 filename属性
+	.save(文件路径)
+    .filename
+
+# 请求来源相关 3
+6. request.host				# ip + port
+7. request.path				# url路由地址
+8. request.url				# 完整路径，如：http://127.0.0.1:5000/detail?id=2
+
+# cookies相关 1
+9. request.cookies			# 字典，获取浏览器请求时带上的cookies
+
+# 特殊数据封装 3
+10.request.data				# Content-type 中不包含 Form 或 FormData，保留请求体中的原始数据，b""类型
+11.request.json				# 请求头的 Content-type:application/json
    							# 请求体中的数据被序列化到request.json中，以字典的形式存放
-11.request.data				# Content-type 中不包含 Form 或 FormData，保留请求体中的原始数据，b""类型
 ```
 
 ```python
@@ -171,10 +182,10 @@ def login():
     return '200 ok'
 
 if __name__ == '__main__':
-		app.run()f
+		app.run()
 ```
 
-- ImmutableMultiDict类型数据用法和dict类型相同，都有 values(), item()，keys() 方法
+- ImmutableMultiDict类型数据用法和dict类型相同，都有 values(), items()，keys() 方法
 
 ## 5. Jinja2(5)
 
@@ -244,13 +255,12 @@ def my_input(na, ty):
 {{ my_input('username', 'text') }}
 ```
 
-## 6. session(6)
+## 6. session(5)
 
 1. **基于请求上下文**
 2. 一般和 request 一起导入
 3. **交由客户端保管机制**，加密后存到浏览器的cookies中。保存一串字符串
 4. 原生：**不建议添加过多的 key:values**，健值对越多，浏览器需要保存的cookies越长，Flask会先对健值对进行压缩和加密
-5. flask理念：一切从简为服务器减轻压力
 6. **flask-session：把加密后的session从浏览器，移动到服务端**
 
 ```python
@@ -291,7 +301,7 @@ def homea():
 ### 1. 装饰器装饰多个函数
 
 1. 自定义装饰器最终会出现多个 inner 函数最终为 endpoint，flask中通过endpoint查找view
-2. 基于functools 修改 `__name__`
+2. 基于functools 修改 `__name__`，functools.wraps，在装饰器的inner上添加`functors.wraps(func)`
 3. 添加endpoint参数
 
 ```python
@@ -329,8 +339,8 @@ def home():
 #### 2. endpoint=None
 
 - 解决装饰器不能装饰多个函数的问题
-- 路由地址和endpoint的mapping
-- 路由地址和视图之间mapping
+- **路由地址和endpoint的mapping**
+- **路由地址和视图之间mapping**
 - 默认是视图函数名
 
 ```python
@@ -342,7 +352,7 @@ def home():
 #### 3. defaults={'count': 20}
 
 - 默认参数
-- url_for()
+- path = url_for(**endpoint**)：返回路由地址
 
 ```python
 from flask import Flask
@@ -380,7 +390,7 @@ def home():
 ### 3. 动态参数路由
 
 - str：可以收一切，**默认是 string 类型**
-- rule：`/home/<filename>`， `/home/<int:page>`， `/home/<ty>_<page>_<id>`，分页、获取文件、解决分类，解决正则路由
+- rule：`/home/<filename>`， `/home/<int:page>`， `/home/<ty>_<page>_<id>`，分页、获取文件、解决分类，**解决正则路由**
 - send_file()：需要限定文件目录
 
 ```python
@@ -398,7 +408,7 @@ def home(filename):
     return send_file(f'media/{filename}')
 ```
 
-## 2. Flask中的配置
+## 2. Flask配置
 
 -   static_host=None：静态文件的服务器
 
@@ -424,7 +434,7 @@ app = Flask(__name__, static_folder='img', static_url_path='/static')
 #### 3. static_url_path='/static'
 
 - 静态文件访问路径，默认`/staic_folder`
-- 自动拼接 host
+- 自动拼接 host：`http://127.0.0.1:5000/`
 
 ```python
 <img src='访问地址'>
@@ -493,6 +503,7 @@ app.config.from_object(TestConfig)
 from flask import Blueprint
 # 蓝图标识必须唯一
 bp = Blueprint('app01', __name__,url_prefix='/car')
+or
 bp = Blueprint(__name__, __name__,url_prefix='/car')
 
 @bp.route('/user')
@@ -513,7 +524,7 @@ app.register_blueprint(bp)
 
 ## 4. 特殊装饰器
 
-- requset校验没过时，绕过view 执行全部after_request
+- requset**校验没过时**，**绕过view 执行全部after_request**
 - 只要有响应返回，af全部执行
 
 ### 1. @app.before_request
@@ -662,8 +673,8 @@ redis_cli.set('name', 'echo')
 
 ## 3. Flask-session
 
-1.  三方组件：pip install flask-session
-2.  app.config最终在 app.default_config中
+1.  三方组件：**pip install flask-session**
+2.  app.config最终在 **app.default_config**中
 3.  settings.py中的DebugConfig中，不是大写英文的一律丢弃不管
 4.  使用**pickle**作为序列化器
 
@@ -703,11 +714,12 @@ app.config['SESSION_REDIS'] = Redis(host='192.168.12.9', 6379, db=10)
 
 # 4. Flask上下文
 
+-   flask实现线程安全的核心，后期进行详细讲解。
+
 ## 1. 偏函数
 
--   flask中的requst 和session
-
 ```python
+# flask中的 requst 和 session
 from functools import partial
 
 def ab(a, b):
@@ -759,12 +771,72 @@ run_simple('0.0.0.0', 5000, app)
 __slots__ = ('__stroage__', '__ident_func__')
 ```
 
+
+
+## 4. 请求上下文的必要性
+
+1.  当 Flask 应用处理经过 WSGI 处理好的请求数据时，将 `environ` 封装成 request 对象。
+2.  为了区分不同请求的请求对象，无非就是只有两种(我只知道两种) 方法，全局变量和使用 Context locals(Werkzeug提供) 实现
+3.  很明显Flask请求上下文使用的是第二种方式，当然你可能会有疑问，使用全局变量的方式不是更简单便捷吗？
+4.  俗话说得好，一个硬币有两面。使用全局变量可以实现没毛病，那就意味着来多少的请求就需要定义多少个全局变量(细思极恐)，而且我们都知道全局变量在程序中应用时很“危险的”，谁都可以访问，也就会导致数据不安全的情况出现等等等问题。
+5.  使用第二种方式就可以完美解决使用全局变量的问题，直到请求处理完毕，Flask 会 pop 掉处理完的请求上下文栈，保证了内存不会溢出。有的同学可能还会提出万一 Flask 应用接收到请求后，服务异常怎么办？Flask 也对此进行进行了相应的处理。
+
+## 5. 源码剖析
+
+**特别说明**
+
+1.  图片中标注的红色数字表示 falsk 应用执行顺序
+2.  红色标注代笔请求上文
+3.  黄色标注代表请求下文
+
+### 1. 请求上文
+
+-   当请求到来时，Flask 会自动把封装 requst、view functions...的 RequstContext 对象 push 进 Local 对象中
+-   当请求数据封装到 environ 后，WSGI 会调用 Flask 实例的 `__call__` 方法，即处理请求
+
+![1 app.__call__](/Users/henry/Documents/截图/Py截图/Flask 请求上文/1 app.__call__.png)
+
+-   我们可以看到，environ 就是请求数据
+
+![2 RequestContext()类](/Users/henry/Documents/截图/Py截图/Flask 请求上文/2 RequestContext()类.png)
+
+-   RequestContext 类实例化时，会对请求数据 environ 进行封装成 request 对象(就是Flask 导入的request)，由app.request_class(environ)，主要是对请求数据的格式化，并初始化request对象
+-   我们可以很清晰的看到，request 在 RequestContext 实例化的过程中被封装进对象中了
+
+![3 RequestContext()类-push()](/Users/henry/Documents/截图/Py截图/Flask 请求上文/3 RequestContext()类-push().png)
+
+![4 _requsest_ctx_stack.png](/Users/henry/Desktop/4 _requsest_ctx_stack.png.png)
+
+![5 LocalStack()类](/Users/henry/Documents/截图/Py截图/Flask 请求上文/5 LocalStack()类.png)
+
+![6 Local()类](/Users/henry/Documents/截图/Py截图/Flask 请求上文/6 Local()类.png)
+
+-   因为在 Local 类中重写了 `__setattr__` 方法，所以在实例化的过程中使用父类的 `__setattr__` 方法
+
+### 2. 请求下文
+
+-   当我们使用 request.method 时，请求下文就开始发挥作用了
+-   首先需要导入 `from flask import request`
+
+![4 _requsest_ctx_stack.png](/Users/henry/Documents/截图/Py截图/Flask 请求上文/4 _requsest_ctx_stack.png.png)
+
+-   这里用到了 functools中的 partial() 函数，主要功能有点类似于装饰器，只要参数传递可以分开传递，也就是说可以多次传递，从底层讲可以维护一块内存空间，用于存储变量值
+-   可以看到下图类初始化时，使用了`_LocalProxy__local`，这里使用的是私有变量的外部访问方式，私有变量在外部访问不到，本质就是在变量名前加上了 `_类名__私有变量名`的形式。
+
+![7 LocalProxy](/Users/henry/Documents/截图/Py截图/Flask 请求上文/7 LocalProxy.png)
+
+-   当请求处理结束，返回 reponse 给客户端后，Flask通过 信号机制调用`flask.reqeust_tearing_down`和`flask.``appcontext_tearing_down`等信号，把当前的request数据销毁，整个请求结束。
+
+
+
+References：https://flask.palletsprojects.com/en/1.1.x/reqcontext/
+
 # 5.websocket
 
 -   使用webscoket实现类似web 微信的一个即时通讯工具
 -   流程
     1.  做前端
-    2.  建立webserver   djan go / flask
+    2.  建立webserver   django / flask
     3.  制作聊天功能
 
 ## 1. 轮询和长链接

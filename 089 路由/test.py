@@ -64,10 +64,10 @@ def user():
 
 """蓝图"""
 from bp import bp
-from stu import stu
+from stu import test
 
 app.register_blueprint(bp)
-app.register_blueprint(stu)
+app.register_blueprint(test)
 
 
 if __name__ == '__main__':

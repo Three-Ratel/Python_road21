@@ -9,8 +9,9 @@ STUDENT_DICT = {
     2: {'name': 'Boy', 'age': 73, 'gender': '男'},
     3: {'name': 'EDU', 'age': 84, 'gender': '女'},
 }
+from functools import wraps
 
-from flask import Flask, request, render_template, redirect, session
+from flask import Flask, request, render_template, redirect, session, url_for
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -18,6 +19,7 @@ app.secret_key = '!@#^%$#@!@#*&&*()&*&NM:"FKhgdd;jGJFr  1`32nKJBKl;'
 
 
 def warpper(func):
+    @wraps(func)
     def inner(*args, **kwargs):
         if session.get('username'):
             return func(*args, **kwargs)
@@ -27,6 +29,7 @@ def warpper(func):
 
 
 @app.route('/login', methods=['GET', 'POST'])
+@warpper
 def login():
     if request.method == 'GET':
         return render_template('exec/login.html')
@@ -39,7 +42,7 @@ def login():
         return 'Failed'
 
 
-@app.route('/detail')
+@app.route('/detail', endpoint='hahaha')
 @warpper
 def detail():
     sid = request.args.get('sid')
@@ -49,6 +52,13 @@ def detail():
         return render_template('exec/detail.html', stus=stus, flag=flag)
     flag = {'flag': 1}
     return render_template('exec/detail.html', stus=STUDENT_DICT, flag=flag)
+
+
+@app.route('/test')
+def test():
+    res = url_for('hahaha')
+    print(res)
+    return res
 
 
 if __name__ == '__main__':

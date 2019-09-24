@@ -17,7 +17,8 @@ app.config.from_object(DebugConfig)
 # app.config.from_object(TestConfig)
 
 app.register_blueprint(log)
-app.register_blueprint(info)
+app.register_blueprint(log)
+# app.register_blueprint(info)
 Session(app)
 
 
@@ -44,5 +45,6 @@ if __name__ == '__main__':
     app.run()   # 基于tcp的socket连接
 
 
-app.__call__()
-from werkzeug.serving import run_simple
+# app.__call__
+# from werkzeug.serving import run_simple
+from flask import request, request_tearing_down
