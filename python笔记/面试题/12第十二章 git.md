@@ -54,8 +54,6 @@ git stash apply stash@{1} #回到快照
 git rebase #将提交记录变成一条直线
 ```
 
-![1558411100749](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\1558411100749.png)
-
 #### 5. 公司如何基于git做的协同开发?
 
 ```python

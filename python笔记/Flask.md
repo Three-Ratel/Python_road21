@@ -860,10 +860,10 @@ References：https://flask.palletsprojects.com/en/1.1.x/reqcontext/
 
 ### 2. 长链接
 
--   短连接：通讯双方有数据交互时，就建立一个连接，数据发送完成后，则断开此连接，即每次连接只完成一项业务的发送。
--   长连接，指在一个连接上可以连续发送多个数据包，在连接保持期间，如果没有数据包发送，需要双方发链路检测包。
+-   **短连接**：通讯双方有数据交互时，就建立一个连接，数据发送完成后，则断开此连接，即每次连接只完成一项业务的发送。
+-   **长连接**，指在一个连接上可以连续发送多个数据包，在连接保持期间，如果没有数据包发送，需要**双方发链路检测包**。
 
-#### 长连接特性：
+#### 长连接特性
 
 1.  A、B client --> server 建立连接并保持连接不断开
 2.  A to B --> server 消息转发 -->B 建立连接的情况下，可以及时准确收到消息
@@ -873,7 +873,7 @@ References：https://flask.palletsprojects.com/en/1.1.x/reqcontext/
 
 ## 2. Websocket 
 
--   实现的组件：werkzeug、gevent-websocket
+-   实现的组件：**werkzeug**、**gevent-websocket**
 
 ### 1. 示例
 
@@ -904,7 +904,6 @@ def ichat():
             ws_socket.send(b'xxx')
     except:pass
     # return '200 ok!'
-
 
 if __name__ == '__main__':
     # handler_class=WSGIhandler（not sure），只支持http请求
@@ -1092,11 +1091,9 @@ if __name__ == '__main__':
 
 ## DButils模块：数据库连接池
 
-
-
 # 6. SQLAlchemy
 
--   ORM框架、通用
+-   通用的ORM框架
 -   Django-Model：基于django
 
 ## 1. 安装
@@ -1109,11 +1106,11 @@ pip install sqlalchemy
 
 ### 1. 约束
 
--   primary_key
--   auto_increment
--   nullable
--   index
--   unique
+1.  primary_key
+2.  auto_increment
+3.  nullable
+4.  index
+5.  unique
 
 ### 2. 数据类型
 
