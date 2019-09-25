@@ -3,7 +3,6 @@ https://blog.csdn.net/weixin_39726347/article/details/88567117
 
 '''
 
-
 # import time
 #
 # from flask import Flask, g, redirect
@@ -28,7 +27,7 @@ https://blog.csdn.net/weixin_39726347/article/details/88567117
 #     app.run()
 
 
-#2.Flask框架的优势
+# 2.Flask框架的优势
 '''
     Django web框架：
         优点 - 组件非常全，教科书框架，admin model-ORM session
@@ -47,7 +46,7 @@ https://blog.csdn.net/weixin_39726347/article/details/88567117
         缺点 - 复杂度较高
 '''
 
-#3.Flask框架依赖组件
+# 3.Flask框架依赖组件
 '''
 1.Werkzeug 一个WSGI工具包（web服务网关接口（Python Web Server Gateway Interface，缩写为WSGI）是为python语言定义的
 web服务器和web应用程序或框架之间的一种简单而通用的借口，其他语言也有类似的接口）
@@ -61,7 +60,7 @@ Jinja2模板引擎
 
 '''
 
-#4.Flask蓝图的作用
+# 4.Flask蓝图的作用
 '''
 1.将不同的功能模块化
 2.构建大型应用
@@ -69,13 +68,13 @@ Jinja2模板引擎
 4.增强可读性,易于维护（跟Django的view功能相似）
 
 '''
-#5.列举使用过得flask的第三方组件
+# 5.列举使用过得flask的第三方组件
 '''
 Flask-session   
 WTForms  相当于 WTF - Django ModelForm
 '''
 
-#6.简述Flask请求上下文管理流程
+# 6.简述Flask请求上下文管理流程
 '''
 RequestContext 请求上下文:
     Request 请求的对象，封装了Http请求(environ)的内容
@@ -94,6 +93,7 @@ RequestContext 请求上下文:
 　　　-通过ctx.pop()去LocalStack中的Local类- 将ctx删除 　
 
 
+
 2.应用上下文
 与请求上下文类似，当请求进来时，先实例化一个AppContext对象app_ctx，在实例化的过程中，提供了两个有用的属性，
 一个是app，一个是g。self.app就是传入的全局的app对象，self.g是一个全局的存储值的对象。接着将这个app_ctx存放到LocalStack()。
@@ -110,15 +110,14 @@ class AppContext(object):
 
 current_app = LocalProxy(_find_app)
 　　最后，当视图函数执行结束后，从storage中pop掉app_ctx对象。
-
 '''
 
-#7.Flask中g的作用
+# 7.Flask中g的作用
 '''
 1.g对象用于存储数据的的全局变量
 2.g对象在一次请求中的所有的代码的地方，都是可以使用的
 '''
-#8.如何编写flask中的离线脚本
+# 8.如何编写flask中的离线脚本
 '''
 离线脚本，就是非 web 运行时（web服务器停止）的状态下，也能对flask进行操作的脚本
 
@@ -186,8 +185,8 @@ with app1.app_context():# __enter__方法 -> push -> app_ctx添加到_app_ctx_st
 
     print(current_app.config['DEBUG'])
 '''
-#9.Flask上下文管理中主要涉及了哪些相关的类,并描述相关类的作用
 
+# 9.Flask上下文管理中主要涉及了哪些相关的类,并描述相关类的作用
 '''
 1.请求上下文:
     RequestContext类 存放request和session数据
@@ -200,7 +199,7 @@ with app1.app_context():# __enter__方法 -> push -> app_ctx添加到_app_ctx_st
     
 '''
 
-#10.为什么flask要把local对象中的值stack维护成一个列表
+# 10.为什么flask要把local对象中的值stack维护成一个列表
 '''
 1.因为通过维护成列表，可以实现一个栈的数据结构，进栈出栈时只取一个数据.
     在local对象中，存储的数据是这样的。app_ctx是应用上下文
@@ -215,7 +214,7 @@ with app1.app_context():# __enter__方法 -> push -> app_ctx添加到_app_ctx_st
 
 '''
 
-#11.Flask中多app应用如何编写?
+# 11.Flask中多app应用如何编写?
 '''
 多app应用的场景很少见，了解一下，就可以了！
 from werkzeug.wsgi import DispatcherMiddleware
@@ -249,7 +248,7 @@ if __name__ == "__main__":
 
 https://www.cnblogs.com/xiao987334176/p/9778183.html
 '''
-#12.flask中实现websocket需要什么组件
+# 12.flask中实现websocket需要什么组件
 '''
 flask-socketio组件
 
@@ -293,7 +292,7 @@ if __name__ == '__main__':
     http_serv.serve_forever()
 
 '''
-#13.wtfforms组件de作用
+# 13.wtfforms组件de作用
 '''
 在flask内部并没有提供全面的表单验证，所以当我们不借助第三方插件来处理时候代码会显得混乱，而官方推荐的
 一个表单验证插件就是wtforms。wtfroms是一个支持多种web框架的form组件，主要用于对用户请求数据的进行验证，
@@ -311,7 +310,7 @@ https://www.cnblogs.com/wdliu/p/10183645.html
 
 '''
 
-#14.Flask框架默认的session处理机制
+# 14.Flask框架默认的session处理机制
 '''
 flask的session是基于cookie的会话保持。简单的原理即：
     当客户端进行第一次请求时，客户端的HTTP request（cookie为空）到服务端，服务端创建session，视图函数根据form表单填写session，
@@ -326,7 +325,7 @@ flask用的secure cookie方式保存session, 即session数据是加密后保存�
 
 '''
 
-#15.解释下flask中的Local对象和threadinglocal对象的区别
+# 15.解释下flask中的Local对象和threadinglocal对象的区别
 '''
 都是在多线程下实现数据安全的方式,flask中的request是导入进去的，就相当于全局变量，每一个视图都可以对它进行访问修改取值操作，
 这就带来了共享数据的冲突问题，解决的思路就是利用协程和线程的唯一标识作为key.

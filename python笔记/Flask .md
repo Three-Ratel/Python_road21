@@ -805,7 +805,7 @@ __slots__ = ('__stroage__', '__ident_func__')
 
 ![3 RequestContext()类-push()](/Users/henry/Documents/截图/Py截图/Flask 请求上文/3 RequestContext()类-push().png)
 
-![4 _requsest_ctx_stack.png](/Users/henry/Desktop/4 _requsest_ctx_stack.png.png)
+![4 _requsest_ctx_stack.png](/Users/henry/Documents/截图/Py截图/Flask 请求上文/4 _requsest_ctx_stack.png.png)
 
 ![5 LocalStack()类](/Users/henry/Documents/截图/Py截图/Flask 请求上文/5 LocalStack()类.png)
 
@@ -829,7 +829,14 @@ __slots__ = ('__stroage__', '__ident_func__')
 
 
 
-References：https://flask.palletsprojects.com/en/1.1.x/reqcontext/
+## 6. Flask 全局变量
+
+-   **`current_app`、`g`、`request`和`session`是`Flask`中常见4个全局变量**。
+
+1.  current_app`是当前`Flask 服务运行的实例
+2.  `g`用于在应用上下文期间保存数据的变量
+3.  `request`封装了客户端的请求信息
+4.  `session`代表了用户会话信息。
 
 # 5.websocket
 
