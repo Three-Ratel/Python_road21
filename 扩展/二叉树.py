@@ -30,34 +30,34 @@ class Tree(object):
         # 树非空
         cur = self.root
         queue = [cur]
-        # # 列表判断法
-        # while True:
-        #     n = queue.pop(0)
-        #     if n.left:
-        #         queue.append(n.left)
-        #     else:
-        #         n.left = node
-        #         return
-        #     if n.right:
-        #         queue.append(n.right)
-        #     else:
-        #         n.right = node
-        #         return
+        # 列表判断法
+        while True:
+            n = queue.pop(0)
+            if n.left:
+                queue.append(n.left)
+            else:
+                n.left = node
+                return
+            if n.right:
+                queue.append(n.right)
+            else:
+                n.right = node
+                return
 
         # # 自己实现，list可能会很长，也就是说牺牲了空间，换取时间
-        for i in queue:
-            if i.left:
-                queue.append(i.left)
-            else:
-                i.left = node
-                print(len(queue))
-                return
-            if i.right:
-                queue.append(i.left)
-            else:
-                i.right = node
-                print(len(queue))
-                return
+        # for i in queue:
+        #     if i.left:
+        #         queue.append(i.left)
+        #     else:
+        #         i.left = node
+        #         print(len(queue))
+        #         return
+        #     if i.right:
+        #         queue.append(i.left)
+        #     else:
+        #         i.right = node
+        #         print(len(queue))
+        #         return
 
     # 遍历
     def travel(self):
@@ -117,5 +117,5 @@ tree.addNode(7)
 # tree.forward(tree.root)
 # print('中序遍历:', end=' ')
 # tree.middle(tree.root)
-# print('后序遍历:', end=' ')
-# tree.back(tree.root)
+print('后序遍历:', end=' ')
+tree.back(tree.root)

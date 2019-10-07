@@ -65,20 +65,20 @@ os.path.getsize(file)
 """
 8. os.walk(), 是一个生成器
 """
-# v = os.walk('/Users/henry/programme/python/Python_codes/day014 函数补充&模块')
-# #a 是目录;b 是目录下的文件夹;c 是目录下的文件
-# for a, b, c in v:
-#     print('--------')
-#     print(a)
-#     print('--------')
-#     print(b)
-#     print('--------')
-#     print(c)
-#     print('--------')
-#     print('===========================')
+v = os.walk('/Users/henry/programme/python/Python_codes/014 函数补充&模块os&sys')
+# a 是目录;b 是目录下的文件夹;c 是目录下的文件
+for a, b, c in v:
+    print('----a----')
+    print(a)
+    print('----b----')
+    print(b)
+    print('----c----')
+    print(c)
+    print('--------')
+    print('===========================')
 
 """
 9. os.mkdir(path)
 """
-os.mkdir('haha')
+# os.mkdir('haha')
 
