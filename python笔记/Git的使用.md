@@ -342,7 +342,19 @@ git add .
 
 ## 3. github的使用
 
--   gitlab 自己搭建仓库
+-   可以通过 gitlab 自己搭建仓库
+
+```python
+# master 修改过后，也需要合并到 dev 分支
+git checkout dev
+git merge master
+# 更新本地工作目录
+git pull origin master
+git pull origin dev
+# pull 命令等价于以下两条命令
+git fetch origin dev					# 把代码拉到版本库
+git merge origin/dev					# 把版本库代码合并到工作区
+```
 
 
 
@@ -355,7 +367,7 @@ git add .
 ### 1. 团队协同开发流程
 
 1. 分支：master dev 每个人
-2. 个人在个人分支上开√发
+2. 个人在个人分支上开发
 3. 开发完成后，推送到自己的分支
 4. 创建pull request 合并到dev分支
 5. leader 审核代码，接收合并
