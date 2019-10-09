@@ -29,5 +29,5 @@
 # obj2 = Singleton('echo')
 # print(id(obj1), id(obj2))
 #
-#
-# type()
+
+

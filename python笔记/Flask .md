@@ -825,7 +825,7 @@ __slots__ = ('__stroage__', '__ident_func__')
 
 ![7 LocalProxy](/Users/henry/Documents/截图/Py截图/Flask 请求上文/7 LocalProxy.png)
 
--   当请求处理结束，返回 reponse 给客户端后，Flask通过 信号机制调用`flask.reqeust_tearing_down`和`flask.``appcontext_tearing_down`等信号，把当前的request数据销毁，整个请求结束。
+-   当请求处理结束，返回 reponse 给客户端后，Flask通过 信号机制调用`flask.reqeust_tearing_down`和`flask.appcontext_tearing_down`等信号，把当前的request数据销毁，整个请求结束。
 
 
 

@@ -1851,7 +1851,7 @@ def fun():
 
 #### 1. 给某个方法加
 
-- 导入View类、导入method_decorator
+- 导入View类、导入**method_decorator**
 - 类中定义对应请求的方法
 - 使用带参数的装饰器
 
@@ -3150,7 +3150,7 @@ print(ret)
 
 ### 3.1 F查询
 
-- F('字段名')，取出字段值进行相应操作
+- F('字段名')，**取出字段值进行相应操作**
 
 ```python
 ret = models.Book.objects.filter(price__gt=100)
@@ -3241,7 +3241,7 @@ LOGGING = {
 
 ```python
 from django.db import connection
-cursor=connection.cursor()
+cursor = connection.cursor()
 # 插入操作
 cursor.execute("insert into hello_author(name) values('钱钟书')")
 # 更新操作
@@ -3250,8 +3250,8 @@ cursor.execute("update hello_author set name='abc' where name='bcd'")
 cursor.execute("delete from hello_author where name='abc'")
 # 查询操作
 cursor.execute("select * from hello_author")
-raw=cursor.fetchone()  # 返回结果
-cursor.fetchall()      # 读取所有
+raw=cursor.fetchone()  			# 返回结果
+cursor.fetchall()      			# 读取所有
 ```
 
 
@@ -4495,7 +4495,7 @@ class Md2(MiddlewareMixin):
 
 1. 执行时间：**视图函数之前**， **process_request之后**
 2. 参数：
-   - **request**和视图函数是同一个request对象
+   - **request**：和视图函数是同一个request对象
    - **view_func**：视图函数(路由匹配得到的视图函数)
    - **view_args**：视图的位置参数(**路由匹配时的分组**)
    - **view_kwargs**：视图的关键字参数
@@ -4970,7 +4970,6 @@ models.Student.objects.all()
 # 指定数据库
 models.Student.objects.all().using('db') or
 models.Student.objects.using('db').all()
-
 ```
 
 -   写入
@@ -5058,7 +5057,7 @@ class Router:
 
 ```python
 # extra
-  
+entry.objects.extra(where=["foo='a' OR bar = 'a'", "id > %s"], params=9)
 
 # 通过raw执行，和 Student 没关系，只是为了拿到 objects
 ret = models.Student.objects.raw('select * from main.app01_classes')
@@ -5073,7 +5072,6 @@ cursor = connectsions['db2'].sursor()
 cursor.execute(r"select * from main.app01_classes where id=%s", [1])
 row = cursor.fetchall()
 print(row)
-
 ```
 
 ### 5. orm性能相关(5)

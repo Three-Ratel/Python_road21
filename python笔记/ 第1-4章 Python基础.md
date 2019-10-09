@@ -168,7 +168,7 @@ eg.henryx'         <--> henryex
 
 |      |                                   | Py2                              | Py3                                                          |
 | ---- | --------------------------------- | -------------------------------- | ------------------------------------------------------------ |
-| 1    | 字符串类型不同                    |                                  |                                                              |
+| 1    | **字符串类型不同**                | unicode，str                     | str，bytes                                                   |
 | 2    | **py2py3默认解释器编码**          | ASCII                            | UTF-8                                                        |
 | 3    | 输入输出                          | raw_input() ; print              | input() ; print()                                            |
 | 4    | int / long                        | int 和 long，除法只保留整数      | 只用int，除法保留小数                                        |
@@ -177,10 +177,10 @@ eg.henryx'         <--> henryex
 | 7    | map/filter                        | 数据类型是list                   | 返回的是iterator，可以list()查看<map object at 0x108bfc668>  |
 | 8    | reduce                            | 内置                             | 移到functools                                                |
 | 9    | 模块和包                          | 需要_\_init__.py                 | —                                                            |
-| 10   | 经典类和新式类                    | 同时拥有                         | 只有新式类                                                   |
-| 11   | yield from                        | 没有                             | 有                                                           |
-|      | 进程池和线程池                    | from multiprocessing import Pool | form concurremnt.furtures.thread import ThreadPoolExecutor              orm concurremnt.furtures.process import ProcessPoolExecutor |
-| 13   | **字符串类型**                    | unicode，str                     | str，bytes                                                   |
+| 10   | **经典类和新式类**                | 同时拥有                         | 只有新式类                                                   |
+| 11   | **yield from**                    | 没有                             | 有                                                           |
+| 12   | 进程池和线程池                    | from multiprocessing import Pool | form concurremnt.furtures.thread import ThreadPoolExecutor              orm concurremnt.furtures.process import ProcessPoolExecutor |
+
 
 
 
