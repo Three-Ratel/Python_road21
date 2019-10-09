@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .box{
+            height: 100px;
+            width: 100px;
+            background-color: red;
+        }
+        .box2{
+            height: 100px;
+            width: 100px;
+            background-color: yellow;
+        }
+        .active{
+            background-color: lightblue;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    {{ msg }}
+    {{ "hello" }}				<!--字符串-->
+    {{ 1 + 1 }}
+    {{ 1 > 2 ? 'true':'false' }}
+    <p>{{ who.split('').reverse().join('') }}</p>
+
+
+    <div v-if="Math.random() > 0.5">
+        Now you see me
+    </div>
+    <div v-else>
+        Now you don't
+    </div>
+</div>
+
+<div id="content">
+    <div>{{ msg }}</div>
+    <button v-on:click = "handlerClick">隐藏</button>
+    <button @click = "handlerChange">切换颜色</button>
+    <div class="box" v-show="isShow" :class="{active:isActive}"></div>
+    <div class='box2' v-show='isShow'></div>
+
+</div>
+
+
+<!--1. 引包-->
+<script src="./vue.js"></script>
+<script type="text/javascript">
+    // 2. 实例化对象
+    var app = new Vue({
+        el: '#app',				// el即element必须是 el
+        data:{					// 数据对象，必须是 data
+            // 数据属性
+            msg:'hello vue!',
+            who: 'i am a vue app'
+        }
+    });
+
+    new Vue({
+        el:'#content',
+        data(){
+            return {
+                msg:"<h2>henry</h2>",
+                isShow: true,
+                isActive:false,
+            }
+        },
+        methods:{
+            add (x, y){
+                return x + y
+            },
+            handlerClick(){
+                console.log(this);
+                this.isShow = !this.isShow
+            },
+            handlerChange(){
+                console.log(this);
+                this.isActive = !this.isActive
+            }
+        },
+    })
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="app">
+    <ul>
+        <li v-for="(item, index) in data.users" :key="">
+            <h3>{{ item.id }}----{{ item.name }}</h3>
+        </li>
+    </ul>
+
+    <div v-for="(value, key) in person">
+        {{ value }}
+        {{ key }}
+    </div>
+</div>
+<script src="./vue.js"></script>
+<script>
+    new Vue({
+        el:'#app',
+        data(){
+            return{
+                data:{
+                    status:'ok',
+                    users:[
+                        {id:1, name:'henry'},
+                        {id:2, name:'echo'},
+                        {id:3, name:'dean'},
+                    ]
+                },
+                person:{'name':'iris'}
+            }
+
+        },
+    })
+
+</script>
+
+</body>
+</html>
