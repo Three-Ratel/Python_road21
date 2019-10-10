@@ -356,7 +356,85 @@ git fetch origin dev					# 把代码拉到版本库
 git merge origin/dev					# 把版本库代码合并到工作区
 ```
 
+## 4. git rebase
 
+### 1. 单分支操作
+
+-   合并提交记录，使其更简洁
+-   合并记录不要合并已经 push 过的记录
+
+```python
+# 合并当前位置开始的 2 条
+git rebase -i HEAD~2
+# 合并当前位置开始到指定 hash 值的区间，不包含指定的hash值
+git rebase -i hash值
+# 修改版本号，修改第二行，第三行... 的 pick 为 s，表示合并到上一个提交记录
+pick bb595c1 rebase-test
+pick 3d7b863 rebase-test1
+# 修改后
+pick bb595c1 rebase-test
+s 3d7b863 rebase-test1
+# 保存退出后，进入下一个文件
+rebase-test
+rebase-test1
+# 修改合并后的记录
+rebase-test & rebase-test1
+```
+
+### 2. 多分支操作
+
+-   场景：把分支合并为一条直线
+
+```python
+git log --graph --pretty=fromat:"%h %s"
+# 切换到 dev 分支
+git checkout dev
+git rebase master
+# 切换到 master 分支
+git checkout master
+git merge dev
+```
+
+-   同一分支分叉问题
+
+```python
+# 公司和家两台终端，在公司 commit 没有push，家里的 push
+# 公司
+git pull origin dev 					# 此时会产生分叉
+# 不会产生分叉
+git fetch origin dev
+git rebase rogin/dev
+```
+
+-   产生冲突
+
+```python
+# 产生冲突，手动解决冲突
+# 继续 rebase 操作
+git add xx.py
+git rebase --continue
+```
+
+## 5. GUI管理工具
+
+### 1. beyond compare
+
+-   安装
+
+### 2. 在git中配置
+
+```python
+# --local，只对当前项目中生效
+git config --local merge.tool bc3
+git config --local mergetool.path '安装路径'
+git config --local mergetool.keepBackup false
+```
+
+### 3. 应用
+
+```python
+git mergetool
+```
 
 
 
