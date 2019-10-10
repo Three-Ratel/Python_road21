@@ -3621,7 +3621,7 @@ def logout(request):
 
 ### 1.1 装饰器
 
-- **csrf_exempt,**只能加到dispatch方法上(类中或者重写dispatch方法)
+- **csrf_exempt**，只能加到dispatch方法上(类中或者重写dispatch方法)
 - **ensure_csrf_cookie**，一般加在get请求上，确保生成csrf需要的cookies
 - **csrf_protect**，局部使用csrf校验，需要配合ensure_csrf_cookie一起使用
 
@@ -4686,10 +4686,7 @@ class UserView(ListAPIView):
 class UserView(ModelViewSet):
     queryset = models.User.objects
     serilaizer_class = UserModelSerializer
-        
 ```
-
-![drf类的继承](/Users/henry/Documents/截图/Py截图/drf类的继承.png)
 
 # Django的其他配置
 
@@ -5057,7 +5054,7 @@ class Router:
 
 ```python
 # extra
-entry.objects.extra(where=["foo='a' OR bar = 'a'", "id > %s"], params=9)
+Entry.objects.extra(where=["foo='a' OR bar = 'a'", "id > %s"], params=9)
 
 # 通过raw执行，和 Student 没关系，只是为了拿到 objects
 ret = models.Student.objects.raw('select * from main.app01_classes')

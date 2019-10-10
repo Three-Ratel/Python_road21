@@ -403,7 +403,7 @@ git merge dev
 git pull origin dev 					# 此时会产生分叉
 # 不会产生分叉
 git fetch origin dev
-git rebase rogin/dev
+git rebase origin/dev
 ```
 
 -   产生冲突
