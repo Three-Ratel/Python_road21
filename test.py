@@ -2,6 +2,7 @@
 #
 # a = {1: 1}
 # print('----', sys.getrefcount(a))
+# print(sys.argv)
 #
 #
 # def func(arg):
@@ -29,5 +30,14 @@
 # obj2 = Singleton('echo')
 # print(id(obj1), id(obj2))
 #
+#
+# li = [1, 2, 3]
+# print(li.__dir__())
+#
+# print(iter(li).__next__())
 
 
+class Test:
+
+    def __new__(cls, *args, **kwargs):
+        pass

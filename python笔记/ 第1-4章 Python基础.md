@@ -846,7 +846,7 @@ print(s)
 #### 2. s.update(s1)
 
 ```python
-# 可以用str ， list， tuple， dict， set， 也可以混合多种类型放入update中
+# 可以用str， list， tuple， dict， set， 也可以混合多种类型放入update中
 s = {1, 'henry', 2, 'echo', 3, 'eliane'}
 s1 = {5, 6, 7, 8, 1, 2, 3}
 s2 = [5, 6, 7, 8, 1, 2, 3]
