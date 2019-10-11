@@ -436,17 +436,232 @@ git config --local mergetool.keepBackup false
 git mergetool
 ```
 
+## 6. 协同开发
+
+### 1. gitflow工作流
+
+#### 1. 分支
+
+-   master、dev、每个人有一个自己的分支
+
+#### 2. 个人功能开发
+
+-   个人分支功能开发完毕，需要代码 review
+
+#### 3. 代码review
+
+-   review 通过后，临时做 release 分支，做发布版本(测试)，修复bug
+
+#### 4. 代码上线
+
+-   上线后，可以删除个人分支或功能分支 
+
+![gitflow工作流](/Users/henry/Documents/截图/Py截图/gitflow工作流.jpg)
+
+### 2. 协同开发
+
+#### 1. 创建初始项目
+
+1.  一般建立组织
+
+2.  组织中创建项目
+
+3.  版本一般使用 v1.0，v1.1，v2.0
+
+    ```python
+    git tag -a v1 -m '第一版'
+    git push origin master
+    ```
+
+#### 2. 分支创建合并
+
+1.  leader创建 dev 分支
+
+    ```python
+    # 创建并切换到 dev 分支
+    git checkout -b dev
+    # 把本地代码 push 到 dev 分支
+    git push origin dev
+    ```
+
+2.  成员注册账号
+
+3.  leader邀请成员进组织：一般是 Member
+
+4.  权限管理
+
+    -   组织settings，默认其他成员是**只读**的
+    -   项目settings：邀请成员，即有开发权限
+
+5.  成员
+
+    -   安装git、clone仓库
+
+    ```python
+    # 成员需要切换到 dev 在创建个人/功能分支
+    git checkout dev
+    git checkout -b 分支名
+    # 开发功能，开发完成后，提交给 leader 进行代码 review
+    ```
+
+6.  代码 review
+
+    1.  使用**GitHub**的 **pull request**
+    2.  settings--branches--规则(dev分支)--require pull reqeust(**设置**)...
+    3.  master分支也需要review
+    4.  成员开发完成后
+        -   提交pull requset，**从哪个分支合并到哪个分支**
+        -   简单描述
+    5.  leader 检查 pull request，viewed all files 通过 review，进行合并(网页/命令都可以)，可以删除分支
+
+#### 3. 测试、合并
+
+1.  `git checkout -b release`
+2.  `git push origin release`
+3.  通过测试后
+    -   一般还需要进行`pull request`
+    -   可以指定 reviewers
+4.  进行合并到master 和 dev，删除 release 分支
+5.  `git pull origin master`
+6.  `git tag -a v2 -m '第二版'`
+7.  代码的合并过程中可能产生冲突，需要进行手动解决冲突
+
+## 7. 为开源贡献
+
+-   通过 fork 和 pull reqeust 的方式进行贡献代码
+
+#### 1. fork 源代码
+
+```python
+# 点击fork后，会到个人的仓库
+```
+
+#### 2. 自己的仓库修改代码
+
+```python
+git clone https://xxxx
+```
+
+-   修改bug，push到自己的仓库
+
+#### 3. 给源代码提交修复bug的申请
+
+-   new pull reqeust
+-   个人仓库的 master 到开源项目的 master
+
+## 8. 其他
+
+### 1. 配置
+
+#### 1. 项目配置文件
+
+-   只对当前项目有效
+
+```python
+git config --local user.name 'xxx'
+```
+
+#### 2. 全局配置
+
+-   对当前用户生效，`~/.gitconfig`
+
+```python
+git config --global user.name 'xxx'
+```
+
+#### 3. 系统配置
+
+-   `/etc/.gitconfig`
+
+```python
+git config --system user.name 'xxx'
+```
+
+#### 2. 应用场景
+
+```python
+git remote add origin 地址	# 默认添加到本地配置文件(--local)
+```
+
+### 2. 免密登录
+
+#### 1. url中体现
+
+```python
+# 原来的地址
+url = https://gitee.com/henry_w/python_road.git
+# 修改地址
+url = https://用户名:密码@gitee.com/henry_w/python_road.git
+```
+
+#### 2. ssh方式
+
+-   `url = git@github.com:Henry-wzh/Python.git`
+
+```python
+# 1. 本地生成公钥和私钥,默认存到 ~/.ssh/ 目录下
+# id_rsa.pub：公钥、id_rsa：私钥
+ssh-keygen -r rsa
+# 2. copy公钥内容，设置到 github 中，settings中的ssh
+# 3. git本地配置 ssh 地址
+git remote add origin git@github.com:Henry-wzh/Python.git
+```
+
+#### 3. 现在使用
+
+-   git 自动管理凭证
+-   系统管理的，mac 在钥匙串中
+
+### 3. .gitingore
+
+-   可以到 GitHub 上寻找
+-   **生产环境一定要用**
+
+```python
+*.h						# 忽略 .h 文件
+!a.h					# a.h 除外
+file/					# 忽略 file 目录下的所有文件
+*.py[c|a|d]				# 忽略 pyc，pya，pyb的文件
+```
+
+### 4. 任务管理
+
+#### 1. issues
+
+-   话题讨论：提问+指定人+标签，bug管理
+-   项目讨论
+
+#### 2. wiki
+
+-   项目介绍：用于新加入的成员对项目进行了解
 
 
 
 
-## 附录：
 
-### 1. 团队协同开发流程
 
-1. 分支：master dev 每个人
-2. 个人在个人分支上开发
-3. 开发完成后，推送到自己的分支
-4. 创建pull request 合并到dev分支
-5. leader 审核代码，接收合并
-6. dev 合并到 merge上
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
